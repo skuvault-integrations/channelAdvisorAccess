@@ -1,0 +1,1540 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Netco</name>
+    </assembly>
+    <members>
+        <member name="T:Netco.Extensions.AssemblyExtensions">
+            <summary>
+            Adds extensions to simplify working with <see cref="T:System.Reflection.Assembly"/>.
+            </summary>
+        </member>
+        <member name="M:Netco.Extensions.AssemblyExtensions.GetOriginalLocation(System.Reflection.Assembly)">
+            <summary>
+            Gets the original location of an assembly (before it was shadow-copied).
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>Original location of the assembly.</returns>
+            <remarks>Original location or <see cref="F:System.String.Empty"/> if location couldn't be determined (because assembly was loaded
+            from byte array for example).</remarks>
+        </member>
+        <member name="T:Netco.Errors.ExceptionForm">
+            <summary>
+            Form to show details for <see cref="T:System.Exception"/>.
+            </summary>
+        </member>
+        <member name="M:Netco.Errors.ExceptionForm.#ctor(System.Exception)">
+            <summary>
+            Constructs error form and initializes to show specified exception.
+            </summary>
+            <param name="targetException">Exception to show.</param>
+        </member>
+        <member name="F:Netco.Errors.ExceptionForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Netco.Errors.ExceptionForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Netco.Errors.ExceptionForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:Netco.Events.OnEvent">
+            <summary>
+            Simplifies raising events.
+            </summary>
+        </member>
+        <member name="M:Netco.Events.OnEvent.Raise(System.EventHandler,System.Object)">
+            <summary>
+            Call to raise generic event.
+            </summary>
+            <param name="eventHandler">The event handler.</param>
+            <param name="source">The source.</param>
+        </member>
+        <member name="M:Netco.Events.OnEvent.Raise``1(System.EventHandler{``0},System.Object,``0)">
+            <summary>
+            Call to raise event with specific event arguments.
+            </summary>
+            <typeparam name="T">Event arguments type.</typeparam>
+            <param name="eventHandler">The event handler.</param>
+            <param name="source">The source.</param>
+            <param name="e">The event arguments.</param>
+        </member>
+        <member name="M:Netco.Events.OnEvent.Raise(System.ComponentModel.PropertyChangedEventHandler,System.Object,System.String)">
+            <summary>
+            Call to raise event in response to a property being changed.
+            </summary>
+            <param name="eventHandler">The event handler.</param>
+            <param name="source">The source.</param>
+            <param name="propertyName">Name of the property.</param>
+        </member>
+        <member name="T:Netco.Events.EventArgs`1">
+            <summary>
+            Generic version of EventArgs to avoid 
+            defining custom  EventArgs types 
+            </summary>
+            <typeparam name="T">Data to pass to event handler.</typeparam>
+            <remarks>Based on Ayende's Rhino Commons.</remarks>
+        </member>
+        <member name="M:Netco.Events.EventArgs`1.#ctor(`0)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.Events.EventArgs`1"/> class.
+            </summary>
+            <param name="item">The item.</param>
+        </member>
+        <member name="P:Netco.Events.EventArgs`1.Item">
+            <summary>
+            Gets or sets the item.
+            </summary>
+            <value>The item.</value>
+        </member>
+        <member name="T:Netco.Extensions.DateTimeExtensions">
+            <summary>
+            Provides helper methods for <see cref="T:System.DateTime"/>.
+            </summary>
+        </member>
+        <member name="M:Netco.Extensions.DateTimeExtensions.ToPresetLocal(System.DateTime)">
+            <summary>
+            Converts <see cref="T:System.DateTime"/> to local time zone.
+            </summary>
+            <param name="dateTime">The date time.</param>
+            <returns>Local <see cref="T:System.DateTime"/>.</returns>
+            <remarks>Relies on <see cref="P:Netco.Extensions.DateTimeExtensions.LocalTimeZone"/> for conversion.</remarks>
+        </member>
+        <member name="M:Netco.Extensions.DateTimeExtensions.SetLocalTimeZone(Netco.Extensions.DateTimeExtensions.CommonTimeZone)">
+            <summary>
+            Sets the local time zone.
+            </summary>
+            <param name="timeZone">The time zone.</param>
+        </member>
+        <member name="P:Netco.Extensions.DateTimeExtensions.LocalTimeZone">
+            <summary>
+            Gets or sets the local time zone used by <see cref="M:Netco.Extensions.DateTimeExtensions.ToPresetLocal(System.DateTime)"/>.
+            </summary>
+            <value>The local time zone.</value>
+        </member>
+        <member name="T:Netco.Extensions.DateTimeExtensions.CommonTimeZone">
+            <summary>
+            Commonly supported time zones.
+            </summary>
+            <seealso href="http://www.timeanddate.com/library/abbreviations/timezones/na/"/>
+        </member>
+        <member name="F:Netco.Extensions.DateTimeExtensions.CommonTimeZone.PST">
+            <summary>
+            Pacific Standard Time
+            </summary>
+            <remarks>UTC - 8 hours, EST - 3 hours</remarks>
+        </member>
+        <member name="F:Netco.Extensions.DateTimeExtensions.CommonTimeZone.MST">
+            <summary>
+            Mountain Standard Time
+            </summary>
+            <remarks>UTC - 7 hours, EST - 2 hours, PST + 1 hour</remarks>
+        </member>
+        <member name="F:Netco.Extensions.DateTimeExtensions.CommonTimeZone.CST">
+            <summary>
+            Central Standard Time
+            </summary>
+            <remarks>UTC - 6 hours, EST - 1 hour, PST + 2 hours</remarks>
+        </member>
+        <member name="F:Netco.Extensions.DateTimeExtensions.CommonTimeZone.EST">
+            <summary>
+            Eastern Standard Time
+            </summary>
+            <remarks>UTC - 5 hours, PST + 3 hours</remarks>
+        </member>
+        <member name="T:Netco.Extensions.TimeSpanExtensions">
+            <summary>
+            Extension methods for <see cref="T:System.TimeSpan"/>.
+            </summary>
+        </member>
+        <member name="M:Netco.Extensions.TimeSpanExtensions.ToTimeSpan(System.String)">
+            <summary>
+            Converts <see cref="T:System.String"/> to <see cref="T:System.TimeSpan"/>.
+            </summary>
+            <param name="s">The s.</param>
+            <returns><see cref="T:System.TimeSpan"/> created from the supplied string.</returns>
+            <remarks>Converts "1.5h", "30m", or "1" (default hour) to <see cref="T:System.TimeSpan"/>.</remarks>
+        </member>
+        <member name="M:Netco.Extensions.TimeSpanExtensions.ToStringFormat(System.TimeSpan)">
+            <summary>
+            Converts <see cref="T:System.TimeSpan"/> to string.
+            </summary>
+            <param name="timeSpan">The time span.</param>
+            <returns>String representing time span.</returns>
+        </member>
+        <member name="M:Netco.Extensions.TimeSpanExtensions.ToStringFormat(System.TimeSpan,System.String)">
+            <summary>
+            Converts <see cref="T:System.TimeSpan"/> to string.
+            </summary>
+            <param name="timeSpan">The time span.</param>
+            <param name="format">The <see cref="M:System.DateTime.ToString(System.String)"/> format.</param>
+            <returns>Formatted <see cref="T:System.TimeSpan"/> string.</returns>
+            <remarks>If <paramref name="format"/> is <c>null</c> or empty default formatting is used.
+            <para>With default formatting if time span is less than an hour, total minutes are shown followed by "m" (<b>15m</b>).
+            Otherwise total hours are shown followed by "h" (<b>1.5h</b>).</para></remarks>
+        </member>
+        <member name="T:Netco.Lib.Exceptions.HeisenbergException">
+            <summary>
+            Thrown if requested state doesn't match current state.
+            </summary>
+            <see href="http://weblogs.asp.net/leftslipper/archive/2009/04/01/the-string-or-the-cat-a-new-net-framework-library.aspx"/>
+        </member>
+        <member name="M:Netco.Lib.Exceptions.HeisenbergException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.Lib.Exceptions.HeisenbergException"/> class.
+            </summary>
+        </member>
+        <member name="T:Netco.Lib.Pair`2">
+            <summary>
+            A generic pair class.
+            </summary>
+            <typeparam name="TFirst">The type of the key.</typeparam>
+            <typeparam name="TSecond">The type of the value.</typeparam>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.#ctor(Netco.Lib.Pair{`0,`1})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="pair"></param>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.#ctor(`0,`1)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="first">The key.</param>
+            <param name="second">The value.</param>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.Equals(Netco.Lib.Pair{`0,`1})">
+            <summary>
+            Indicates whether the current object is equal to 
+            another object of the same type.
+            </summary>
+            <param name="pair">The pair to compare.</param>
+            <returns>True if the key and value identities are the same.</returns>
+            <exception cref="T:System.NullReferenceException">The provided pair was null.</exception>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.HasSameFirst(Netco.Lib.Pair{`0,`1})">
+            <summary>
+            Indicates whether the current object share its
+            first object with another object of the same type.
+            </summary>
+            <param name="pair">The pair with the first object to compare.</param>
+            <returns>True if the first object identities are the same.</returns>
+            <exception cref="T:System.NullReferenceException">The provided pair was null.</exception>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.HasSameSecond(Netco.Lib.Pair{`0,`1})">
+            <summary>
+            Indicates whether the current object share its
+            second object with another object of the same type.
+            </summary>
+            <param name="pair">The pair with the second object to compare.</param>
+            <returns>True if the second object identities are the same.</returns>
+            <exception cref="T:System.NullReferenceException">The provided pair was null.</exception>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.ToString">
+            <summary>
+            Converts the key of the current pair to its 
+            equivalent <see cref="T:System.String"/> representation.
+            </summary>
+            <returns>A String representation.</returns>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+            <returns>
+            	<c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+            <exception cref="T:System.NullReferenceException">
+            The <paramref name="obj"/> parameter is null.
+            </exception>
+        </member>
+        <member name="M:Netco.Lib.Pair`2.GetHashCode">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="P:Netco.Lib.Pair`2.First">
+            <summary>
+            The first object.
+            </summary>
+        </member>
+        <member name="P:Netco.Lib.Pair`2.Second">
+            <summary>
+            The second object.
+            </summary>
+        </member>
+        <member name="T:Netco.Lib.PairExtensions">
+            <summary>
+            Extension methods to the pair.
+            </summary>
+        </member>
+        <member name="M:Netco.Lib.PairExtensions.Dictionary2List``2(System.Collections.Generic.IDictionary{``0,``1})">
+            <summary>
+            Converts dictionary to a list of pairs
+            </summary>
+            <param name="dictionary">The dictionary.</param>
+            <returns>List of pairs based on the dictionary.</returns>
+        </member>
+        <member name="M:Netco.Lib.PairExtensions.List2Dictionary``2(System.Collections.Generic.IList{Netco.Lib.Pair{``0,``1}})">
+            <summary>
+            Converts a list of pairs to a dictionary.
+            </summary>
+            <param name="list">The list.</param>
+            <returns>Dictionary based on the list of pairs.</returns>
+        </member>
+        <member name="M:Netco.Lib.PairExtensions.List2TwoDimentionalDictionary``2(System.Collections.Generic.IList{Netco.Lib.Pair{``0,``1}})">
+            <summary>
+            Converts a list of pairs to dictionary, combining all pairs with the same key to be a list of values.
+            </summary>
+            <param name="list">The list.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Netco.Lib.SchrodingOr`2">
+            <summary>
+            Holds a pair of values, returning specific value depending on the outcome of the supplied generator.
+            </summary>
+            <typeparam name="TDead">The type of the dead.</typeparam>
+            <typeparam name="TAlive">The type of the alive.</typeparam>
+            <see href="http://weblogs.asp.net/leftslipper/archive/2009/04/01/the-string-or-the-cat-a-new-net-framework-library.aspx"/>
+        </member>
+        <member name="M:Netco.Lib.SchrodingOr`2.#ctor(`0,`1)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.Lib.SchrodingOr`2"/> class.
+            </summary>
+            <param name="dead">The dead instance.</param>
+            <param name="alive">The alive instance.</param>
+        </member>
+        <member name="M:Netco.Lib.SchrodingOr`2.#ctor(`0,`1,System.Func{System.Boolean})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.Lib.SchrodingOr`2"/> class.
+            </summary>
+            <param name="dead">The dead.</param>
+            <param name="alive">The alive.</param>
+            <param name="heisenbergGenerator">The heisenberg generator used to determine whether current instance is alive or dead.</param>
+        </member>
+        <member name="M:Netco.Lib.SchrodingOr`2.EnsureStateValid(System.Boolean)">
+            <summary>
+            Ensures the state valid.
+            </summary>
+            <param name="alive">Expected state.</param>
+            <exception cref="T:Netco.Lib.Exceptions.HeisenbergException">Expected state doesn't match current state..</exception>
+        </member>
+        <member name="P:Netco.Lib.SchrodingOr`2.Alive">
+            <summary>
+            Gets or sets the alive instance.
+            </summary>
+            <value>The alive instance.</value>
+        </member>
+        <member name="P:Netco.Lib.SchrodingOr`2.Dead">
+            <summary>
+            Gets or sets the dead instance.
+            </summary>
+            <value>The dead instance.</value>
+        </member>
+        <member name="T:Netco.Lib.StringOr`1">
+            <summary>
+            Holds an object and corresponding string value.
+            </summary>
+            <typeparam name="TOther">The type of the other.</typeparam>
+            <see href="http://weblogs.asp.net/leftslipper/archive/2009/04/01/the-string-or-the-cat-a-new-net-framework-library.aspx"/>
+        </member>
+        <member name="M:Netco.Lib.StringOr`1.#ctor(`0)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.Lib.StringOr`1"/> class.
+            </summary>
+            <param name="otherValue">The other value.</param>
+            <remarks>String value is retrieved using <see cref="M:System.Object.ToString"/>.</remarks>
+        </member>
+        <member name="M:Netco.Lib.StringOr`1.#ctor(System.String,`0)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.Lib.StringOr`1"/> class.
+            </summary>
+            <param name="stringValue">The string value.</param>
+            <param name="otherValue">The other value.</param>
+        </member>
+        <member name="M:Netco.Lib.StringOr`1.op_Implicit(Netco.Lib.StringOr{`0})~System.String">
+            <summary>
+            Performs an implicit conversion from <see cref="T:Netco.Lib.StringOr`1"/> to <see cref="T:System.String"/>.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>The result of the conversion.</returns>
+        </member>
+        <member name="M:Netco.Lib.StringOr`1.op_Implicit(Netco.Lib.StringOr{`0})~`0">
+            <summary>
+            Performs an implicit conversion from <see cref="T:Netco.Lib.StringOr`1"/> to <c>TOther</c> type.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>The result of the conversion.</returns>
+        </member>
+        <member name="P:Netco.Lib.StringOr`1.StringValue">
+            <summary>
+            Gets or sets the string value.
+            </summary>
+            <value>The string value.</value>
+        </member>
+        <member name="P:Netco.Lib.StringOr`1.OtherValue">
+            <summary>
+            Gets or sets the other value.
+            </summary>
+            <value>The other value.</value>
+        </member>
+        <member name="T:System.Linq.Dynamic.DynamicLinqExtensions">
+            <summary>
+            Contains an extension methods for dynamic queries against <see cref="T:System.Collections.IEnumerable"/> objects in<see cref="T:System.Linq.IQueryable"/>ust IQueryable objects
+            Written by Jon von Gillern
+            See http://blog.nitriq.com for more information
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.Where``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            Returns an IEnumerable of all the items in the original source where the times satisify the
+            predicate created from the whereClause
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.Where``1(System.Collections.Generic.IEnumerable{``0},System.String,System.Object[])">
+            <summary>
+            Returns an IEnumerable of all the items in the original source where the times satisify the
+            predicate created from the whereClause
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.CreatePredicate``1(System.String)">
+            <summary>
+            Creates a predicate from a string
+            </summary>
+            <example>
+            var pred = DynamicLamba.CreatePredicate&lt;Person>("Age > 25")
+            Console.WriteLine(pred(new Person { Age = 28 })); // outputs "true"
+            Console.WriteLine(pred(new Person { Age = 20 })); // outputs "false"
+            </example>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.CreatePredicate``1(System.String,System.Object[])">
+            <summary>
+            Creates a predicate from the predicate string
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.OrderBy``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            Orders the items by the appropriate property
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.OrderByDescending``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            Orders the items by the appropriate property
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.CreateComparer``1(System.String)">
+            <summary>
+            Creates a comparer Func
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.CreateComparer``1(System.String,System.Boolean)">
+            <summary>
+            Creates a comparer Func
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicLinqExtensions.CreateValueExpression``2(System.String)">
+            <summary>
+            Returns a function that takes an object of type TInput and evaluates an expression on the input object
+            type, evaluates the expression against the object and returns the result of the expression
+            </summary>
+            <example>
+            var getFullNameFunc = DynamicLambda.CreateValueExpression&lt;Person, string>("FirstName + \" \" + LastName");
+            Console.WriteLine(getFullNameFunc(new Person { FirstName = "Jon", LastName = "von Gillern" })); //outputs "Jon von Gillern"
+            
+            var getPerimeterFunc = DynamicLambda.CreateValueExpression&lt;Triangle, double>("Side1 + Side2 + Side3");
+            Console.WriteLine(getPerimeterFunc(new Triangle(3,4,5)); //outputs 12
+            </example>
+        </member>
+        <member name="T:System.Linq.Dynamic.ComparerWrapper`1">
+            <summary>
+            Wraps comparer method.
+            </summary>
+            <typeparam name="T">Type of comparer.</typeparam>
+        </member>
+        <member name="M:System.Linq.Dynamic.ComparerWrapper`1.#ctor(System.Func{`0,`0,System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Linq.Dynamic.ComparerWrapper`1"/> class.
+            </summary>
+            <param name="comparer">The comparer.</param>
+        </member>
+        <member name="M:System.Linq.Dynamic.ComparerWrapper`1.Compare(`0,`0)">
+            <summary>
+            Compares two objects and returns a value indicating whether one is less than, equal to, or greater than the other.
+            </summary>
+            <param name="x">The first object to compare.</param>
+            <param name="y">The second object to compare.</param>
+            <returns>
+            Value
+            Condition
+            Less than zero
+            <paramref name="x"/> is less than <paramref name="y"/>.
+            Zero
+            <paramref name="x"/> equals <paramref name="y"/>.
+            Greater than zero
+            <paramref name="x"/> is greater than <paramref name="y"/>.
+            </returns>
+        </member>
+        <member name="T:System.Linq.Dynamic.DynamicQueryable">
+            <summary>
+            Provides support for dynamic queries.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.Where``1(System.Linq.IQueryable{``0},System.String,System.Object[])">
+            <summary>
+            Filters a sequence of values based on a predicate.
+            </summary>
+            <typeparam name="T">The type of the elements of source.</typeparam>
+            <param name="source">The source.</param>
+            <param name="predicate">The predicate.</param>
+            <param name="values">The values.</param>
+            <returns>Filtered query.</returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.Where(System.Linq.IQueryable,System.String,System.Object[])">
+            <summary>
+            Filters a sequence of values based on a predicate.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="predicate">The predicate.</param>
+            <param name="values">The values.</param>
+            <returns>Filtered query.</returns>
+            <exception cref="T:System.ArgumentNullException"><c>source</c> or <c>predicate</c> is null.</exception>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.Select(System.Linq.IQueryable,System.String,System.Object[])">
+            <summary>
+            Generates dynamic query to select the data from specified source.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="selector">The selector.</param>
+            <param name="values">The values.</param>
+            <returns>Query to select the data from specified source.</returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.OrderBy``1(System.Linq.IQueryable{``0},System.String,System.Object[])">
+            <summary>
+            Sorts the elements of a sequence in ascending order according to the expression. 
+            </summary>
+            <typeparam name="T">The type of the elements of source. </typeparam>
+            <param name="source">The source.</param>
+            <param name="ordering">The ordering.</param>
+            <param name="values">The values.</param>
+            <returns>Query to sort elements.</returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.OrderBy(System.Linq.IQueryable,System.String,System.Object[])">
+            <summary>
+            Orders the by.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="ordering">The ordering.</param>
+            <param name="values">The values.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.Take(System.Linq.IQueryable,System.Int32)">
+            <summary>
+            Takes the specified number items from the source.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="count">The count.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.Skip(System.Linq.IQueryable,System.Int32)">
+            <summary>
+            Skips the specified number of items in the source.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="count">The count.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.GroupBy(System.Linq.IQueryable,System.String,System.String,System.Object[])">
+            <summary>
+            Groups the items.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="keySelector">The key selector.</param>
+            <param name="elementSelector">The element selector.</param>
+            <param name="values">The values.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.Any(System.Linq.IQueryable)">
+            <summary>
+            Selects any item is the source.
+            </summary>
+            <param name="source">The source.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicQueryable.Count(System.Linq.IQueryable)">
+            <summary>
+            Returnes number of items in the source.
+            </summary>
+            <param name="source">The source.</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Linq.Dynamic.DynamicClass">
+            <summary>
+            Class that dynamically builds <see cref="M:System.Linq.Dynamic.DynamicClass.ToString"/> depending on it's properties.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicClass.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this instance.
+            </returns>
+        </member>
+        <member name="T:System.Linq.Dynamic.DynamicProperty">
+            <summary>
+            A dynamic property.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicProperty.#ctor(System.String,System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Linq.Dynamic.DynamicProperty"/> class.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="type">The type.</param>
+        </member>
+        <member name="P:System.Linq.Dynamic.DynamicProperty.Name">
+            <summary>
+            Gets the name.
+            </summary>
+            <value>The name.</value>
+        </member>
+        <member name="P:System.Linq.Dynamic.DynamicProperty.Type">
+            <summary>
+            Gets the type.
+            </summary>
+            <value>The type.</value>
+        </member>
+        <member name="T:System.Linq.Dynamic.DynamicExpression">
+            <summary>
+            Dynamic expression.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicExpression.Parse(System.Type,System.String,System.Object[])">
+            <summary>
+            Parses the specified expression.
+            </summary>
+            <param name="resultType">Type of the result.</param>
+            <param name="expression">The expression.</param>
+            <param name="values">The values.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicExpression.ParseLambda(System.Type,System.Type,System.String,System.Object[])">
+            <summary>
+            Parses the lambda.
+            </summary>
+            <param name="itType">It type.</param>
+            <param name="resultType">Type of the result.</param>
+            <param name="expression">The expression.</param>
+            <param name="values">The values.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicExpression.ParseLambda(System.Linq.Expressions.ParameterExpression[],System.Type,System.String,System.Object[])">
+            <summary>
+            Parses the lambda.
+            </summary>
+            <param name="parameters">The parameters.</param>
+            <param name="resultType">Type of the result.</param>
+            <param name="expression">The expression.</param>
+            <param name="values">The values.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicExpression.ParseLambda``2(System.String,System.Object[])">
+            <summary>
+            Parses the lambda.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="S"></typeparam>
+            <param name="expression">The expression.</param>
+            <param name="values">The values.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicExpression.CreateClass(System.Linq.Dynamic.DynamicProperty[])">
+            <summary>
+            Creates the dynamic class.
+            </summary>
+            <param name="properties">The properties.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Linq.Dynamic.DynamicExpression.CreateClass(System.Collections.Generic.IEnumerable{System.Linq.Dynamic.DynamicProperty})">
+            <summary>
+            Creates the dynamic class.
+            </summary>
+            <param name="properties">The properties.</param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Linq.Dynamic.ParseException">
+            <summary>
+            Class to parse the exception.
+            </summary>
+        </member>
+        <member name="M:System.Linq.Dynamic.ParseException.#ctor(System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Linq.Dynamic.ParseException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="position">The position.</param>
+        </member>
+        <member name="M:System.Linq.Dynamic.ParseException.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this instance.
+            </returns>
+            <PermissionSet>
+            	<IPermission class="System.Security.Permissions.FileIOPermission, mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" version="1" PathDiscovery="*AllFiles*"/>
+            </PermissionSet>
+        </member>
+        <member name="P:System.Linq.Dynamic.ParseException.Position">
+            <summary>
+            Gets the position.
+            </summary>
+            <value>The position.</value>
+        </member>
+        <member name="T:Netco.Logging.ConsoleLogger">
+            <summary>
+            Sends all log messages to the console.
+            </summary>
+        </member>
+        <member name="T:Netco.Logging.ILogger">
+            <summary>
+            Logger interface to use for logging.
+            </summary>
+            <remarks>Logging providers are expected to implement this.</remarks>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Trace(System.String)">
+            <summary>
+            Logs the trace message.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Trace(System.Exception,System.String)">
+            <summary>
+            Logs the trace message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Trace(System.String,System.Object[])">
+            <summary>
+            Logs the trace message.
+            </summary>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Trace(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs the trace message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Debug(System.String)">
+            <summary>
+            Logs the debug message.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Debug(System.Exception,System.String)">
+            <summary>
+            Logs the debug message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Debug(System.String,System.Object[])">
+            <summary>
+            Logs the debug message.
+            </summary>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Debug(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs the debug message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Info(System.String)">
+            <summary>
+            Logs the info message.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Info(System.Exception,System.String)">
+            <summary>
+            Logs the info message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Info(System.String,System.Object[])">
+            <summary>
+            Logs the info message.
+            </summary>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Info(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs the info message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Warn(System.String)">
+            <summary>
+            Logs the warn message.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Warn(System.Exception,System.String)">
+            <summary>
+            Logs the warn message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Warn(System.String,System.Object[])">
+            <summary>
+            Logs the warn message.
+            </summary>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Warn(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs the warn message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Error(System.String)">
+            <summary>
+            Logs the error message.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Error(System.Exception,System.String)">
+            <summary>
+            Logs the error message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Error(System.String,System.Object[])">
+            <summary>
+            Logs the error message.
+            </summary>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Error(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs the error message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Fatal(System.String)">
+            <summary>
+            Logs the fatal message.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Fatal(System.Exception,System.String)">
+            <summary>
+            Logs the fatal message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Fatal(System.String,System.Object[])">
+            <summary>
+            Logs the fatal message.
+            </summary>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ILogger.Fatal(System.Exception,System.String,System.Object[])">
+            <summary>
+            Logs the fatal message.
+            </summary>
+            <param name="exception">The exception.</param>
+            <param name="format">The format string.</param>
+            <param name="args">The format arguments.</param>
+        </member>
+        <member name="M:Netco.Logging.ConsoleLogger.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.Logging.ConsoleLogger"/> class.
+            </summary>
+            <param name="type">The type.</param>
+        </member>
+        <member name="M:Netco.Logging.ConsoleLogger.LM(System.String[])">
+            <summary>
+            Logs the specified message.
+            </summary>
+            <param name="messages">All message to log.</param>
+        </member>
+        <member name="P:Netco.Logging.ConsoleLogger.SeparateLogEntries">
+            <summary>
+            Gets or sets a value indicating whether to separate log entries.
+            </summary>
+            <value><c>true</c> if separate log entries with new line; otherwise, <c>false</c>.</value>
+            <remarks>When entries are separated, they are easier to read, but take up more space.</remarks>
+        </member>
+        <member name="T:Netco.Logging.ConsoleLoggerFactory">
+            <summary>
+            Returns console logger for the specified object type.
+            </summary>
+        </member>
+        <member name="T:Netco.Logging.ILoggerFactory">
+            <summary>
+            Logger factory interface. Supplies logger for each log call.
+            </summary>
+            <remarks>Needs to be implemented by each separate logger provider.</remarks>
+        </member>
+        <member name="M:Netco.Logging.ILoggerFactory.GetLogger(System.Type)">
+            <summary>
+            Gets the logger to log message for the specified type.
+            </summary>
+            <param name="objectToLogType">Type of the object to log.</param>
+            <returns>Logger to log messages for the specified type.</returns>
+        </member>
+        <member name="M:Netco.Logging.ConsoleLoggerFactory.GetLogger(System.Type)">
+            <summary>
+            Gets the logger to log message for the specified type.
+            </summary>
+            <param name="objectToLogType">Type of the object to log.</param>
+            <returns>
+            Logger to log messages for the specified type.
+            </returns>
+        </member>
+        <member name="P:Netco.Logging.ConsoleLoggerFactory.SeparateLogEntries">
+            <summary>
+            Gets or sets a value indicating whether to separate log entries.
+            </summary>
+            <value><c>true</c> if separate log entries with new line; otherwise, <c>false</c>.</value>
+            <remarks>When entries are separated, they are easier to read, but take up more space.</remarks>
+        </member>
+        <member name="T:Netco.Logging.LogExtensions">
+            <summary>
+            Extends all objects to support logging.
+            </summary>
+        </member>
+        <member name="M:Netco.Logging.LogExtensions.Log``1(``0)">
+            <summary>
+            Gets the logger for the specified object.
+            </summary>
+            <typeparam name="T">Type of the object for which to get the logger.</typeparam>
+            <param name="needToLogObj">The need to log obj.</param>
+            <returns>The logger for the specified object.</returns>
+        </member>
+        <member name="T:Netco.Logging.NetcoLogger">
+            <summary>
+            Provides maing logging support.
+            </summary>
+        </member>
+        <member name="M:Netco.Logging.NetcoLogger.GetLogger(System.Type)">
+            <summary>
+            Gets the logger.
+            </summary>
+            <param name="objectToLogType">Type of the object to log.</param>
+            <returns>Logger to log messages for the specified object type.</returns>
+        </member>
+        <member name="P:Netco.Logging.NetcoLogger.LoggerFactory">
+            <summary>
+            Gets or sets the logger factory.
+            </summary>
+            <value>The logger factory that will supply the logger.</value>
+        </member>
+        <member name="T:Netco.Logging.NullLogger">
+            <summary>
+            Basic logger that does nothing. No messages will be logged.
+            </summary>
+        </member>
+        <member name="T:Netco.Logging.NullLoggerFactory">
+            <summary>
+            Returns <see cref="T:Netco.Logging.NullLogger"/> for all object types.
+            </summary>
+        </member>
+        <member name="M:Netco.Logging.NullLoggerFactory.GetLogger(System.Type)">
+            <summary>
+            Gets the logger to log message for the specified type.
+            </summary>
+            <param name="objectToLogType">Type of the object to log.</param>
+            <returns>
+            Logger to log messages for the specified type.
+            </returns>
+        </member>
+        <member name="T:Netco.MediatorLib.Mediator">
+            <summary>
+            Provides loosely-coupled messaging between
+            various colleagues.  All references to objects
+            are stored weakly, to prevent memory leaks.
+            </summary>
+            <see href="http://marlongrech.wordpress.com/2009/04/16/mediator-v2-for-mvvm-wpf-and-silverlight-applications/"/>
+        </member>
+        <member name="M:Netco.MediatorLib.Mediator.Register(System.Object)">
+            <summary>
+            Register a ViewModel to the mediator notifications
+            This will iterate through all methods of the target passed and will register all methods that are decorated with the MediatorMessageSink Attribute
+            </summary>
+            <param name="target">The ViewModel instance to register</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="target"/>  is <c>null</c></exception>
+            <exception cref="T:System.InvalidOperationException">The registered method should only have 1 parameter since the Mediator has only 1 argument to pass</exception>
+        </member>
+        <member name="M:Netco.MediatorLib.Mediator.Register(System.String,System.Delegate)">
+            <summary>
+            Registers a specific method to the Mediator notifications
+            </summary>
+            <param name="message">The message to register to</param>
+            <param name="callback">The callback function to be called when this message is broadcasted</param>
+            <exception cref="T:System.InvalidOperationException">Called in Silverlight (and it's not supported)
+            <para>-or-</para>
+            <para><paramref name="callback"/> delegate is static</para>
+            <para>-or-</para>
+            <para><paramref name="callback"/> delegate has 2 or more parameters (and it must be 0 or 1).</para>
+            </exception>
+        </member>
+        <member name="M:Netco.MediatorLib.Mediator.RegisterCallbackMethod(System.String,System.Object,System.Reflection.MethodInfo)">
+            <summary>
+            Registers the callback method.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="target">The target.</param>
+            <param name="method">The method.</param>
+            <exception cref="T:System.InvalidOperationException">The registered callback delegate should only have 0 or 1 parameter since the Mediator has up to 1 argument to pass</exception>
+        </member>
+        <member name="M:Netco.MediatorLib.Mediator.NotifyColleagues``1(System.String,``0)">
+            <summary>
+            Notify all registered parties that a specific message was broadcasted
+            </summary>
+            <typeparam name="T">The Type of parameter to be passed</typeparam>
+            <param name="message">The message to broadcast</param>
+            <param name="parameter">The parameter to pass together with the message</param>
+        </member>
+        <member name="M:Netco.MediatorLib.Mediator.NotifyColleagues(System.String)">
+            <summary>
+            Notify all registered parties that a specific message was broadcasted.
+            </summary>
+            <param name="message">The message to broadcast</param>
+        </member>
+        <member name="T:Netco.MediatorLib.MediatorMessageSinkAttribute">
+            <summary>
+            Attribute to decorate a method to be registered to the Mediator
+            </summary>
+        </member>
+        <member name="M:Netco.MediatorLib.MediatorMessageSinkAttribute.#ctor(System.String)">
+            <summary>
+            Constructs a method
+            </summary>
+            <param name="message">The message to subscribe to</param>
+        </member>
+        <member name="P:Netco.MediatorLib.MediatorMessageSinkAttribute.Message">
+            <summary>
+            The message to register to 
+            </summary>
+        </member>
+        <member name="P:Netco.MediatorLib.MediatorMessageSinkAttribute.ParameterType">
+            <summary>
+            The type of parameter for the Method
+            </summary>
+        </member>
+        <member name="T:Netco.MediatorLib.MessageToActionsMap">
+            <summary>
+            This class is an implementation detail of the Mediator class.
+            This will store all actions to be invoked
+            </summary>
+        </member>
+        <member name="M:Netco.MediatorLib.MessageToActionsMap.AddAction(System.String,System.Object,System.Reflection.MethodInfo,System.Type)">
+            <summary>
+            Adds an action to the list
+            </summary>
+            <param name="message">The message to register to </param>
+            <param name="target">The target object to invoke</param>
+            <param name="method">The method in the target object to invoke</param>
+            <param name="actionType">The Type of the action</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> or <paramref name="method"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Netco.MediatorLib.MessageToActionsMap.GetActions(System.String)">
+            <summary>
+            Gets the list of actions to be invoked for the specified message
+            </summary>
+            <param name="message">The message to get the actions for</param>
+            <returns>Returns a list of actions that are registered to the specified message</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="message"/> is <c>null</c></exception>
+        </member>
+        <member name="T:Netco.MediatorLib.WeakAction">
+            <summary>
+            This class is an implementation detail of the MessageToActionsMap class.
+            </summary>
+        </member>
+        <member name="M:Netco.MediatorLib.WeakAction.#ctor(System.Object,System.Reflection.MethodInfo,System.Type)">
+            <summary>
+            Constructs a WeakAction.
+            </summary>
+            <param name="target">The instance to be stored as a weak reference.</param>
+            <param name="method">The Method Info to create the action for.</param>
+            <param name="parameterType">The type of parameter to be passed in the action. Pass null if there is not a parameter.</param>
+        </member>
+        <member name="M:Netco.MediatorLib.WeakAction.CreateAction">
+            <summary>
+            Creates a "throw away" delegate to invoke the method on the target
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Netco.MediatorLib.WeakAction.IsAlive">
+            <summary>
+            returns true if the target is still in memory
+            </summary>
+        </member>
+        <member name="T:Netco.Profiling.Profiler">
+            <summary>
+            Time and memory profiling.
+            </summary>
+            <remarks>Profiling works through a stack. <see cref="M:Netco.Profiling.Profiler.Start(System.String)"/> saves current time
+            and starts profiling. <see cref="M:Netco.Profiling.Profiler.End"/> stops profiling and logs current results.
+            <see cref="M:Netco.Profiling.Profiler.End"/> must be called in reverse from <see cref="M:Netco.Profiling.Profiler.Start(System.String)"/> order.</remarks>
+        </member>
+        <member name="M:Netco.Profiling.Profiler.Start(System.String)">
+            <summary>
+            Starts profiler.
+            </summary>
+            <param name="name">The name of the profile.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="name"/> is null or empty.</exception>
+        </member>
+        <member name="M:Netco.Profiling.Profiler.End">
+            <summary>
+            Ends profiler with the specified message.
+            </summary>
+            <returns><see cref="T:Netco.Profiling.ProfilingInfo"/> holding info about the current profiling.</returns>
+            <remarks>Logs time profiler ran and memory used delta.</remarks>
+        </member>
+        <member name="M:Netco.Profiling.Profiler.End(System.String)">
+            <summary>
+            Ends profiler with the specified message.
+            </summary>
+            <param name="message">The message.</param>
+            <returns><see cref="T:Netco.Profiling.ProfilingInfo"/> holding info about the current profiling.</returns>
+            <remarks>Logs time profiler ran and memory used delta.</remarks>
+        </member>
+        <member name="M:Netco.Profiling.Profiler.GetCurrentMemory">
+            <summary>
+            Gets the current used memory.
+            </summary>
+            <returns>Bytes allocated to the current process.</returns>
+        </member>
+        <member name="M:Netco.Profiling.Profiler.GetCurrentMemoryInMB">
+            <summary>
+            Gets the current memory in MB.
+            </summary>
+            <returns>Megabytes allocated to the current process.</returns>
+        </member>
+        <member name="M:Netco.Profiling.Profiler.GetCurrentMemoryGC">
+            <summary>
+            Gets the current memory thought to be allocated by GC.
+            </summary>
+            <returns>Bytes allocated by GC.</returns>
+            <seealso cref="M:System.GC.GetTotalMemory(System.Boolean)"/>
+        </member>
+        <member name="M:Netco.Profiling.Profiler.GetCurrentMemoryGCInMB">
+            <summary>
+            Gets the current memory thought to be allocated by GC in MB.
+            </summary>
+            <returns>Megabytes allocated by GC.</returns>
+            <seealso cref="M:System.GC.GetTotalMemory(System.Boolean)"/>
+        </member>
+        <member name="P:Netco.Profiling.Profiler.EnableProfiling">
+            <summary>
+            Gets or sets a value indicating whether profiling is enabled.
+            </summary>
+            <value><c>true</c> to enable profiling; otherwise, <c>false</c>.</value>
+            <remarks>By default profiling is enabled.
+            <para>This affects prevents profiling from getting started. If any profiling is
+            taking place it will be ended regardless what this property value is.</para></remarks>
+        </member>
+        <member name="P:Netco.Profiling.Profiler.EnableLogging">
+            <summary>
+            Gets or sets a value indicating whether to log profiling results.
+            </summary>
+            <value><c>true</c> to log results; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Netco.Profiling.Profiler.Logger">
+            <summary>
+            Gets or sets the logger.
+            </summary>
+            <value>The logger.</value>
+        </member>
+        <member name="T:Netco.Profiling.ProfilingInfo">
+            <summary>
+            Holds profiling information.
+            </summary>
+        </member>
+        <member name="P:Netco.Profiling.ProfilingInfo.StartTime">
+            <summary>
+            Gets the profiling start time.
+            </summary>
+            <value>The profiling start time.</value>
+        </member>
+        <member name="P:Netco.Profiling.ProfilingInfo.StartMemory">
+            <summary>
+            Gets the profiling start memory.
+            </summary>
+            <value>The profiling start memory.</value>
+        </member>
+        <member name="P:Netco.Profiling.ProfilingInfo.EndTime">
+            <summary>
+            Gets the profiling end time.
+            </summary>
+            <value>The profiling end time.</value>
+        </member>
+        <member name="P:Netco.Profiling.ProfilingInfo.EndMemory">
+            <summary>
+            Gets the profiling end memory.
+            </summary>
+            <value>The profiling end memory.</value>
+        </member>
+        <member name="P:Netco.Profiling.ProfilingInfo.Duration">
+            <summary>
+            Gets the profiling span.
+            </summary>
+            <value>The profiling span.</value>
+        </member>
+        <member name="P:Netco.Profiling.ProfilingInfo.MemoryDelta">
+            <summary>
+            Gets the memory delta.
+            </summary>
+            <value>The memory delta.</value>
+        </member>
+        <member name="P:Netco.Profiling.ProfilingInfo.Name">
+            <summary>
+            Gets the profiling name.
+            </summary>
+            <value>The profiling name.</value>
+        </member>
+        <member name="T:Netco.UserInteraction.Impl.FormsInteraction">
+            <summary>
+            Class to notify user.
+            </summary>
+        </member>
+        <member name="T:Netco.UserInteraction.IUserInteraction">
+            <summary>
+            Interacts with user, possibly getting back simple user replies.
+            </summary>
+        </member>
+        <member name="T:Netco.UserInteraction.IUserNotification">
+            <summary>
+            Sends user notifications.
+            </summary>
+        </member>
+        <member name="M:Netco.UserInteraction.IUserNotification.Notify(System.String,System.String)">
+            <summary>
+            Notifies the user.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+            <remarks>Essentially sends user simple messages. Useful to inform
+            user about application progress.
+            <para>It's up to the implementation to wait for the user to acknowledge
+            notification or not.</para></remarks>
+        </member>
+        <member name="M:Netco.UserInteraction.IUserNotification.Notify(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the specified user using supplied message.
+            </summary>
+            <param name="message">The message to show to the user.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.IUserNotification.NotifyAboutError(System.String,System.String)">
+            <summary>
+            Notifies user about an error.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+            <remarks>Implementation can show some kind of special message to the user.</remarks>
+        </member>
+        <member name="M:Netco.UserInteraction.IUserNotification.NotifyAboutError(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the user about an error using supplied message.
+            </summary>
+            <param name="message">The message to show to the user.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.IUserInteraction.Ask(System.String,System.String)">
+            <summary>
+            Asks user a question.
+            </summary>
+            <param name="title">The question title.</param>
+            <param name="question">The question.</param>
+            <returns><c>true</c> if user agreed; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Netco.UserInteraction.IUserInteraction.Ask(Netco.UserInteraction.Message)">
+            <summary>
+            Asks user a question.
+            </summary>
+            <param name="question">The question.</param>
+            <returns><c>true</c> if user agreed; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.Notify(System.String,System.String)">
+            <summary>
+            Notifies the user with the specified message.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.Notify(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the specified user using supplied message.
+            </summary>
+            <param name="message">The message to show to the user.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.ShowMessage(System.String,System.String,System.Windows.Forms.MessageBoxIcon)">
+            <summary>
+            Shows the message with the specified icon.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+            <param name="messageIcon">The message icon.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.NotifyAboutError(System.String,System.String)">
+            <summary>
+            Notifies user about an error.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.NotifyAboutError(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the user about an error using supplied message.
+            </summary>
+            <param name="message">The message to show to the user.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.ShowError(System.String,System.String)">
+            <summary>
+            Notifies user about an error.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.Ask(System.String,System.String)">
+            <summary>
+            Asks user a question.
+            </summary>
+            <param name="title">The question title.</param>
+            <param name="question">The question.</param>
+            <returns><c>true</c> if user agreed; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.Ask(Netco.UserInteraction.Message)">
+            <summary>
+            Asks user a question.
+            </summary>
+            <param name="question">The question.</param>
+            <returns>
+            	<c>true</c> if user agreed; <c>false</c> otherwise.
+            </returns>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.ShowQuestion(System.String,System.String)">
+            <summary>
+            Asks user a question.
+            </summary>
+            <param name="title">The question title.</param>
+            <param name="question">The question.</param>
+            <returns><c>true</c> if user agreed; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.FormsInteraction.ShowQuestion(System.String,System.String,System.Windows.Forms.MessageBoxButtons)">
+            <summary>
+            Asks the specified question.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="question">The question.</param>
+            <param name="buttons">The buttons.</param>
+            <returns><see cref="T:System.Windows.Forms.DialogResult"/> with user response.</returns>
+            <seealso cref="M:System.Windows.Forms.MessageBox.Show(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon,System.Windows.Forms.MessageBoxDefaultButton,System.Windows.Forms.MessageBoxOptions)"/>
+        </member>
+        <member name="T:Netco.UserInteraction.Impl.MailNotification">
+            <summary>
+            Notifies users through email.
+            </summary>
+            <remarks>You can configure SMTP server using <c>app.config</c> or <c>web.config</c>. See <see href="http://weblogs.asp.net/scottgu/archive/2005/12/10/432854.aspx"/>
+            and MSDN for further details.</remarks>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.MailNotification.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Netco.UserInteraction.Impl.MailNotification"/> class.
+            </summary>
+            <param name="toEmail">To email.</param>
+            <param name="fromEmail">From email.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.MailNotification.Notify(System.String,System.String)">
+            <summary>
+            Notifies the user.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.MailNotification.Notify(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the specified user using supplied message.
+            </summary>
+            <param name="message">The message to email to the user.</param>
+            <remarks>If to or from are not supplied, default values are used.</remarks>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.MailNotification.NotifyAboutError(System.String,System.String)">
+            <summary>
+            Notifies user about an error.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Impl.MailNotification.NotifyAboutError(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the user about an error using supplied message.
+            </summary>
+            <param name="message">The message to show to the user.</param>
+        </member>
+        <member name="T:Netco.UserInteraction.Interaction">
+            <summary>
+            Provides a common way to interact with the user.
+            </summary>
+            <remarks>Makes it easy to initialize interaction service once and reuse it
+            everywhere in the program.</remarks>
+        </member>
+        <member name="M:Netco.UserInteraction.Interaction.Notify(System.String,System.String)">
+            <summary>
+            Notifies the user.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Interaction.Notify(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the user.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Interaction.NotifyAboutError(System.String,System.String)">
+            <summary>
+            Notifies user about an error.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Interaction.NotifyAboutError(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies user about an error.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Interaction.Ask(System.String,System.String)">
+            <summary>
+            Asks user a question.
+            </summary>
+            <param name="title">The question title.</param>
+            <param name="question">The question.</param>
+            <returns><c>true</c> if user agreed; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:Netco.UserInteraction.Interaction.Ask(Netco.UserInteraction.Message)">
+            <summary>
+            Asks user a question.
+            </summary>
+            <param name="question">The question.</param>
+            <returns><c>true</c> if user agreed; <c>false</c> otherwise.</returns>
+        </member>
+        <member name="P:Netco.UserInteraction.Interaction.InteractionService">
+            <summary>
+            Gets or sets the user interaction service.
+            </summary>
+            <value>The user interaction service.</value>
+            <remarks>Use this to initialize how program interacts and notifies the user.</remarks>
+        </member>
+        <member name="T:Netco.UserInteraction.Message">
+            <summary>
+            Represents a message to be sent to the user.
+            </summary>
+        </member>
+        <member name="P:Netco.UserInteraction.Message.Title">
+            <summary>
+            Gets or sets message the title.
+            </summary>
+            <value>The message title.</value>
+        </member>
+        <member name="P:Netco.UserInteraction.Message.Body">
+            <summary>
+            Gets or sets the actual message (body).
+            </summary>
+            <value>The message (body).</value>
+        </member>
+        <member name="P:Netco.UserInteraction.Message.IsBodyHtml">
+            <summary>
+            Gets or sets a value indicating whether the message is in HTML.
+            </summary>
+            <value>
+            	<c>true</c> if this message body is in HTML; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Netco.UserInteraction.Message.From">
+            <summary>
+            Gets or sets from whom message is sent (if applicable).
+            </summary>
+            <value>From whom message is sent (if applicable).</value>
+        </member>
+        <member name="P:Netco.UserInteraction.Message.To">
+            <summary>
+            Gets or sets to whom send the message (if applicable).
+            </summary>
+            <value>To whom send the message (if applicable).</value>
+        </member>
+        <member name="T:Netco.UserInteraction.Notification">
+            <summary>
+            Provides a common way to notify the user.
+            </summary>
+            <remarks>Makes it easy to initialize notification service once and reuse it
+            everywhere in the program.</remarks>
+        </member>
+        <member name="M:Netco.UserInteraction.Notification.Notify(System.String,System.String)">
+            <summary>
+            Notifies the user.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Notification.Notify(Netco.UserInteraction.Message)">
+            <summary>
+            Notifies the user.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Netco.UserInteraction.Notification.NotifyAboutError(System.String,System.String)">
+            <summary>
+            Notifies user about an error.
+            </summary>
+            <param name="title">The title.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="P:Netco.UserInteraction.Notification.NotificationService">
+            <summary>
+            Gets or sets the user notification service.
+            </summary>
+            <value>The user notification service.</value>
+            <remarks>Use this to initialize how program notifies the user.</remarks>
+        </member>
+    </members>
+</doc>

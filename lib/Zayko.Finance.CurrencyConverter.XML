@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Zayko.Finance.CurrencyConverter</name>
+    </assembly>
+    <members>
+        <member name="T:Zayko.Finance.CurrencyData">
+            <summary>
+            Static Class contains currency codes and names
+            </summary>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyData.#ctor(System.String,System.String)">
+            <summary>
+            Object Constructor
+            </summary>
+            <param name="baseCode">Three-chars Currency code</param>
+            <param name="targetCode">Three-chars Currency code</param>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyData.op_Equality(Zayko.Finance.CurrencyData,Zayko.Finance.CurrencyData)">
+            <summary>
+            Compare two CurrencyData objects. Static method.
+            </summary>
+            <param name="leftCurrencyData">Left-side CurrencyData object to compare</param>
+            <param name="rightCurrencyData">Right-side CurrencyData object to compare</param>
+            <returns>true if these objects ARE equal, false if otherwise</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyData.op_Inequality(Zayko.Finance.CurrencyData,Zayko.Finance.CurrencyData)">
+            <summary>
+            Compare two CurrencyData objects. Static method.
+            </summary>
+            <param name="leftCurrencyData">Left-side CurrencyData object to compare</param>
+            <param name="rightCurrencyData">Right-side CurrencyData object to compare</param>
+            <returns>true if these objects are NOT equal, false if otherwise</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyData.Equals(System.Object)">
+            <summary>
+            Compare two CurrencyData object for equality
+            </summary>
+            <param name="obj">An Object to compare with the current</param>
+            <returns>true if equal; false if otherwise</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyData.GetHashCode">
+            <summary>
+            Return Hash code for the object
+            </summary>
+            <returns>Object's Hash code</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyData.ToString">
+            <summary>
+            Gets string representation of the object
+            </summary>
+            <returns>string contains Base code, Target code, current Price, Trade date and Bid and Ask values</returns>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyData.TradeDate">
+            <summary>
+            Last Trade Date/Time
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyData.Rate">
+            <summary>
+            Current Exchange rate
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyData.Min">
+            <summary>
+            Minimal Bid price
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyData.Max">
+            <summary>
+            Maximal Ask price
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyData.BaseCode">
+            <summary>
+            Three-chars Currency code to convert from
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyData.TargetCode">
+            <summary>
+            Three-chars Currency code to conver to
+            </summary>
+        </member>
+        <member name="T:Zayko.Finance.CurrencyConverter">
+            <summary>
+            Connect to Web service and get currency exchange rates
+            </summary>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyConverter.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyConverter.GetData(System.Uri)">
+            <summary>
+            Connect to Finance!Yahoo site and gets the info
+            </summary>
+            <param name="url">Finance!Yahoo URL with actual currencies as params</param>
+            <exception cref="T:System.UnauthorizedAccessException">Thrown when the service is unavailable</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown when supplied currencies are not supported</exception>
+            <returns>List of CurrencyData objects</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyConverter.CheckParams(Zayko.Finance.CurrencyData)">
+            <summary>
+            Checks CurrencyData
+            </summary>
+            <param name="data">CurrencyData object to check</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when either BaseCode or TargetCode is empty, or BaseCode is equal to TargetCode</exception>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyConverter.GetCurrencyData(System.Collections.Generic.IList{Zayko.Finance.CurrencyData}@)">
+            <summary>
+            Receive Currency data form multi currencies stored in ICollection
+            </summary>
+            <param name="listData">List of Currencies to get</param>
+            <seealso cref="T:System.Collections.Generic.IList`1"/>
+            <example>
+            This example shows how to call GetCurrencyData with IList&lt;CurrencyData&gt; param
+            <code>
+            CurrencyConverter cc = new CurrencyConverter();
+            if(useProxy)
+                cc.Proxy = new System.Net.WebProxy(proxyAddress, proxyPort);
+            IList&lt;CurrencyData&gt; list = new List&lt;CurrencyData&gt;(listViewRate.Items.Count);
+            list.Add(new CurrencyData("USD", "RUB"));
+            cc.GetCurrencyData(ref list);
+            </code>
+            </example>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyConverter.GetCurrencyData(Zayko.Finance.CurrencyData@)">
+            <summary>
+            Receive current Currency data by specified CurrencyData param
+            </summary>
+            <param name="data">Reference to a CurrencyData class containing the Currency codes</param>
+            <seealso cref="T:Zayko.Finance.CurrencyData"/>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyConverter.GetCurrencyData(System.String,System.String)">
+            <summary>
+            Return CurrencyData by suplied Currency codes
+            </summary>
+            <param name="source">Three-chars Currency code</param>
+            <param name="target">Three-chars Currency code</param>
+            <returns>CurrencyData class contains exchange rate information</returns>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyConverter.AdjustToLocalTime">
+            <summary>
+            Set to true if you want to convert Trade Date/Time to your local value
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyConverter.Proxy">
+            <summary>
+            Gets or Sets Web Proxy settings
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyConverter.Timeout">
+            <summary>
+            Gets or sets the time-out value for the GetResponse and GetRequestStream methods. Default - 30 sec.
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyConverter.ReadWriteTimeout">
+            <summary>
+            Gets or sets a time-out when writing to or reading from a stream. Default - 30 sec.
+            </summary>
+        </member>
+        <member name="T:Zayko.Finance.CurrencyConverter.DataFieldNames">
+            <summary>
+            Enums data fields
+            </summary>
+        </member>
+        <member name="T:Zayko.Finance.CurrencyList">
+            <summary>
+            Base class contains list of supported currencies
+            </summary>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyList.GetCode(System.Int32)">
+            <summary>
+            Returns Currency code by its number
+            </summary>
+            <param name="index">Number to get</param>
+            <returns>Tree-chars currency code</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyList.GetCode(System.String)">
+            <summary>
+            Returns currency Code by its Name
+            </summary>
+            <param name="description">A Currency Name</param>
+            <returns>Tree-chars currency code</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyList.GetCodeIndex(System.String)">
+            <summary>
+            Returns Currency index by its Code
+            </summary>
+            <param name="code">Tree-chars currency code</param>
+            <returns>Position in the list</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyList.GetDescription(System.Int32)">
+            <summary>
+            Returns Currency Name by its position in the list
+            </summary>
+            <param name="index">Position in the list</param>
+            <returns>A Currency Name</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyList.GetDescription(System.String)">
+            <summary>
+            Returns Currency Name by its code
+            </summary>
+            <param name="code">Three-chars Currency Code</param>
+            <returns>A Currency Name</returns>
+        </member>
+        <member name="M:Zayko.Finance.CurrencyList.GetDescriptionIndex(System.String)">
+            <summary>
+            Returns Currency position in the list by its Name
+            </summary>
+            <param name="description">A Currency Name</param>
+            <returns>Currency position</returns>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyList.Count">
+            <summary>
+            Return number of supported Currencies
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyList.Codes">
+            <summary>
+            Returns list of supported Currency Codes
+            </summary>
+        </member>
+        <member name="P:Zayko.Finance.CurrencyList.Descriptions">
+            <summary>
+            Returns list of supported Currency Names
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,122 @@
+using System.Collections.Generic;
+using ChannelAdvisorAccess.InventoryService;
+
+namespace ChannelAdvisorAccess.Services.Items
+{
+	public interface IItemsService
+	{
+		/// <summary>
+		/// Gets all items in the inventory.
+		/// </summary>
+		/// <returns>Iterator to go over items 1 order at a time.</returns>
+		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
+		IEnumerable< InventoryItemResponse > GetAllItems();
+
+		/// <summary>
+		/// Gets all skus.
+		/// </summary>
+		/// <returns>All skus for the current account.</returns>
+		IEnumerable< string > GetAllSkus();
+
+		/// <summary>
+		/// Gets the item attributes.
+		/// </summary>
+		/// <param name="sku">The sku.</param>
+		/// <returns>Item attributes.</returns>
+		ClassificationAttributeInfo[] GetAttributes( string sku );
+
+		/// <summary>
+		/// Gets the items matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <returns>Items matching supplied filter.</returns>
+		IEnumerable< InventoryItemResponse > GetItems( ItemsFilter filter );
+		
+		/// <summary>
+		/// Gets the items.
+		/// </summary>
+		/// <param name="skus">The skus.</param>
+		/// <returns>Items with specified skus.</returns>
+		IEnumerable< InventoryItemResponse > GetItems( string [] skus );
+
+		/// <summary>
+		/// Updates the item.
+		/// </summary>
+		/// <param name="item">The item.</param>
+		/// <remarks>Only non-default fields will be updated.</remarks>
+		void SynchItem( InventoryItemSubmit item );
+
+		/// <summary>
+		/// Updates items.
+		/// </summary>
+		/// <param name="items">The items.</param>
+		/// <remarks>Only non-default fields will be updated.</remarks>
+		void SynchItems( List< InventoryItemSubmit > items );
+
+		/// <summary>
+		/// Deletes the item.
+		/// </summary>
+		/// <param name="sku">The item sku.</param>
+		void DeleteItem( string sku );
+
+		/// <summary>
+		/// Gets the additional item quantities.
+		/// </summary>
+		/// <param name="sku">The sku.</param>
+		/// <returns>Item quantities.</returns>
+		/// <remarks>This is required since <see cref="ItemsService.GetItems(string[])"/> returns
+		/// only available quantity.</remarks>
+		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
+		QuantityInfoResponse GetItemQuantities ( string sku );
+
+		/// <summary>
+		/// Gets the available quantity.
+		/// </summary>
+		/// <param name="sku">The sku of the item.</param>
+		/// <returns>The Available quantity for the specified sku.</returns>
+		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryQuantity"/>
+		int GetAvailableQuantity( string sku );
+
+		/// <summary>
+		/// Doeses the sku exist.
+		/// </summary>
+		/// <param name="sku">The sku.</param>
+		/// <returns><c>true</c> if sku exists; <c>false</c> otherwise.</returns>
+		bool DoesSkuExist ( string sku );
+		
+		/// <summary>
+		/// Gets the skus matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <returns>skus matching supplied filter.</returns>
+		IEnumerable< string > GetSkus ( ItemsFilter filter );
+
+		/// <summary>
+		/// Gets all items in a list.
+		/// </summary>
+		/// <returns>Downloads and returns all items.</returns>
+		IList< InventoryItemResponse > GetAllItemsList();
+
+		/// <summary>
+		/// Updates both quantity and price on a single item.
+		/// </summary>
+		/// <param name="itemQuantityAndPrice">The item quantity and price.</param>
+		void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice );
+
+		/// <summary>
+		/// Updates both quantity and price on all supplied items.
+		/// </summary>
+		/// <param name="itemQuantityAndPrices">The item quantity and prices.</param>
+		void UpdateQuantityAndPrices( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices );
+
+		/// <summary>
+		/// Gets the account name.
+		/// </summary>
+		string Name { get; }
+
+		/// <summary>
+		/// Gets the account id.
+		/// </summary>
+		string AccountId{ get; }
+	}
+}

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.channeladvisor.com/webservices/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://api.channeladvisor.com/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://api.channeladvisor.com/webservices/">
+      <s:element name="WithdrawListings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="skuList" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="listingIDList" type="tns:ArrayOfString" />
+            <s:element minOccurs="1" maxOccurs="1" name="withdrawReason" type="tns:WithdrawReason" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="WithdrawReason">
+        <s:restriction base="s:string">
+          <s:enumeration value="ItemWasLostOrBroken" />
+          <s:enumeration value="ItemNoLongerAvailableForSale" />
+          <s:enumeration value="ErrorInMinimumBidOrReserve" />
+          <s:enumeration value="ErrorInTheListing" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="WithdrawListingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="WithdrawListingsResult" type="tns:APIResultOfInt32" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="APIResultOfInt32">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ResultData" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ResultStatus">
+        <s:restriction base="s:string">
+          <s:enumeration value="Success" />
+          <s:enumeration value="Failure" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="APICredentials" type="tns:APICredentials" />
+      <s:complexType name="APICredentials">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DeveloperKey" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+        </s:sequence>
+        <s:anyAttribute />
+      </s:complexType>
+      <s:element name="Ping">
+        <s:complexType />
+      </s:element>
+      <s:element name="PingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PingResult" type="tns:APIResultOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="APIResultOfString">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="WithdrawListingsSoapIn">
+    <wsdl:part name="parameters" element="tns:WithdrawListings" />
+  </wsdl:message>
+  <wsdl:message name="WithdrawListingsSoapOut">
+    <wsdl:part name="parameters" element="tns:WithdrawListingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="WithdrawListingsAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
+  <wsdl:message name="PingSoapIn">
+    <wsdl:part name="parameters" element="tns:Ping" />
+  </wsdl:message>
+  <wsdl:message name="PingSoapOut">
+    <wsdl:part name="parameters" element="tns:PingResponse" />
+  </wsdl:message>
+  <wsdl:message name="PingAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
+  <wsdl:portType name="ListingServiceSoap">
+    <wsdl:operation name="WithdrawListings">
+      <wsdl:input message="tns:WithdrawListingsSoapIn" />
+      <wsdl:output message="tns:WithdrawListingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <wsdl:input message="tns:PingSoapIn" />
+      <wsdl:output message="tns:PingSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ListingServiceSoap" type="tns:ListingServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="WithdrawListings">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/WithdrawListings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:WithdrawListingsAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/Ping" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:PingAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ListingServiceSoap12" type="tns:ListingServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="WithdrawListings">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/WithdrawListings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:WithdrawListingsAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ping">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/Ping" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:PingAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ListingService">
+    <wsdl:port name="ListingServiceSoap" binding="tns:ListingServiceSoap">
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ListingService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ListingServiceSoap12" binding="tns:ListingServiceSoap12">
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ListingService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

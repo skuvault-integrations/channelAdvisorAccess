@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PGK.Extensions.Entity</name>
+    </assembly>
+    <members>
+        <member name="T:OperationResult`1">
+            <summary>
+            	The data contracted operation result class of closed generic.
+            </summary>
+            <typeparam name = "TResult">The type of data expected for the returning result.</typeparam>
+        </member>
+        <member name="M:OperationResult`1.#ctor">
+            <summary>
+            	Initializes a new instance of the <see cref="T:OperationResult`1"/> class.
+            </summary>
+        </member>
+        <member name="M:OperationResult`1.#ctor(`0,System.Boolean,System.String)">
+            <summary>
+            	Initializes a new instance of the <see cref="T:OperationResult`1"/> class.
+            </summary>
+            <param name="result">
+            	The result.
+            </param>
+            <param name="error">
+            	The error.
+            </param>
+            <param name="message"></param>
+        </member>
+        <member name="P:OperationResult`1.Result">
+            <summary>
+            	The operation result data.
+            </summary>
+        </member>
+        <member name="P:OperationResult`1.Error">
+            <summary>
+            	An indicator of the operation suceess. False means no errors.
+            </summary>
+        </member>
+        <member name="P:OperationResult`1.Message">
+            <summary>
+            	A string representing messages from the operation.
+            </summary>
+        </member>
+    </members>
+</doc>
