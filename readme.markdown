@@ -1,4 +1,4 @@
-ChannelAdvisorAccess is .NET wrapper around [Channel Advisor API][http://developer.channeladvisor.com/display/cadn/ChannelAdvisor+Developer+Network] I created to simplify and speed up working with it.
+ChannelAdvisorAccess is .NET wrapper around [Channel Advisor API](http://developer.channeladvisor.com/display/cadn/ChannelAdvisor+Developer+Network) I created to simplify and speed up working with it.
 
 Features
 ========
