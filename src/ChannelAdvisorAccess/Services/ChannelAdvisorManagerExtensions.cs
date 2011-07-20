@@ -138,7 +138,7 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="accountId">The account id.</param>
 		/// <param name="sku">The sku.</param>
 		/// <returns>Item attributes collection.</returns>
-		public static ClassificationAttributeInfo[] GetAttributes( this IChannelAdvisorManager manager, string accountId, string sku )
+		public static AttributeInfo[] GetAttributes( this IChannelAdvisorManager manager, string accountId, string sku )
 		{
 			var itemsService = manager.GetItemsServiceByAccountId( accountId );
 			return itemsService.GetAttributes( sku ); 

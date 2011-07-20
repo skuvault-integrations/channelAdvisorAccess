@@ -25,6 +25,11 @@ namespace ChannelAdvisorAccess.ShippingService {
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.ShippingService.GetShippingCarrierListResponse GetShippingCarrierList(ChannelAdvisorAccess.ShippingService.GetShippingCarrierListRequest request);
         
+        // CODEGEN: Generating message contract since message GetOrderShipmentHistoryListRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetOrderShipmentHistoryList", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListResponse GetOrderShipmentHistoryList(ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListRequest request);
+        
         // CODEGEN: Generating message contract since message OrderShippedRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/OrderShipped", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -207,6 +212,140 @@ namespace ChannelAdvisorAccess.ShippingService {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/ShippingService")]
+    public partial class ShipmentResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private bool successField;
+        
+        private string messageField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public bool Success {
+            get {
+                return this.successField;
+            }
+            set {
+                this.successField = value;
+                this.RaisePropertyChanged("Success");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class APIResultOfArrayOfShipmentResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private ResultStatus statusField;
+        
+        private int messageCodeField;
+        
+        private string messageField;
+        
+        private string dataField;
+        
+        private ShipmentResponse[] resultDataField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public ResultStatus Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+                this.RaisePropertyChanged("Status");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MessageCode {
+            get {
+                return this.messageCodeField;
+            }
+            set {
+                this.messageCodeField = value;
+                this.RaisePropertyChanged("MessageCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Data {
+            get {
+                return this.dataField;
+            }
+            set {
+                this.dataField = value;
+                this.RaisePropertyChanged("Data");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
+        public ShipmentResponse[] ResultData {
+            get {
+                return this.resultDataField;
+            }
+            set {
+                this.resultDataField = value;
+                this.RaisePropertyChanged("ResultData");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
     public partial class FullShipmentContents : object, System.ComponentModel.INotifyPropertyChanged {
         
@@ -217,6 +356,8 @@ namespace ChannelAdvisorAccess.ShippingService {
         private string classCodeField;
         
         private string trackingNumberField;
+        
+        private string sellerFulfillmentIDField;
         
         private System.Nullable<decimal> shipmentCostField;
         
@@ -273,7 +414,19 @@ namespace ChannelAdvisorAccess.ShippingService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public string sellerFulfillmentID {
+            get {
+                return this.sellerFulfillmentIDField;
+            }
+            set {
+                this.sellerFulfillmentIDField = value;
+                this.RaisePropertyChanged("sellerFulfillmentID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
         public System.Nullable<decimal> shipmentCost {
             get {
                 return this.shipmentCostField;
@@ -285,7 +438,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
         public System.Nullable<decimal> shipmentTaxCost {
             get {
                 return this.shipmentTaxCostField;
@@ -297,7 +450,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=7)]
         public System.Nullable<decimal> insuranceCost {
             get {
                 return this.insuranceCostField;
@@ -414,6 +567,8 @@ namespace ChannelAdvisorAccess.ShippingService {
         
         private string trackingNumberField;
         
+        private string sellerFulfillmentIDField;
+        
         private System.Nullable<decimal> shipmentCostField;
         
         private System.Nullable<decimal> shipmentTaxCostField;
@@ -481,7 +636,19 @@ namespace ChannelAdvisorAccess.ShippingService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public string sellerFulfillmentID {
+            get {
+                return this.sellerFulfillmentIDField;
+            }
+            set {
+                this.sellerFulfillmentIDField = value;
+                this.RaisePropertyChanged("sellerFulfillmentID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
         public System.Nullable<decimal> shipmentCost {
             get {
                 return this.shipmentCostField;
@@ -493,7 +660,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=7)]
         public System.Nullable<decimal> shipmentTaxCost {
             get {
                 return this.shipmentTaxCostField;
@@ -505,7 +672,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=7)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=8)]
         public System.Nullable<decimal> insuranceCost {
             get {
                 return this.insuranceCostField;
@@ -728,6 +895,422 @@ namespace ChannelAdvisorAccess.ShippingService {
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=4)]
         public bool ResultData {
+            get {
+                return this.resultDataField;
+            }
+            set {
+                this.resultDataField = value;
+                this.RaisePropertyChanged("ResultData");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/ShippingService")]
+    public partial class ShipmentLineItemResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int lineItemIDField;
+        
+        private string sKUField;
+        
+        private int quantityField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int LineItemID {
+            get {
+                return this.lineItemIDField;
+            }
+            set {
+                this.lineItemIDField = value;
+                this.RaisePropertyChanged("LineItemID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string SKU {
+            get {
+                return this.sKUField;
+            }
+            set {
+                this.sKUField = value;
+                this.RaisePropertyChanged("SKU");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public int Quantity {
+            get {
+                return this.quantityField;
+            }
+            set {
+                this.quantityField = value;
+                this.RaisePropertyChanged("Quantity");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/ShippingService")]
+    public partial class OrderShipmentResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private System.DateTime shipmentDateGMTField;
+        
+        private string carrierCodeField;
+        
+        private string classCodeField;
+        
+        private string trackingNumberField;
+        
+        private string distributionCenterCodeField;
+        
+        private decimal shipmentCostField;
+        
+        private decimal shipmentTaxCostField;
+        
+        private decimal shipmentInsuranceCostField;
+        
+        private string sellerFulfillmentIDField;
+        
+        private ShipmentLineItemResponse[] shipmentLineItemsField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public System.DateTime ShipmentDateGMT {
+            get {
+                return this.shipmentDateGMTField;
+            }
+            set {
+                this.shipmentDateGMTField = value;
+                this.RaisePropertyChanged("ShipmentDateGMT");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string CarrierCode {
+            get {
+                return this.carrierCodeField;
+            }
+            set {
+                this.carrierCodeField = value;
+                this.RaisePropertyChanged("CarrierCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string ClassCode {
+            get {
+                return this.classCodeField;
+            }
+            set {
+                this.classCodeField = value;
+                this.RaisePropertyChanged("ClassCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string TrackingNumber {
+            get {
+                return this.trackingNumberField;
+            }
+            set {
+                this.trackingNumberField = value;
+                this.RaisePropertyChanged("TrackingNumber");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public string DistributionCenterCode {
+            get {
+                return this.distributionCenterCodeField;
+            }
+            set {
+                this.distributionCenterCodeField = value;
+                this.RaisePropertyChanged("DistributionCenterCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public decimal ShipmentCost {
+            get {
+                return this.shipmentCostField;
+            }
+            set {
+                this.shipmentCostField = value;
+                this.RaisePropertyChanged("ShipmentCost");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        public decimal ShipmentTaxCost {
+            get {
+                return this.shipmentTaxCostField;
+            }
+            set {
+                this.shipmentTaxCostField = value;
+                this.RaisePropertyChanged("ShipmentTaxCost");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
+        public decimal ShipmentInsuranceCost {
+            get {
+                return this.shipmentInsuranceCostField;
+            }
+            set {
+                this.shipmentInsuranceCostField = value;
+                this.RaisePropertyChanged("ShipmentInsuranceCost");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
+        public string SellerFulfillmentID {
+            get {
+                return this.sellerFulfillmentIDField;
+            }
+            set {
+                this.sellerFulfillmentIDField = value;
+                this.RaisePropertyChanged("SellerFulfillmentID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=9)]
+        public ShipmentLineItemResponse[] ShipmentLineItems {
+            get {
+                return this.shipmentLineItemsField;
+            }
+            set {
+                this.shipmentLineItemsField = value;
+                this.RaisePropertyChanged("ShipmentLineItems");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/ShippingService")]
+    public partial class OrderShipmentHistoryResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int orderIDField;
+        
+        private string clientOrderIdentifierField;
+        
+        private ShippingStatusCode shippingStatusField;
+        
+        private System.DateTime shippingStatusUpdateDateGMTField;
+        
+        private OrderShipmentResponse[] orderShipmentsField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int OrderID {
+            get {
+                return this.orderIDField;
+            }
+            set {
+                this.orderIDField = value;
+                this.RaisePropertyChanged("OrderID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string ClientOrderIdentifier {
+            get {
+                return this.clientOrderIdentifierField;
+            }
+            set {
+                this.clientOrderIdentifierField = value;
+                this.RaisePropertyChanged("ClientOrderIdentifier");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public ShippingStatusCode ShippingStatus {
+            get {
+                return this.shippingStatusField;
+            }
+            set {
+                this.shippingStatusField = value;
+                this.RaisePropertyChanged("ShippingStatus");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public System.DateTime ShippingStatusUpdateDateGMT {
+            get {
+                return this.shippingStatusUpdateDateGMTField;
+            }
+            set {
+                this.shippingStatusUpdateDateGMTField = value;
+                this.RaisePropertyChanged("ShippingStatusUpdateDateGMT");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
+        public OrderShipmentResponse[] OrderShipments {
+            get {
+                return this.orderShipmentsField;
+            }
+            set {
+                this.orderShipmentsField = value;
+                this.RaisePropertyChanged("OrderShipments");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public enum ShippingStatusCode {
+        
+        /// <remarks/>
+        NoChange,
+        
+        /// <remarks/>
+        Unshipped,
+        
+        /// <remarks/>
+        Shipped,
+        
+        /// <remarks/>
+        PartiallyShipped,
+        
+        /// <remarks/>
+        PendingShipment,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class APIResultOfArrayOfOrderShipmentHistoryResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private ResultStatus statusField;
+        
+        private int messageCodeField;
+        
+        private string messageField;
+        
+        private string dataField;
+        
+        private OrderShipmentHistoryResponse[] resultDataField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public ResultStatus Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+                this.RaisePropertyChanged("Status");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MessageCode {
+            get {
+                return this.messageCodeField;
+            }
+            set {
+                this.messageCodeField = value;
+                this.RaisePropertyChanged("MessageCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Data {
+            get {
+                return this.dataField;
+            }
+            set {
+                this.dataField = value;
+                this.RaisePropertyChanged("Data");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
+        public OrderShipmentHistoryResponse[] ResultData {
             get {
                 return this.resultDataField;
             }
@@ -1127,6 +1710,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         public ChannelAdvisorAccess.ShippingService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
@@ -1145,6 +1729,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         public string postalCode;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=6)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string country;
         
         public GetShippingRateListRequest() {
@@ -1189,6 +1774,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         public ChannelAdvisorAccess.ShippingService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         public GetShippingCarrierListRequest() {
@@ -1220,6 +1806,53 @@ namespace ChannelAdvisorAccess.ShippingService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetOrderShipmentHistoryList", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class GetOrderShipmentHistoryListRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.ShippingService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        public int[] orderIDList;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
+        public string[] clientOrderIdentifierList;
+        
+        public GetOrderShipmentHistoryListRequest() {
+        }
+        
+        public GetOrderShipmentHistoryListRequest(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] clientOrderIdentifierList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.orderIDList = orderIDList;
+            this.clientOrderIdentifierList = clientOrderIdentifierList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetOrderShipmentHistoryListResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class GetOrderShipmentHistoryListResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfOrderShipmentHistoryResponse GetOrderShipmentHistoryListResult;
+        
+        public GetOrderShipmentHistoryListResponse() {
+        }
+        
+        public GetOrderShipmentHistoryListResponse(ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfOrderShipmentHistoryResponse GetOrderShipmentHistoryListResult) {
+            this.GetOrderShipmentHistoryListResult = GetOrderShipmentHistoryListResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(WrapperName="OrderShipped", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
     public partial class OrderShippedRequest {
         
@@ -1227,6 +1860,7 @@ namespace ChannelAdvisorAccess.ShippingService {
         public ChannelAdvisorAccess.ShippingService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
@@ -1244,10 +1878,13 @@ namespace ChannelAdvisorAccess.ShippingService {
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=5)]
         public string trackingNumber;
         
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=6)]
+        public string sellerFulfillmentID;
+        
         public OrderShippedRequest() {
         }
         
-        public OrderShippedRequest(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, int orderID, System.DateTime dateShippedGMT, string carrierCode, string classCode, string trackingNumber) {
+        public OrderShippedRequest(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, int orderID, System.DateTime dateShippedGMT, string carrierCode, string classCode, string trackingNumber, string sellerFulfillmentID) {
             this.APICredentials = APICredentials;
             this.accountID = accountID;
             this.orderID = orderID;
@@ -1255,6 +1892,7 @@ namespace ChannelAdvisorAccess.ShippingService {
             this.carrierCode = carrierCode;
             this.classCode = classCode;
             this.trackingNumber = trackingNumber;
+            this.sellerFulfillmentID = sellerFulfillmentID;
         }
     }
     
@@ -1285,9 +1923,11 @@ namespace ChannelAdvisorAccess.ShippingService {
         public ChannelAdvisorAccess.ShippingService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.ShippingService.OrderShipmentList ShipmentList;
         
         public SubmitOrderShipmentListRequest() {
@@ -1307,12 +1947,12 @@ namespace ChannelAdvisorAccess.ShippingService {
     public partial class SubmitOrderShipmentListResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public ChannelAdvisorAccess.ShippingService.APIResultOfBoolean SubmitOrderShipmentListResult;
+        public ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShipmentResponse SubmitOrderShipmentListResult;
         
         public SubmitOrderShipmentListResponse() {
         }
         
-        public SubmitOrderShipmentListResponse(ChannelAdvisorAccess.ShippingService.APIResultOfBoolean SubmitOrderShipmentListResult) {
+        public SubmitOrderShipmentListResponse(ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShipmentResponse SubmitOrderShipmentListResult) {
             this.SubmitOrderShipmentListResult = SubmitOrderShipmentListResult;
         }
     }
@@ -1411,11 +2051,26 @@ namespace ChannelAdvisorAccess.ShippingService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListResponse ChannelAdvisorAccess.ShippingService.ShippingServiceSoap.GetOrderShipmentHistoryList(ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListRequest request) {
+            return base.Channel.GetOrderShipmentHistoryList(request);
+        }
+        
+        public ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfOrderShipmentHistoryResponse GetOrderShipmentHistoryList(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] clientOrderIdentifierList) {
+            ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListRequest inValue = new ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.orderIDList = orderIDList;
+            inValue.clientOrderIdentifierList = clientOrderIdentifierList;
+            ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListResponse retVal = ((ChannelAdvisorAccess.ShippingService.ShippingServiceSoap)(this)).GetOrderShipmentHistoryList(inValue);
+            return retVal.GetOrderShipmentHistoryListResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         ChannelAdvisorAccess.ShippingService.OrderShippedResponse ChannelAdvisorAccess.ShippingService.ShippingServiceSoap.OrderShipped(ChannelAdvisorAccess.ShippingService.OrderShippedRequest request) {
             return base.Channel.OrderShipped(request);
         }
         
-        public ChannelAdvisorAccess.ShippingService.APIResultOfBoolean OrderShipped(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, int orderID, System.DateTime dateShippedGMT, string carrierCode, string classCode, string trackingNumber) {
+        public ChannelAdvisorAccess.ShippingService.APIResultOfBoolean OrderShipped(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, int orderID, System.DateTime dateShippedGMT, string carrierCode, string classCode, string trackingNumber, string sellerFulfillmentID) {
             ChannelAdvisorAccess.ShippingService.OrderShippedRequest inValue = new ChannelAdvisorAccess.ShippingService.OrderShippedRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
@@ -1424,6 +2079,7 @@ namespace ChannelAdvisorAccess.ShippingService {
             inValue.carrierCode = carrierCode;
             inValue.classCode = classCode;
             inValue.trackingNumber = trackingNumber;
+            inValue.sellerFulfillmentID = sellerFulfillmentID;
             ChannelAdvisorAccess.ShippingService.OrderShippedResponse retVal = ((ChannelAdvisorAccess.ShippingService.ShippingServiceSoap)(this)).OrderShipped(inValue);
             return retVal.OrderShippedResult;
         }
@@ -1433,7 +2089,7 @@ namespace ChannelAdvisorAccess.ShippingService {
             return base.Channel.SubmitOrderShipmentList(request);
         }
         
-        public ChannelAdvisorAccess.ShippingService.APIResultOfBoolean SubmitOrderShipmentList(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.ShippingService.OrderShipmentList ShipmentList) {
+        public ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShipmentResponse SubmitOrderShipmentList(ChannelAdvisorAccess.ShippingService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.ShippingService.OrderShipmentList ShipmentList) {
             ChannelAdvisorAccess.ShippingService.SubmitOrderShipmentListRequest inValue = new ChannelAdvisorAccess.ShippingService.SubmitOrderShipmentListRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;

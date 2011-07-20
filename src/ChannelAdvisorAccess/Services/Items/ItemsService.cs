@@ -175,11 +175,11 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public ClassificationAttributeInfo[] GetAttributes( string sku )
+		public AttributeInfo[] GetAttributes( string sku )
 		{
 			var attributeList = ActionPolicies.CaGetPolicy.Get(
 				() =>
-				this._client.GetInventoryItemClassificationAttributeList( this._credentials, this.AccountId, sku ) );
+				this._client.GetInventoryItemAttributeList( this._credentials, this.AccountId, sku ) );
 			return GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
 		}
 

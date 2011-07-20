@@ -18,10 +18,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v1/InventoryService.asmx?WSDL" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/InventoryService.asmx?WSDL" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="InventoryService.wsdl" MetadataType="Wsdl" ID="7def847c-69cc-4617-86b4-10bd4b27d041" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v1/InventoryService.asmx?WSDL" />
+    <MetadataFile FileName="InventoryService1.wsdl" MetadataType="Wsdl" ID="97cc4128-7576-4cd3-acea-f3a42614d56b" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/InventoryService.asmx?WSDL" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />

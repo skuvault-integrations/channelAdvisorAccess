@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="vKYGhOyLKwk9iYqqWkWnIKh0OoQ=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="4Fnw5sXczPoe/4gAJKuhiiHLXzc=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="OrderServiceSoap">
       <properties>
@@ -221,10 +221,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="OrderServiceSoap" contract="OrderService.OrderServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v1/OrderService.asmx" bindingConfiguration="OrderServiceSoap">
+    <endpoint name="OrderServiceSoap" contract="OrderService.OrderServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/OrderService.asmx" bindingConfiguration="OrderServiceSoap">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v1/OrderService.asmx</serializedValue>
+          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v5/OrderService.asmx</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

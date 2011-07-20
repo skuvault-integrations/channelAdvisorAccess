@@ -124,8 +124,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 			orderCriteria.PageNumberFilter += 1;
 
 			#region Profiler Start
-			var statusUpdateBegin = orderCriteria.StatusUpdateFilterBeginTimeGMT;
-			var statusUpdateEnd = orderCriteria.StatusUpdateFilterEndTimeGMT;
+			var statusUpdateBegin = orderCriteria.StatusUpdateFilterBeginTimeGMT ?? DateTime.MinValue;
+			var statusUpdateEnd = orderCriteria.StatusUpdateFilterEndTimeGMT ?? DateTime.MinValue;
 			Profiler.Start( "GetOrderList for '{0}' account. UCT Status update begin '{1}' and end '{2}'".
 			                	FormatWith( this.Name, statusUpdateBegin.ToUniversalTime(), statusUpdateEnd.ToUniversalTime() ) );
 			#endregion

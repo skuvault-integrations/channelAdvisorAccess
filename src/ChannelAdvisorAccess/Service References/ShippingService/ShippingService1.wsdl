@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.channeladvisor.com/webservices/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://api.channeladvisor.com/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.channeladvisor.com/webservices/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s1="http://api.channeladvisor.com/datacontracts/ShippingService" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s2="http://api.channeladvisor.com/datacontracts/orders" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://api.channeladvisor.com/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://api.channeladvisor.com/webservices/">
+      <s:import namespace="http://api.channeladvisor.com/datacontracts/ShippingService" />
       <s:element name="GetShippingRateList">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="accountID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="cartID" type="s:int" />
             <s:element minOccurs="0" maxOccurs="1" name="street" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="city" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="state" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="postalCode" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="country" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="country" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -65,7 +66,7 @@
       <s:element name="GetShippingCarrierList">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="accountID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -100,15 +101,56 @@
           <s:element minOccurs="0" maxOccurs="1" name="ClassName" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="GetOrderShipmentHistoryList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="orderIDList" type="tns:ArrayOfInt" />
+            <s:element minOccurs="0" maxOccurs="1" name="clientOrderIdentifierList" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfInt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetOrderShipmentHistoryListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOrderShipmentHistoryListResult" type="tns:APIResultOfArrayOfOrderShipmentHistoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="APIResultOfArrayOfOrderShipmentHistoryResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfOrderShipmentHistoryResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfOrderShipmentHistoryResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="OrderShipmentHistoryResponse" nillable="true" type="s1:OrderShipmentHistoryResponse" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="OrderShipped">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="accountID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="orderID" type="s:int" />
             <s:element minOccurs="1" maxOccurs="1" name="dateShippedGMT" type="s:dateTime" />
             <s:element minOccurs="0" maxOccurs="1" name="carrierCode" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="classCode" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="trackingNumber" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sellerFulfillmentID" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -131,8 +173,8 @@
       <s:element name="SubmitOrderShipmentList">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="accountID" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="ShipmentList" type="tns:OrderShipmentList" />
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ShipmentList" nillable="true" type="tns:OrderShipmentList" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -168,6 +210,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="carrierCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="classCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="trackingNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="sellerFulfillmentID" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="shipmentCost" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="shipmentTaxCost" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="insuranceCost" nillable="true" type="s:decimal" />
@@ -195,6 +238,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="carrierCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="classCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="trackingNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="sellerFulfillmentID" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="shipmentCost" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="shipmentTaxCost" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="insuranceCost" nillable="true" type="s:decimal" />
@@ -203,10 +247,24 @@
       <s:element name="SubmitOrderShipmentListResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="SubmitOrderShipmentListResult" type="tns:APIResultOfBoolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubmitOrderShipmentListResult" type="tns:APIResultOfArrayOfShipmentResponse" />
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:complexType name="APIResultOfArrayOfShipmentResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfShipmentResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfShipmentResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ShipmentResponse" nillable="true" type="s1:ShipmentResponse" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="Ping">
         <s:complexType />
       </s:element>
@@ -227,6 +285,66 @@
         </s:sequence>
       </s:complexType>
     </s:schema>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://api.channeladvisor.com/datacontracts/ShippingService">
+      <s:import namespace="http://api.channeladvisor.com/datacontracts/orders" />
+      <s:complexType name="OrderShipmentHistoryResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OrderID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClientOrderIdentifier" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ShippingStatus" type="s2:ShippingStatusCode" />
+          <s:element minOccurs="1" maxOccurs="1" name="ShippingStatusUpdateDateGMT" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrderShipments" type="s1:ArrayOfOrderShipmentResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfOrderShipmentResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="OrderShipmentResponse" nillable="true" type="s1:OrderShipmentResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="OrderShipmentResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ShipmentDateGMT" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClassCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="TrackingNumber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ShipmentCost" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="ShipmentTaxCost" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="ShipmentInsuranceCost" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="SellerFulfillmentID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShipmentLineItems" type="s1:ArrayOfShipmentLineItemResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfShipmentLineItemResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ShipmentLineItemResponse" nillable="true" type="s1:ShipmentLineItemResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ShipmentLineItemResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="LineItemID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="SKU" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ShipmentResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Success" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://api.channeladvisor.com/datacontracts/orders">
+      <s:simpleType name="ShippingStatusCode">
+        <s:restriction base="s:string">
+          <s:enumeration value="NoChange" />
+          <s:enumeration value="Unshipped" />
+          <s:enumeration value="Shipped" />
+          <s:enumeration value="PartiallyShipped" />
+          <s:enumeration value="PendingShipment" />
+        </s:restriction>
+      </s:simpleType>
+    </s:schema>
   </wsdl:types>
   <wsdl:message name="GetShippingRateListSoapIn">
     <wsdl:part name="parameters" element="tns:GetShippingRateList" />
@@ -244,6 +362,15 @@
     <wsdl:part name="parameters" element="tns:GetShippingCarrierListResponse" />
   </wsdl:message>
   <wsdl:message name="GetShippingCarrierListAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderShipmentHistoryListSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOrderShipmentHistoryList" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderShipmentHistoryListSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOrderShipmentHistoryListResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderShipmentHistoryListAPICredentials">
     <wsdl:part name="APICredentials" element="tns:APICredentials" />
   </wsdl:message>
   <wsdl:message name="OrderShippedSoapIn">
@@ -282,6 +409,10 @@
       <wsdl:input message="tns:GetShippingCarrierListSoapIn" />
       <wsdl:output message="tns:GetShippingCarrierListSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetOrderShipmentHistoryList">
+      <wsdl:input message="tns:GetOrderShipmentHistoryListSoapIn" />
+      <wsdl:output message="tns:GetOrderShipmentHistoryListSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="OrderShipped">
       <wsdl:input message="tns:OrderShippedSoapIn" />
       <wsdl:output message="tns:OrderShippedSoapOut" />
@@ -312,6 +443,16 @@
       <wsdl:input>
         <soap:body use="literal" />
         <soap:header message="tns:GetShippingCarrierListAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrderShipmentHistoryList">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/GetOrderShipmentHistoryList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetOrderShipmentHistoryListAPICredentials" part="APICredentials" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
@@ -370,6 +511,16 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetOrderShipmentHistoryList">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/GetOrderShipmentHistoryList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetOrderShipmentHistoryListAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="OrderShipped">
       <soap12:operation soapAction="http://api.channeladvisor.com/webservices/OrderShipped" style="document" />
       <wsdl:input>
@@ -403,10 +554,10 @@
   </wsdl:binding>
   <wsdl:service name="ShippingService">
     <wsdl:port name="ShippingServiceSoap" binding="tns:ShippingServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v1/ShippingService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ShippingService.asmx" />
     </wsdl:port>
     <wsdl:port name="ShippingServiceSoap12" binding="tns:ShippingServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v1/ShippingService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ShippingService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

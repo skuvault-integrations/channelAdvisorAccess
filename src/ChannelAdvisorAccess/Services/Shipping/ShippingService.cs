@@ -32,12 +32,23 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				
-			ActionPolicies.CaSubmitPolicy.Do( () =>
-				{
-					var result = _client.OrderShipped( _credentials, this.AccountId, orderId, dateShipped, carrierCode, classCode, trackingNumber );
-					CheckCaSuccess( result );
-				});
+				ActionPolicies.CaSubmitPolicy.Do( () =>
+					{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+							new OrderShipment{ 
+								OrderId = orderId,
+								ShipmentType = ShipmentTypeEnum.Full,
+								FullShipment = new FullShipmentContents{
+									carrierCode = carrierCode,
+									classCode = classCode,
+									trackingNumber = trackingNumber,
+									shipmentCost = 0,
+									shipmentTaxCost = 0,
+									insuranceCost = 0
+								}
+							}}});
+						CheckCaSuccess( result );
+					});
 			}
 			catch( Exception e )
 			{
@@ -52,6 +63,14 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			var result = this._client.GetShippingCarrierList( this._credentials, this.AccountId );
 			CheckCaSuccess( result ); 
 			return result.ResultData;
+		}
+
+		/// <summary>Checks the ca success.</summary>
+		/// <param name="result">The result.</param>
+		private void CheckCaSuccess( APIResultOfArrayOfShipmentResponse result )
+		{
+			if( result.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
 
 		/// <summary>

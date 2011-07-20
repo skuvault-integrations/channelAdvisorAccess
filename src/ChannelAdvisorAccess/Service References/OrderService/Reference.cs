@@ -15,14 +15,6 @@ namespace ChannelAdvisorAccess.OrderService {
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://api.channeladvisor.com/webservices/", ConfigurationName="OrderService.OrderServiceSoap")]
     public interface OrderServiceSoap {
         
-        // CODEGEN: Generating message contract since message SubmitAmazonFullRefundRequest has headers
-        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SubmitAmazonFullRefund", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Order))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
-        ChannelAdvisorAccess.OrderService.SubmitAmazonFullRefundResponse SubmitAmazonFullRefund(ChannelAdvisorAccess.OrderService.SubmitAmazonFullRefundRequest request);
-        
         // CODEGEN: Generating message contract since message SetOrdersExportStatusRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SetOrdersExportStatus", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -30,14 +22,6 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse SetOrdersExportStatus(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request);
-        
-        // CODEGEN: Generating message contract since message SubmitAmazonPartialRefundRequest has headers
-        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SubmitAmazonPartialRefund", ReplyAction="*")]
-        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Order))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
-        ChannelAdvisorAccess.OrderService.SubmitAmazonPartialRefundResponse SubmitAmazonPartialRefund(ChannelAdvisorAccess.OrderService.SubmitAmazonPartialRefundRequest request);
         
         // CODEGEN: Generating message contract since message SubmitOrderRefundRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SubmitOrderRefund", ReplyAction="*")]
@@ -71,6 +55,14 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse SetSellerOrderID(ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest request);
         
+        // CODEGEN: Generating message contract since message SetSellerOrderItemIDListRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SetSellerOrderItemIDList", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Order))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
+        ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse SetSellerOrderItemIDList(ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest request);
+        
         // CODEGEN: Generating message contract since message GetOrderRefundHistoryRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetOrderRefundHistory", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
@@ -78,6 +70,30 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse GetOrderRefundHistory(ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest request);
+        
+        // CODEGEN: Generating message contract since message UpdateOrderListRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/UpdateOrderList", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Order))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
+        ChannelAdvisorAccess.OrderService.UpdateOrderListResponse UpdateOrderList(ChannelAdvisorAccess.OrderService.UpdateOrderListRequest request);
+        
+        // CODEGEN: Generating message contract since message OrderMergeRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/OrderMerge", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Order))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
+        ChannelAdvisorAccess.OrderService.OrderMergeResponse OrderMerge(ChannelAdvisorAccess.OrderService.OrderMergeRequest request);
+        
+        // CODEGEN: Generating message contract since message OrderSplitRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/OrderSplit", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Order))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(OrderLineItemBase))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
+        ChannelAdvisorAccess.OrderService.OrderSplitResponse OrderSplit(ChannelAdvisorAccess.OrderService.OrderSplitRequest request);
         
         // CODEGEN: Generating message contract since message PingRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
@@ -247,6 +263,1177 @@ namespace ChannelAdvisorAccess.OrderService {
         
         /// <remarks/>
         Failure,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class APIResultOfBoolean : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private ResultStatus statusField;
+        
+        private int messageCodeField;
+        
+        private string messageField;
+        
+        private string dataField;
+        
+        private bool resultDataField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public ResultStatus Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+                this.RaisePropertyChanged("Status");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MessageCode {
+            get {
+                return this.messageCodeField;
+            }
+            set {
+                this.messageCodeField = value;
+                this.RaisePropertyChanged("MessageCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Data {
+            get {
+                return this.dataField;
+            }
+            set {
+                this.dataField = value;
+                this.RaisePropertyChanged("Data");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public bool ResultData {
+            get {
+                return this.resultDataField;
+            }
+            set {
+                this.resultDataField = value;
+                this.RaisePropertyChanged("ResultData");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class OrderUpdateResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private bool flagAndNotesSuccessField;
+        
+        private string flagAndNotesMessageField;
+        
+        private bool orderStatusSuccessField;
+        
+        private string orderStatusMessageField;
+        
+        private bool shippingAndCOIDSuccessField;
+        
+        private string shippingAndCOIDMessageField;
+        
+        private bool billingAndPaymentSuccessField;
+        
+        private string billingAndPaymentMessageField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public bool FlagAndNotesSuccess {
+            get {
+                return this.flagAndNotesSuccessField;
+            }
+            set {
+                this.flagAndNotesSuccessField = value;
+                this.RaisePropertyChanged("FlagAndNotesSuccess");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string FlagAndNotesMessage {
+            get {
+                return this.flagAndNotesMessageField;
+            }
+            set {
+                this.flagAndNotesMessageField = value;
+                this.RaisePropertyChanged("FlagAndNotesMessage");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public bool OrderStatusSuccess {
+            get {
+                return this.orderStatusSuccessField;
+            }
+            set {
+                this.orderStatusSuccessField = value;
+                this.RaisePropertyChanged("OrderStatusSuccess");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string OrderStatusMessage {
+            get {
+                return this.orderStatusMessageField;
+            }
+            set {
+                this.orderStatusMessageField = value;
+                this.RaisePropertyChanged("OrderStatusMessage");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public bool ShippingAndCOIDSuccess {
+            get {
+                return this.shippingAndCOIDSuccessField;
+            }
+            set {
+                this.shippingAndCOIDSuccessField = value;
+                this.RaisePropertyChanged("ShippingAndCOIDSuccess");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public string ShippingAndCOIDMessage {
+            get {
+                return this.shippingAndCOIDMessageField;
+            }
+            set {
+                this.shippingAndCOIDMessageField = value;
+                this.RaisePropertyChanged("ShippingAndCOIDMessage");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        public bool BillingAndPaymentSuccess {
+            get {
+                return this.billingAndPaymentSuccessField;
+            }
+            set {
+                this.billingAndPaymentSuccessField = value;
+                this.RaisePropertyChanged("BillingAndPaymentSuccess");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
+        public string BillingAndPaymentMessage {
+            get {
+                return this.billingAndPaymentMessageField;
+            }
+            set {
+                this.billingAndPaymentMessageField = value;
+                this.RaisePropertyChanged("BillingAndPaymentMessage");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class APIResultOfArrayOfOrderUpdateResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private ResultStatus statusField;
+        
+        private int messageCodeField;
+        
+        private string messageField;
+        
+        private string dataField;
+        
+        private OrderUpdateResponse[] resultDataField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public ResultStatus Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+                this.RaisePropertyChanged("Status");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MessageCode {
+            get {
+                return this.messageCodeField;
+            }
+            set {
+                this.messageCodeField = value;
+                this.RaisePropertyChanged("MessageCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Data {
+            get {
+                return this.dataField;
+            }
+            set {
+                this.dataField = value;
+                this.RaisePropertyChanged("Data");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
+        public OrderUpdateResponse[] ResultData {
+            get {
+                return this.resultDataField;
+            }
+            set {
+                this.resultDataField = value;
+                this.RaisePropertyChanged("ResultData");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class OrderStatusUpdateSubmit : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private CheckoutPaymentStatusCode checkoutPaymentStatusField;
+        
+        private ShippingStatusCode shippingStatusField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public CheckoutPaymentStatusCode CheckoutPaymentStatus {
+            get {
+                return this.checkoutPaymentStatusField;
+            }
+            set {
+                this.checkoutPaymentStatusField = value;
+                this.RaisePropertyChanged("CheckoutPaymentStatus");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public ShippingStatusCode ShippingStatus {
+            get {
+                return this.shippingStatusField;
+            }
+            set {
+                this.shippingStatusField = value;
+                this.RaisePropertyChanged("ShippingStatus");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public enum CheckoutPaymentStatusCode {
+        
+        /// <remarks/>
+        NoChange,
+        
+        /// <remarks/>
+        CheckoutSamePaymentSubmitted,
+        
+        /// <remarks/>
+        CheckoutSamePaymentDeposited,
+        
+        /// <remarks/>
+        CheckoutSamePaymentCleared,
+        
+        /// <remarks/>
+        CheckoutCanceledPaymentFailed,
+        
+        /// <remarks/>
+        CheckoutReopenedPaymentFailed,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public enum ShippingStatusCode {
+        
+        /// <remarks/>
+        NoChange,
+        
+        /// <remarks/>
+        Unshipped,
+        
+        /// <remarks/>
+        Shipped,
+        
+        /// <remarks/>
+        PartiallyShipped,
+        
+        /// <remarks/>
+        PendingShipment,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class TransactionNoteSubmit : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string noteField;
+        
+        private bool shouldOverwriteField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string Note {
+            get {
+                return this.noteField;
+            }
+            set {
+                this.noteField = value;
+                this.RaisePropertyChanged("Note");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public bool ShouldOverwrite {
+            get {
+                return this.shouldOverwriteField;
+            }
+            set {
+                this.shouldOverwriteField = value;
+                this.RaisePropertyChanged("ShouldOverwrite");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class OrderUpdateSubmit : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int orderIDField;
+        
+        private string newClientOrderIdentifierField;
+        
+        private System.Nullable<FlagType> flagStyleField;
+        
+        private string flagDescriptionField;
+        
+        private TransactionNoteSubmit transactionNotesField;
+        
+        private OrderStatusUpdateSubmit orderStatusUpdateField;
+        
+        private BillingInfoUpdateSubmit billingInfoField;
+        
+        private ShippingInfoUpdateSubmit shippingInfoField;
+        
+        private PaymentInfoUpdateSubmit paymentInfoField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int OrderID {
+            get {
+                return this.orderIDField;
+            }
+            set {
+                this.orderIDField = value;
+                this.RaisePropertyChanged("OrderID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string NewClientOrderIdentifier {
+            get {
+                return this.newClientOrderIdentifierField;
+            }
+            set {
+                this.newClientOrderIdentifierField = value;
+                this.RaisePropertyChanged("NewClientOrderIdentifier");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=2)]
+        public System.Nullable<FlagType> FlagStyle {
+            get {
+                return this.flagStyleField;
+            }
+            set {
+                this.flagStyleField = value;
+                this.RaisePropertyChanged("FlagStyle");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string FlagDescription {
+            get {
+                return this.flagDescriptionField;
+            }
+            set {
+                this.flagDescriptionField = value;
+                this.RaisePropertyChanged("FlagDescription");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public TransactionNoteSubmit TransactionNotes {
+            get {
+                return this.transactionNotesField;
+            }
+            set {
+                this.transactionNotesField = value;
+                this.RaisePropertyChanged("TransactionNotes");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public OrderStatusUpdateSubmit OrderStatusUpdate {
+            get {
+                return this.orderStatusUpdateField;
+            }
+            set {
+                this.orderStatusUpdateField = value;
+                this.RaisePropertyChanged("OrderStatusUpdate");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        public BillingInfoUpdateSubmit BillingInfo {
+            get {
+                return this.billingInfoField;
+            }
+            set {
+                this.billingInfoField = value;
+                this.RaisePropertyChanged("BillingInfo");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
+        public ShippingInfoUpdateSubmit ShippingInfo {
+            get {
+                return this.shippingInfoField;
+            }
+            set {
+                this.shippingInfoField = value;
+                this.RaisePropertyChanged("ShippingInfo");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
+        public PaymentInfoUpdateSubmit PaymentInfo {
+            get {
+                return this.paymentInfoField;
+            }
+            set {
+                this.paymentInfoField = value;
+                this.RaisePropertyChanged("PaymentInfo");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public enum FlagType {
+        
+        /// <remarks/>
+        ItemCopied,
+        
+        /// <remarks/>
+        ExclamationPoint,
+        
+        /// <remarks/>
+        NoFlag,
+        
+        /// <remarks/>
+        RedFlag,
+        
+        /// <remarks/>
+        QuestionMark,
+        
+        /// <remarks/>
+        NotAvailable,
+        
+        /// <remarks/>
+        Price,
+        
+        /// <remarks/>
+        YellowFlag,
+        
+        /// <remarks/>
+        GreenFlag,
+        
+        /// <remarks/>
+        BlueFlag,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class BillingInfoUpdateSubmit : BillingInfo {
+        
+        private string emailAddressField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string EmailAddress {
+            get {
+                return this.emailAddressField;
+            }
+            set {
+                this.emailAddressField = value;
+                this.RaisePropertyChanged("EmailAddress");
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(BillingInfoUpdateSubmit))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class BillingInfo : ContactComplete {
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoUpdateSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(BillingInfo))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(BillingInfoUpdateSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfo))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoResponse))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class ContactComplete : AddressInfo {
+        
+        private string companyNameField;
+        
+        private string jobTitleField;
+        
+        private string titleField;
+        
+        private string firstNameField;
+        
+        private string lastNameField;
+        
+        private string suffixField;
+        
+        private string phoneNumberDayField;
+        
+        private string phoneNumberEveningField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string CompanyName {
+            get {
+                return this.companyNameField;
+            }
+            set {
+                this.companyNameField = value;
+                this.RaisePropertyChanged("CompanyName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string JobTitle {
+            get {
+                return this.jobTitleField;
+            }
+            set {
+                this.jobTitleField = value;
+                this.RaisePropertyChanged("JobTitle");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Title {
+            get {
+                return this.titleField;
+            }
+            set {
+                this.titleField = value;
+                this.RaisePropertyChanged("Title");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string FirstName {
+            get {
+                return this.firstNameField;
+            }
+            set {
+                this.firstNameField = value;
+                this.RaisePropertyChanged("FirstName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public string LastName {
+            get {
+                return this.lastNameField;
+            }
+            set {
+                this.lastNameField = value;
+                this.RaisePropertyChanged("LastName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public string Suffix {
+            get {
+                return this.suffixField;
+            }
+            set {
+                this.suffixField = value;
+                this.RaisePropertyChanged("Suffix");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        public string PhoneNumberDay {
+            get {
+                return this.phoneNumberDayField;
+            }
+            set {
+                this.phoneNumberDayField = value;
+                this.RaisePropertyChanged("PhoneNumberDay");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
+        public string PhoneNumberEvening {
+            get {
+                return this.phoneNumberEveningField;
+            }
+            set {
+                this.phoneNumberEveningField = value;
+                this.RaisePropertyChanged("PhoneNumberEvening");
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContactComplete))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoUpdateSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(BillingInfo))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(BillingInfoUpdateSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfo))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoResponse))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class AddressInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string addressLine1Field;
+        
+        private string addressLine2Field;
+        
+        private string cityField;
+        
+        private string regionField;
+        
+        private string regionDescriptionField;
+        
+        private string postalCodeField;
+        
+        private string countryCodeField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string AddressLine1 {
+            get {
+                return this.addressLine1Field;
+            }
+            set {
+                this.addressLine1Field = value;
+                this.RaisePropertyChanged("AddressLine1");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string AddressLine2 {
+            get {
+                return this.addressLine2Field;
+            }
+            set {
+                this.addressLine2Field = value;
+                this.RaisePropertyChanged("AddressLine2");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string City {
+            get {
+                return this.cityField;
+            }
+            set {
+                this.cityField = value;
+                this.RaisePropertyChanged("City");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Region {
+            get {
+                return this.regionField;
+            }
+            set {
+                this.regionField = value;
+                this.RaisePropertyChanged("Region");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public string RegionDescription {
+            get {
+                return this.regionDescriptionField;
+            }
+            set {
+                this.regionDescriptionField = value;
+                this.RaisePropertyChanged("RegionDescription");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public string PostalCode {
+            get {
+                return this.postalCodeField;
+            }
+            set {
+                this.postalCodeField = value;
+                this.RaisePropertyChanged("PostalCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        public string CountryCode {
+            get {
+                return this.countryCodeField;
+            }
+            set {
+                this.countryCodeField = value;
+                this.RaisePropertyChanged("CountryCode");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class ShippingInfoUpdateSubmit : ContactComplete {
+        
+        private string emailAddressField;
+        
+        private string shippingInstructionsField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string EmailAddress {
+            get {
+                return this.emailAddressField;
+            }
+            set {
+                this.emailAddressField = value;
+                this.RaisePropertyChanged("EmailAddress");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string ShippingInstructions {
+            get {
+                return this.shippingInstructionsField;
+            }
+            set {
+                this.shippingInstructionsField = value;
+                this.RaisePropertyChanged("ShippingInstructions");
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoResponse))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public abstract partial class ShippingInfo : ContactComplete {
+        
+        private Shipment[] shipmentListField;
+        
+        private string shippingInstructionsField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=0)]
+        public Shipment[] ShipmentList {
+            get {
+                return this.shipmentListField;
+            }
+            set {
+                this.shipmentListField = value;
+                this.RaisePropertyChanged("ShipmentList");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string ShippingInstructions {
+            get {
+                return this.shippingInstructionsField;
+            }
+            set {
+                this.shippingInstructionsField = value;
+                this.RaisePropertyChanged("ShippingInstructions");
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class Shipment : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string shippingCarrierField;
+        
+        private string shippingClassField;
+        
+        private string trackingNumberField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string ShippingCarrier {
+            get {
+                return this.shippingCarrierField;
+            }
+            set {
+                this.shippingCarrierField = value;
+                this.RaisePropertyChanged("ShippingCarrier");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string ShippingClass {
+            get {
+                return this.shippingClassField;
+            }
+            set {
+                this.shippingClassField = value;
+                this.RaisePropertyChanged("ShippingClass");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string TrackingNumber {
+            get {
+                return this.trackingNumberField;
+            }
+            set {
+                this.trackingNumberField = value;
+                this.RaisePropertyChanged("TrackingNumber");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class ShippingInfoSubmit : ShippingInfo {
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class ShippingInfoResponse : ShippingInfo {
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class PaymentInfoUpdateSubmit : PaymentInfo {
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(PaymentInfoUpdateSubmit))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(PaymentInfoResponse))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class PaymentInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string paymentTypeField;
+        
+        private string creditCardLast4Field;
+        
+        private string payPalIDField;
+        
+        private string merchantReferenceNumberField;
+        
+        private string paymentTransactionIDField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string PaymentType {
+            get {
+                return this.paymentTypeField;
+            }
+            set {
+                this.paymentTypeField = value;
+                this.RaisePropertyChanged("PaymentType");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string CreditCardLast4 {
+            get {
+                return this.creditCardLast4Field;
+            }
+            set {
+                this.creditCardLast4Field = value;
+                this.RaisePropertyChanged("CreditCardLast4");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string PayPalID {
+            get {
+                return this.payPalIDField;
+            }
+            set {
+                this.payPalIDField = value;
+                this.RaisePropertyChanged("PayPalID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string MerchantReferenceNumber {
+            get {
+                return this.merchantReferenceNumberField;
+            }
+            set {
+                this.merchantReferenceNumberField = value;
+                this.RaisePropertyChanged("MerchantReferenceNumber");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public string PaymentTransactionID {
+            get {
+                return this.paymentTransactionIDField;
+            }
+            set {
+                this.paymentTransactionIDField = value;
+                this.RaisePropertyChanged("PaymentTransactionID");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class PaymentInfoResponse : PaymentInfo {
     }
     
     /// <remarks/>
@@ -520,6 +1707,12 @@ namespace ChannelAdvisorAccess.OrderService {
         AMAZON_UK,
         
         /// <remarks/>
+        AMAZON_DE,
+        
+        /// <remarks/>
+        AMAZON_FR,
+        
+        /// <remarks/>
         STOREADVISOR_PREMIUM,
         
         /// <remarks/>
@@ -530,6 +1723,21 @@ namespace ChannelAdvisorAccess.OrderService {
         
         /// <remarks/>
         BUY_DOT_COM,
+        
+        /// <remarks/>
+        SELL_ON_SEARS,
+        
+        /// <remarks/>
+        NEWEGG,
+        
+        /// <remarks/>
+        MAGENTO_ENTERPRISE,
+        
+        /// <remarks/>
+        MAGENTO_GO,
+        
+        /// <remarks/>
+        AMAZON_WEBSTORE,
     }
     
     /// <remarks/>
@@ -555,104 +1763,6 @@ namespace ChannelAdvisorAccess.OrderService {
         
         /// <remarks/>
         NoChange,
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(PaymentInfoResponse))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class PaymentInfo : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string paymentTypeField;
-        
-        private string creditCardLast4Field;
-        
-        private string payPalIDField;
-        
-        private string merchantReferenceNumberField;
-        
-        private string paymentTransactionIDField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string PaymentType {
-            get {
-                return this.paymentTypeField;
-            }
-            set {
-                this.paymentTypeField = value;
-                this.RaisePropertyChanged("PaymentType");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string CreditCardLast4 {
-            get {
-                return this.creditCardLast4Field;
-            }
-            set {
-                this.creditCardLast4Field = value;
-                this.RaisePropertyChanged("CreditCardLast4");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string PayPalID {
-            get {
-                return this.payPalIDField;
-            }
-            set {
-                this.payPalIDField = value;
-                this.RaisePropertyChanged("PayPalID");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public string MerchantReferenceNumber {
-            get {
-                return this.merchantReferenceNumberField;
-            }
-            set {
-                this.merchantReferenceNumberField = value;
-                this.RaisePropertyChanged("MerchantReferenceNumber");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public string PaymentTransactionID {
-            get {
-                return this.paymentTransactionIDField;
-            }
-            set {
-                this.paymentTransactionIDField = value;
-                this.RaisePropertyChanged("PaymentTransactionID");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class PaymentInfoResponse : PaymentInfo {
     }
     
     /// <remarks/>
@@ -687,6 +1797,8 @@ namespace ChannelAdvisorAccess.OrderService {
         private System.Nullable<bool> restockQuantityField;
         
         private RefundAdjustmentReason adjustmentReasonField;
+        
+        private string sellerRefundIDField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
@@ -832,6 +1944,18 @@ namespace ChannelAdvisorAccess.OrderService {
             }
         }
         
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=12)]
+        public string SellerRefundID {
+            get {
+                return this.sellerRefundIDField;
+            }
+            set {
+                this.sellerRefundIDField = value;
+                this.RaisePropertyChanged("SellerRefundID");
+            }
+        }
+        
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         
         protected void RaisePropertyChanged(string propertyName) {
@@ -861,7 +1985,7 @@ namespace ChannelAdvisorAccess.OrderService {
         CouldNotShip,
         
         /// <remarks/>
-        AlternateItemProvied,
+        AlternateItemProvided,
         
         /// <remarks/>
         BuyerCancelled,
@@ -1471,383 +2595,6 @@ namespace ChannelAdvisorAccess.OrderService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public enum ShippingStatusCode {
-        
-        /// <remarks/>
-        NoChange,
-        
-        /// <remarks/>
-        Unshipped,
-        
-        /// <remarks/>
-        Shipped,
-        
-        /// <remarks/>
-        PartiallyShipped,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class BillingInfo : ContactComplete {
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(BillingInfo))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfo))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoSubmit))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoResponse))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class ContactComplete : AddressInfo {
-        
-        private string companyNameField;
-        
-        private string jobTitleField;
-        
-        private string titleField;
-        
-        private string firstNameField;
-        
-        private string lastNameField;
-        
-        private string suffixField;
-        
-        private string phoneNumberDayField;
-        
-        private string phoneNumberEveningField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string CompanyName {
-            get {
-                return this.companyNameField;
-            }
-            set {
-                this.companyNameField = value;
-                this.RaisePropertyChanged("CompanyName");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string JobTitle {
-            get {
-                return this.jobTitleField;
-            }
-            set {
-                this.jobTitleField = value;
-                this.RaisePropertyChanged("JobTitle");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string Title {
-            get {
-                return this.titleField;
-            }
-            set {
-                this.titleField = value;
-                this.RaisePropertyChanged("Title");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public string FirstName {
-            get {
-                return this.firstNameField;
-            }
-            set {
-                this.firstNameField = value;
-                this.RaisePropertyChanged("FirstName");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public string LastName {
-            get {
-                return this.lastNameField;
-            }
-            set {
-                this.lastNameField = value;
-                this.RaisePropertyChanged("LastName");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
-        public string Suffix {
-            get {
-                return this.suffixField;
-            }
-            set {
-                this.suffixField = value;
-                this.RaisePropertyChanged("Suffix");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
-        public string PhoneNumberDay {
-            get {
-                return this.phoneNumberDayField;
-            }
-            set {
-                this.phoneNumberDayField = value;
-                this.RaisePropertyChanged("PhoneNumberDay");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
-        public string PhoneNumberEvening {
-            get {
-                return this.phoneNumberEveningField;
-            }
-            set {
-                this.phoneNumberEveningField = value;
-                this.RaisePropertyChanged("PhoneNumberEvening");
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ContactComplete))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(BillingInfo))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfo))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoSubmit))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoResponse))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class AddressInfo : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string addressLine1Field;
-        
-        private string addressLine2Field;
-        
-        private string cityField;
-        
-        private string regionField;
-        
-        private string postalCodeField;
-        
-        private string countryCodeField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string AddressLine1 {
-            get {
-                return this.addressLine1Field;
-            }
-            set {
-                this.addressLine1Field = value;
-                this.RaisePropertyChanged("AddressLine1");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string AddressLine2 {
-            get {
-                return this.addressLine2Field;
-            }
-            set {
-                this.addressLine2Field = value;
-                this.RaisePropertyChanged("AddressLine2");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string City {
-            get {
-                return this.cityField;
-            }
-            set {
-                this.cityField = value;
-                this.RaisePropertyChanged("City");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public string Region {
-            get {
-                return this.regionField;
-            }
-            set {
-                this.regionField = value;
-                this.RaisePropertyChanged("Region");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public string PostalCode {
-            get {
-                return this.postalCodeField;
-            }
-            set {
-                this.postalCodeField = value;
-                this.RaisePropertyChanged("PostalCode");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
-        public string CountryCode {
-            get {
-                return this.countryCodeField;
-            }
-            set {
-                this.countryCodeField = value;
-                this.RaisePropertyChanged("CountryCode");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoSubmit))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(ShippingInfoResponse))]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public abstract partial class ShippingInfo : ContactComplete {
-        
-        private Shipment[] shipmentListField;
-        
-        private string shippingInstructionsField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=0)]
-        public Shipment[] ShipmentList {
-            get {
-                return this.shipmentListField;
-            }
-            set {
-                this.shipmentListField = value;
-                this.RaisePropertyChanged("ShipmentList");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string ShippingInstructions {
-            get {
-                return this.shippingInstructionsField;
-            }
-            set {
-                this.shippingInstructionsField = value;
-                this.RaisePropertyChanged("ShippingInstructions");
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class Shipment : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string shippingCarrierField;
-        
-        private string shippingClassField;
-        
-        private string trackingNumberField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string ShippingCarrier {
-            get {
-                return this.shippingCarrierField;
-            }
-            set {
-                this.shippingCarrierField = value;
-                this.RaisePropertyChanged("ShippingCarrier");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string ShippingClass {
-            get {
-                return this.shippingClassField;
-            }
-            set {
-                this.shippingClassField = value;
-                this.RaisePropertyChanged("ShippingClass");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string TrackingNumber {
-            get {
-                return this.trackingNumberField;
-            }
-            set {
-                this.trackingNumberField = value;
-                this.RaisePropertyChanged("TrackingNumber");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class ShippingInfoSubmit : ShippingInfo {
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class ShippingInfoResponse : ShippingInfo {
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
@@ -2004,6 +2751,9 @@ namespace ChannelAdvisorAccess.OrderService {
         
         /// <remarks/>
         Overstock_Shopping,
+        
+        /// <remarks/>
+        Sears_Marketplace,
     }
     
     /// <remarks/>
@@ -2064,6 +2814,8 @@ namespace ChannelAdvisorAccess.OrderService {
         private string giftMessageField;
         
         private string giftWrapLevelField;
+        
+        private OrderLineItemItemPromo[] itemPromoListField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
@@ -2268,11 +3020,71 @@ namespace ChannelAdvisorAccess.OrderService {
                 this.RaisePropertyChanged("GiftWrapLevel");
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=17)]
+        public OrderLineItemItemPromo[] ItemPromoList {
+            get {
+                return this.itemPromoListField;
+            }
+            set {
+                this.itemPromoListField = value;
+                this.RaisePropertyChanged("ItemPromoList");
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class OrderLineItemItemPromo : OrderLineItemPromo {
+        
+        private decimal shippingPriceField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public decimal ShippingPrice {
+            get {
+                return this.shippingPriceField;
+            }
+            set {
+                this.shippingPriceField = value;
+                this.RaisePropertyChanged("ShippingPrice");
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(OrderLineItemItemPromo))]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
+    public partial class OrderLineItemPromo : OrderLineItemBase {
+        
+        private string promoCodeField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string PromoCode {
+            get {
+                return this.promoCodeField;
+            }
+            set {
+                this.promoCodeField = value;
+                this.RaisePropertyChanged("PromoCode");
+            }
+        }
     }
     
     /// <remarks/>
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(OrderLineItemInvoice))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(OrderLineItemPromo))]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(OrderLineItemItemPromo))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(OrderLineItemItem))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(OrderLineItemItemResponse))]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
@@ -2375,29 +3187,6 @@ namespace ChannelAdvisorAccess.OrderService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class OrderLineItemPromo : OrderLineItemBase {
-        
-        private string promoCodeField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string PromoCode {
-            get {
-                return this.promoCodeField;
-            }
-            set {
-                this.promoCodeField = value;
-                this.RaisePropertyChanged("PromoCode");
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
     public partial class OrderLineItemItemResponse : OrderLineItemItem {
         
         private ItemWeight unitWeightField;
@@ -2405,6 +3194,8 @@ namespace ChannelAdvisorAccess.OrderService {
         private string warehouseLocationField;
         
         private string userNameField;
+        
+        private string distributionCenterCodeField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
@@ -2439,6 +3230,18 @@ namespace ChannelAdvisorAccess.OrderService {
             set {
                 this.userNameField = value;
                 this.RaisePropertyChanged("UserName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string DistributionCenterCode {
+            get {
+                return this.distributionCenterCodeField;
+            }
+            set {
+                this.distributionCenterCodeField = value;
+                this.RaisePropertyChanged("DistributionCenterCode");
             }
         }
     }
@@ -2586,6 +3389,8 @@ namespace ChannelAdvisorAccess.OrderService {
         
         private string clientOrderIdentifierField;
         
+        private System.Nullable<FlagType> flagStyleField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
         public int NumberOfMatches {
@@ -2682,6 +3487,18 @@ namespace ChannelAdvisorAccess.OrderService {
             }
         }
         
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=8)]
+        public System.Nullable<FlagType> FlagStyle {
+            get {
+                return this.flagStyleField;
+            }
+            set {
+                this.flagStyleField = value;
+                this.RaisePropertyChanged("FlagStyle");
+            }
+        }
+        
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         
         protected void RaisePropertyChanged(string propertyName) {
@@ -2756,6 +3573,8 @@ namespace ChannelAdvisorAccess.OrderService {
         
         private BillingInfo billingInfoField;
         
+        private string flagDescriptionField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
         public string ResellerID {
@@ -2827,6 +3646,18 @@ namespace ChannelAdvisorAccess.OrderService {
                 this.RaisePropertyChanged("BillingInfo");
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        public string FlagDescription {
+            get {
+                return this.flagDescriptionField;
+            }
+            set {
+                this.flagDescriptionField = value;
+                this.RaisePropertyChanged("FlagDescription");
+            }
+        }
     }
     
     /// <remarks/>
@@ -2865,6 +3696,8 @@ namespace ChannelAdvisorAccess.OrderService {
         
         private string buyerIpAddressField;
         
+        private string transactionNotesField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Order=0)]
         public CustomValue[] CustomValueList {
@@ -2886,6 +3719,18 @@ namespace ChannelAdvisorAccess.OrderService {
             set {
                 this.buyerIpAddressField = value;
                 this.RaisePropertyChanged("BuyerIpAddress");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string TransactionNotes {
+            get {
+                return this.transactionNotesField;
+            }
+            set {
+                this.transactionNotesField = value;
+                this.RaisePropertyChanged("TransactionNotes");
             }
         }
     }
@@ -2986,37 +3831,41 @@ namespace ChannelAdvisorAccess.OrderService {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
     public partial class OrderCriteria : object, System.ComponentModel.INotifyPropertyChanged {
         
-        private System.DateTime orderCreationFilterBeginTimeGMTField;
+        private System.Nullable<System.DateTime> orderCreationFilterBeginTimeGMTField;
         
-        private System.DateTime orderCreationFilterEndTimeGMTField;
+        private System.Nullable<System.DateTime> orderCreationFilterEndTimeGMTField;
         
-        private System.DateTime statusUpdateFilterBeginTimeGMTField;
+        private System.Nullable<System.DateTime> statusUpdateFilterBeginTimeGMTField;
         
-        private System.DateTime statusUpdateFilterEndTimeGMTField;
+        private System.Nullable<System.DateTime> statusUpdateFilterEndTimeGMTField;
         
-        private DetailLevelType detailLevelField;
+        private System.Nullable<bool> joinDateFiltersWithOrField;
         
-        private ExportStateType exportStateField;
+        private System.Nullable<DetailLevelType> detailLevelField;
         
-        private bool exportStateFieldSpecified;
+        private System.Nullable<ExportStateType> exportStateField;
         
         private int[] orderIDListField;
         
-        private OrderStateCode orderStateFilterField;
+        private string[] clientOrderIdentifierListField;
         
-        private PaymentStatusCode paymentStatusFilterField;
+        private System.Nullable<OrderStateCode> orderStateFilterField;
         
-        private CheckoutStatusCode checkoutStatusFilterField;
+        private System.Nullable<PaymentStatusCode> paymentStatusFilterField;
         
-        private ShippingStatusCode shippingStatusFilterField;
+        private System.Nullable<CheckoutStatusCode> checkoutStatusFilterField;
         
-        private int pageNumberFilterField;
+        private System.Nullable<ShippingStatusCode> shippingStatusFilterField;
         
-        private int pageSizeField;
+        private string distributionCenterCodeField;
+        
+        private System.Nullable<int> pageNumberFilterField;
+        
+        private System.Nullable<int> pageSizeField;
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public System.DateTime OrderCreationFilterBeginTimeGMT {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=0)]
+        public System.Nullable<System.DateTime> OrderCreationFilterBeginTimeGMT {
             get {
                 return this.orderCreationFilterBeginTimeGMTField;
             }
@@ -3027,8 +3876,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public System.DateTime OrderCreationFilterEndTimeGMT {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public System.Nullable<System.DateTime> OrderCreationFilterEndTimeGMT {
             get {
                 return this.orderCreationFilterEndTimeGMTField;
             }
@@ -3039,8 +3888,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public System.DateTime StatusUpdateFilterBeginTimeGMT {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=2)]
+        public System.Nullable<System.DateTime> StatusUpdateFilterBeginTimeGMT {
             get {
                 return this.statusUpdateFilterBeginTimeGMTField;
             }
@@ -3051,8 +3900,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public System.DateTime StatusUpdateFilterEndTimeGMT {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
+        public System.Nullable<System.DateTime> StatusUpdateFilterEndTimeGMT {
             get {
                 return this.statusUpdateFilterEndTimeGMTField;
             }
@@ -3063,8 +3912,20 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public DetailLevelType DetailLevel {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=4)]
+        public System.Nullable<bool> JoinDateFiltersWithOr {
+            get {
+                return this.joinDateFiltersWithOrField;
+            }
+            set {
+                this.joinDateFiltersWithOrField = value;
+                this.RaisePropertyChanged("JoinDateFiltersWithOr");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
+        public System.Nullable<DetailLevelType> DetailLevel {
             get {
                 return this.detailLevelField;
             }
@@ -3075,8 +3936,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
-        public ExportStateType ExportState {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
+        public System.Nullable<ExportStateType> ExportState {
             get {
                 return this.exportStateField;
             }
@@ -3087,19 +3948,7 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool ExportStateSpecified {
-            get {
-                return this.exportStateFieldSpecified;
-            }
-            set {
-                this.exportStateFieldSpecified = value;
-                this.RaisePropertyChanged("ExportStateSpecified");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=6)]
+        [System.Xml.Serialization.XmlArrayAttribute(Order=7)]
         public int[] OrderIDList {
             get {
                 return this.orderIDListField;
@@ -3111,8 +3960,20 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
-        public OrderStateCode OrderStateFilter {
+        [System.Xml.Serialization.XmlArrayAttribute(Order=8)]
+        public string[] ClientOrderIdentifierList {
+            get {
+                return this.clientOrderIdentifierListField;
+            }
+            set {
+                this.clientOrderIdentifierListField = value;
+                this.RaisePropertyChanged("ClientOrderIdentifierList");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=9)]
+        public System.Nullable<OrderStateCode> OrderStateFilter {
             get {
                 return this.orderStateFilterField;
             }
@@ -3123,8 +3984,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
-        public PaymentStatusCode PaymentStatusFilter {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=10)]
+        public System.Nullable<PaymentStatusCode> PaymentStatusFilter {
             get {
                 return this.paymentStatusFilterField;
             }
@@ -3135,8 +3996,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=9)]
-        public CheckoutStatusCode CheckoutStatusFilter {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=11)]
+        public System.Nullable<CheckoutStatusCode> CheckoutStatusFilter {
             get {
                 return this.checkoutStatusFilterField;
             }
@@ -3147,8 +4008,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=10)]
-        public ShippingStatusCode ShippingStatusFilter {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=12)]
+        public System.Nullable<ShippingStatusCode> ShippingStatusFilter {
             get {
                 return this.shippingStatusFilterField;
             }
@@ -3159,8 +4020,20 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=11)]
-        public int PageNumberFilter {
+        [System.Xml.Serialization.XmlElementAttribute(Order=13)]
+        public string DistributionCenterCode {
+            get {
+                return this.distributionCenterCodeField;
+            }
+            set {
+                this.distributionCenterCodeField = value;
+                this.RaisePropertyChanged("DistributionCenterCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=14)]
+        public System.Nullable<int> PageNumberFilter {
             get {
                 return this.pageNumberFilterField;
             }
@@ -3171,8 +4044,8 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=12)]
-        public int PageSize {
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=15)]
+        public System.Nullable<int> PageSize {
             get {
                 return this.pageSizeField;
             }
@@ -3219,6 +4092,9 @@ namespace ChannelAdvisorAccess.OrderService {
         
         /// <remarks/>
         Unknown,
+        
+        /// <remarks/>
+        Exported,
         
         /// <remarks/>
         NotExported,
@@ -3416,6 +4292,8 @@ namespace ChannelAdvisorAccess.OrderService {
         
         private RefundAdjustmentReason adjustmentReasonField;
         
+        private string sellerRefundIDField;
+        
         private RefundItem[] refundItemsField;
         
         /// <remarks/>
@@ -3467,53 +4345,19 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
-        public RefundItem[] RefundItems {
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public string SellerRefundID {
             get {
-                return this.refundItemsField;
+                return this.sellerRefundIDField;
             }
             set {
-                this.refundItemsField = value;
-                this.RaisePropertyChanged("RefundItems");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class RefundItemRequest : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string orderIDField;
-        
-        private RefundItem[] refundItemsField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string OrderID {
-            get {
-                return this.orderIDField;
-            }
-            set {
-                this.orderIDField = value;
-                this.RaisePropertyChanged("OrderID");
+                this.sellerRefundIDField = value;
+                this.RaisePropertyChanged("SellerRefundID");
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=1)]
+        [System.Xml.Serialization.XmlArrayAttribute(Order=5)]
         public RefundItem[] RefundItems {
             get {
                 return this.refundItemsField;
@@ -3622,186 +4466,6 @@ namespace ChannelAdvisorAccess.OrderService {
         }
     }
     
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/datacontracts/orders")]
-    public partial class RefundItemResponse : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string orderIDField;
-        
-        private RefundItem[] refundItemsField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string OrderID {
-            get {
-                return this.orderIDField;
-            }
-            set {
-                this.orderIDField = value;
-                this.RaisePropertyChanged("OrderID");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=1)]
-        public RefundItem[] RefundItems {
-            get {
-                return this.refundItemsField;
-            }
-            set {
-                this.refundItemsField = value;
-                this.RaisePropertyChanged("RefundItems");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class APIResultOfRefundItemResponse : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private ResultStatus statusField;
-        
-        private int messageCodeField;
-        
-        private string messageField;
-        
-        private string dataField;
-        
-        private RefundItemResponse resultDataField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public ResultStatus Status {
-            get {
-                return this.statusField;
-            }
-            set {
-                this.statusField = value;
-                this.RaisePropertyChanged("Status");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public int MessageCode {
-            get {
-                return this.messageCodeField;
-            }
-            set {
-                this.messageCodeField = value;
-                this.RaisePropertyChanged("MessageCode");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string Message {
-            get {
-                return this.messageField;
-            }
-            set {
-                this.messageField = value;
-                this.RaisePropertyChanged("Message");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public string Data {
-            get {
-                return this.dataField;
-            }
-            set {
-                this.dataField = value;
-                this.RaisePropertyChanged("Data");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public RefundItemResponse ResultData {
-            get {
-                return this.resultDataField;
-            }
-            set {
-                this.resultDataField = value;
-                this.RaisePropertyChanged("ResultData");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="SubmitAmazonFullRefund", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
-    public partial class SubmitAmazonFullRefundRequest {
-        
-        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-        public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public string accountID;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
-        public string orderID;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
-        public ChannelAdvisorAccess.OrderService.RefundAdjustmentReason reason;
-        
-        public SubmitAmazonFullRefundRequest() {
-        }
-        
-        public SubmitAmazonFullRefundRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string orderID, ChannelAdvisorAccess.OrderService.RefundAdjustmentReason reason) {
-            this.APICredentials = APICredentials;
-            this.accountID = accountID;
-            this.orderID = orderID;
-            this.reason = reason;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="SubmitAmazonFullRefundResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
-    public partial class SubmitAmazonFullRefundResponse {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfRefundItemResponse SubmitAmazonFullRefundResult;
-        
-        public SubmitAmazonFullRefundResponse() {
-        }
-        
-        public SubmitAmazonFullRefundResponse(ChannelAdvisorAccess.OrderService.APIResultOfRefundItemResponse SubmitAmazonFullRefundResult) {
-            this.SubmitAmazonFullRefundResult = SubmitAmazonFullRefundResult;
-        }
-    }
-    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -3812,6 +4476,7 @@ namespace ChannelAdvisorAccess.OrderService {
         public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
@@ -3851,48 +4516,6 @@ namespace ChannelAdvisorAccess.OrderService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="SubmitAmazonPartialRefund", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
-    public partial class SubmitAmazonPartialRefundRequest {
-        
-        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-        public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public string accountID;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
-        public ChannelAdvisorAccess.OrderService.RefundItemRequest request;
-        
-        public SubmitAmazonPartialRefundRequest() {
-        }
-        
-        public SubmitAmazonPartialRefundRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.RefundItemRequest request) {
-            this.APICredentials = APICredentials;
-            this.accountID = accountID;
-            this.request = request;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="SubmitAmazonPartialRefundResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
-    public partial class SubmitAmazonPartialRefundResponse {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfRefundItemResponse SubmitAmazonPartialRefundResult;
-        
-        public SubmitAmazonPartialRefundResponse() {
-        }
-        
-        public SubmitAmazonPartialRefundResponse(ChannelAdvisorAccess.OrderService.APIResultOfRefundItemResponse SubmitAmazonPartialRefundResult) {
-            this.SubmitAmazonPartialRefundResult = SubmitAmazonPartialRefundResult;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(WrapperName="SubmitOrderRefund", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
     public partial class SubmitOrderRefundRequest {
         
@@ -3900,9 +4523,11 @@ namespace ChannelAdvisorAccess.OrderService {
         public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.OrderService.RefundOrderRequest request;
         
         public SubmitOrderRefundRequest() {
@@ -3942,9 +4567,11 @@ namespace ChannelAdvisorAccess.OrderService {
         public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.OrderService.OrderCriteria orderCriteria;
         
         public GetOrderListRequest() {
@@ -3984,9 +4611,11 @@ namespace ChannelAdvisorAccess.OrderService {
         public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.OrderService.OrderSubmit order;
         
         public SubmitOrderRequest() {
@@ -4026,6 +4655,7 @@ namespace ChannelAdvisorAccess.OrderService {
         public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
@@ -4065,6 +4695,57 @@ namespace ChannelAdvisorAccess.OrderService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="SetSellerOrderItemIDList", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class SetSellerOrderItemIDListRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        public int orderID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
+        public int[] lineItemIDList;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=3)]
+        public string[] sellerOrderItemIDList;
+        
+        public SetSellerOrderItemIDListRequest() {
+        }
+        
+        public SetSellerOrderItemIDListRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, string[] sellerOrderItemIDList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.orderID = orderID;
+            this.lineItemIDList = lineItemIDList;
+            this.sellerOrderItemIDList = sellerOrderItemIDList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="SetSellerOrderItemIDListResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class SetSellerOrderItemIDListResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean SetSellerOrderItemIDListResult;
+        
+        public SetSellerOrderItemIDListResponse() {
+        }
+        
+        public SetSellerOrderItemIDListResponse(ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean SetSellerOrderItemIDListResult) {
+            this.SetSellerOrderItemIDListResult = SetSellerOrderItemIDListResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(WrapperName="GetOrderRefundHistory", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
     public partial class GetOrderRefundHistoryRequest {
         
@@ -4072,6 +4753,7 @@ namespace ChannelAdvisorAccess.OrderService {
         public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
@@ -4101,6 +4783,143 @@ namespace ChannelAdvisorAccess.OrderService {
         
         public GetOrderRefundHistoryResponse(ChannelAdvisorAccess.OrderService.APIResultOfOrderRefundHistoryResponse GetOrderRefundHistoryResult) {
             this.GetOrderRefundHistoryResult = GetOrderRefundHistoryResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="UpdateOrderList", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class UpdateOrderListRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        public OrderUpdateSubmit[] updateOrderSubmitList;
+        
+        public UpdateOrderListRequest() {
+        }
+        
+        public UpdateOrderListRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, OrderUpdateSubmit[] updateOrderSubmitList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.updateOrderSubmitList = updateOrderSubmitList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="UpdateOrderListResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class UpdateOrderListResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse UpdateOrderListResult;
+        
+        public UpdateOrderListResponse() {
+        }
+        
+        public UpdateOrderListResponse(ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse UpdateOrderListResult) {
+            this.UpdateOrderListResult = UpdateOrderListResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="OrderMerge", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class OrderMergeRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        public int primaryOrderID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
+        public int[] orderIDMergeList;
+        
+        public OrderMergeRequest() {
+        }
+        
+        public OrderMergeRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int primaryOrderID, int[] orderIDMergeList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.primaryOrderID = primaryOrderID;
+            this.orderIDMergeList = orderIDMergeList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="OrderMergeResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class OrderMergeResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean OrderMergeResult;
+        
+        public OrderMergeResponse() {
+        }
+        
+        public OrderMergeResponse(ChannelAdvisorAccess.OrderService.APIResultOfBoolean OrderMergeResult) {
+            this.OrderMergeResult = OrderMergeResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="OrderSplit", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class OrderSplitRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.OrderService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        public int orderID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
+        public int[] lineItemIDList;
+        
+        public OrderSplitRequest() {
+        }
+        
+        public OrderSplitRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.orderID = orderID;
+            this.lineItemIDList = lineItemIDList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="OrderSplitResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class OrderSplitResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean OrderSplitResult;
+        
+        public OrderSplitResponse() {
+        }
+        
+        public OrderSplitResponse(ChannelAdvisorAccess.OrderService.APIResultOfBoolean OrderSplitResult) {
+            this.OrderSplitResult = OrderSplitResult;
         }
     }
     
@@ -4166,21 +4985,6 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.SubmitAmazonFullRefundResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.SubmitAmazonFullRefund(ChannelAdvisorAccess.OrderService.SubmitAmazonFullRefundRequest request) {
-            return base.Channel.SubmitAmazonFullRefund(request);
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfRefundItemResponse SubmitAmazonFullRefund(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string orderID, ChannelAdvisorAccess.OrderService.RefundAdjustmentReason reason) {
-            ChannelAdvisorAccess.OrderService.SubmitAmazonFullRefundRequest inValue = new ChannelAdvisorAccess.OrderService.SubmitAmazonFullRefundRequest();
-            inValue.APICredentials = APICredentials;
-            inValue.accountID = accountID;
-            inValue.orderID = orderID;
-            inValue.reason = reason;
-            ChannelAdvisorAccess.OrderService.SubmitAmazonFullRefundResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SubmitAmazonFullRefund(inValue);
-            return retVal.SubmitAmazonFullRefundResult;
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.SetOrdersExportStatus(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request) {
             return base.Channel.SetOrdersExportStatus(request);
         }
@@ -4193,20 +4997,6 @@ namespace ChannelAdvisorAccess.OrderService {
             inValue.markAsExported = markAsExported;
             ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SetOrdersExportStatus(inValue);
             return retVal.SetOrdersExportStatusResult;
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.SubmitAmazonPartialRefundResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.SubmitAmazonPartialRefund(ChannelAdvisorAccess.OrderService.SubmitAmazonPartialRefundRequest request) {
-            return base.Channel.SubmitAmazonPartialRefund(request);
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfRefundItemResponse SubmitAmazonPartialRefund(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.RefundItemRequest request) {
-            ChannelAdvisorAccess.OrderService.SubmitAmazonPartialRefundRequest inValue = new ChannelAdvisorAccess.OrderService.SubmitAmazonPartialRefundRequest();
-            inValue.APICredentials = APICredentials;
-            inValue.accountID = accountID;
-            inValue.request = request;
-            ChannelAdvisorAccess.OrderService.SubmitAmazonPartialRefundResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SubmitAmazonPartialRefund(inValue);
-            return retVal.SubmitAmazonPartialRefundResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -4267,6 +5057,22 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.SetSellerOrderItemIDList(ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest request) {
+            return base.Channel.SetSellerOrderItemIDList(request);
+        }
+        
+        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean SetSellerOrderItemIDList(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, string[] sellerOrderItemIDList) {
+            ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest inValue = new ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.orderID = orderID;
+            inValue.lineItemIDList = lineItemIDList;
+            inValue.sellerOrderItemIDList = sellerOrderItemIDList;
+            ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SetSellerOrderItemIDList(inValue);
+            return retVal.SetSellerOrderItemIDListResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.GetOrderRefundHistory(ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest request) {
             return base.Channel.GetOrderRefundHistory(request);
         }
@@ -4278,6 +5084,50 @@ namespace ChannelAdvisorAccess.OrderService {
             inValue.orderID = orderID;
             ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).GetOrderRefundHistory(inValue);
             return retVal.GetOrderRefundHistoryResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.OrderService.UpdateOrderListResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.UpdateOrderList(ChannelAdvisorAccess.OrderService.UpdateOrderListRequest request) {
+            return base.Channel.UpdateOrderList(request);
+        }
+        
+        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse UpdateOrderList(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, OrderUpdateSubmit[] updateOrderSubmitList) {
+            ChannelAdvisorAccess.OrderService.UpdateOrderListRequest inValue = new ChannelAdvisorAccess.OrderService.UpdateOrderListRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.updateOrderSubmitList = updateOrderSubmitList;
+            ChannelAdvisorAccess.OrderService.UpdateOrderListResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).UpdateOrderList(inValue);
+            return retVal.UpdateOrderListResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.OrderService.OrderMergeResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.OrderMerge(ChannelAdvisorAccess.OrderService.OrderMergeRequest request) {
+            return base.Channel.OrderMerge(request);
+        }
+        
+        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean OrderMerge(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int primaryOrderID, int[] orderIDMergeList) {
+            ChannelAdvisorAccess.OrderService.OrderMergeRequest inValue = new ChannelAdvisorAccess.OrderService.OrderMergeRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.primaryOrderID = primaryOrderID;
+            inValue.orderIDMergeList = orderIDMergeList;
+            ChannelAdvisorAccess.OrderService.OrderMergeResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).OrderMerge(inValue);
+            return retVal.OrderMergeResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.OrderService.OrderSplitResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.OrderSplit(ChannelAdvisorAccess.OrderService.OrderSplitRequest request) {
+            return base.Channel.OrderSplit(request);
+        }
+        
+        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean OrderSplit(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList) {
+            ChannelAdvisorAccess.OrderService.OrderSplitRequest inValue = new ChannelAdvisorAccess.OrderService.OrderSplitRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.orderID = orderID;
+            inValue.lineItemIDList = lineItemIDList;
+            ChannelAdvisorAccess.OrderService.OrderSplitResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).OrderSplit(inValue);
+            return retVal.OrderSplitResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]

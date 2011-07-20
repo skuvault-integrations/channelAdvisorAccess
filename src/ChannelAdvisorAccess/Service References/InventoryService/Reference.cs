@@ -61,11 +61,10 @@ namespace ChannelAdvisorAccess.InventoryService {
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.InventoryService.GetClassificationConfigurationInformationResponse GetClassificationConfigurationInformation(ChannelAdvisorAccess.InventoryService.GetClassificationConfigurationInformationRequest request);
         
-        // CODEGEN: Generating message contract since message GetInventoryItemClassificationAttributeListRequest has headers
-        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetInventoryItemClassificationAttribute" +
-            "List", ReplyAction="*")]
+        // CODEGEN: Generating message contract since message GetInventoryItemAttributeListRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetInventoryItemAttributeList", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        ChannelAdvisorAccess.InventoryService.GetInventoryItemClassificationAttributeListResponse GetInventoryItemClassificationAttributeList(ChannelAdvisorAccess.InventoryService.GetInventoryItemClassificationAttributeListRequest request);
+        ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListResponse GetInventoryItemAttributeList(ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListRequest request);
         
         // CODEGEN: Generating message contract since message GetInventoryItemVariationInfoRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetInventoryItemVariationInfo", ReplyAction="*")]
@@ -127,6 +126,21 @@ namespace ChannelAdvisorAccess.InventoryService {
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/RemoveLabelListFromInventoryItemList", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.InventoryService.RemoveLabelListFromInventoryItemListResponse RemoveLabelListFromInventoryItemList(ChannelAdvisorAccess.InventoryService.RemoveLabelListFromInventoryItemListRequest request);
+        
+        // CODEGEN: Generating message contract since message AddUpsellRelationshipRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/AddUpsellRelationship", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipResponse AddUpsellRelationship(ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipRequest request);
+        
+        // CODEGEN: Generating message contract since message GetUpsellRelationshipRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetUpsellRelationship", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipResponse GetUpsellRelationship(ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipRequest request);
+        
+        // CODEGEN: Generating message contract since message DeleteUpsellRelationshipRequest has headers
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/DeleteUpsellRelationship", ReplyAction="*")]
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipResponse DeleteUpsellRelationship(ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipRequest request);
         
         // CODEGEN: Generating message contract since message PingRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
@@ -293,6 +307,424 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         Failure,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class APIResultOfArrayOfBoolean : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private ResultStatus statusField;
+        
+        private int messageCodeField;
+        
+        private string messageField;
+        
+        private string dataField;
+        
+        private bool[] resultDataField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public ResultStatus Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+                this.RaisePropertyChanged("Status");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MessageCode {
+            get {
+                return this.messageCodeField;
+            }
+            set {
+                this.messageCodeField = value;
+                this.RaisePropertyChanged("MessageCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Data {
+            get {
+                return this.dataField;
+            }
+            set {
+                this.dataField = value;
+                this.RaisePropertyChanged("Data");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
+        public bool[] ResultData {
+            get {
+                return this.resultDataField;
+            }
+            set {
+                this.resultDataField = value;
+                this.RaisePropertyChanged("ResultData");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class InventoryUpsellInfoResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string parentSKUField;
+        
+        private InventoryUpsellChildInfo[] childItemListField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string ParentSKU {
+            get {
+                return this.parentSKUField;
+            }
+            set {
+                this.parentSKUField = value;
+                this.RaisePropertyChanged("ParentSKU");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=1)]
+        public InventoryUpsellChildInfo[] ChildItemList {
+            get {
+                return this.childItemListField;
+            }
+            set {
+                this.childItemListField = value;
+                this.RaisePropertyChanged("ChildItemList");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class InventoryUpsellChildInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string sKUField;
+        
+        private System.Nullable<int> quantityField;
+        
+        private System.Nullable<decimal> salePriceField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string SKU {
+            get {
+                return this.sKUField;
+            }
+            set {
+                this.sKUField = value;
+                this.RaisePropertyChanged("SKU");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public System.Nullable<int> Quantity {
+            get {
+                return this.quantityField;
+            }
+            set {
+                this.quantityField = value;
+                this.RaisePropertyChanged("Quantity");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=2)]
+        public System.Nullable<decimal> SalePrice {
+            get {
+                return this.salePriceField;
+            }
+            set {
+                this.salePriceField = value;
+                this.RaisePropertyChanged("SalePrice");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class APIResultOfArrayOfInventoryUpsellInfoResponse : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private ResultStatus statusField;
+        
+        private int messageCodeField;
+        
+        private string messageField;
+        
+        private string dataField;
+        
+        private InventoryUpsellInfoResponse[] resultDataField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public ResultStatus Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+                this.RaisePropertyChanged("Status");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MessageCode {
+            get {
+                return this.messageCodeField;
+            }
+            set {
+                this.messageCodeField = value;
+                this.RaisePropertyChanged("MessageCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Data {
+            get {
+                return this.dataField;
+            }
+            set {
+                this.dataField = value;
+                this.RaisePropertyChanged("Data");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
+        public InventoryUpsellInfoResponse[] ResultData {
+            get {
+                return this.resultDataField;
+            }
+            set {
+                this.resultDataField = value;
+                this.RaisePropertyChanged("ResultData");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class APIResultOfArrayOfArrayOfBoolean : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private ResultStatus statusField;
+        
+        private int messageCodeField;
+        
+        private string messageField;
+        
+        private string dataField;
+        
+        private bool[][] resultDataField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public ResultStatus Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+                this.RaisePropertyChanged("Status");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MessageCode {
+            get {
+                return this.messageCodeField;
+            }
+            set {
+                this.messageCodeField = value;
+                this.RaisePropertyChanged("MessageCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+                this.RaisePropertyChanged("Message");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string Data {
+            get {
+                return this.dataField;
+            }
+            set {
+                this.dataField = value;
+                this.RaisePropertyChanged("Data");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
+        [System.Xml.Serialization.XmlArrayItemAttribute("ArrayOfBoolean")]
+        [System.Xml.Serialization.XmlArrayItemAttribute(IsNullable=false, NestingLevel=1)]
+        public bool[][] ResultData {
+            get {
+                return this.resultDataField;
+            }
+            set {
+                this.resultDataField = value;
+                this.RaisePropertyChanged("ResultData");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class InventoryUpsellInfoSubmit : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string parentSKUField;
+        
+        private InventoryUpsellChildInfo[] childItemListField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string ParentSKU {
+            get {
+                return this.parentSKUField;
+            }
+            set {
+                this.parentSKUField = value;
+                this.RaisePropertyChanged("ParentSKU");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=1)]
+        public InventoryUpsellChildInfo[] ChildItemList {
+            get {
+                return this.childItemListField;
+            }
+            set {
+                this.childItemListField = value;
+                this.RaisePropertyChanged("ChildItemList");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
     
     /// <remarks/>
@@ -939,11 +1371,35 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string eANField;
         
+        private string manufacturerField;
+        
+        private string brandField;
+        
+        private string conditionField;
+        
+        private string warrantyField;
+        
+        private System.Nullable<decimal> productMarginField;
+        
+        private string supplierPOField;
+        
+        private System.Nullable<System.DateTime> receivedInInventoryField;
+        
+        private string harmonizedCodeField;
+        
+        private System.Nullable<decimal> heightField;
+        
+        private System.Nullable<decimal> lengthField;
+        
+        private System.Nullable<decimal> widthField;
+        
+        private string classificationField;
+        
         private QuantityInfoSubmit quantityInfoField;
         
         private PriceInfo priceInfoField;
         
-        private ClassificationInfo classificationInfoField;
+        private AttributeInfo[] attributeListField;
         
         private VariationInfo variationInfoField;
         
@@ -1175,6 +1631,150 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=18)]
+        public string Manufacturer {
+            get {
+                return this.manufacturerField;
+            }
+            set {
+                this.manufacturerField = value;
+                this.RaisePropertyChanged("Manufacturer");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=19)]
+        public string Brand {
+            get {
+                return this.brandField;
+            }
+            set {
+                this.brandField = value;
+                this.RaisePropertyChanged("Brand");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=20)]
+        public string Condition {
+            get {
+                return this.conditionField;
+            }
+            set {
+                this.conditionField = value;
+                this.RaisePropertyChanged("Condition");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=21)]
+        public string Warranty {
+            get {
+                return this.warrantyField;
+            }
+            set {
+                this.warrantyField = value;
+                this.RaisePropertyChanged("Warranty");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=22)]
+        public System.Nullable<decimal> ProductMargin {
+            get {
+                return this.productMarginField;
+            }
+            set {
+                this.productMarginField = value;
+                this.RaisePropertyChanged("ProductMargin");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=23)]
+        public string SupplierPO {
+            get {
+                return this.supplierPOField;
+            }
+            set {
+                this.supplierPOField = value;
+                this.RaisePropertyChanged("SupplierPO");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=24)]
+        public System.Nullable<System.DateTime> ReceivedInInventory {
+            get {
+                return this.receivedInInventoryField;
+            }
+            set {
+                this.receivedInInventoryField = value;
+                this.RaisePropertyChanged("ReceivedInInventory");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=25)]
+        public string HarmonizedCode {
+            get {
+                return this.harmonizedCodeField;
+            }
+            set {
+                this.harmonizedCodeField = value;
+                this.RaisePropertyChanged("HarmonizedCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=26)]
+        public System.Nullable<decimal> Height {
+            get {
+                return this.heightField;
+            }
+            set {
+                this.heightField = value;
+                this.RaisePropertyChanged("Height");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=27)]
+        public System.Nullable<decimal> Length {
+            get {
+                return this.lengthField;
+            }
+            set {
+                this.lengthField = value;
+                this.RaisePropertyChanged("Length");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=28)]
+        public System.Nullable<decimal> Width {
+            get {
+                return this.widthField;
+            }
+            set {
+                this.widthField = value;
+                this.RaisePropertyChanged("Width");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=29)]
+        public string Classification {
+            get {
+                return this.classificationField;
+            }
+            set {
+                this.classificationField = value;
+                this.RaisePropertyChanged("Classification");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=30)]
         public QuantityInfoSubmit QuantityInfo {
             get {
                 return this.quantityInfoField;
@@ -1186,7 +1786,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=19)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=31)]
         public PriceInfo PriceInfo {
             get {
                 return this.priceInfoField;
@@ -1198,19 +1798,19 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=20)]
-        public ClassificationInfo ClassificationInfo {
+        [System.Xml.Serialization.XmlArrayAttribute(Order=32)]
+        public AttributeInfo[] AttributeList {
             get {
-                return this.classificationInfoField;
+                return this.attributeListField;
             }
             set {
-                this.classificationInfoField = value;
-                this.RaisePropertyChanged("ClassificationInfo");
+                this.attributeListField = value;
+                this.RaisePropertyChanged("AttributeList");
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=21)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=33)]
         public VariationInfo VariationInfo {
             get {
                 return this.variationInfoField;
@@ -1222,7 +1822,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=22)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=34)]
         public StoreInfo StoreInfo {
             get {
                 return this.storeInfoField;
@@ -1234,7 +1834,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=23)]
+        [System.Xml.Serialization.XmlArrayAttribute(Order=35)]
         public ImageInfoSubmit[] ImageList {
             get {
                 return this.imageListField;
@@ -1246,7 +1846,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=24)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=36)]
         public ShippingInfo ShippingInfo {
             get {
                 return this.shippingInfoField;
@@ -1258,7 +1858,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=25)]
+        [System.Xml.Serialization.XmlArrayAttribute(Order=37)]
         public string[] LabelList {
             get {
                 return this.labelListField;
@@ -1270,7 +1870,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=26)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=38)]
         public string MetaDescription {
             get {
                 return this.metaDescriptionField;
@@ -1334,53 +1934,7 @@ namespace ChannelAdvisorAccess.InventoryService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class ClassificationInfo : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string nameField;
-        
-        private ClassificationAttributeInfo[] attributeListField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string Name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-                this.RaisePropertyChanged("Name");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=1)]
-        public ClassificationAttributeInfo[] AttributeList {
-            get {
-                return this.attributeListField;
-            }
-            set {
-                this.attributeListField = value;
-                this.RaisePropertyChanged("AttributeList");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class ClassificationAttributeInfo : object, System.ComponentModel.INotifyPropertyChanged {
+    public partial class AttributeInfo : object, System.ComponentModel.INotifyPropertyChanged {
         
         private string nameField;
         
@@ -2134,6 +2688,30 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         Error_AuctionWinnerValidation,
+        
+        /// <remarks/>
+        MergeInvoice_CheckoutNotOpen,
+        
+        /// <remarks/>
+        MergeInvoice_SameInvoice,
+        
+        /// <remarks/>
+        MergeInvoice_DiffTaxModule,
+        
+        /// <remarks/>
+        MergeInvoice_Error,
+        
+        /// <remarks/>
+        SplitInvoice_NoLineItems,
+        
+        /// <remarks/>
+        SplitInvoice_CheckoutNotOpen,
+        
+        /// <remarks/>
+        SplitInvoice_NotEnoughLineItems,
+        
+        /// <remarks/>
+        SplitInvoice_Error,
     }
     
     /// <remarks/>
@@ -2702,7 +3280,7 @@ namespace ChannelAdvisorAccess.InventoryService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class APIResultOfArrayOfClassificationAttributeInfo : object, System.ComponentModel.INotifyPropertyChanged {
+    public partial class APIResultOfArrayOfAttributeInfo : object, System.ComponentModel.INotifyPropertyChanged {
         
         private ResultStatus statusField;
         
@@ -2712,7 +3290,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string dataField;
         
-        private ClassificationAttributeInfo[] resultDataField;
+        private AttributeInfo[] resultDataField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
@@ -2764,7 +3342,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
-        public ClassificationAttributeInfo[] ResultData {
+        public AttributeInfo[] ResultData {
             get {
                 return this.resultDataField;
             }
@@ -3795,11 +4373,35 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string eANField;
         
+        private string manufacturerField;
+        
+        private string brandField;
+        
+        private string conditionField;
+        
+        private string warrantyField;
+        
+        private System.Nullable<decimal> productMarginField;
+        
+        private string supplierPOField;
+        
+        private System.Nullable<System.DateTime> receivedInInventoryField;
+        
+        private string harmonizedCodeField;
+        
+        private System.Nullable<decimal> heightField;
+        
+        private System.Nullable<decimal> lengthField;
+        
+        private System.Nullable<decimal> widthField;
+        
+        private string classificationField;
+        
         private QuantityInfoResponse quantityInfoField;
         
         private PriceInfo priceInfoField;
         
-        private ClassificationInfo classificationInfoField;
+        private AttributeInfo[] attributeListField;
         
         private VariationInfo variationInfoField;
         
@@ -4029,6 +4631,150 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=18)]
+        public string Manufacturer {
+            get {
+                return this.manufacturerField;
+            }
+            set {
+                this.manufacturerField = value;
+                this.RaisePropertyChanged("Manufacturer");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=19)]
+        public string Brand {
+            get {
+                return this.brandField;
+            }
+            set {
+                this.brandField = value;
+                this.RaisePropertyChanged("Brand");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=20)]
+        public string Condition {
+            get {
+                return this.conditionField;
+            }
+            set {
+                this.conditionField = value;
+                this.RaisePropertyChanged("Condition");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=21)]
+        public string Warranty {
+            get {
+                return this.warrantyField;
+            }
+            set {
+                this.warrantyField = value;
+                this.RaisePropertyChanged("Warranty");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=22)]
+        public System.Nullable<decimal> ProductMargin {
+            get {
+                return this.productMarginField;
+            }
+            set {
+                this.productMarginField = value;
+                this.RaisePropertyChanged("ProductMargin");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=23)]
+        public string SupplierPO {
+            get {
+                return this.supplierPOField;
+            }
+            set {
+                this.supplierPOField = value;
+                this.RaisePropertyChanged("SupplierPO");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=24)]
+        public System.Nullable<System.DateTime> ReceivedInInventory {
+            get {
+                return this.receivedInInventoryField;
+            }
+            set {
+                this.receivedInInventoryField = value;
+                this.RaisePropertyChanged("ReceivedInInventory");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=25)]
+        public string HarmonizedCode {
+            get {
+                return this.harmonizedCodeField;
+            }
+            set {
+                this.harmonizedCodeField = value;
+                this.RaisePropertyChanged("HarmonizedCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=26)]
+        public System.Nullable<decimal> Height {
+            get {
+                return this.heightField;
+            }
+            set {
+                this.heightField = value;
+                this.RaisePropertyChanged("Height");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=27)]
+        public System.Nullable<decimal> Length {
+            get {
+                return this.lengthField;
+            }
+            set {
+                this.lengthField = value;
+                this.RaisePropertyChanged("Length");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=28)]
+        public System.Nullable<decimal> Width {
+            get {
+                return this.widthField;
+            }
+            set {
+                this.widthField = value;
+                this.RaisePropertyChanged("Width");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=29)]
+        public string Classification {
+            get {
+                return this.classificationField;
+            }
+            set {
+                this.classificationField = value;
+                this.RaisePropertyChanged("Classification");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=30)]
         public QuantityInfoResponse QuantityInfo {
             get {
                 return this.quantityInfoField;
@@ -4040,7 +4786,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=19)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=31)]
         public PriceInfo PriceInfo {
             get {
                 return this.priceInfoField;
@@ -4052,19 +4798,19 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=20)]
-        public ClassificationInfo ClassificationInfo {
+        [System.Xml.Serialization.XmlArrayAttribute(Order=32)]
+        public AttributeInfo[] AttributeList {
             get {
-                return this.classificationInfoField;
+                return this.attributeListField;
             }
             set {
-                this.classificationInfoField = value;
-                this.RaisePropertyChanged("ClassificationInfo");
+                this.attributeListField = value;
+                this.RaisePropertyChanged("AttributeList");
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=21)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=33)]
         public VariationInfo VariationInfo {
             get {
                 return this.variationInfoField;
@@ -4076,7 +4822,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=22)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=34)]
         public StoreInfo StoreInfo {
             get {
                 return this.storeInfoField;
@@ -4088,7 +4834,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=23)]
+        [System.Xml.Serialization.XmlArrayAttribute(Order=35)]
         public ImageInfoResponse[] ImageList {
             get {
                 return this.imageListField;
@@ -4100,7 +4846,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=24)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=36)]
         public ShippingInfo ShippingInfo {
             get {
                 return this.shippingInfoField;
@@ -4112,7 +4858,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=25)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=37)]
         public string MetaDescription {
             get {
                 return this.metaDescriptionField;
@@ -4471,6 +5217,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public DoesSkuExistRequest() {
@@ -4669,6 +5416,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.InventoryService.InventoryItemCriteria itemCriteria;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
@@ -4726,6 +5474,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.InventoryService.InventoryItemCriteria itemCriteria;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
@@ -4779,6 +5528,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public GetInventoryItemShippingInfoRequest() {
@@ -4822,6 +5572,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public GetInventoryItemQuantityInfoRequest() {
@@ -4893,8 +5644,8 @@ namespace ChannelAdvisorAccess.InventoryService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="GetInventoryItemClassificationAttributeList", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
-    public partial class GetInventoryItemClassificationAttributeListRequest {
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetInventoryItemAttributeList", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class GetInventoryItemAttributeListRequest {
         
         [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
         public ChannelAdvisorAccess.InventoryService.APICredentials APICredentials;
@@ -4904,12 +5655,13 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
-        public GetInventoryItemClassificationAttributeListRequest() {
+        public GetInventoryItemAttributeListRequest() {
         }
         
-        public GetInventoryItemClassificationAttributeListRequest(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string sku) {
+        public GetInventoryItemAttributeListRequest(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string sku) {
             this.APICredentials = APICredentials;
             this.accountID = accountID;
             this.sku = sku;
@@ -4919,17 +5671,17 @@ namespace ChannelAdvisorAccess.InventoryService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(WrapperName="GetInventoryItemClassificationAttributeListResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
-    public partial class GetInventoryItemClassificationAttributeListResponse {
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetInventoryItemAttributeListResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class GetInventoryItemAttributeListResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfClassificationAttributeInfo GetInventoryItemClassificationAttributeListResult;
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfAttributeInfo GetInventoryItemAttributeListResult;
         
-        public GetInventoryItemClassificationAttributeListResponse() {
+        public GetInventoryItemAttributeListResponse() {
         }
         
-        public GetInventoryItemClassificationAttributeListResponse(ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfClassificationAttributeInfo GetInventoryItemClassificationAttributeListResult) {
-            this.GetInventoryItemClassificationAttributeListResult = GetInventoryItemClassificationAttributeListResult;
+        public GetInventoryItemAttributeListResponse(ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfAttributeInfo GetInventoryItemAttributeListResult) {
+            this.GetInventoryItemAttributeListResult = GetInventoryItemAttributeListResult;
         }
     }
     
@@ -4947,6 +5699,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public GetInventoryItemVariationInfoRequest() {
@@ -4990,6 +5743,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public GetInventoryItemStoreInfoRequest() {
@@ -5033,6 +5787,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public GetInventoryItemImageListRequest() {
@@ -5076,6 +5831,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public GetInventoryQuantityRequest() {
@@ -5162,6 +5918,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public string sku;
         
         public DeleteInventoryItemRequest() {
@@ -5205,6 +5962,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.InventoryService.InventoryItemSubmit item;
         
         public SynchInventoryItemRequest() {
@@ -5291,6 +6049,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public ChannelAdvisorAccess.InventoryService.InventoryItemQuantityAndPrice itemQuantityAndPrice;
         
         public UpdateInventoryItemQuantityAndPriceRequest() {
@@ -5466,6 +6225,140 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         public RemoveLabelListFromInventoryItemListResponse(ChannelAdvisorAccess.InventoryService.APIResultOfBoolean RemoveLabelListFromInventoryItemListResult) {
             this.RemoveLabelListFromInventoryItemListResult = RemoveLabelListFromInventoryItemListResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="AddUpsellRelationship", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class AddUpsellRelationshipRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.InventoryService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        public InventoryUpsellInfoSubmit[] upsellInfoList;
+        
+        public AddUpsellRelationshipRequest() {
+        }
+        
+        public AddUpsellRelationshipRequest(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, InventoryUpsellInfoSubmit[] upsellInfoList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.upsellInfoList = upsellInfoList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="AddUpsellRelationshipResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class AddUpsellRelationshipResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfArrayOfBoolean AddUpsellRelationshipResult;
+        
+        public AddUpsellRelationshipResponse() {
+        }
+        
+        public AddUpsellRelationshipResponse(ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfArrayOfBoolean AddUpsellRelationshipResult) {
+            this.AddUpsellRelationshipResult = AddUpsellRelationshipResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetUpsellRelationship", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class GetUpsellRelationshipRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.InventoryService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        public string[] parentSKUList;
+        
+        public GetUpsellRelationshipRequest() {
+        }
+        
+        public GetUpsellRelationshipRequest(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string[] parentSKUList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.parentSKUList = parentSKUList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetUpsellRelationshipResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class GetUpsellRelationshipResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfInventoryUpsellInfoResponse GetUpsellRelationshipResult;
+        
+        public GetUpsellRelationshipResponse() {
+        }
+        
+        public GetUpsellRelationshipResponse(ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfInventoryUpsellInfoResponse GetUpsellRelationshipResult) {
+            this.GetUpsellRelationshipResult = GetUpsellRelationshipResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="DeleteUpsellRelationship", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class DeleteUpsellRelationshipRequest {
+        
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+        public ChannelAdvisorAccess.InventoryService.APICredentials APICredentials;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string accountID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string parentSKU;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
+        public string[] childSKUList;
+        
+        public DeleteUpsellRelationshipRequest() {
+        }
+        
+        public DeleteUpsellRelationshipRequest(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string parentSKU, string[] childSKUList) {
+            this.APICredentials = APICredentials;
+            this.accountID = accountID;
+            this.parentSKU = parentSKU;
+            this.childSKUList = childSKUList;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="DeleteUpsellRelationshipResponse", WrapperNamespace="http://api.channeladvisor.com/webservices/", IsWrapped=true)]
+    public partial class DeleteUpsellRelationshipResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfBoolean DeleteUpsellRelationshipResult;
+        
+        public DeleteUpsellRelationshipResponse() {
+        }
+        
+        public DeleteUpsellRelationshipResponse(ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfBoolean DeleteUpsellRelationshipResult) {
+            this.DeleteUpsellRelationshipResult = DeleteUpsellRelationshipResult;
         }
     }
     
@@ -5661,17 +6554,17 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.InventoryService.GetInventoryItemClassificationAttributeListResponse ChannelAdvisorAccess.InventoryService.InventoryServiceSoap.GetInventoryItemClassificationAttributeList(ChannelAdvisorAccess.InventoryService.GetInventoryItemClassificationAttributeListRequest request) {
-            return base.Channel.GetInventoryItemClassificationAttributeList(request);
+        ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListResponse ChannelAdvisorAccess.InventoryService.InventoryServiceSoap.GetInventoryItemAttributeList(ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListRequest request) {
+            return base.Channel.GetInventoryItemAttributeList(request);
         }
         
-        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfClassificationAttributeInfo GetInventoryItemClassificationAttributeList(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string sku) {
-            ChannelAdvisorAccess.InventoryService.GetInventoryItemClassificationAttributeListRequest inValue = new ChannelAdvisorAccess.InventoryService.GetInventoryItemClassificationAttributeListRequest();
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfAttributeInfo GetInventoryItemAttributeList(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string sku) {
+            ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListRequest inValue = new ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.sku = sku;
-            ChannelAdvisorAccess.InventoryService.GetInventoryItemClassificationAttributeListResponse retVal = ((ChannelAdvisorAccess.InventoryService.InventoryServiceSoap)(this)).GetInventoryItemClassificationAttributeList(inValue);
-            return retVal.GetInventoryItemClassificationAttributeListResult;
+            ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListResponse retVal = ((ChannelAdvisorAccess.InventoryService.InventoryServiceSoap)(this)).GetInventoryItemAttributeList(inValue);
+            return retVal.GetInventoryItemAttributeListResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5845,6 +6738,49 @@ namespace ChannelAdvisorAccess.InventoryService {
             inValue.removeReasonDesc = removeReasonDesc;
             ChannelAdvisorAccess.InventoryService.RemoveLabelListFromInventoryItemListResponse retVal = ((ChannelAdvisorAccess.InventoryService.InventoryServiceSoap)(this)).RemoveLabelListFromInventoryItemList(inValue);
             return retVal.RemoveLabelListFromInventoryItemListResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipResponse ChannelAdvisorAccess.InventoryService.InventoryServiceSoap.AddUpsellRelationship(ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipRequest request) {
+            return base.Channel.AddUpsellRelationship(request);
+        }
+        
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfArrayOfBoolean AddUpsellRelationship(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, InventoryUpsellInfoSubmit[] upsellInfoList) {
+            ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipRequest inValue = new ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.upsellInfoList = upsellInfoList;
+            ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipResponse retVal = ((ChannelAdvisorAccess.InventoryService.InventoryServiceSoap)(this)).AddUpsellRelationship(inValue);
+            return retVal.AddUpsellRelationshipResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipResponse ChannelAdvisorAccess.InventoryService.InventoryServiceSoap.GetUpsellRelationship(ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipRequest request) {
+            return base.Channel.GetUpsellRelationship(request);
+        }
+        
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfInventoryUpsellInfoResponse GetUpsellRelationship(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string[] parentSKUList) {
+            ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipRequest inValue = new ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.parentSKUList = parentSKUList;
+            ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipResponse retVal = ((ChannelAdvisorAccess.InventoryService.InventoryServiceSoap)(this)).GetUpsellRelationship(inValue);
+            return retVal.GetUpsellRelationshipResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipResponse ChannelAdvisorAccess.InventoryService.InventoryServiceSoap.DeleteUpsellRelationship(ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipRequest request) {
+            return base.Channel.DeleteUpsellRelationship(request);
+        }
+        
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfBoolean DeleteUpsellRelationship(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string parentSKU, string[] childSKUList) {
+            ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipRequest inValue = new ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipRequest();
+            inValue.APICredentials = APICredentials;
+            inValue.accountID = accountID;
+            inValue.parentSKU = parentSKU;
+            inValue.childSKUList = childSKUList;
+            ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipResponse retVal = ((ChannelAdvisorAccess.InventoryService.InventoryServiceSoap)(this)).DeleteUpsellRelationship(inValue);
+            return retVal.DeleteUpsellRelationshipResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]

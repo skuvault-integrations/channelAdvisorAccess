@@ -23,7 +23,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// </summary>
 		/// <param name="sku">The sku.</param>
 		/// <returns>Item attributes.</returns>
-		ClassificationAttributeInfo[] GetAttributes( string sku );
+		AttributeInfo[] GetAttributes( string sku );
 
 		/// <summary>
 		/// Gets the items matching filter.

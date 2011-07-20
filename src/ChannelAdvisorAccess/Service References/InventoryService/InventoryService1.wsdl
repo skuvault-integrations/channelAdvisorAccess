@@ -6,7 +6,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -130,9 +130,21 @@
           <s:element minOccurs="0" maxOccurs="1" name="UPC" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="MPN" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EAN" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Manufacturer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Brand" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Condition" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Warranty" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ProductMargin" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="SupplierPO" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReceivedInInventory" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="HarmonizedCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Height" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Length" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Width" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="Classification" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="QuantityInfo" type="tns:QuantityInfoResponse" />
           <s:element minOccurs="0" maxOccurs="1" name="PriceInfo" type="tns:PriceInfo" />
-          <s:element minOccurs="0" maxOccurs="1" name="ClassificationInfo" type="tns:ClassificationInfo" />
+          <s:element minOccurs="0" maxOccurs="1" name="AttributeList" type="tns:ArrayOfAttributeInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="VariationInfo" type="tns:VariationInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="StoreInfo" type="tns:StoreInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="ImageList" type="tns:ArrayOfImageInfoResponse" />
@@ -181,18 +193,12 @@
           <s:element minOccurs="1" maxOccurs="1" name="StorePrice" nillable="true" type="s:decimal" />
         </s:sequence>
       </s:complexType>
-      <s:complexType name="ClassificationInfo">
+      <s:complexType name="ArrayOfAttributeInfo">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="AttributeList" type="tns:ArrayOfClassificationAttributeInfo" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AttributeInfo" nillable="true" type="tns:AttributeInfo" />
         </s:sequence>
       </s:complexType>
-      <s:complexType name="ArrayOfClassificationAttributeInfo">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="ClassificationAttributeInfo" nillable="true" type="tns:ClassificationAttributeInfo" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ClassificationAttributeInfo">
+      <s:complexType name="AttributeInfo">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
@@ -297,7 +303,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="itemCriteria" type="tns:InventoryItemCriteria" />
+            <s:element minOccurs="1" maxOccurs="1" name="itemCriteria" nillable="true" type="tns:InventoryItemCriteria" />
             <s:element minOccurs="0" maxOccurs="1" name="detailLevel" type="tns:InventoryItemDetailLevel" />
             <s:element minOccurs="1" maxOccurs="1" name="sortField" nillable="true" type="tns:InventoryItemSortField" />
             <s:element minOccurs="1" maxOccurs="1" name="sortDirection" nillable="true" type="tns:SortDirection" />
@@ -377,7 +383,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="itemCriteria" type="tns:InventoryItemCriteria" />
+            <s:element minOccurs="1" maxOccurs="1" name="itemCriteria" nillable="true" type="tns:InventoryItemCriteria" />
             <s:element minOccurs="1" maxOccurs="1" name="sortField" nillable="true" type="tns:InventoryItemSortField" />
             <s:element minOccurs="1" maxOccurs="1" name="sortDirection" nillable="true" type="tns:SortDirection" />
           </s:sequence>
@@ -403,7 +409,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -427,7 +433,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -493,35 +499,35 @@
           <s:element minOccurs="0" maxOccurs="1" name="ListOfChoices" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:element name="GetInventoryItemClassificationAttributeList">
+      <s:element name="GetInventoryItemAttributeList">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GetInventoryItemClassificationAttributeListResponse">
+      <s:element name="GetInventoryItemAttributeListResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetInventoryItemClassificationAttributeListResult" type="tns:APIResultOfArrayOfClassificationAttributeInfo" />
+            <s:element minOccurs="0" maxOccurs="1" name="GetInventoryItemAttributeListResult" type="tns:APIResultOfArrayOfAttributeInfo" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="APIResultOfArrayOfClassificationAttributeInfo">
+      <s:complexType name="APIResultOfArrayOfAttributeInfo">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
           <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfClassificationAttributeInfo" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfAttributeInfo" />
         </s:sequence>
       </s:complexType>
       <s:element name="GetInventoryItemVariationInfo">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -545,7 +551,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -569,7 +575,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -593,7 +599,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -718,13 +724,21 @@
           <s:enumeration value="Error_NotValidCartID" />
           <s:enumeration value="Error_SKUDuplicated" />
           <s:enumeration value="Error_AuctionWinnerValidation" />
+          <s:enumeration value="MergeInvoice_CheckoutNotOpen" />
+          <s:enumeration value="MergeInvoice_SameInvoice" />
+          <s:enumeration value="MergeInvoice_DiffTaxModule" />
+          <s:enumeration value="MergeInvoice_Error" />
+          <s:enumeration value="SplitInvoice_NoLineItems" />
+          <s:enumeration value="SplitInvoice_CheckoutNotOpen" />
+          <s:enumeration value="SplitInvoice_NotEnoughLineItems" />
+          <s:enumeration value="SplitInvoice_Error" />
         </s:restriction>
       </s:simpleType>
       <s:element name="DeleteInventoryItem">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="sku" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="sku" nillable="true" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -739,7 +753,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="item" type="tns:InventoryItemSubmit" />
+            <s:element minOccurs="1" maxOccurs="1" name="item" nillable="true" type="tns:InventoryItemSubmit" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -763,9 +777,21 @@
           <s:element minOccurs="0" maxOccurs="1" name="UPC" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="MPN" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EAN" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Manufacturer" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Brand" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Condition" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Warranty" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ProductMargin" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="SupplierPO" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReceivedInInventory" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="HarmonizedCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Height" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Length" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="Width" nillable="true" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="Classification" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="QuantityInfo" type="tns:QuantityInfoSubmit" />
           <s:element minOccurs="0" maxOccurs="1" name="PriceInfo" type="tns:PriceInfo" />
-          <s:element minOccurs="0" maxOccurs="1" name="ClassificationInfo" type="tns:ClassificationInfo" />
+          <s:element minOccurs="0" maxOccurs="1" name="AttributeList" type="tns:ArrayOfAttributeInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="VariationInfo" type="tns:VariationInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="StoreInfo" type="tns:StoreInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="ImageList" type="tns:ArrayOfImageInfoSubmit" />
@@ -853,7 +879,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="itemQuantityAndPrice" type="tns:InventoryItemQuantityAndPrice" />
+            <s:element minOccurs="1" maxOccurs="1" name="itemQuantityAndPrice" nillable="true" type="tns:InventoryItemQuantityAndPrice" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -947,6 +973,123 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="AddUpsellRelationship">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="upsellInfoList" type="tns:ArrayOfInventoryUpsellInfoSubmit" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfInventoryUpsellInfoSubmit">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="InventoryUpsellInfoSubmit" nillable="true" type="tns:InventoryUpsellInfoSubmit" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="InventoryUpsellInfoSubmit">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ParentSKU" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ChildItemList" type="tns:ArrayOfInventoryUpsellChildInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfInventoryUpsellChildInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="InventoryUpsellChildInfo" nillable="true" type="tns:InventoryUpsellChildInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="InventoryUpsellChildInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="SKU" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SalePrice" nillable="true" type="s:decimal" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AddUpsellRelationshipResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AddUpsellRelationshipResult" type="tns:APIResultOfArrayOfArrayOfBoolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="APIResultOfArrayOfArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfArrayOfBoolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ArrayOfBoolean" nillable="true" type="tns:ArrayOfBoolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="boolean" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetUpsellRelationship">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="parentSKUList" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUpsellRelationshipResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUpsellRelationshipResult" type="tns:APIResultOfArrayOfInventoryUpsellInfoResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="APIResultOfArrayOfInventoryUpsellInfoResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfInventoryUpsellInfoResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfInventoryUpsellInfoResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="InventoryUpsellInfoResponse" nillable="true" type="tns:InventoryUpsellInfoResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="InventoryUpsellInfoResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ParentSKU" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ChildItemList" type="tns:ArrayOfInventoryUpsellChildInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="DeleteUpsellRelationship">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="parentSKU" nillable="true" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="childSKUList" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteUpsellRelationshipResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeleteUpsellRelationshipResult" type="tns:APIResultOfArrayOfBoolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="APIResultOfArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfBoolean" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="Ping">
         <s:complexType />
       </s:element>
@@ -1049,13 +1192,13 @@
   <wsdl:message name="GetClassificationConfigurationInformationAPICredentials">
     <wsdl:part name="APICredentials" element="tns:APICredentials" />
   </wsdl:message>
-  <wsdl:message name="GetInventoryItemClassificationAttributeListSoapIn">
-    <wsdl:part name="parameters" element="tns:GetInventoryItemClassificationAttributeList" />
+  <wsdl:message name="GetInventoryItemAttributeListSoapIn">
+    <wsdl:part name="parameters" element="tns:GetInventoryItemAttributeList" />
   </wsdl:message>
-  <wsdl:message name="GetInventoryItemClassificationAttributeListSoapOut">
-    <wsdl:part name="parameters" element="tns:GetInventoryItemClassificationAttributeListResponse" />
+  <wsdl:message name="GetInventoryItemAttributeListSoapOut">
+    <wsdl:part name="parameters" element="tns:GetInventoryItemAttributeListResponse" />
   </wsdl:message>
-  <wsdl:message name="GetInventoryItemClassificationAttributeListAPICredentials">
+  <wsdl:message name="GetInventoryItemAttributeListAPICredentials">
     <wsdl:part name="APICredentials" element="tns:APICredentials" />
   </wsdl:message>
   <wsdl:message name="GetInventoryItemVariationInfoSoapIn">
@@ -1166,6 +1309,33 @@
   <wsdl:message name="RemoveLabelListFromInventoryItemListAPICredentials">
     <wsdl:part name="APICredentials" element="tns:APICredentials" />
   </wsdl:message>
+  <wsdl:message name="AddUpsellRelationshipSoapIn">
+    <wsdl:part name="parameters" element="tns:AddUpsellRelationship" />
+  </wsdl:message>
+  <wsdl:message name="AddUpsellRelationshipSoapOut">
+    <wsdl:part name="parameters" element="tns:AddUpsellRelationshipResponse" />
+  </wsdl:message>
+  <wsdl:message name="AddUpsellRelationshipAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
+  <wsdl:message name="GetUpsellRelationshipSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUpsellRelationship" />
+  </wsdl:message>
+  <wsdl:message name="GetUpsellRelationshipSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUpsellRelationshipResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUpsellRelationshipAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
+  <wsdl:message name="DeleteUpsellRelationshipSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteUpsellRelationship" />
+  </wsdl:message>
+  <wsdl:message name="DeleteUpsellRelationshipSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteUpsellRelationshipResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteUpsellRelationshipAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
   <wsdl:message name="PingSoapIn">
     <wsdl:part name="parameters" element="tns:Ping" />
   </wsdl:message>
@@ -1212,9 +1382,9 @@
       <wsdl:input message="tns:GetClassificationConfigurationInformationSoapIn" />
       <wsdl:output message="tns:GetClassificationConfigurationInformationSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="GetInventoryItemClassificationAttributeList">
-      <wsdl:input message="tns:GetInventoryItemClassificationAttributeListSoapIn" />
-      <wsdl:output message="tns:GetInventoryItemClassificationAttributeListSoapOut" />
+    <wsdl:operation name="GetInventoryItemAttributeList">
+      <wsdl:input message="tns:GetInventoryItemAttributeListSoapIn" />
+      <wsdl:output message="tns:GetInventoryItemAttributeListSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetInventoryItemVariationInfo">
       <wsdl:input message="tns:GetInventoryItemVariationInfoSoapIn" />
@@ -1263,6 +1433,18 @@
     <wsdl:operation name="RemoveLabelListFromInventoryItemList">
       <wsdl:input message="tns:RemoveLabelListFromInventoryItemListSoapIn" />
       <wsdl:output message="tns:RemoveLabelListFromInventoryItemListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AddUpsellRelationship">
+      <wsdl:input message="tns:AddUpsellRelationshipSoapIn" />
+      <wsdl:output message="tns:AddUpsellRelationshipSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUpsellRelationship">
+      <wsdl:input message="tns:GetUpsellRelationshipSoapIn" />
+      <wsdl:output message="tns:GetUpsellRelationshipSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteUpsellRelationship">
+      <wsdl:input message="tns:DeleteUpsellRelationshipSoapIn" />
+      <wsdl:output message="tns:DeleteUpsellRelationshipSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="Ping">
       <wsdl:input message="tns:PingSoapIn" />
@@ -1361,11 +1543,11 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetInventoryItemClassificationAttributeList">
-      <soap:operation soapAction="http://api.channeladvisor.com/webservices/GetInventoryItemClassificationAttributeList" style="document" />
+    <wsdl:operation name="GetInventoryItemAttributeList">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/GetInventoryItemAttributeList" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
-        <soap:header message="tns:GetInventoryItemClassificationAttributeListAPICredentials" part="APICredentials" use="literal" />
+        <soap:header message="tns:GetInventoryItemAttributeListAPICredentials" part="APICredentials" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
@@ -1491,6 +1673,36 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="AddUpsellRelationship">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/AddUpsellRelationship" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:AddUpsellRelationshipAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUpsellRelationship">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/GetUpsellRelationship" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetUpsellRelationshipAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteUpsellRelationship">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/DeleteUpsellRelationship" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:DeleteUpsellRelationshipAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="Ping">
       <soap:operation soapAction="http://api.channeladvisor.com/webservices/Ping" style="document" />
       <wsdl:input>
@@ -1594,11 +1806,11 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetInventoryItemClassificationAttributeList">
-      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/GetInventoryItemClassificationAttributeList" style="document" />
+    <wsdl:operation name="GetInventoryItemAttributeList">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/GetInventoryItemAttributeList" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
-        <soap12:header message="tns:GetInventoryItemClassificationAttributeListAPICredentials" part="APICredentials" use="literal" />
+        <soap12:header message="tns:GetInventoryItemAttributeListAPICredentials" part="APICredentials" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
@@ -1724,6 +1936,36 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="AddUpsellRelationship">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/AddUpsellRelationship" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:AddUpsellRelationshipAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUpsellRelationship">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/GetUpsellRelationship" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetUpsellRelationshipAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteUpsellRelationship">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/DeleteUpsellRelationship" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:DeleteUpsellRelationshipAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="Ping">
       <soap12:operation soapAction="http://api.channeladvisor.com/webservices/Ping" style="document" />
       <wsdl:input>
@@ -1737,10 +1979,10 @@
   </wsdl:binding>
   <wsdl:service name="InventoryService">
     <wsdl:port name="InventoryServiceSoap" binding="tns:InventoryServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v1/InventoryService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/InventoryService.asmx" />
     </wsdl:port>
     <wsdl:port name="InventoryServiceSoap12" binding="tns:InventoryServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v1/InventoryService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/InventoryService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
