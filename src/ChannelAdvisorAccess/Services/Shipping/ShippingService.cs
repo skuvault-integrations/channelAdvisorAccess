@@ -41,10 +41,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 								FullShipment = new FullShipmentContents{
 									carrierCode = carrierCode,
 									classCode = classCode,
-									trackingNumber = trackingNumber,
-									shipmentCost = 0,
-									shipmentTaxCost = 0,
-									insuranceCost = 0
+									trackingNumber = trackingNumber
 								}
 							}}});
 						CheckCaSuccess( result );
