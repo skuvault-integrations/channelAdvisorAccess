@@ -370,6 +370,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="TaxAmount" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="GiftWrapAmount" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="GiftWrapTaxAmount" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="RecyclingFee" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="RefundRequestID" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="RefundRequested" type="s:boolean" />
@@ -552,6 +553,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="DateCancelledGMT" nillable="true" type="s:dateTime" />
           <s:element minOccurs="1" maxOccurs="1" name="OrderID" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="ClientOrderIdentifier" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SellerOrderID" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="FlagStyle" nillable="true" type="s1:FlagType" />
         </s:sequence>
       </s:complexType>
@@ -629,6 +631,8 @@
             <s:sequence>
               <s:element minOccurs="0" maxOccurs="1" name="ShipmentList" type="s1:ArrayOfShipment" />
               <s:element minOccurs="0" maxOccurs="1" name="ShippingInstructions" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="EstimatedShipDate" nillable="true" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DeliveryDate" nillable="true" type="s:dateTime" />
             </s:sequence>
           </s:extension>
         </s:complexContent>
@@ -745,6 +749,7 @@
               <s:element minOccurs="0" maxOccurs="1" name="GiftMessage" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="GiftWrapLevel" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ItemPromoList" type="s1:ArrayOfOrderLineItemItemPromo" />
+              <s:element minOccurs="1" maxOccurs="1" name="RecyclingFee" nillable="true" type="s:decimal" />
             </s:sequence>
           </s:extension>
         </s:complexContent>
@@ -806,6 +811,7 @@
               <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsFBA" type="s:boolean" />
             </s:sequence>
           </s:extension>
         </s:complexContent>
@@ -862,6 +868,7 @@
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="OrderTimeGMT" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="ClientOrderIdentifier" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SellerOrderID" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="OrderStatus" type="s1:OrderStatus" />
           <s:element minOccurs="0" maxOccurs="1" name="BuyerEmailAddress" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="EmailOptIn" type="s:boolean" />
@@ -915,6 +922,8 @@
             <s:sequence>
               <s:element minOccurs="0" maxOccurs="1" name="EmailAddress" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="ShippingInstructions" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="EstimatedShipDate" nillable="true" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DeliveryDate" nillable="true" type="s:dateTime" />
             </s:sequence>
           </s:extension>
         </s:complexContent>

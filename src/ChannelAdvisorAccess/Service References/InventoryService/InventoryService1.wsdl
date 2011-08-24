@@ -687,6 +687,7 @@
           <s:enumeration value="TooManyVATShippingAmounts" />
           <s:enumeration value="TooManyGiftWrapAmounts" />
           <s:enumeration value="TooManyVATGiftWrapAmounts" />
+          <s:enumeration value="TooManyRecyclingFeeAmounts" />
           <s:enumeration value="VATRangeOutOfRange" />
           <s:enumeration value="PromoAmountOutOfRange" />
           <s:enumeration value="NegativeQuantity" />

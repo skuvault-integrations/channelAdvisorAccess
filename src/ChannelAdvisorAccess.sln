@@ -5,7 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelAdvisorAccess", "Cha
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{00E8503B-120D-4F94-BD03-4DDE2D1C01EA}"
 	ProjectSection(SolutionItems) = preProject
-		..\default.ps1 = ..\default.ps1
 		..\psake.cmd = ..\psake.cmd
 		..\tools\psake\psake.ps1 = ..\tools\psake\psake.ps1
 		..\release.cmd = ..\release.cmd
