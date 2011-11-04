@@ -12,11 +12,17 @@ namespace ChannelAdvisorAccess
 	{
 		private readonly ICurrencyConverter _currencyConverter;
 
-		public ChannelAdvisorAccount( string name, string id, string currencyCode, bool isActive, bool isMain, IChannelAdvisorServicesFactory servicesFactory, ICurrencyConverter currencyConverter )
+		public ChannelAdvisorAccount( string name, string id, string currencyCode, bool isActive, bool isMain, IChannelAdvisorServicesFactory servicesFactory, ICurrencyConverter currencyConverter ) :
+			this( name, id, 0, currencyCode, isActive, isMain, servicesFactory, currencyConverter )
+		{
+		}
+		
+		public ChannelAdvisorAccount( string name, string id, int privateId, string currencyCode, bool isActive, bool isMain, IChannelAdvisorServicesFactory servicesFactory, ICurrencyConverter currencyConverter )
 		{
 			this._currencyConverter = currencyConverter;
 			this.Name = name;
 			this.Id = id;
+			this.PrivateId = privateId;
 			this.CurrencyCode = currencyCode;
 			this.IsActive = isActive;
 			this.IsMain = isMain;
@@ -29,6 +35,7 @@ namespace ChannelAdvisorAccess
 
 		public string Name { get; private set; }
 		public string Id { get; private set; }
+		public int PrivateId { get; private set; }
 		public string CurrencyCode { get; private set; }
 		public bool IsActive { get; private set; }
 		public bool IsMain{ get; private set; }
