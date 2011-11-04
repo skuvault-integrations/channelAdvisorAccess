@@ -55,6 +55,79 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			}
 		}
 
+		public void MarkOrderShipped( string clientOrderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
+		{
+			try
+			{
+				ActionPolicies.CaSubmitPolicy.Do( () =>
+					{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+							new OrderShipment{ 
+								ClientOrderIdentifier = clientOrderId,
+								ShipmentType = ShipmentTypeEnum.Full,
+								FullShipment = new FullShipmentContents{
+									carrierCode = carrierCode,
+									classCode = classCode,
+									trackingNumber = trackingNumber
+								}
+							}}});
+						CheckCaSuccess( result );
+					});
+			}
+			catch( Exception e )
+			{
+				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
+					clientOrderId, this.AccountId, carrierCode, classCode, trackingNumber );
+				throw;
+			}
+		}
+
+		public void MarkOrderShipped( int orderId, PartialShipmentContents partialShipmentContents )
+		{
+			try
+			{
+				ActionPolicies.CaSubmitPolicy.Do( () =>
+					{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+							new OrderShipment{ 
+								OrderId = orderId,
+								ShipmentType = ShipmentTypeEnum.Partial,
+								PartialShipment = partialShipmentContents
+							}}});
+						CheckCaSuccess( result );
+					});
+			}
+			catch( Exception e )
+			{
+				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
+					orderId, this.AccountId, partialShipmentContents.carrierCode, partialShipmentContents.classCode, partialShipmentContents.trackingNumber );
+				throw;
+			}
+		}
+
+		public void MarkOrderShipped( string clientOrderId, PartialShipmentContents partialShipmentContents )
+		{
+			try
+			{
+				ActionPolicies.CaSubmitPolicy.Do( () =>
+					{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+							new OrderShipment{ 
+								ClientOrderIdentifier = clientOrderId,
+								ShipmentType = ShipmentTypeEnum.Partial,
+								PartialShipment = partialShipmentContents
+							}}});
+						CheckCaSuccess( result );
+					});
+			}
+			catch( Exception e )
+			{
+				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
+					clientOrderId, this.AccountId, partialShipmentContents.carrierCode, partialShipmentContents.classCode, partialShipmentContents.trackingNumber );
+				throw;
+			}
+		}
+
 		public ShippingCarrier[] GetShippingCarrierList()
 		{
 			var result = this._client.GetShippingCarrierList( this._credentials, this.AccountId );
