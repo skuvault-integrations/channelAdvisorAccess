@@ -128,6 +128,27 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			}
 		}
 
+		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList )
+		{
+			return GetOrderShipmentHistoryList( orderIdList, new string[]{} );
+		}
+
+		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( string [] clientOrderIdentifierList )
+		{
+			return GetOrderShipmentHistoryList( new int[]{}, clientOrderIdentifierList );
+		}
+
+		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList, string [] clientOrderIdentifierList )
+		{
+			return ActionPolicies.CaSubmitPolicy.Get( () =>
+					{
+						var result = _client.GetOrderShipmentHistoryList( _credentials, this.AccountId, orderIdList, clientOrderIdentifierList );
+						CheckCaSuccess( result );
+						return result.ResultData;
+					});
+		}
+
+
 		public ShippingCarrier[] GetShippingCarrierList()
 		{
 			var result = this._client.GetShippingCarrierList( this._credentials, this.AccountId );
@@ -160,6 +181,12 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		/// <param name="result">The result.</param>
 		/// <exception cref="ChannelAdvisorException">Thrown if CA call failed.</exception>
 		private static void CheckCaSuccess( APIResultOfArrayOfShippingCarrier result )
+		{
+			if( result.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( result.MessageCode, result.Message );
+		}
+
+		private void CheckCaSuccess( APIResultOfArrayOfOrderShipmentHistoryResponse result )
 		{
 			if( result.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
