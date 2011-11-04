@@ -312,6 +312,36 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="SubmitOrderWithRecycling">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="order" nillable="true" type="s1:OrderSubmit" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SubmitOrderWithRecyclingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SubmitOrderWithRecyclingResult" type="tns:APIResultOfInt32" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOrderListWithRecycling">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="orderCriteria" nillable="true" type="s1:OrderCriteria" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOrderListWithRecyclingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOrderListWithRecyclingResult" type="tns:APIResultOfArrayOfOrderResponseItem" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="Ping">
         <s:complexType />
       </s:element>
@@ -476,6 +506,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="PaymentStatusFilter" nillable="true" type="s1:PaymentStatusCode" />
           <s:element minOccurs="1" maxOccurs="1" name="CheckoutStatusFilter" nillable="true" type="s1:CheckoutStatusCode" />
           <s:element minOccurs="1" maxOccurs="1" name="ShippingStatusFilter" nillable="true" type="s1:ShippingStatusCode" />
+          <s:element minOccurs="1" maxOccurs="1" name="RefundStatusFilter" nillable="true" type="s1:OrderRefundStatusCode" />
           <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="PageNumberFilter" nillable="true" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PageSize" nillable="true" type="s:int" />
@@ -543,6 +574,16 @@
           <s:enumeration value="PendingShipment" />
         </s:restriction>
       </s:simpleType>
+      <s:simpleType name="OrderRefundStatusCode">
+        <s:restriction base="s:string">
+          <s:enumeration value="NoChange" />
+          <s:enumeration value="FailedAttemptsOnly" />
+          <s:enumeration value="NoRefunds" />
+          <s:enumeration value="OrderLevel" />
+          <s:enumeration value="LineItemLevel" />
+          <s:enumeration value="OrderAndLineItemLevel" />
+        </s:restriction>
+      </s:simpleType>
       <s:complexType name="OrderResponseItem" abstract="true">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="NumberOfMatches" type="s:int" />
@@ -591,15 +632,6 @@
           <s:element minOccurs="1" maxOccurs="1" name="OrderRefundStatus" type="s1:OrderRefundStatusCode" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="OrderRefundStatusCode">
-        <s:restriction base="s:string">
-          <s:enumeration value="FailedAttemptsOnly" />
-          <s:enumeration value="NoRefunds" />
-          <s:enumeration value="OrderLevel" />
-          <s:enumeration value="LineItemLevel" />
-          <s:enumeration value="OrderAndLineItemLevel" />
-        </s:restriction>
-      </s:simpleType>
       <s:complexType name="OrderResponseDetailMedium">
         <s:complexContent mixed="false">
           <s:extension base="s1:OrderResponseDetailLow">
@@ -773,6 +805,7 @@
           <s:enumeration value="BuyerOptInIncentive" />
           <s:enumeration value="GiftWrap" />
           <s:enumeration value="VATGiftWrap" />
+          <s:enumeration value="RecyclingFee" />
         </s:restriction>
       </s:simpleType>
       <s:complexType name="OrderLineItemPromo">
@@ -1025,6 +1058,24 @@
   <wsdl:message name="OrderSplitAPICredentials">
     <wsdl:part name="APICredentials" element="tns:APICredentials" />
   </wsdl:message>
+  <wsdl:message name="SubmitOrderWithRecyclingSoapIn">
+    <wsdl:part name="parameters" element="tns:SubmitOrderWithRecycling" />
+  </wsdl:message>
+  <wsdl:message name="SubmitOrderWithRecyclingSoapOut">
+    <wsdl:part name="parameters" element="tns:SubmitOrderWithRecyclingResponse" />
+  </wsdl:message>
+  <wsdl:message name="SubmitOrderWithRecyclingAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderListWithRecyclingSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOrderListWithRecycling" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderListWithRecyclingSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOrderListWithRecyclingResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOrderListWithRecyclingAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
   <wsdl:message name="PingSoapIn">
     <wsdl:part name="parameters" element="tns:Ping" />
   </wsdl:message>
@@ -1074,6 +1125,14 @@
     <wsdl:operation name="OrderSplit">
       <wsdl:input message="tns:OrderSplitSoapIn" />
       <wsdl:output message="tns:OrderSplitSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SubmitOrderWithRecycling">
+      <wsdl:input message="tns:SubmitOrderWithRecyclingSoapIn" />
+      <wsdl:output message="tns:SubmitOrderWithRecyclingSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOrderListWithRecycling">
+      <wsdl:input message="tns:GetOrderListWithRecyclingSoapIn" />
+      <wsdl:output message="tns:GetOrderListWithRecyclingSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="Ping">
       <wsdl:input message="tns:PingSoapIn" />
@@ -1177,6 +1236,26 @@
       <wsdl:input>
         <soap:body use="literal" />
         <soap:header message="tns:OrderSplitAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitOrderWithRecycling">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/SubmitOrderWithRecycling" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:SubmitOrderWithRecyclingAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrderListWithRecycling">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/GetOrderListWithRecycling" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetOrderListWithRecyclingAPICredentials" part="APICredentials" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
@@ -1290,6 +1369,26 @@
       <wsdl:input>
         <soap12:body use="literal" />
         <soap12:header message="tns:OrderSplitAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitOrderWithRecycling">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/SubmitOrderWithRecycling" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:SubmitOrderWithRecyclingAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOrderListWithRecycling">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/GetOrderListWithRecycling" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetOrderListWithRecyclingAPICredentials" part="APICredentials" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
