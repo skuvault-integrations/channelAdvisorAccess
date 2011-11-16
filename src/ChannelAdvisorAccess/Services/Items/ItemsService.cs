@@ -17,9 +17,9 @@ namespace ChannelAdvisorAccess.Services.Items
 		private readonly ObjectCache _cache;
 		private readonly string _allItemsCacheKey;
 		private readonly object _inventoryCacheLock = new Object();
-		
+
 		public string Name { get; private set; }
-		public string AccountId{ get; private set; }
+		public string AccountId { get; private set; }
 		public TimeSpan SlidingCacheExpiration { get; set; }
 
 		/// <summary>
@@ -41,7 +41,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			this.SlidingCacheExpiration = ObjectCache.NoSlidingExpiration;
 			this._allItemsCacheKey = "caAllItems_ID_{0}".FormatWith( this.AccountId );
 		}
-		
+
 		#region Get items
 		public bool DoesSkuExist( string sku )
 		{
@@ -51,10 +51,10 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public IEnumerable< InventoryItemResponse > GetAllItems()
 		{
-			if( UseCache() )
-				return GetCachedInventory();
+			if( this.UseCache() )
+				return this.GetCachedInventory();
 			else
-				return DownloadAllItems();
+				return this.DownloadAllItems();
 		}
 
 		private IEnumerable< InventoryItemResponse > GetCachedInventory()
@@ -76,16 +76,16 @@ namespace ChannelAdvisorAccess.Services.Items
 		private IEnumerable< InventoryItemResponse > DownloadAllItems()
 		{
 			var filter = new ItemsFilter
-				{
-					DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
-				};
+			             	{
+			             		DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
+			             	};
 
 			return this.GetItems( filter );
 		}
 
 		private bool UseCache()
 		{
-			return _cache != null;
+			return this._cache != null;
 		}
 
 		/// <summary>
@@ -147,10 +147,10 @@ namespace ChannelAdvisorAccess.Services.Items
 				Profiler.Start( "GetInventoryItemList" );
 
 				var itemResponse = ActionPolicies.CaGetPolicy.Get( () => this._client.GetFilteredInventoryItemList
-						(
-							this._credentials,
-							this.AccountId, filter.Criteria, filter.DetailLevel,
-							filter.SortField, filter.SortDirection ) );
+				                                                         	(
+				                                                         		this._credentials,
+				                                                         		this.AccountId, filter.Criteria, filter.DetailLevel,
+				                                                         		filter.SortField, filter.SortDirection ) );
 
 				Profiler.End( "Pulled page - " + filter.Criteria.PageNumber );
 
@@ -194,7 +194,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		public QuantityInfoResponse GetItemQuantities( string sku )
 		{
 			var quantityInfo = ActionPolicies.CaGetPolicy.Get( () =>
-				this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ));
+			                                                   this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
 			return GetResultWithSuccessCheck( quantityInfo, quantityInfo.ResultData );
 		}
 
@@ -286,24 +286,23 @@ namespace ChannelAdvisorAccess.Services.Items
 			const int pageSize = 100;
 			var length = pageSize;
 
-			for( int i = 0; i < items.Count; i += pageSize )
+			for( var i = 0; i < items.Count; i += pageSize )
 			{
 				// adjust count of items
 				if( i + length > items.Count )
 					length = items.Count - i;
 
-				var itemInfoArray = new InventoryItemSubmit[length];
-				items.CopyTo( i, itemInfoArray, 0, length );
+				var itemInfoArray = new InventoryItemSubmit[ length ];
+				items.CopyTo( i, itemInfoArray, 0, length - 1 );
+				itemInfoArray[ length - 1 ] = items[ length - 1 ];
 
-				Profiler.Start(
-					"Synching items, page - {0}, position - {1}, count - {2}".FormatWith(
-						Math.Ceiling( ( ( double )i ) / pageSize ), i, itemInfoArray.Length ) );
-				
+				Profiler.Start( "Synching items, page - {0}, position - {1}, count - {2}".FormatWith( Math.Ceiling( ( ( double )i ) / pageSize ), i, itemInfoArray.Length ) );
+
 				ActionPolicies.CaSubmitPolicy.Do( () =>
-						{
-							var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, itemInfoArray );
-							CheckCaSuccess( resultOfBoolean );
-						} );
+				                                  	{
+				                                  		var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, itemInfoArray );
+				                                  		CheckCaSuccess( resultOfBoolean );
+				                                  	} );
 
 				Profiler.End();
 			}
@@ -312,10 +311,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice )
 		{
 			ActionPolicies.CaSubmitPolicy.Do( () =>
-				{
-					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPrice( this._credentials, this.AccountId, itemQuantityAndPrice );
-					CheckCaSuccess( resultOfBoolean );
-				});
+			                                  	{
+			                                  		var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPrice( this._credentials, this.AccountId, itemQuantityAndPrice );
+			                                  		CheckCaSuccess( resultOfBoolean );
+			                                  	} );
 		}
 
 		public void UpdateQuantityAndPrices( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
@@ -324,21 +323,20 @@ namespace ChannelAdvisorAccess.Services.Items
 			const int pageSize = 500;
 			var length = pageSize;
 
-			for( int i = 0; i < itemQuantityAndPrices.Count; i += pageSize )
+			for( var i = 0; i < itemQuantityAndPrices.Count; i += pageSize )
 			{
 				// adjust count of items
 				if( i + length > itemQuantityAndPrices.Count )
 					length = itemQuantityAndPrices.Count - i;
 
-				var itemInfoArray = new InventoryItemQuantityAndPrice[length];
+				var itemInfoArray = new InventoryItemQuantityAndPrice[ length ];
 				itemQuantityAndPrices.CopyTo( i, itemInfoArray, 0, length );
 
-				
 				ActionPolicies.CaSubmitPolicy.Do( () =>
-					{
-						var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemInfoArray );
-						CheckCaSuccess( resultOfBoolean );
-					});
+				                                  	{
+				                                  		var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemInfoArray );
+				                                  		CheckCaSuccess( resultOfBoolean );
+				                                  	} );
 			}
 		}
 		#endregion
@@ -347,10 +345,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		public void DeleteItem( string sku )
 		{
 			ActionPolicies.CaSubmitPolicy.Do( () =>
-				{
-					var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
-					CheckCaSuccess( resultOfBoolean );
-				});
+			                                  	{
+			                                  		var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
+			                                  		CheckCaSuccess( resultOfBoolean );
+			                                  	} );
 		}
 		#endregion
 
@@ -358,11 +356,11 @@ namespace ChannelAdvisorAccess.Services.Items
 		public ClassificationConfigurationInformation[] GetClassificationConfigInfo()
 		{
 			return ActionPolicies.CaGetPolicy.Get( () =>
-				{
-					var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
-					CheckCaSuccess( result );
-					return result.ResultData;
-				});
+			                                       	{
+			                                       		var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
+			                                       		CheckCaSuccess( result );
+			                                       		return result.ResultData;
+			                                       	} );
 		}
 		#endregion
 
