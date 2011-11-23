@@ -28,6 +28,32 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		public string Name { get; private set; }
 		public string AccountId{ get; private set; }
 
+		/// <summary>Markes the order shipped old.</summary>
+		/// <param name="orderId">The order id.</param>
+		/// <param name="carrierCode">The carrier code.</param>
+		/// <param name="classCode">The class code.</param>
+		/// <param name="trackingNumber">The tracking number.</param>
+		/// <param name="dateShipped">The date shipped.</param>
+		/// <remarks>Uses old OrderShipped CA API method to mark the order shipped.</remarks>
+		/// <seealso href="http://developer.channeladvisor.com/display/cadn/OrderShipped"/>
+		public void MarkeOrderShippedOld( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
+		{
+			try
+			{
+				ActionPolicies.CaSubmitPolicy.Do( () =>
+					{
+						var result = _client.OrderShipped( _credentials, this.AccountId, orderId, dateShipped, carrierCode, classCode, trackingNumber, null );
+						CheckCaSuccess( result );
+					});
+			}
+			catch( Exception e )
+			{
+				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
+				                  orderId, this.AccountId, carrierCode, classCode, trackingNumber );
+				throw;
+			}
+		}
+
 		public void MarkOrderShipped( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
 		{
 			try
