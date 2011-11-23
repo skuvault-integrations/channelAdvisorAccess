@@ -13,7 +13,6 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		/// <param name="classCode">The class code.</param>
 		/// <param name="trackingNumber">The tracking number.</param>
 		/// <param name="dateShipped">The date shipped when order was shipped (will be converted to UTC).</param>
-		/// <seealso href="http://developer.channeladvisor.com/display/cadn/OrderShipped"/>
 		void MarkOrderShipped( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped );
 
 		/// <summary>
@@ -31,5 +30,21 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		/// </summary>
 		/// <returns>List of supported shipping carriers.</returns>
 		ShippingCarrier[] GetShippingCarrierList();
+
+		/// <summary>Markes the order shipped old.</summary>
+		/// <param name="orderId">The order ID.</param>
+		/// <param name="carrierCode">The carrier code.</param>
+		/// <param name="classCode">The class code.</param>
+		/// <param name="trackingNumber">The tracking number.</param>
+		/// <param name="dateShipped">The date shipped when order was shipped (will be converted to UTC).</param>
+		/// <seealso href="http://developer.channeladvisor.com/display/cadn/OrderShipped"/>
+		void MarkeOrderShippedOld( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped );
+
+		void MarkOrderShipped( string clientOrderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped );
+		void MarkOrderShipped( int orderId, PartialShipmentContents partialShipmentContents );
+		void MarkOrderShipped( string clientOrderId, PartialShipmentContents partialShipmentContents );
+		OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList );
+		OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( string [] clientOrderIdentifierList );
+		OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList, string [] clientOrderIdentifierList );
 	}
 }
