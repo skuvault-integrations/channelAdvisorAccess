@@ -28,7 +28,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		public string Name { get; private set; }
 		public string AccountId{ get; private set; }
 
-		public void MarkeOrderShippedOld( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
+		public void MarkOrderShippedOld( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
 		{
 			try
 			{

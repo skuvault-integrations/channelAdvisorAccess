@@ -38,7 +38,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		/// <param name="trackingNumber">The tracking number.</param>
 		/// <param name="dateShipped">The date shipped when order was shipped (will be converted to UTC).</param>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/OrderShipped"/>
-		void MarkeOrderShippedOld( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped );
+		void MarkOrderShippedOld( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped );
 
 		void MarkOrderShipped( string clientOrderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped );
 		void MarkOrderShipped( int orderId, PartialShipmentContents partialShipmentContents );
