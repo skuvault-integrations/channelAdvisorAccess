@@ -40,6 +40,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 								ShipmentType = ShipmentTypeEnum.Full,
 								FullShipment = new FullShipmentContents{
 									carrierCode = carrierCode,
+									dateShippedGMT = dateShipped,
 									classCode = classCode,
 									trackingNumber = trackingNumber
 								}
@@ -67,6 +68,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 								ShipmentType = ShipmentTypeEnum.Full,
 								FullShipment = new FullShipmentContents{
 									carrierCode = carrierCode,
+									dateShippedGMT = dateShipped,
 									classCode = classCode,
 									trackingNumber = trackingNumber
 								}
