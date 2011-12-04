@@ -16,6 +16,10 @@ namespace ChannelAdvisorAccess.Exceptions
 			this._errorMessage = message;
 		}
 
+		public ChannelAdvisorException( string message ) : this( 0, message )
+		{
+		}
+
 		public int MessageCode
 		{
 			get { return this._messageCode; }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.ShippingService;
@@ -148,6 +149,24 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			}
 		}
 
+		public void SubmitOrderShipmentList( OrderShipment[] orderShipments )
+		{
+			try
+			{
+				ActionPolicies.CaSubmitPolicy.Do( () =>
+				                                  	{
+				                                  		var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId,
+												new OrderShipmentList{ ShipmentList = orderShipments });
+											CheckCaSuccess( result );
+				                                  	} );
+			}
+			catch( Exception e )
+			{
+				this.Log().Error( e, "Failed to submit order shipment list" );
+				throw;
+			}
+		}
+
 		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList )
 		{
 			return GetOrderShipmentHistoryList( orderIdList, new string[]{} );
@@ -182,6 +201,18 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			if( result.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
+			ChannelAdvisorException exceptionToThrow = null;
+			foreach( var shipmentResponse in result.ResultData )
+			{
+				if( !shipmentResponse.Success )
+				{
+					this.Log().Error( "Error encountered while marking order shipped: {0}", shipmentResponse.Message );
+					if( exceptionToThrow == null )
+						exceptionToThrow = new ChannelAdvisorException( shipmentResponse.Message );
+				}
+			}
+			if( exceptionToThrow != null )
+				throw exceptionToThrow;
 		}
 
 		/// <summary>
