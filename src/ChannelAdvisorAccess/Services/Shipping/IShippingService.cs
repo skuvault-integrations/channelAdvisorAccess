@@ -46,5 +46,6 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList );
 		OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( string [] clientOrderIdentifierList );
 		OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList, string [] clientOrderIdentifierList );
+		void SubmitOrderShipmentList( OrderShipment[] orderShipments );
 	}
 }
