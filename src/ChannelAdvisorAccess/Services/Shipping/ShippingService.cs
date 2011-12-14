@@ -6,6 +6,7 @@ using ChannelAdvisorAccess.ShippingService;
 using Netco.Logging;
 using APICredentials=ChannelAdvisorAccess.ShippingService.APICredentials;
 using ResultStatus=ChannelAdvisorAccess.ShippingService.ResultStatus;
+using System.Linq;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {
@@ -153,12 +154,20 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				const int pageSize = 50;
+				var pagesCount = orderShipments.Length / pageSize + (orderShipments.Length % pageSize > 0 ? 1 : 0);
+
+				for( int pageNumber = 0; pageNumber < pagesCount; pageNumber++ )
+				{
+					var shipmentsToSubmit = orderShipments.Skip( pageNumber * pageSize ).Take( pageSize ).ToArray();
+
+					ActionPolicies.CaSubmitPolicy.Do( () =>
 				                                  	{
 				                                  		var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId,
-												new OrderShipmentList{ ShipmentList = orderShipments });
+												new OrderShipmentList{ ShipmentList = shipmentsToSubmit });
 											CheckCaSuccess( result );
 				                                  	} );
+				}
 			}
 			catch( Exception e )
 			{
