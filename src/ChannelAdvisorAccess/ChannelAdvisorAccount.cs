@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChannelAdvisorAccess.CurrencyConversion;
 using ChannelAdvisorAccess.Services;
 using ChannelAdvisorAccess.Services.Items;
@@ -31,6 +32,8 @@ namespace ChannelAdvisorAccess
 			this.OrdersService = servicesFactory.CreateOrdersService( name, id );
 			this.ShippingService = servicesFactory.CreateShippingService( name, id );
 			this.ListingService = servicesFactory.CreateListingService( name, id );
+
+			this.Meta = new Dictionary< string, object >();
 		}
 
 		public string Name { get; private set; }
@@ -44,6 +47,12 @@ namespace ChannelAdvisorAccess
 		public IOrdersService OrdersService { get; private set; }
 		public IShippingService ShippingService { get; private set; }
 		public IListingService ListingService { get; private set; }
+
+		/// <summary>
+		/// Dictionary to store additional data related to account.
+		/// </summary>
+		/// <remarks>Can be used to store additional ids or related services. It's best to create extension methods to access specific meta data.</remarks>
+		public Dictionary< string , object > Meta{ get; private set; }
 
 		/// <summary>Converts currency from account currency to the base currency.</summary>
 		/// <param name="accountCurrency">The account currency.</param>
