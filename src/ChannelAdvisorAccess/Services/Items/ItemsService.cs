@@ -329,7 +329,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				if( i + length > itemQuantityAndPrices.Count )
 					length = itemQuantityAndPrices.Count - i;
 
-				var itemInfoArray = new InventoryItemQuantityAndPrice[ length - 1 ];
+				var itemInfoArray = new InventoryItemQuantityAndPrice[ length ];
 				itemQuantityAndPrices.CopyTo( i, itemInfoArray, 0, length - 1 );
 				itemInfoArray[ length - 1 ] = itemQuantityAndPrices[ length - 1 ]; // Work around MS Contracts bug
 
