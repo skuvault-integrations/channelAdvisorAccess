@@ -410,8 +410,18 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		private static void CheckCaSuccess( APIResultOfArrayOfSynchInventoryItemResponse apiResult )
 		{
-			if( apiResult.Status != ResultStatus.Success )
-				throw new ChannelAdvisorException( apiResult.MessageCode, apiResult.Message );
+			if( apiResult.Status != ResultStatus.Success && apiResult.ResultData.Any(r => !IsSkuMissing( r )))
+			{
+				var skusListMsg = string.Join( ", ", apiResult.ResultData.Where( r => !r.Result && !IsSkuMissing( r )).Select( r => "{0} ({1})".FormatWith( r.Sku, r.ErrorMessage )));
+				var msg =  @"{0}. Invalid Skus: {1}".FormatWith( apiResult.Message, skusListMsg );
+				throw new ChannelAdvisorException( apiResult.MessageCode, msg );
+			}
+		}
+
+		private static bool IsSkuMissing( SynchInventoryItemResponse r )
+		{
+			const string skuMissingMsg = "The specified Sku does not exist";
+			return r.ErrorMessage.StartsWith( skuMissingMsg, StringComparison.InvariantCultureIgnoreCase );
 		}
 
 		private static void CheckCaSuccess( APIResultOfArrayOfUpdateInventoryItemResponse apiResult )
