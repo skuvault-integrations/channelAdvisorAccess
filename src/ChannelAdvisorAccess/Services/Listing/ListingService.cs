@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using ChannelAdvisorAccess.ListingService;
 using ChannelAdvisorAccess.Misc;
-using System.Linq;
+using PGK.Extensions;
 
 namespace ChannelAdvisorAccess.Services.Listing
 {

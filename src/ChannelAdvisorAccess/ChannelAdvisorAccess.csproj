@@ -118,20 +118,19 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lokad.ActionPolicy, Version=1.5.181.1, Culture=neutral, PublicKeyToken=43f0664b2b4db1fc, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Lokad\Lokad.ActionPolicy.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FluentDateTime">
+      <HintPath>..\packages\FluentDateTime.1.5.0.0\Lib\NET\FluentDateTime.dll</HintPath>
     </Reference>
-    <Reference Include="Lokad.Shared, Version=1.5.181.1, Culture=neutral, PublicKeyToken=43f0664b2b4db1fc, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Lokad\Lokad.Shared.dll</HintPath>
+    <Reference Include="Netco, Version=0.5.4426.27969, Culture=neutral, PublicKeyToken=9d732c15ac2ec2c9, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Netco.0.5.4426.27969\lib\net40\Netco.dll</HintPath>
     </Reference>
-    <Reference Include="Netco, Version=0.5.4118.26666, Culture=neutral, PublicKeyToken=9d732c15ac2ec2c9, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\Netco\Netco.dll</HintPath>
+    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="PGK.Extensions, Version=1.0.4426.27946, Culture=neutral, PublicKeyToken=f93e897f802ddcb7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="PGK.Extensions">
-      <HintPath>..\packages\PGK.Extensions.2011.6\lib\PGK.Extensions.dll</HintPath>
+      <HintPath>..\packages\PGK.Extensions.1.0.4426.27946\lib\net40\PGK.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -397,8 +396,18 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="License.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>set _config=$(ConfigurationName)
+if "%25_config:~0,7%25"=="Release" (
+	nuget pack $(ProjectPath) -prop Configuration=$(ConfigurationName)
+	del %25NuGetLocalFeedPath%25\$(ProjectName)*.nupkg
+	move /y $(TargetDir)*.*nupkg %25NuGetLocalFeedPath%25
+)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
