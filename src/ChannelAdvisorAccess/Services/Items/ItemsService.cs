@@ -5,6 +5,7 @@ using System.Runtime.Caching;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
+using Netco.Logging;
 using Netco.Profiling;
 
 namespace ChannelAdvisorAccess.Services.Items
@@ -193,9 +194,39 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
 		public QuantityInfoResponse GetItemQuantities( string sku )
 		{
-			var quantityInfo = ActionPolicies.CaGetPolicy.Get( () =>
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
 			                                                   this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
-			return GetResultWithSuccessCheck( quantityInfo, quantityInfo.ResultData );
+			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
+		{
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ));
+			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public StoreInfo GetStoreInfo( string sku )
+		{
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemStoreInfo( this._credentials, this.AccountId, sku ));
+			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public ImageInfoResponse[] GetImageList( string sku )
+		{
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ));
+			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public ShippingRateInfo[] GetShippingInfo( string sku )
+		{
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ));
+			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public VariationInfo GetVariationInfo( string sku )
+		{
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemVariationInfo( this._credentials, this.AccountId, sku ));
+			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		/// <summary>
@@ -374,7 +405,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="resultData">The result data.</param>
 		/// <returns>Returns result default value (typically <c>null</c>) if there was a problem
 		/// with API call, otherwise returns result.</returns>
-		private static T GetResultWithSuccessCheck< T >( object apiResult, T resultData )
+		private T GetResultWithSuccessCheck< T >( object apiResult, T resultData )
 		{
 			if( !IsRequestSuccessful( apiResult ) )
 				return default( T );
@@ -389,7 +420,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <returns>
 		/// 	<c>true</c> if request was successful; otherwise, <c>false</c>.
 		/// </returns>
-		private static bool IsRequestSuccessful( object apiResult )
+		private bool IsRequestSuccessful( object apiResult )
 		{
 			var type = apiResult.GetType();
 
@@ -399,7 +430,15 @@ namespace ChannelAdvisorAccess.Services.Items
 			var messageCodeProp = type.GetProperty( "MessageCode" );
 			var messageCode = ( int )messageCodeProp.GetValue( apiResult, null );
 
-			return status == ResultStatus.Success && messageCode == 0;
+			var isRequestSuccessful = status == ResultStatus.Success && messageCode == 0;
+
+			if( !isRequestSuccessful )
+			{
+				var message = ( string )type.GetProperty( "Message" ).GetValue( apiResult, null );
+				this.Log().Error( "CA Api Request failed with message: {0}", message );
+			}
+
+			return isRequestSuccessful;
 		}
 
 		private static void CheckCaSuccess( APIResultOfBoolean apiResult )

@@ -69,6 +69,35 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
 		QuantityInfoResponse GetItemQuantities ( string sku );
 
+		/// <summary>Gets classifications the configuration information.</summary>
+		/// <returns>Classification configuration for the account.</returns>
+		/// <see href="http://developer.channeladvisor.com/display/cadn/GetClassificationConfigurationInformation"/>
+		ClassificationConfigurationInformation[] GetClassificationConfigurationInformation();
+
+		/// <summary>Gets the store info.</summary>
+		/// <param name="sku">The sku.</param>
+		/// <returns>Store information for the specified sku.</returns>
+		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemStoreInfo"/>
+		StoreInfo GetStoreInfo( string sku );
+
+		/// <summary>Gets the image list.</summary>
+		/// <param name="sku">The sku.</param>
+		/// <returns>Array of images related to the specified sku.</returns>
+		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemImageList"/>
+		ImageInfoResponse[] GetImageList( string sku );
+
+		/// <summary>Gets the shipping info.</summary>
+		/// <param name="sku">The sku.</param>
+		/// <returns>Shipping rates for the specified sku.</returns>
+		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemShippingInfo"/>
+		ShippingRateInfo[] GetShippingInfo( string sku );
+
+		/// <summary>Gets the variation info.</summary>
+		/// <param name="sku">The sku.</param>
+		/// <returns>Item variation info for the specified sku.</returns>
+		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemShippingInfo"/>
+		VariationInfo GetVariationInfo( string sku );
+
 		/// <summary>
 		/// Gets the available quantity.
 		/// </summary>
