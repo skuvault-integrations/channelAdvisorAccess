@@ -10,4 +10,7 @@
     <description>$description$</description>
     <copyright>Copyright Bitnox LLC 2012</copyright>
   </metadata>
+  <files>
+	<file src="..\..\lib\Zayko*.*" target="lib\net40" />
+  </files>
 </package>

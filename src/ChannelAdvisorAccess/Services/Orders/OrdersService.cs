@@ -37,8 +37,6 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			var orderCriteria = new OrderCriteria
 			                    	{
-			                    		//OrderCreationFilterBeginTimeGMT = startDate,
-			                    		//OrderCreationFilterEndTimeGMT = endDate,
 			                    		StatusUpdateFilterBeginTimeGMT = startDate,
 			                    		StatusUpdateFilterEndTimeGMT = endDate
 			                    	};
@@ -111,6 +109,16 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 		#endregion
 
+		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
+		{
+			return ActionPolicies.CaSubmitPolicy.Get( () => 
+				{
+					var results = this._client.UpdateOrderList( _credentials, AccountId, orderUpdates );
+					this.CheckCaSuccess( results );
+					return results.ResultData;
+				});
+		}
+
 		/// <summary>
 		/// Used to keep total orders count for profiling/logging.
 		/// </summary>
@@ -151,6 +159,12 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 
 		private void CheckCaSuccess( APIResultOfInt32 results )
+		{
+			if( results.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( results.MessageCode, results.Message );
+		}
+
+		private void CheckCaSuccess( APIResultOfArrayOfOrderUpdateResponse results )
 		{
 			if( results.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( results.MessageCode, results.Message );

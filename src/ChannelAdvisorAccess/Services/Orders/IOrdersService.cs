@@ -35,6 +35,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
 			where T : OrderResponseItem;
 
+		/// <summary>Updates the order list.</summary>
+		/// <param name="orderUpdates">The order updates.</param>
+		/// <returns>Result of updates.</returns>
+		IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates ); 
+
 		/// <summary>
 		/// Gets the account name.
 		/// </summary>
