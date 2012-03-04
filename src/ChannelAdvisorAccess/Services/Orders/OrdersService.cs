@@ -4,7 +4,6 @@ using System.Linq;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
-using Netco.Profiling;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {
@@ -118,36 +117,13 @@ namespace ChannelAdvisorAccess.Services.Orders
 					return results.ResultData;
 				});
 		}
-
-		/// <summary>
-		/// Used to keep total orders count for profiling/logging.
-		/// </summary>
-		private int _totalOrdersDowloaded;
-
+		
 		private OrderResponseItem[] GetNextOrdersPage( OrderCriteria orderCriteria )
 		{
-			if( orderCriteria.PageNumberFilter == 0 )
-				this._totalOrdersDowloaded = 0;
-
 			orderCriteria.PageNumberFilter += 1;
 
-			#region Profiler Start
-			var statusUpdateBegin = orderCriteria.StatusUpdateFilterBeginTimeGMT ?? DateTime.MinValue;
-			var statusUpdateEnd = orderCriteria.StatusUpdateFilterEndTimeGMT ?? DateTime.MinValue;
-			Profiler.Start( "GetOrderList for '{0}' account. UCT Status update begin '{1}' and end '{2}'".
-			                	FormatWith( this.Name, statusUpdateBegin.ToUniversalTime(), statusUpdateEnd.ToUniversalTime() ) );
-			#endregion
-
 			var orderList = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
-
 			CheckCaSuccess( orderList );
-
-			#region Profiler End
-			var ordersCount = orderList.ResultData != null ? orderList.ResultData.Length : 0;
-			this._totalOrdersDowloaded += ordersCount;
-			Profiler.End( "Got {0} orders. Current total - {1}. Page - '{2}'. Account - '{3}'.".
-			              	FormatWith( ordersCount, this._totalOrdersDowloaded, orderCriteria.PageNumberFilter, this.Name ) );
-			#endregion
 
 			return orderList.ResultData;
 		}

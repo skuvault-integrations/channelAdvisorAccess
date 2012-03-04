@@ -6,7 +6,6 @@ using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
 using Netco.Logging;
-using Netco.Profiling;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -110,13 +109,9 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			foreach( var sku in skus )
 			{
-				Profiler.Start( "GetInventoryItemList" );
-
 				var itemList = ActionPolicies.CaGetPolicy.Get(
 					() =>
 					this._client.GetInventoryItemList( this._credentials, this.AccountId, new[] { sku } ) );
-
-				Profiler.End( "Got SKU - {0}".FormatWith( sku ) );
 
 				if( !IsRequestSuccessful( itemList ) )
 				{
@@ -145,15 +140,11 @@ namespace ChannelAdvisorAccess.Services.Items
 			while( true )
 			{
 				filter.Criteria.PageNumber += 1;
-				Profiler.Start( "GetInventoryItemList" );
-
 				var itemResponse = ActionPolicies.CaGetPolicy.Get( () => this._client.GetFilteredInventoryItemList
 				                                                         	(
 				                                                         		this._credentials,
 				                                                         		this.AccountId, filter.Criteria, filter.DetailLevel,
 				                                                         		filter.SortField, filter.SortDirection ) );
-
-				Profiler.End( "Pulled page - " + filter.Criteria.PageNumber );
 
 				if( !IsRequestSuccessful( itemResponse ) )
 				{
@@ -327,15 +318,11 @@ namespace ChannelAdvisorAccess.Services.Items
 				items.CopyTo( i, itemInfoArray, 0, length - 1 );
 				itemInfoArray[ length - 1 ] = items[ length - 1 ];
 
-				Profiler.Start( "Synching items, page - {0}, position - {1}, count - {2}".FormatWith( Math.Ceiling( ( ( double )i ) / pageSize ), i, itemInfoArray.Length ) );
-
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 				                                  	{
 				                                  		var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, itemInfoArray );
 				                                  		CheckCaSuccess( resultOfBoolean );
 				                                  	} );
-
-				Profiler.End();
 			}
 		}
 
