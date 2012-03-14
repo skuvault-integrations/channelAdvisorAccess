@@ -115,7 +115,6 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				if( !IsRequestSuccessful( itemList ) )
 				{
-					yield return null;
 					continue;
 				}
 
