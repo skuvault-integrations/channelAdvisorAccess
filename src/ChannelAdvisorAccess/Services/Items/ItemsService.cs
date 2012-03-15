@@ -46,7 +46,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		public bool DoesSkuExist( string sku )
 		{
 			var skuExist = ActionPolicies.CaGetPolicy.Get( () => this._client.DoesSkuExist( this._credentials, this.AccountId, sku ) );
-			return GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
+			return this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
 		}
 
 		public IEnumerable< InventoryItemResponse > GetAllItems()
@@ -76,9 +76,9 @@ namespace ChannelAdvisorAccess.Services.Items
 		private IEnumerable< InventoryItemResponse > DownloadAllItems()
 		{
 			var filter = new ItemsFilter
-			             	{
-			             		DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
-			             	};
+				{
+					DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
+				};
 
 			return this.GetItems( filter );
 		}
@@ -113,10 +113,8 @@ namespace ChannelAdvisorAccess.Services.Items
 					() =>
 					this._client.GetInventoryItemList( this._credentials, this.AccountId, new[] { sku } ) );
 
-				if( !IsRequestSuccessful( itemList ) )
-				{
+				if( !this.IsRequestSuccessful( itemList ) )
 					continue;
-				}
 
 				foreach( var item in itemList.ResultData )
 				{
@@ -145,7 +143,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				                                                         		this.AccountId, filter.Criteria, filter.DetailLevel,
 				                                                         		filter.SortField, filter.SortDirection ) );
 
-				if( !IsRequestSuccessful( itemResponse ) )
+				if( !this.IsRequestSuccessful( itemResponse ) )
 				{
 					yield return null;
 					continue;
@@ -171,7 +169,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			var attributeList = ActionPolicies.CaGetPolicy.Get(
 				() =>
 				this._client.GetInventoryItemAttributeList( this._credentials, this.AccountId, sku ) );
-			return GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
+			return this.GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
 		}
 
 		/// <summary>
@@ -185,38 +183,38 @@ namespace ChannelAdvisorAccess.Services.Items
 		public QuantityInfoResponse GetItemQuantities( string sku )
 		{
 			var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
-			                                                   this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
-			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			                                                    this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ));
-			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public StoreInfo GetStoreInfo( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemStoreInfo( this._credentials, this.AccountId, sku ));
-			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemStoreInfo( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public ImageInfoResponse[] GetImageList( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ));
-			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public ShippingRateInfo[] GetShippingInfo( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ));
-			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public VariationInfo GetVariationInfo( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemVariationInfo( this._credentials, this.AccountId, sku ));
-			return GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemVariationInfo( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		/// <summary>
@@ -264,7 +262,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					      		this._credentials, this.AccountId, filter.Criteria,
 					      		filter.SortField, filter.SortDirection ) );
 
-				if( !IsRequestSuccessful( itemResponse ) )
+				if( !this.IsRequestSuccessful( itemResponse ) )
 				{
 					yield return null;
 					continue;
@@ -318,20 +316,20 @@ namespace ChannelAdvisorAccess.Services.Items
 				itemInfoArray[ length - 1 ] = items[ length - 1 ];
 
 				ActionPolicies.CaSubmitPolicy.Do( () =>
-				                                  	{
-				                                  		var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, itemInfoArray );
-				                                  		CheckCaSuccess( resultOfBoolean );
-				                                  	} );
+					{
+						var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, itemInfoArray );
+						CheckCaSuccess( resultOfBoolean );
+					} );
 			}
 		}
 
 		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice )
 		{
 			ActionPolicies.CaSubmitPolicy.Do( () =>
-			                                  	{
-			                                  		var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPrice( this._credentials, this.AccountId, itemQuantityAndPrice );
-			                                  		CheckCaSuccess( resultOfBoolean );
-			                                  	} );
+				{
+					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPrice( this._credentials, this.AccountId, itemQuantityAndPrice );
+					CheckCaSuccess( resultOfBoolean );
+				} );
 		}
 
 		public void UpdateQuantityAndPrices( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
@@ -351,10 +349,10 @@ namespace ChannelAdvisorAccess.Services.Items
 				itemInfoArray[ length - 1 ] = itemQuantityAndPrices[ length - 1 ]; // Work around MS Contracts bug
 
 				ActionPolicies.CaSubmitPolicy.Do( () =>
-				                                  	{
-				                                  		var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemInfoArray );
-				                                  		CheckCaSuccess( resultOfBoolean );
-				                                  	} );
+					{
+						var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemInfoArray );
+						CheckCaSuccess( resultOfBoolean );
+					} );
 			}
 		}
 		#endregion
@@ -363,10 +361,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		public void DeleteItem( string sku )
 		{
 			ActionPolicies.CaSubmitPolicy.Do( () =>
-			                                  	{
-			                                  		var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
-			                                  		CheckCaSuccess( resultOfBoolean );
-			                                  	} );
+				{
+					var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
+					CheckCaSuccess( resultOfBoolean );
+				} );
 		}
 		#endregion
 
@@ -374,11 +372,11 @@ namespace ChannelAdvisorAccess.Services.Items
 		public ClassificationConfigurationInformation[] GetClassificationConfigInfo()
 		{
 			return ActionPolicies.CaGetPolicy.Get( () =>
-			                                       	{
-			                                       		var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
-			                                       		CheckCaSuccess( result );
-			                                       		return result.ResultData;
-			                                       	} );
+				{
+					var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
+					CheckCaSuccess( result );
+					return result.ResultData;
+				} );
 		}
 		#endregion
 
@@ -393,7 +391,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// with API call, otherwise returns result.</returns>
 		private T GetResultWithSuccessCheck< T >( object apiResult, T resultData )
 		{
-			if( !IsRequestSuccessful( apiResult ) )
+			if( !this.IsRequestSuccessful( apiResult ) )
 				return default( T );
 
 			return resultData;
@@ -421,7 +419,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			if( !isRequestSuccessful )
 			{
 				var message = ( string )type.GetProperty( "Message" ).GetValue( apiResult, null );
-				if( message.Contains( "The specified SKU was not found" ))
+				if( message.Contains( "The specified SKU was not found" ) )
 					this.Log().Trace( "CA Api Request failed with message: {0}", message );
 				else
 					this.Log().Error( "CA Api Request failed with message: {0}", message );
@@ -438,10 +436,10 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		private static void CheckCaSuccess( APIResultOfArrayOfSynchInventoryItemResponse apiResult )
 		{
-			if( apiResult.Status != ResultStatus.Success && apiResult.ResultData.Any(r => !IsSkuMissing( r )))
+			if( apiResult.Status != ResultStatus.Success && apiResult.ResultData.Any( r => !IsSkuMissing( r ) ) )
 			{
-				var skusListMsg = string.Join( ", ", apiResult.ResultData.Where( r => !r.Result && !IsSkuMissing( r )).Select( r => "{0} ({1})".FormatWith( r.Sku, r.ErrorMessage )));
-				var msg =  @"{0}. Invalid Skus: {1}".FormatWith( apiResult.Message, skusListMsg );
+				var skusListMsg = string.Join( ", ", apiResult.ResultData.Where( r => !r.Result && !IsSkuMissing( r ) ).Select( r => "{0} ({1})".FormatWith( r.Sku, r.ErrorMessage ) ) );
+				var msg = @"{0}. Invalid Skus: {1}".FormatWith( apiResult.Message, skusListMsg );
 				throw new ChannelAdvisorException( apiResult.MessageCode, msg );
 			}
 		}
