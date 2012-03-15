@@ -421,7 +421,10 @@ namespace ChannelAdvisorAccess.Services.Items
 			if( !isRequestSuccessful )
 			{
 				var message = ( string )type.GetProperty( "Message" ).GetValue( apiResult, null );
-				this.Log().Error( "CA Api Request failed with message: {0}", message );
+				if( message.Contains( "The specified SKU was not found" ))
+					this.Log().Trace( "CA Api Request failed with message: {0}", message );
+				else
+					this.Log().Error( "CA Api Request failed with message: {0}", message );
 			}
 
 			return isRequestSuccessful;
