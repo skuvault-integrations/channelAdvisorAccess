@@ -65,7 +65,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
 			where T : OrderResponseItem
 		{
-			orderCriteria.DetailLevel = DetailLevelType.High;
+			if( !orderCriteria.DetailLevel.HasValue )
+				orderCriteria.DetailLevel = DetailLevelType.High;
 
 			orderCriteria.PageSize = 30;
 			orderCriteria.PageNumberFilter = 0;
