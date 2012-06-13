@@ -144,7 +144,7 @@
             	Contributed by Mohammad Rahman, http://mohammad-rahman.blogspot.com/
             </remarks>
         </member>
-        <member name="M:IntExtensions.GetArrayInedx(System.Int32)">
+        <member name="M:IntExtensions.GetArrayIndex(System.Int32)">
             <summary>
             To get Array index from a given based on a number.
             </summary>
@@ -152,6 +152,67 @@
             <returns></returns>
             <remarks>
             	Contributed by Mohammad Rahman, http://mohammad-rahman.blogspot.com/
+            	jceddy fixed typo
+            </remarks>
+        </member>
+        <member name="M:IntExtensions.Days(System.Int32)">
+            <summary>
+            Gets a TimeSpan from an integer number of days.
+            </summary>
+            <param name="days">The number of days the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of days.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:IntExtensions.Hours(System.Int32)">
+            <summary>
+            Gets a TimeSpan from an integer number of hours.
+            </summary>
+            <param name="days">The number of hours the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of hours.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:IntExtensions.Milliseconds(System.Int32)">
+            <summary>
+            Gets a TimeSpan from an integer number of milliseconds.
+            </summary>
+            <param name="days">The number of milliseconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of milliseconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:IntExtensions.Minutes(System.Int32)">
+            <summary>
+            Gets a TimeSpan from an integer number of minutes.
+            </summary>
+            <param name="days">The number of minutes the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of minutes.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:IntExtensions.Seconds(System.Int32)">
+            <summary>
+            Gets a TimeSpan from an integer number of seconds.
+            </summary>
+            <param name="days">The number of seconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of seconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:IntExtensions.Ticks(System.Int32)">
+            <summary>
+            Gets a TimeSpan from an integer number of ticks.
+            </summary>
+            <param name="days">The number of ticks the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of ticks.</returns>
+            <remarks>
+            	Contributed by jceddy
             </remarks>
         </member>
         <member name="T:DateTimeOffsetExtensions">
@@ -451,6 +512,11 @@
         <member name="M:PGK.Extensions.StringBuilderExtensions.AppendLine(System.Text.StringBuilder,System.String,System.Object[])">
             <summary>
             AppendLine version with format string parameters.
+            </summary>
+        </member>
+        <member name="T:ByteArrayExtensions">
+            <summary>
+            	Extension methods for byte-Arrays
             </summary>
         </member>
         <member name="M:ByteArrayExtensions.FindArrayInArray(System.Byte[],System.Byte[])">
@@ -958,6 +1024,175 @@
             <param name="distance">Distance that will be used to surround the point.</param>
             <returns>Rectangle that sorrounds the given point by a specified distance.</returns>
         </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleToSize(System.Drawing.Bitmap,System.Drawing.Size)">
+            <summary>
+            	Scales the bitmap to the passed target size without respecting the aspect.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "size">The target size.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleToSize(100, 100);
+            	</code>
+            </example>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleToSize(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            	Scales the bitmap to the passed target size without respecting the aspect.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "width">The target width.</param>
+            <param name = "height">The target height.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleToSize(100, 100);
+            	</code>
+            </example>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleProportional(System.Drawing.Bitmap,System.Drawing.Size)">
+            <summary>
+            	Scales the bitmap to the passed target size by respecting the aspect.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "size">The target size.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleProportional(100, 100);
+            	</code>
+            </example>
+            <remarks>
+            	Please keep in mind that the returned bitmaps size might not match the desired size due to original bitmaps aspect.
+            </remarks>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleProportional(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            	Scales the bitmap to the passed target size by respecting the aspect.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "width">The target width.</param>
+            <param name = "height">The target height.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleProportional(100, 100);
+            	</code>
+            </example>
+            <remarks>
+            	Please keep in mind that the returned bitmaps size might not match the desired size due to original bitmaps aspect.
+            </remarks>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleToSizeProportional(System.Drawing.Bitmap,System.Drawing.Size)">
+            <summary>
+            	Scales the bitmap to the passed target size by respecting the aspect. The overlapping background is filled with the given background color.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "size">The target size.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleToSizeProportional(100, 100);
+            	</code>
+            </example>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleToSizeProportional(System.Drawing.Bitmap,System.Drawing.Color,System.Drawing.Size)">
+            <summary>
+            	Scales the bitmap to the passed target size by respecting the aspect. The overlapping background is filled with the given background color.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "backgroundColor">The color of the background.</param>
+            <param name = "size">The target size.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleToSizeProportional(100, 100);
+            	</code>
+            </example>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleToSizeProportional(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            	Scales the bitmap to the passed target size by respecting the aspect. The overlapping background is filled with the given background color.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "width">The target width.</param>
+            <param name = "height">The target height.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleToSizeProportional(100, 100);
+            	</code>
+            </example>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleToSizeProportional(System.Drawing.Bitmap,System.Drawing.Color,System.Int32,System.Int32)">
+            <summary>
+            	Scales the bitmap to the passed target size by respecting the aspect. The overlapping background is filled with the given background color.
+            </summary>
+            <param name = "bitmap">The source bitmap.</param>
+            <param name = "backgroundColor">The color of the background.</param>
+            <param name = "width">The target width.</param>
+            <param name = "height">The target height.</param>
+            <returns>The scaled bitmap</returns>
+            <example>
+            	<code>
+            		var bitmap = new Bitmap("image.png");
+            		var thumbnail = bitmap.ScaleToSizeProportional(100, 100);
+            	</code>
+            </example>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.GetImageInBytes(System.Drawing.Image,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Gets the Image as a Byte[]
+            </summary>
+            <param name="img">The img.</param>
+            <param name="format">ImageFormat</param>
+            <returns>A Byte[] of the Image</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.GetImageInBase64(System.Drawing.Image,System.Drawing.Imaging.ImageFormat)">
+            <summary>
+            Gets the Image in Base64 format for storage or transfer
+            </summary>
+            <param name="img">The img.</param>
+            <param name="format">ImageFormat</param>
+            <returns>Base64 String of the Image</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ScaleImage(System.Drawing.Image,System.Int32,System.Int32)">
+            <summary>
+            Scales the image.
+            </summary>
+            <param name="img">The img.</param>
+            <param name="height">The height as int.</param>
+            <param name="width">The width as int.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ResizeAndFit(System.Drawing.Image,System.Drawing.Size)">
+            <summary>
+            Resizes the image to fit new size.
+            </summary>
+            <param name="image">The image.</param>
+            <param name="newSize">The new size.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:PGK.Extensions.DrawingExtensions.ConvertToImage(System.Byte[])">
+            <summary>
+            Converts to image.
+            </summary>
+            <param name="byteArrayIn">The byte array in.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
         <member name="T:LongExtensions">
             <summary>
             	Extension methods for the Long data type
@@ -1025,6 +1260,66 @@
             <param name="i">Object value</param>
             <param name="format">A standard or custom format string that is supported by the object to be formatted.</param>
             <returns>Returns string containing ordinal indicator adjacent to a numeral denoting. (English)</returns>
+        </member>
+        <member name="M:LongExtensions.Days(System.Int64)">
+            <summary>
+            Gets a TimeSpan from a long number of days.
+            </summary>
+            <param name="days">The number of days the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of days.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:LongExtensions.Hours(System.Int64)">
+            <summary>
+            Gets a TimeSpan from a long number of hours.
+            </summary>
+            <param name="days">The number of hours the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of hours.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:LongExtensions.Milliseconds(System.Int64)">
+            <summary>
+            Gets a TimeSpan from a long number of milliseconds.
+            </summary>
+            <param name="days">The number of milliseconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of milliseconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:LongExtensions.Minutes(System.Int64)">
+            <summary>
+            Gets a TimeSpan from a long number of minutes.
+            </summary>
+            <param name="days">The number of minutes the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of minutes.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:LongExtensions.Seconds(System.Int64)">
+            <summary>
+            Gets a TimeSpan from a long number of seconds.
+            </summary>
+            <param name="days">The number of seconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of seconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:LongExtensions.Ticks(System.Int64)">
+            <summary>
+            Gets a TimeSpan from a long number of ticks.
+            </summary>
+            <param name="days">The number of ticks the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of ticks.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
         </member>
         <member name="F:PGK.Extensions.SystemDependencies.Clock.SubstituteForNow">
             <summary>
@@ -1631,6 +1926,97 @@
             <param name="source">The object instance to copy.</param>
             <returns>The copied object.</returns>
         </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.Cast``1(System.Object)">
+            <summary>
+            Casts the specified object to the specified type.
+            </summary>
+            <typeparam name="T">The type to cast to</typeparam>
+            <param name="o">The Object being casted</param>
+            <returns>returns the object as casted type.</returns>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.Cast``1(System.Object,``0)">
+            <summary>
+            Casts the specified object. If the object is null a return type can be specified.
+            </summary>
+            <typeparam name="T">The type to cast to.</typeparam>
+            <param name="o">The Object being casted</param>
+            <param name="defaultValue">The default Type.</param>
+            <returns>returns the object as casted type. If null the default type is returned.</returns>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.CopyPropertiesFrom(System.Object,System.Object)">
+            <summary>
+            Copies the readable and writable public property values from the source object to the target
+            </summary>
+            <remarks>The source and target objects must be of the same type.</remarks>
+            <param name="target">The target object</param>
+            <param name="source">The source object</param>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.CopyPropertiesFrom(System.Object,System.Object,System.String)">
+            <summary>
+            Copies the readable and writable public property values from the source object to the target
+            </summary>
+            <remarks>The source and target objects must be of the same type.</remarks>
+            <param name="target">The target object</param>
+            <param name="source">The source object</param>
+            <param name="ignoreProperty">A single property name to ignore</param>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.CopyPropertiesFrom(System.Object,System.Object,System.String[])">
+            <summary>
+            Copies the readable and writable public property values from the source object to the target
+            </summary>
+            <remarks>The source and target objects must be of the same type.</remarks>
+            <param name="target">The target object</param>
+            <param name="source">The source object</param>
+            <param name="ignoreProperties">An array of property names to ignore</param>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.ToPropertiesString(System.Object)">
+            <summary>
+            Returns a string representation of the objects property values
+            </summary>
+            <param name="source">The object for the string representation</param>
+            <returns>A string</returns>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.ToPropertiesString(System.Object,System.String)">
+            <summary>
+            Returns a string representation of the objects property values
+            </summary>
+            <param name="source">The object for the string representation</param>
+            <param name="delimiter">The line terminstor string to use between properties</param>
+            <returns>A string</returns>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.ToXml(System.Object)">
+            <summary>
+            Serializes the object into an XML string, using the encoding method specified in
+            <see cref="!:ExtensionMethodsSettings.DefaultEncoding"/>
+            </summary>
+            <remarks>
+            The object to be serialized should be decorated with the 
+            <see cref="T:System.SerializableAttribute"/>, or implement the <see cref="T:System.Runtime.Serialization.ISerializable"/> interface.
+            </remarks>
+            <param name="source">The object to serialize</param>
+            <returns>An XML encoded string representation of the source object</returns>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.ToXml(System.Object,System.Text.Encoding)">
+            <summary>
+            Serializes the object into an XML string
+            </summary>
+            <remarks>
+            The object to be serialized should be decorated with the 
+            <see cref="T:System.SerializableAttribute"/>, or implement the <see cref="T:System.Runtime.Serialization.ISerializable"/> interface.
+            </remarks>
+            <param name="source">The object to serialize</param>
+            <param name="encoding">The Encoding scheme to use when serializing the data to XML</param>
+            <returns>An XML encoded string representation of the source object</returns>
+        </member>
+        <member name="M:PGK.Extensions.ObjectExtensions.ExceptionIfNullOrEmpty(System.Object,System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentNullException"/> 
+            if the the value is null.
+            </summary>
+            <param name="value">The value to test.</param>
+            <param name="message">The message to display if the value is null.</param>
+            <param name="name">The name of the parameter being tested.</param>
+        </member>
         <member name="T:ExceptionExtensions">
             <summary>
               Extension methods for all kinds of exceptions.
@@ -2065,6 +2451,26 @@
             The value of this attribute
             </summary>
         </member>
+        <member name="T:DecimalExtenders">
+            <summary>
+            Contains extension methods for the <see cref="T:System.Decimal"/> class
+            </summary>
+        </member>
+        <member name="M:DecimalExtenders.RoundDecimalPoints(System.Decimal,System.Int32)">
+            <summary>
+            Rounds the supplied decimal to the specified amount of decimal points
+            </summary>
+            <param name="val">The decimal to round</param>
+            <param name="decimalPoints">The number of decimal points to round the output value to</param>
+            <returns>A rounded decimal</returns>
+        </member>
+        <member name="M:DecimalExtenders.RoundToTwoDecimalPoints(System.Decimal)">
+            <summary>
+            Rounds the supplied decimal value to two decimal points
+            </summary>
+            <param name="val">The decimal to round</param>
+            <returns>A decimal value rounded to two decimal points</returns>
+        </member>
         <member name="T:ComparableExtensions">
             <summary>
             	Extension methods for all comparable objects eg. string, DateTime, numeric values ...
@@ -2216,7 +2622,7 @@
         </member>
         <member name="M:StringExtensions.ContainsEquivalenceTo(System.String,System.String)">
             <summary>
-            	Determines whether the comparison value strig is contained within the input value string without any
+            	Determines whether the comparison value string is contained within the input value string without any
                 consideration about the case (<see cref="F:System.StringComparison.InvariantCultureIgnoreCase"/>).
             </summary>
             <param name="inputValue">The input value.</param>
@@ -2480,6 +2886,10 @@
             <returns>The right part.</returns>
         </member>
         <member name="M:StringExtensions.ToTitleCase(System.String)">
+            <summary>Convert text's case to a title case</summary>
+            <remarks>UppperCase characters is the source string after the first of each word are lowered, unless the word is exactly 2 characters</remarks>
+        </member>
+        <member name="M:StringExtensions.ToTitleCase(System.String,System.Globalization.CultureInfo)">
             <summary>Convert text's case to a title case</summary>
             <remarks>UppperCase characters is the source string after the first of each word are lowered, unless the word is exactly 2 characters</remarks>
         </member>
@@ -2888,6 +3298,144 @@
             	Contributed by Mohammad Rahman, http://mohammad-rahman.blogspot.com/
             </remarks>
         </member>
+        <member name="M:StringExtensions.RemoveLeft(System.String,System.Int32)">
+            <summary>
+            Return the string with the leftmost number_of_characters characters removed.
+            </summary>
+            <param name="str">The string being extended</param>
+            <param name="number_of_characters">The number of characters to remove.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.RemoveRight(System.String,System.Int32)">
+            <summary>
+            Return the string with the rightmost number_of_characters characters removed.
+            </summary>
+            <param name="str">The string being extended</param>
+            <param name="number_of_characters">The number of characters to remove.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.EncryptToByteArray(System.String,System.String)">
+            <summary>
+            Encrypt this string into a byte array.
+            </summary>
+            <param name="plain_text">The string being extended and that will be encrypted.</param>
+            <param name="password">The password to use then encrypting the string.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.DecryptFromByteArray(System.Byte[],System.String)">
+            <summary>
+            Decrypt the encryption stored in this byte array.
+            </summary>
+            <param name="encrypted_bytes">The byte array to decrypt.</param>
+            <param name="password">The password to use when decrypting.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.EncryptToString(System.String,System.String)">
+            <summary>
+            Encrypt this string and return the result as a string of hexadecimal characters.
+            </summary>
+            <param name="plain_text">The string being extended and that will be encrypted.</param>
+            <param name="password">The password to use then encrypting the string.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.DecryptFromString(System.String,System.String)">
+            <summary>
+            Decrypt the encryption stored in this string of hexadecimal values.
+            </summary>
+            <param name="encrypted_bytes_string">The hexadecimal string to decrypt.</param>
+            <param name="password">The password to use then encrypting the string.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.CryptBytes(System.String,System.Byte[],System.Boolean)">
+            <summary>
+            Encrypt or decrypt a byte array using the TripleDESCryptoServiceProvider crypto provider and Rfc2898DeriveBytes to build the key and initialization vector.
+            </summary>
+            <param name="password">The password string to use in encrypting or decrypting.</param>
+            <param name="in_bytes">The array of bytes to encrypt.</param>
+            <param name="encrypt">True to encrypt, False to decrypt.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.MakeKeyAndIV(System.String,System.Byte[],System.Int32,System.Int32,System.Byte[]@,System.Byte[]@)">
+            <summary>
+            Use the password to generate key bytes and an initialization vector with Rfc2898DeriveBytes.
+            </summary>
+            <param name="password">The input password to use in generating the bytes.</param>
+            <param name="salt">The input salt bytes to use in generating the bytes.</param>
+            <param name="key_size_bits">The input size of the key to generate.</param>
+            <param name="block_size_bits">The input block size used by the crypto provider.</param>
+            <param name="key">The output key bytes to generate.</param>
+            <param name="iv">The output initialization vector to generate.</param>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.BytesToHexString(System.Byte[])">
+            <summary>
+            Convert a byte array into a hexadecimal string representation.
+            </summary>
+            <param name="bytes"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.HexStringToBytes(System.String)">
+            <summary>
+            Convert this string containing hexadecimal into a byte array.
+            </summary>
+            <param name="str">The hexadecimal string to convert.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:StringExtensions.DefaultIfNullOrEmpty(System.String,System.String)">
+            <summary>
+            Returns a default value if the string is null or empty.
+            </summary>
+            <param name="s">Original String</param>
+            <param name="defaultValue">The default value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:StringExtensions.ExceptionIfNullOrEmpty(System.String,System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentException"/> if the string value is empty.
+            </summary>
+            <param name="obj">The value to test.</param>
+            <param name="message">The message to display if the value is null.</param>
+            <param name="name">The name of the parameter being tested.</param>
+        </member>
+        <member name="M:StringExtensions.JoinNotNullOrEmpty(System.String[],System.String)">
+            <summary>
+            Joins  the values of a string array if the values are not null or empty.
+            </summary>
+            <param name="objs">The string array used for joining.</param>
+            <param name="separator">The separator to use in the joined string.</param>
+            <returns></returns>
+        </member>
+        <member name="M:StringExtensions.ParseCommandlineParams(System.String[])">
+            <summary>
+            Parses the commandline params.
+            </summary>
+            <param name="value">The value.</param>
+            <returns>A StringDictionary type object of command line parameters.</returns>
+        </member>
+        <member name="M:StringExtensions.EncodeEmailAddress(System.String)">
+            <summary>
+            Encodes the email address so that the link is still valid, but the email address is useless for email harvsters.
+            </summary>
+            <param name="emailAddress">The email address.</param>
+            <returns></returns>
+        </member>
+        <member name="M:StringExtensions.GetSHA1Hash(System.String)">
+            <summary>
+            Calculates the SHA1 hash of the supplied string and returns a base 64 string.
+            </summary>
+            <param name="stringToHash">String that must be hashed.</param>
+            <returns>The hashed string or null if hashing failed.</returns>
+            <exception cref="T:System.ArgumentException">Occurs when stringToHash or key is null or empty.</exception>
+        </member>
         <member name="T:StringExtensions.ComparsionTemplateOptions">
             <summary>
             Options to match the template with the original string
@@ -2989,6 +3537,18 @@
             <param name = "seconds">The seconds to be set.</param>
             <returns>The DateTime including the new time value</returns>
         </member>
+        <member name="M:DateTimeExtensions.SetTime(System.DateTime,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            	Sets the time on the specified DateTime value.
+            </summary>
+            <param name = "date">The base date.</param>
+            <param name="hours">The hour</param>
+            <param name="minutes">The minute</param>
+            <param name="seconds">The second</param>
+            <param name="milliseconds">The millisecond</param>
+            <returns>The DateTime including the new time value</returns>
+            <remarks>Added overload for milliseconds - jtolar</remarks>
+        </member>
         <member name="M:DateTimeExtensions.SetTime(System.DateTime,System.TimeSpan)">
             <summary>
             	Sets the time on the specified DateTime value.
@@ -3020,6 +3580,9 @@
             </summary>
             <param name = "date">The date.</param>
             <returns>The first day of the week</returns>
+            <remarks>
+                modified by jtolar to implement culture settings
+            </remarks>
         </member>
         <member name="M:DateTimeExtensions.GetFirstDayOfWeek(System.DateTime,System.Globalization.CultureInfo)">
             <summary>
@@ -3035,6 +3598,9 @@
             </summary>
             <param name = "date">The date.</param>
             <returns>The first day of the week</returns>
+            <remarks>
+                modified by jtolar to implement culture settings
+            </remarks>
         </member>
         <member name="M:DateTimeExtensions.GetLastDayOfWeek(System.DateTime,System.Globalization.CultureInfo)">
             <summary>
@@ -3056,6 +3622,9 @@
             		var thisWeeksMonday = DateTime.Now.GetWeekday(DayOfWeek.Monday);
             	</code>
             </example>
+            <remarks>
+                modified by jtolar to implement culture settings
+            </remarks>
         </member>
         <member name="M:DateTimeExtensions.GetWeeksWeekday(System.DateTime,System.DayOfWeek,System.Globalization.CultureInfo)">
             <summary>
@@ -3127,6 +3696,14 @@
             	Contributed by blaumeister, http://www.codeplex.com/site/users/view/blaumeiser
             </remarks>
         </member>
+        <member name="M:DateTimeExtensions.ToUnixEpoch(System.DateTime)">
+            <summary>
+            Get milliseconds of UNIX area. This is the milliseconds since 1/1/1970
+            </summary>
+            <param name="dateTime">The date time.</param>
+            <returns></returns>
+            <remarks>This is the same as GetMillisecondsSince1970 but more descriptive</remarks>
+        </member>
         <member name="M:DateTimeExtensions.IsWeekend(System.DateTime)">
             <summary>
             	Indicates whether the specified date is a weekend (Saturday or Sunday).
@@ -3152,16 +3729,43 @@
             <returns>the number of days within that year</returns>
              <remarks>
              	Contributed by Michael T, http://about.me/MichaelTran
+                 Modified by JTolar to implement Culture Settings
+             </remarks>
+        </member>
+        <member name="M:DateTimeExtensions.GetDays(System.Int32,System.Globalization.CultureInfo)">
+            <summary>
+            	Get the number of days within that year. Uses the culture specified.
+            </summary>
+            <param name = "year">The year.</param>
+            <param name="culture">Specific culture</param>
+            <returns>the number of days within that year</returns>
+             <remarks>
+             	Contributed by Michael T, http://about.me/MichaelTran
+                 Modified by JTolar to implement Culture Settings
              </remarks>
         </member>
         <member name="M:DateTimeExtensions.GetDays(System.DateTime)">
             <summary>
-            	Get the number of days within that date year.
+            	Get the number of days within that date year. Allows user to specify culture.
             </summary>
             <param name = "date">The date.</param>
+            <param name="culture">Specific culture</param>
             <returns>the number of days within that year</returns>
              <remarks>
              	Contributed by Michael T, http://about.me/MichaelTran
+                 Modified by JTolar to implement Culture Settings 
+             </remarks>
+        </member>
+        <member name="M:DateTimeExtensions.GetDays(System.DateTime,System.Globalization.CultureInfo)">
+            <summary>
+            	Get the number of days within that date year. Allows user to specify culture
+            </summary>
+            <param name = "date">The date.</param>
+            <param name="culture">Specific culture</param>
+            <returns>the number of days within that year</returns>
+             <remarks>
+             	Contributed by Michael T, http://about.me/MichaelTran
+                 Modified by JTolar to implement Culture Settings 
              </remarks>
         </member>
         <member name="M:DateTimeExtensions.GetDays(System.DateTime,System.DateTime)">
@@ -3185,12 +3789,27 @@
              	Contributed by Michael T, http://about.me/MichaelTran
              </remarks>
         </member>
+        <member name="M:DateTimeExtensions.GetWeekOfYear(System.DateTime,System.Globalization.CultureInfo)">
+            <summary>
+            Gets the week number for a provided date time value based on a specific culture.
+            </summary>
+            <param name="dateTime">The date time.</param>
+            <param name="culture">Specific culture</param>
+            <returns>The week number</returns>
+            <remarks>
+                modified by jtolar to implement culture settings
+            </remarks>
+        </member>
         <member name="M:DateTimeExtensions.GetWeekOfYear(System.DateTime)">
             <summary>
-            Gets the week number for a provided date time value based on the current culture settings.
+            Gets the week number for a provided date time value based on the current culture settings. 
+            Uses DefaultCulture from ExtensionMethodSetting
             </summary>
             <param name="dateTime">The date time.</param>
             <returns>The week number</returns>
+            <remarks>
+                modified by jtolar to implement culture settings
+            </remarks>
         </member>
         <member name="M:DateTimeExtensions.IsEaster(System.DateTime)">
             <summary>
@@ -3215,10 +3834,147 @@
             <param name="other">The compared DateTime.</param>
             <returns>True if the source is before the other DateTime, False otherwise</returns>
         </member>
+        <member name="M:DateTimeExtensions.Tomorrow(System.DateTime)">
+            <summary>
+            Gets a DateTime representing Next Day
+            </summary>
+            <param name="date">The current day</param>
+            <returns></returns>
+        </member>
+        <member name="M:DateTimeExtensions.Yesterday(System.DateTime)">
+            <summary>
+            Gets a DateTime representing Previous Day
+            </summary>
+            <param name="date">The current day</param>
+            <returns></returns>
+        </member>
+        <member name="M:DateTimeExtensions.ToFriendlyDateString(System.DateTime,System.Globalization.CultureInfo)">
+            <summary>
+            The ToFriendlyString() method represents dates in a user friendly way. 
+            For example, when displaying a news article on a webpage, you might want 
+            articles that were published one day ago to have their publish dates 
+            represented as "yesterday at 12:30 PM". Or if the article was publish today, 
+            show the date as "Today, 3:33 PM".
+            </summary>
+            <param name="date">The date.</param>
+            <param name="culture">Specific Culture</param>
+            <returns>string</returns>
+            <remarks>
+                modified by jtolar to implement culture settings
+            </remarks>/// <remarks></remarks>
+        </member>
+        <member name="M:DateTimeExtensions.ToFriendlyDateString(System.DateTime)">
+            <summary>
+             The ToFriendlyString() method represents dates in a user friendly way. 
+             For example, when displaying a news article on a webpage, you might want 
+             articles that were published one day ago to have their publish dates 
+             represented as "yesterday at 12:30 PM". Or if the article was publish today, 
+             show the date as "Today, 3:33 PM". Uses DefaultCulture from ExtensionMethodSetting.
+             </summary>
+             <param name="date">The date.</param>
+             <returns>string</returns>
+             <remarks>
+                 modified by jtolar to implement culture settings
+             </remarks>/// <remarks></remarks>
+        </member>
+        <member name="M:DateTimeExtensions.EndOfDay(System.DateTime)">
+            <summary>
+            Returns the date at 23:59.59.999 for the specified DateTime
+            </summary>
+            <param name="date">The DateTime to be processed</param>
+            <returns>The date at 23:50.59.999</returns>
+        </member>
+        <member name="M:DateTimeExtensions.Noon(System.DateTime)">
+            <summary>
+            Returns the date at 12:00:00 for the specified DateTime
+            </summary>
+            <param name="time">The current date</param>
+        </member>
+        <member name="M:DateTimeExtensions.Midnight(System.DateTime)">
+            <summary>
+            Returns the date at 00:00:00 for the specified DateTime
+            </summary>
+            <param name="time">The current date</param>
+        </member>
+        <member name="M:DateTimeExtensions.IsWeekDay(System.DateTime)">
+            <summary>
+            Returns whether the DateTime falls on a weekday
+            </summary>
+            <param name="date">The date to be processed</param>
+            <returns>Whether the specified date occurs on a weekday</returns>
+        </member>
         <member name="P:DateTimeExtensions.UtcOffset">
             <summary>
             	Return System UTC Offset
             </summary>
+        </member>
+        <member name="T:DoubleExtensions">
+            <summary>
+            	Extension methods for the Double data type
+            </summary>
+        </member>
+        <member name="M:DoubleExtensions.InRange(System.Double,System.Double,System.Double)">
+            <summary>Checks whether the value is in range</summary>
+            <param name="value">The Value</param>
+            <param name="minValue">The minimum value</param>
+            <param name="maxValue">The maximum value</param>
+        </member>
+        <member name="M:DoubleExtensions.InRange(System.Double,System.Double,System.Double,System.Double)">
+            <summary>Checks whether the value is in range or returns the default value</summary>
+            <param name="value">The Value</param>
+            <param name="minValue">The minimum value</param>
+            <param name="maxValue">The maximum value</param>
+            <param name="defaultValue">The default value</param>
+        </member>
+        <member name="M:DoubleExtensions.Days(System.Double)">
+            <summary>
+            Gets a TimeSpan from a double number of days.
+            </summary>
+            <param name="days">The number of days the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of days.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:DoubleExtensions.Hours(System.Double)">
+            <summary>
+            Gets a TimeSpan from a double number of hours.
+            </summary>
+            <param name="days">The number of hours the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of hours.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:DoubleExtensions.Milliseconds(System.Double)">
+            <summary>
+            Gets a TimeSpan from a double number of milliseconds.
+            </summary>
+            <param name="days">The number of milliseconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of milliseconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:DoubleExtensions.Minutes(System.Double)">
+            <summary>
+            Gets a TimeSpan from a double number of minutes.
+            </summary>
+            <param name="days">The number of minutes the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of minutes.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:DoubleExtensions.Seconds(System.Double)">
+            <summary>
+            Gets a TimeSpan from a double number of seconds.
+            </summary>
+            <param name="days">The number of seconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of seconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
         </member>
         <member name="T:CollectionExtensions">
             <summary>
@@ -3261,6 +4017,38 @@
              	Contributed by Michael T, http://about.me/MichaelTran
              	Renamed by James Curran, to match corresponding HashSet.RemoveWhere()
              </remarks>
+        </member>
+        <member name="M:CollectionExtensions.IsEmpty(System.Collections.ICollection)">
+            <summary>
+            Tests if the collection is empty.
+            </summary>
+            <param name="collection">The collection to test.</param>
+            <returns>True if the collection is empty.</returns>
+        </member>
+        <member name="M:CollectionExtensions.IsEmpty``1(System.Collections.Generic.ICollection{``0})">
+            <summary>
+            Tests if the collection is empty.
+            </summary>
+            <typeparam name="T">The type of the items in 
+            the collection.</typeparam>
+            <param name="collection">The collection to test.</param>
+            <returns>True if the collection is empty.</returns>
+        </member>
+        <member name="M:CollectionExtensions.IsEmpty(System.Collections.IList)">
+            <summary>
+            Tests if the collection is empty.
+            </summary>
+            <param name="collection">The collection to test.</param>
+            <returns>True if the collection is empty.</returns>
+        </member>
+        <member name="M:CollectionExtensions.IsEmpty``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Tests if the collection is empty.
+            </summary>
+            <typeparam name="T">The type of the items in 
+            the collection.</typeparam>
+            <param name="collection">The collection to test.</param>
+            <returns>True if the collection is empty.</returns>
         </member>
         <member name="T:BitmapExtensions">
             <summary>
@@ -3410,6 +4198,30 @@
             <summary>
             Open the Database connection if not already opened.
             </summary>
+        </member>
+        <member name="M:ColorExtensions.ToHtmlColor(System.Drawing.Color)">
+            <summary>
+            returns the RGB Value of a color.
+            </summary>
+            <param name="color">The color.</param>
+            <returns>string</returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:ColorExtensions.ToOleColor(System.Drawing.Color)">
+            <summary>
+            returns the OLE Value of the color.
+            </summary>
+            <param name="color">The color.</param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:ColorExtensions.ToWin32Color(System.Drawing.Color)">
+            <summary>
+            returns the Win32 value of the color.
+            </summary>
+            <param name="color">The color.</param>
+            <returns></returns>
+            <remarks></remarks>
         </member>
         <member name="T:PGK.Extensions.EnumerableExtensions">
             <summary>
@@ -3772,26 +4584,28 @@
             <param name="groupings">The enumeration of groupings from a GroupBy() clause.</param>
             <returns>A dictionary of groupings such that the key of the dictionary is TKey type and the value is List of TValue type.</returns>
         </member>
-        <member name="M:PGK.Extensions.EnumerableExtensions.Slice``1(System.Collections.Generic.IEnumerable{``0},System.Int32,System.Func{``0,System.Int32},System.Int32)">
+        <member name="M:PGK.Extensions.EnumerableExtensions.HasCountOf``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
             <summary>
-            <para>Performs lazy splitting of the provided collection into collections of <paramref name="sliceLength"/>.</para>
-            <para>Each collection will have total <em>weight</em> equal or less than <paramref name="maxSliceWeight"/></para>
+              Returns whether the sequence contains a certain amount of elements.
             </summary>
-            <typeparam name="TItem">The type of the item.</typeparam>
-            <param name="source">The source collection to slice.</param>
-            <param name="sliceLength">Length of the slice.</param>
-            <param name="weightDelegate">Function to calculate <em>weight</em> of each item in the collection</param>
-            <param name="maxSliceWeight">The max item weight.</param>
-            <returns>enumerator over the results</returns>
+            <typeparam name = "T">The type of the elements of the input sequence.</typeparam>
+            <param name = "source">The source for this extension method.</param>
+            <param name = "count">The amount of elements the sequence should contain.</param>
+            <returns>True when the sequence contains the specified amount of elements, false otherwise.</returns>
         </member>
-        <member name="M:PGK.Extensions.EnumerableExtensions.Slice``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+        <member name="M:PGK.Extensions.EnumerableExtensions.EnumValuesToList``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
-            Performs lazy splitting of the provided collection into collections of <paramref name="sliceLength"/>
+            Allows you to create Enumerable List of the Enum's Values.
             </summary>
-            <typeparam name="TItem">The type of the item.</typeparam>
-            <param name="source">The source.</param>
-            <param name="sliceLength">Maximum length of the slice.</param>
-            <returns>lazy enumerator of the collection of arrays</returns>
+            <typeparam name="T">Enum Type to enumerate</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:PGK.Extensions.EnumerableExtensions.EnumNamesToList``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Allows you to create a enumerable string list of the items name in the Enum.
+            </summary>
+            <typeparam name="T">Enum Type to enumerate</typeparam>
+            <returns></returns>
         </member>
         <member name="T:PGK.Extensions.Converter`1">
             <summary>
@@ -3810,6 +4624,12 @@
             	Gets the internal value to be converted.
             </summary>
             <value>The value.</value>
+        </member>
+        <member name="T:PGK.Extensions.Cultures">
+            <summary>
+            Enumeration of all CultureInfo Names using the DisplayStringAttribute to allow 
+            developer to easily specify a culture from an enumeration.
+            </summary>
         </member>
         <member name="T:ValueTypeExtensions">
             <summary>
@@ -3982,6 +4802,13 @@
             </remarks>
         </member>
         <!-- Badly formed XML comment ignored for member "M:ArrayExtension.ClearAt``1(``0[],System.Int32)" -->
+        <member name="M:ArrayExtension.IsEmpty(System.Array)">
+            <summary>
+            Tests if the array is empty.
+            </summary>
+            <param name="array">The array to test.</param>
+            <returns>True if the array is empty.</returns>
+        </member>
         <member name="T:TextReaderExtensions">
             <summary>
             	Extension methods for the TextReader class and its sub classes (StreamReader, StringReader)
@@ -4023,12 +4850,12 @@
             	Contributed by OlivierJ
             </remarks>
         </member>
-        <member name="T:ListExtensions">
+        <member name="T:PGK.Extensions.ListExtensions">
             <summary>
             	Extension methods for all kind of Lists implementing the IList&lt;T&gt; interface
             </summary>
         </member>
-        <member name="M:ListExtensions.InsertUnique``1(System.Collections.Generic.IList{``0},System.Int32,``0)">
+        <member name="M:PGK.Extensions.ListExtensions.InsertUnique``1(System.Collections.Generic.IList{``0},System.Int32,``0)">
             <summary>
             	Inserts an item uniquely to to a list and returns a value whether the item was inserted or not.
             </summary>
@@ -4038,7 +4865,7 @@
             <param name = "item">The item to be added.</param>
             <returns>Indicates whether the item was inserted or not</returns>
         </member>
-        <member name="M:ListExtensions.InsertRangeUnique``1(System.Collections.Generic.IList{``0},System.Int32,System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:PGK.Extensions.ListExtensions.InsertRangeUnique``1(System.Collections.Generic.IList{``0},System.Int32,System.Collections.Generic.IEnumerable{``0})">
             <summary>
             	Inserts a range of items uniquely to a list starting at a given index and returns the amount of items inserted.
             </summary>
@@ -4048,7 +4875,7 @@
             <param name = "items">The items to be inserted.</param>
             <returns>The amount if items that were inserted.</returns>
         </member>
-        <member name="M:ListExtensions.IndexOf``1(System.Collections.Generic.IList{``0},System.Func{``0,System.Boolean})">
+        <member name="M:PGK.Extensions.ListExtensions.IndexOf``1(System.Collections.Generic.IList{``0},System.Func{``0,System.Boolean})">
             <summary>
             	Return the index of the first matching item or -1.
             </summary>
@@ -4057,7 +4884,7 @@
             <param name = "comparison">The comparison.</param>
             <returns>The item index</returns>
         </member>
-        <member name="M:ListExtensions.Join``1(System.Collections.Generic.IList{``0},System.Char)">
+        <member name="M:PGK.Extensions.ListExtensions.Join``1(System.Collections.Generic.IList{``0},System.Char)">
             <summary>
             	Join all the elements in the list and create a string seperated by the specified char.
             </summary>
@@ -4076,7 +4903,7 @@
             	Contributed by Michael T, http://about.me/MichaelTran
             </remarks>
         </member>
-        <member name="M:ListExtensions.Join``1(System.Collections.Generic.IList{``0},System.String)">
+        <member name="M:PGK.Extensions.ListExtensions.Join``1(System.Collections.Generic.IList{``0},System.String)">
             <summary>
             	Join all the elements in the list and create a string seperated by the specified string.
             </summary>
@@ -4096,7 +4923,7 @@
             	Optimised by Mario Majcica
             </remarks>
         </member>
-        <member name="M:ListExtensions.Match``1(System.Collections.Generic.IList{``0},System.String,System.Int32,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
+        <member name="M:PGK.Extensions.ListExtensions.Match``1(System.Collections.Generic.IList{``0},System.String,System.Int32,System.Linq.Expressions.Expression{System.Func{``0,System.Object}}[])">
             <summary>
             	Using Relugar Expression, find the top matches for each item in the source specified by the arguments to search.
             </summary>
@@ -4121,7 +4948,7 @@
             	Contributed by Michael T, http://about.me/MichaelTran
             </remarks>
         </member>
-        <member name="M:ListExtensions.Cast``1(System.Collections.IList)">
+        <member name="M:PGK.Extensions.ListExtensions.Cast``1(System.Collections.IList)">
             <summary>
             	Cast this list into a List
             </summary>
@@ -4132,7 +4959,34 @@
              	Contributed by Michael T, http://about.me/MichaelTran
              </remarks>
         </member>
-        <member name="M:ListExtensions.Merge``1(System.Collections.Generic.List{``0}[])">
+        <member name="M:PGK.Extensions.ListExtensions.GetRandomItem``1(System.Collections.Generic.IList{``0},System.Random)">
+            <summary>
+            Get's an random item from list.
+            </summary>
+            <typeparam name="T">Type of list item.</typeparam>
+            <param name="source">Source list.</param>
+            <param name="random">Random instance to get random index.</param>
+            <returns>A random item from list.</returns>
+        </member>
+        <member name="M:PGK.Extensions.ListExtensions.GetRandomItem``1(System.Collections.Generic.IList{``0},System.Int32)">
+            <summary>
+            Get's an random item from list.
+            </summary>
+            <typeparam name="T">Type of list item.</typeparam>
+            <param name="source">Source list.</param>
+            <param name="seed">MSDN: A number used to calculate a starting value for the pseudo-random number 
+            sequence. If a negative number is specified, the absolute value of the number is used..</param>
+            <returns>A random item from list.</returns>
+        </member>
+        <member name="M:PGK.Extensions.ListExtensions.GetRandomItem``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            Get's an random item from list.
+            </summary>
+            <typeparam name="T">Type of list item.</typeparam>
+            <param name="source">Source list.</param>
+            <returns>A random item from list.</returns>
+        </member>
+        <member name="M:PGK.Extensions.ListExtensions.Merge``1(System.Collections.Generic.List{``0}[])">
             <summary>The merge.</summary>
             <param name="lists">The lists.</param>
             <typeparam name="T"></typeparam>
@@ -4141,7 +4995,7 @@
             	Contributed by Michael T, http://about.me/MichaelTran
             </remarks>
         </member>
-        <member name="M:ListExtensions.Merge``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Collections.Generic.List{``0}[])">
+        <member name="M:PGK.Extensions.ListExtensions.Merge``1(System.Linq.Expressions.Expression{System.Func{``0,System.Object}},System.Collections.Generic.List{``0}[])">
             <summary>The merge.</summary>
             <param name="match">The match.</param>
             <param name="lists">The lists.</param>
@@ -4151,7 +5005,7 @@
             	Contributed by Michael T, http://about.me/MichaelTran
             </remarks>
         </member>
-        <member name="M:ListExtensions.Merge``1(System.Collections.Generic.List{``0},System.Collections.Generic.List{``0},System.Linq.Expressions.Expression{System.Func{``0,System.Object}})">
+        <member name="M:PGK.Extensions.ListExtensions.Merge``1(System.Collections.Generic.List{``0},System.Collections.Generic.List{``0},System.Linq.Expressions.Expression{System.Func{``0,System.Object}})">
             <summary>The merge.</summary>
             <param name="list1">The list 1.</param>
             <param name="list2">The list 2.</param>
@@ -4162,7 +5016,7 @@
             	Contributed by Michael T, http://about.me/MichaelTran
             </remarks>
         </member>
-        <member name="M:ListExtensions.Merge``1(System.Collections.Generic.List{``0},System.Collections.Generic.List{``0})">
+        <member name="M:PGK.Extensions.ListExtensions.Merge``1(System.Collections.Generic.List{``0},System.Collections.Generic.List{``0})">
             <summary>The merge.</summary>
             <param name="list1">The list 1.</param>
             <param name="list2">The list 2.</param>
@@ -4262,6 +5116,24 @@
             <param name="key">The key of interest.</param>
             <param name="exception">The exception to throw if the key is not found.</param>
             <returns>The value associated with the specified key if the key is found, the specified exception is thrown if the key is not found</returns>
+        </member>
+        <member name="M:PGK.Extensions.DictionaryExtensions.IsEmpty(System.Collections.IDictionary)">
+            <summary>
+            Tests if the collection is empty.
+            </summary>
+            <param name="collection">The collection to test.</param>
+            <returns>True if the collection is empty.</returns>
+        </member>
+        <member name="M:PGK.Extensions.DictionaryExtensions.IsEmpty``2(System.Collections.Generic.IDictionary{``0,``1})">
+            <summary>
+            Tests if the IDictionary is empty.
+            </summary>
+            <typeparam name="TKey">The type of the key of 
+            the IDictionary.</typeparam>
+            <typeparam name="TValue">The type of the values
+            of the IDictionary.</typeparam>
+            <param name="collection">The collection to test.</param>
+            <returns>True if the collection is empty.</returns>
         </member>
         <member name="T:DataRowExtensions">
             <summary>
@@ -4679,6 +5551,103 @@
             <param name = "name">The name.</param>
             <param name = "value">The value.</param>
         </member>
+        <member name="T:FloatExtensions">
+            <summary>
+            	Extension methods for the Float data type
+            </summary>
+        </member>
+        <member name="M:FloatExtensions.InRange(System.Single,System.Single,System.Single)">
+            <summary>Checks whether the value is in range</summary>
+            <param name="value">The Value</param>
+            <param name="minValue">The minimum value</param>
+            <param name="maxValue">The maximum value</param>
+        </member>
+        <member name="M:FloatExtensions.InRange(System.Single,System.Single,System.Single,System.Single)">
+            <summary>Checks whether the value is in range or returns the default value</summary>
+            <param name="value">The Value</param>
+            <param name="minValue">The minimum value</param>
+            <param name="maxValue">The maximum value</param>
+            <param name="defaultValue">The default value</param>
+        </member>
+        <member name="M:FloatExtensions.Days(System.Single)">
+            <summary>
+            Gets a TimeSpan from a float number of days.
+            </summary>
+            <param name="days">The number of days the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of days.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:FloatExtensions.Hours(System.Single)">
+            <summary>
+            Gets a TimeSpan from a float number of hours.
+            </summary>
+            <param name="days">The number of hours the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of hours.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:FloatExtensions.Milliseconds(System.Single)">
+            <summary>
+            Gets a TimeSpan from a float number of milliseconds.
+            </summary>
+            <param name="days">The number of milliseconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of milliseconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:FloatExtensions.Minutes(System.Single)">
+            <summary>
+            Gets a TimeSpan from a float number of minutes.
+            </summary>
+            <param name="days">The number of minutes the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of minutes.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="M:FloatExtensions.Seconds(System.Single)">
+            <summary>
+            Gets a TimeSpan from a float number of seconds.
+            </summary>
+            <param name="days">The number of seconds the TimeSpan will contain.</param>
+            <returns>A TimeSpan containing the specified number of seconds.</returns>
+            <remarks>
+            	Contributed by jceddy
+            </remarks>
+        </member>
+        <member name="T:ExtensionMethodSetting">
+            <summary>
+            Allows developer to set default values for CultureInfo and Encoding
+            </summary>
+            <remarks>Added by Jtolar</remarks>
+        </member>
+        <member name="M:ExtensionMethodSetting.#cctor">
+            <summary>
+            Initializes a static instance of the ExtensionMethodsSettings class
+            </summary>
+        </member>
+        <member name="P:ExtensionMethodSetting.DefaultEncoding">
+            <summary>
+            Gets or Sets the default encoding scheme extension methods should use
+            </summary>
+            <remarks>
+            The default value for this property is <see cref="P:System.Text.Encoding.UTF8"/>
+            </remarks>
+        </member>
+        <member name="P:ExtensionMethodSetting.DefaultCulture">
+            <summary>
+            Gets or Sets the default culture information extension methods should use
+            </summary>
+            <remarks>
+            The default value for this property is <see cref="P:System.Globalization.CultureInfo.CurrentUICulture"/>
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:EventHandlerExtenders.RaiseEvent``1(System.EventHandler{``0},System.Object,``0)" -->
+        <!-- Badly formed XML comment ignored for member "M:EventHandlerExtenders.RaiseEventOnUIThread``1(System.EventHandler{``0},System.Object,``0)" -->
         <member name="T:EnumExtensions">
             <summary>
             Extension methods for the enum data type

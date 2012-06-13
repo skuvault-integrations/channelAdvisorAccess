@@ -118,19 +118,20 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FluentDateTime">
-      <HintPath>..\packages\FluentDateTime.1.5.0.0\Lib\NET\FluentDateTime.dll</HintPath>
-    </Reference>
-    <Reference Include="Netco, Version=0.5.4426.27969, Culture=neutral, PublicKeyToken=9d732c15ac2ec2c9, processorArchitecture=MSIL">
+    <Reference Include="FluentDateTime, Version=1.6.1.0, Culture=neutral, PublicKeyToken=6ccbc613702e6c71, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Netco.0.5.4426.27969\lib\net40\Netco.dll</HintPath>
+      <HintPath>..\packages\FluentDateTime.1.6.1.0\Lib\NET40\FluentDateTime.dll</HintPath>
+    </Reference>
+    <Reference Include="Netco, Version=0.5.4546.40356, Culture=neutral, PublicKeyToken=9d732c15ac2ec2c9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Netco.0.5.4546.40356\lib\net40\Netco.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="PGK.Extensions, Version=1.0.4426.27946, Culture=neutral, PublicKeyToken=f93e897f802ddcb7, processorArchitecture=MSIL">
+    <Reference Include="PGK.Extensions, Version=1.0.4531.28100, Culture=neutral, PublicKeyToken=f93e897f802ddcb7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\PGK.Extensions.1.0.4426.27946\lib\net40\PGK.Extensions.dll</HintPath>
+      <HintPath>..\packages\PGK.Extensions.1.0.4531.28100\lib\net40\PGK.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

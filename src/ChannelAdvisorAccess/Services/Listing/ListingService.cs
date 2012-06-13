@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using ChannelAdvisorAccess.ListingService;
 using ChannelAdvisorAccess.Misc;
-using PGK.Extensions;
+using Netco.Extensions;
 
 namespace ChannelAdvisorAccess.Services.Listing
 {
