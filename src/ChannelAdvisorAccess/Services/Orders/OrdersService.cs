@@ -56,6 +56,13 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return this.GetOrders< T >( startDate, endDate ).ToList();
 		}
 
+		private readonly Dictionary< DetailLevelType, int > _pageSizes = new Dictionary< DetailLevelType, int >{
+				{ DetailLevelType.Low, 200 },
+				{ DetailLevelType.Medium, 100 },
+				{ DetailLevelType.High, 50 },
+				{ DetailLevelType.Complete, 20 },
+			};
+
 		/// <summary>
 		/// Gets the orders.
 		/// </summary>
@@ -68,7 +75,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			if( !orderCriteria.DetailLevel.HasValue )
 				orderCriteria.DetailLevel = DetailLevelType.High;
 
-			orderCriteria.PageSize = 30;
+			orderCriteria.PageSize = _pageSizes[ orderCriteria.DetailLevel.Value ];
 			orderCriteria.PageNumberFilter = 0;
 
 			while( true )
