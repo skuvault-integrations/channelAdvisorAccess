@@ -18,10 +18,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ShippingService.asmx?WSDL" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ShippingService.asmx?WSDL" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ShippingService1.wsdl" MetadataType="Wsdl" ID="c1a280d1-73da-4c5c-9793-a3c16e8f4127" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ShippingService.asmx?WSDL" />
+    <MetadataFile FileName="ShippingService.wsdl" MetadataType="Wsdl" ID="5580daf4-465b-4055-8ba6-25868874bb6f" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ShippingService.asmx?WSDL" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

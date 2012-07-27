@@ -213,13 +213,16 @@
     </None>
     <None Include="ChannelAdvisorAccessKey.snk" />
     <None Include="packages.config" />
+    <None Include="Service References\InventoryService\InventoryService.wsdl" />
+    <None Include="Service References\ListingService\ListingService1.wsdl" />
+    <None Include="Service References\OrderService\OrderService.wsdl" />
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfOrderShipmentHistoryResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShipmentResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ShippingService\ShippingService1.wsdl" />
+    <None Include="Service References\ShippingService\ShippingService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\InventoryService\" />
@@ -276,7 +279,6 @@
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfVariationInfo.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\InventoryService\InventoryService1.wsdl" />
     <None Include="Service References\InventoryService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -287,7 +289,6 @@
     <None Include="Service References\ListingService\ChannelAdvisorAccess.ListingService.APIResultOfString.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ListingService\ListingService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse.datasource">
@@ -311,7 +312,6 @@
     <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.APIResultOfString.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\OrderService\OrderService1.wsdl" />
     <None Include="Service References\OrderService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
