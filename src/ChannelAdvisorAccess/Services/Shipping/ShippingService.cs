@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.ShippingService;
