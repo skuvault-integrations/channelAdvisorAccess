@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Caching;
 using ChannelAdvisorAccess.OrderService;
+using ChannelAdvisorAccess.Services.Admin;
 using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.Services.Listing;
 using ChannelAdvisorAccess.Services.Orders;
@@ -28,6 +29,12 @@ namespace ChannelAdvisorAccess.Services
 			this._developerKey = developerKey;
 			this._cache = cache;
 			this._slidingCacheExpiration = slidingCacheExpiration;
+		}
+
+		public IAdminService CreateAdminService()
+		{
+			var adminCredentials = new AdminService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
+			return new Admin.AdminService( adminCredentials );
 		}
 
 		public IOrdersService CreateOrdersService( string accountName, string accountId )
