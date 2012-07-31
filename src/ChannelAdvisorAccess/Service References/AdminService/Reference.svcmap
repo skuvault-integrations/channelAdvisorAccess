@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="b768031c-5cc5-48b6-a1e7-c473c1c494be" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="9f4fd76d-d92c-4106-bb78-465cfa9a5755" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
@@ -18,13 +18,13 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/OrderService.asmx?WSDL" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/AdminService.asmx?WSDL" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="OrderService.wsdl" MetadataType="Wsdl" ID="84eb5e78-a691-49aa-9a98-c5fc8b76b2c6" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/OrderService.asmx?WSDL" />
+    <MetadataFile FileName="AdminService.wsdl" MetadataType="Wsdl" ID="3c625e1e-df54-485c-a701-a7f34076c1b8" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/AdminService.asmx?WSDL" />
   </Metadata>
   <Extensions>
-    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
   </Extensions>
 </ReferenceGroup>

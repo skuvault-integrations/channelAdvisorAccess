@@ -19,7 +19,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			this._detailLevel = detailLevel;
 		}
 
-		public ItemsFilter( InventoryItemCriteria criteria, InventoryItemDetailLevel detailLevel, InventoryItemSortField sortField, SortDirection sortDirection )
+		public ItemsFilter( InventoryItemCriteria criteria, InventoryItemDetailLevel detailLevel, string sortField, string sortDirection )
 		{
 			this._criteria = criteria;
 			this._detailLevel = detailLevel;
@@ -29,8 +29,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		private InventoryItemCriteria _criteria;
 		private InventoryItemDetailLevel _detailLevel;
-		private InventoryItemSortField? _sortField;
-		private SortDirection? _sortDirection;
+		private string _sortField;
+		private string _sortDirection;
 
 		public InventoryItemCriteria Criteria
 		{
@@ -44,13 +44,13 @@ namespace ChannelAdvisorAccess.Services.Items
 			set { this._detailLevel = value; }
 		}
 
-		public InventoryItemSortField? SortField
+		public string SortField
 		{
 			get { return this._sortField; }
 			set { this._sortField = value; }
 		}
 
-		public SortDirection? SortDirection
+		public string SortDirection
 		{
 			get { return this._sortDirection; }
 			set { this._sortDirection = value; }

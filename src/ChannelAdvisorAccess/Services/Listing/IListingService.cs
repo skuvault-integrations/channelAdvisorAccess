@@ -10,8 +10,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 	{
 		/// <summary>Ends the listings for the specified item.</summary>
 		/// <param name="itemSkus">The item skus.</param>
-		/// <param name="reason">The reason.</param>
+		/// <param name="withdrawReason">The reason.</param>
 		/// <remarks>Automatically ends listing for all account for the specified SKUs.</remarks>
-		void WithdrawListing( IList< string > itemSkus, WithdrawReason reason ); 
+		void WithdrawListing( IList< string > itemSkus, string withdrawReason ); 
 	}
 }

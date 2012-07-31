@@ -10,7 +10,7 @@ namespace ChannelAdvisorAccess.Services.Listing
 		private readonly APICredentials _credentials;
 		private readonly ListingServiceSoapClient _client;
 		public string Name { get; private set; }
-		public string AccountId{ get; private set; }
+		public string AccountId { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListingService"/> class.
@@ -26,15 +26,15 @@ namespace ChannelAdvisorAccess.Services.Listing
 			this._client = new ListingServiceSoapClient();
 		}
 
-		public void WithdrawListing( IList< string > itemSkus, WithdrawReason reason )
+		public void WithdrawListing( IList< string > itemSkus, string withdrawReason )
 		{
 			if( itemSkus == null || itemSkus.Count == 0 )
 				return;
 
-			foreach( var skusSlice in itemSkus.Slice( 100 ))
+			foreach( var skusSlice in itemSkus.Slice( 100 ) )
 			{
 				string[] slice = skusSlice;
-				ActionPolicies.CaSubmitPolicy.Do( () => _client.WithdrawListings( _credentials, AccountId, slice, null, reason ));
+				ActionPolicies.CaSubmitPolicy.Do( () => _client.WithdrawListings( _credentials, AccountId, slice, null, withdrawReason ) );
 			}
 		}
 	}

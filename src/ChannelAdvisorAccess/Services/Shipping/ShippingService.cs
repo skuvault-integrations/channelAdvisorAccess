@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.ShippingService;
@@ -57,7 +56,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
 							new OrderShipment{ 
 								OrderId = orderId,
-								ShipmentType = ShipmentTypeEnum.Full,
+								ShipmentType = "Full",
 								FullShipment = new FullShipmentContents{
 									carrierCode = carrierCode,
 									classCode = classCode,
@@ -85,7 +84,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
 							new OrderShipment{ 
 								ClientOrderIdentifier = clientOrderId,
-								ShipmentType = ShipmentTypeEnum.Full,
+								ShipmentType = "Full",
 								FullShipment = new FullShipmentContents{
 									carrierCode = carrierCode,
 									classCode = classCode,
@@ -113,7 +112,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
 							new OrderShipment{ 
 								OrderId = orderId,
-								ShipmentType = ShipmentTypeEnum.Partial,
+								ShipmentType = "Partial",
 								PartialShipment = partialShipmentContents
 							}}});
 						CheckCaSuccess( result );
@@ -136,7 +135,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
 							new OrderShipment{ 
 								ClientOrderIdentifier = clientOrderId,
-								ShipmentType = ShipmentTypeEnum.Partial,
+								ShipmentType = "Partial",
 								PartialShipment = partialShipmentContents
 							}}});
 						CheckCaSuccess( result );
