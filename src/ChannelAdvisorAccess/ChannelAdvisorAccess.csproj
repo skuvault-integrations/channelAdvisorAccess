@@ -163,6 +163,7 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Constants\CheckoutStatusCodes.cs" />
+    <Compile Include="Constants\DetailLevelTypes.cs" />
     <Compile Include="Constants\InventoryQuantityUpdateTypes.cs" />
     <Compile Include="Constants\OrderStateCodes.cs" />
     <Compile Include="Constants\PaymentStatusCodes.cs" />
