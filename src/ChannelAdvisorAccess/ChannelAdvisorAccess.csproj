@@ -162,6 +162,11 @@
     <Compile Include="..\Global\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Constants\CheckoutStatusCodes.cs" />
+    <Compile Include="Constants\InventoryQuantityUpdateTypes.cs" />
+    <Compile Include="Constants\OrderStateCodes.cs" />
+    <Compile Include="Constants\PaymentStatusCodes.cs" />
+    <Compile Include="Constants\ShippingStatusCodes.cs" />
     <Compile Include="CurrencyConversion\YahooCurrencyConverter.cs" />
     <Compile Include="Exceptions\ChannelAdvisorException.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
