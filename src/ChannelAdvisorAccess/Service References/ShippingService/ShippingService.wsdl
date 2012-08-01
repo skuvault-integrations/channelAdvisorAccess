@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.channeladvisor.com/webservices/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s1="http://api.channeladvisor.com/datacontracts/ShippingService" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s2="http://api.channeladvisor.com/datacontracts/orders" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://api.channeladvisor.com/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://api.channeladvisor.com/webservices/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s1="http://api.channeladvisor.com/datacontracts/ShippingService" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://api.channeladvisor.com/webservices/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://api.channeladvisor.com/webservices/">
       <s:import namespace="http://api.channeladvisor.com/datacontracts/ShippingService" />
@@ -192,17 +192,11 @@
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="OrderId" nillable="true" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="ClientOrderIdentifier" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="ShipmentType" type="tns:ShipmentTypeEnum" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShipmentType" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="PartialShipment" type="tns:PartialShipmentContents" />
           <s:element minOccurs="0" maxOccurs="1" name="FullShipment" type="tns:FullShipmentContents" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="ShipmentTypeEnum">
-        <s:restriction base="s:string">
-          <s:enumeration value="Full" />
-          <s:enumeration value="Partial" />
-        </s:restriction>
-      </s:simpleType>
       <s:complexType name="PartialShipmentContents">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="shipmentContents" nillable="true" type="tns:ShipmentContents" />
@@ -286,12 +280,11 @@
       </s:complexType>
     </s:schema>
     <s:schema elementFormDefault="qualified" targetNamespace="http://api.channeladvisor.com/datacontracts/ShippingService">
-      <s:import namespace="http://api.channeladvisor.com/datacontracts/orders" />
       <s:complexType name="OrderShipmentHistoryResponse">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="OrderID" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="ClientOrderIdentifier" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="ShippingStatus" type="s2:ShippingStatusCode" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShippingStatus" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="ShippingStatusUpdateDateGMT" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="OrderShipments" type="s1:ArrayOfOrderShipmentResponse" />
         </s:sequence>
@@ -333,17 +326,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
         </s:sequence>
       </s:complexType>
-    </s:schema>
-    <s:schema elementFormDefault="qualified" targetNamespace="http://api.channeladvisor.com/datacontracts/orders">
-      <s:simpleType name="ShippingStatusCode">
-        <s:restriction base="s:string">
-          <s:enumeration value="NoChange" />
-          <s:enumeration value="Unshipped" />
-          <s:enumeration value="Shipped" />
-          <s:enumeration value="PartiallyShipped" />
-          <s:enumeration value="PendingShipment" />
-        </s:restriction>
-      </s:simpleType>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="GetShippingRateListSoapIn">
@@ -554,10 +536,10 @@
   </wsdl:binding>
   <wsdl:service name="ShippingService">
     <wsdl:port name="ShippingServiceSoap" binding="tns:ShippingServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ShippingService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ShippingService.asmx" />
     </wsdl:port>
     <wsdl:port name="ShippingServiceSoap12" binding="tns:ShippingServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ShippingService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ShippingService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

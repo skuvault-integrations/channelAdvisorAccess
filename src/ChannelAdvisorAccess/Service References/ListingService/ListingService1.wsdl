@@ -8,7 +8,7 @@
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="skuList" type="tns:ArrayOfString" />
             <s:element minOccurs="0" maxOccurs="1" name="listingIDList" type="tns:ArrayOfString" />
-            <s:element minOccurs="1" maxOccurs="1" name="withdrawReason" type="tns:WithdrawReason" />
+            <s:element minOccurs="0" maxOccurs="1" name="withdrawReason" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -17,14 +17,6 @@
           <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="WithdrawReason">
-        <s:restriction base="s:string">
-          <s:enumeration value="ItemWasLostOrBroken" />
-          <s:enumeration value="ItemNoLongerAvailableForSale" />
-          <s:enumeration value="ErrorInMinimumBidOrReserve" />
-          <s:enumeration value="ErrorInTheListing" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="WithdrawListingsResponse">
         <s:complexType>
           <s:sequence>
@@ -152,10 +144,10 @@
   </wsdl:binding>
   <wsdl:service name="ListingService">
     <wsdl:port name="ListingServiceSoap" binding="tns:ListingServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ListingService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx" />
     </wsdl:port>
     <wsdl:port name="ListingServiceSoap12" binding="tns:ListingServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/ListingService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
