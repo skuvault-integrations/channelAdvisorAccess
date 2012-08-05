@@ -126,9 +126,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Netco.0.5.4546.40356\lib\net40\Netco.dll</HintPath>
     </Reference>
-    <Reference Include="NLog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.2.0.0.2000\lib\net40\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="PGK.Extensions, Version=1.0.4531.28100, Culture=neutral, PublicKeyToken=f93e897f802ddcb7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\PGK.Extensions.1.0.4531.28100\lib\net40\PGK.Extensions.dll</HintPath>
@@ -396,9 +393,6 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,5 +1,4 @@
 using System;
-using FluentDateTime;
 using Netco.ActionPolicyServices;
 using Netco.Logging;
 using Netco.Utils;
@@ -13,12 +12,29 @@ namespace ChannelAdvisorAccess.Misc
 			get { return _caGetPolicy; }
 		}
 
-		private static readonly ActionPolicy _caGetPolicy = ActionPolicy.Handle< Exception >().Retry(
-			10, ( ex, i ) =>
+		private static T Retry< T >( Func< T > producer, Action< string > message )
+		{
+			Exception e = new NullReferenceException();
+			for( var i = 0; i < 4; i++ )
+			{
+				try
 				{
-					typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API get call for the {0} time", i );
-					SystemUtil.Sleep( ( 0.5 + i ).Seconds() );
-				} );
+					return producer();
+				}
+				catch( Exception ex )
+				{
+					message( "Retrying from: " + ex.Message );
+					e = ex;
+				}
+			}
+			throw e;
+		}
+
+		private static readonly ActionPolicy _caGetPolicy = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+			{
+				typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API get call for the {0} time", i );
+				SystemUtil.Sleep( ( 0.5 + i ).Seconds() );
+			} );
 
 		public static ActionPolicy CaSubmitPolicy
 		{
@@ -26,9 +42,9 @@ namespace ChannelAdvisorAccess.Misc
 		}
 
 		private static readonly ActionPolicy _caSumbitPolicy = ActionPolicy.Handle< Exception >().Retry( 3, ( ex, i ) =>
-				{
-					typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API submit call for the {0} time", i );
-					SystemUtil.Sleep( ( 0.5 + i ).Seconds() );
-				} );
+			{
+				typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API submit call for the {0} time", i );
+				SystemUtil.Sleep( ( 0.5 + i ).Seconds() );
+			} );
 	}
 }
