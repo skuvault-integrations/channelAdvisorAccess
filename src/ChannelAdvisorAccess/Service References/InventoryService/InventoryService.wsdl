@@ -121,7 +121,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="SupplierCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="TaxProductCode" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="FlagStyle" nillable="true" type="tns:FlagType" />
+          <s:element minOccurs="0" maxOccurs="1" name="FlagStyle" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="FlagDescription" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="IsBlocked" nillable="true" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="BlockComment" type="s:string" />
@@ -152,20 +152,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="MetaDescription" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="FlagType">
-        <s:restriction base="s:string">
-          <s:enumeration value="ItemCopied" />
-          <s:enumeration value="ExclamationPoint" />
-          <s:enumeration value="NoFlag" />
-          <s:enumeration value="RedFlag" />
-          <s:enumeration value="QuestionMark" />
-          <s:enumeration value="NotAvailable" />
-          <s:enumeration value="Price" />
-          <s:enumeration value="YellowFlag" />
-          <s:enumeration value="GreenFlag" />
-          <s:enumeration value="BlueFlag" />
-        </s:restriction>
-      </s:simpleType>
       <s:complexType name="QuantityInfoResponse">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Total" type="s:int" />
@@ -247,6 +233,7 @@
       <s:complexType name="ShippingInfo">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsFBA" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="ShippingRateList" type="tns:ArrayOfShippingRateInfo" />
         </s:sequence>
       </s:complexType>
@@ -265,25 +252,12 @@
           <s:element minOccurs="1" maxOccurs="1" name="FirstItemHandlingRate" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="AdditionalItemHandlingRate" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="FreeShippingIfBuyItNow" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="FirstItemRateAttribute" type="tns:ShippingRateAttribute" />
-          <s:element minOccurs="0" maxOccurs="1" name="FirstItemHandlingRateAttribute" type="tns:HandlingRateAttribute" />
-          <s:element minOccurs="1" maxOccurs="1" name="AdditionalItemRateAttribute" type="tns:ShippingRateAttribute" />
-          <s:element minOccurs="0" maxOccurs="1" name="AdditionalItemHandlingRateAttribute" type="tns:HandlingRateAttribute" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstItemRateAttribute" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstItemHandlingRateAttribute" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdditionalItemRateAttribute" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdditionalItemHandlingRateAttribute" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="ShippingRateAttribute">
-        <s:restriction base="s:string">
-          <s:enumeration value="Price" />
-          <s:enumeration value="TBD" />
-          <s:enumeration value="NotAvailable" />
-        </s:restriction>
-      </s:simpleType>
-      <s:simpleType name="HandlingRateAttribute">
-        <s:restriction base="s:string">
-          <s:enumeration value="Price" />
-          <s:enumeration value="NotAvailable" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="GetInventoryItemListWithFullDetail">
         <s:complexType>
           <s:sequence>
@@ -305,14 +279,14 @@
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="itemCriteria" nillable="true" type="tns:InventoryItemCriteria" />
             <s:element minOccurs="0" maxOccurs="1" name="detailLevel" type="tns:InventoryItemDetailLevel" />
-            <s:element minOccurs="1" maxOccurs="1" name="sortField" nillable="true" type="tns:InventoryItemSortField" />
-            <s:element minOccurs="1" maxOccurs="1" name="sortDirection" nillable="true" type="tns:SortDirection" />
+            <s:element minOccurs="0" maxOccurs="1" name="sortField" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sortDirection" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
       <s:complexType name="InventoryItemCriteria">
         <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="DateRangeField" nillable="true" type="tns:InventoryItemDateRangeField" />
+          <s:element minOccurs="0" maxOccurs="1" name="DateRangeField" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="DateRangeStartGMT" nillable="true" type="s:dateTime" />
           <s:element minOccurs="1" maxOccurs="1" name="DateRangeEndGMT" nillable="true" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="PartialSku" type="s:string" />
@@ -320,39 +294,13 @@
           <s:element minOccurs="0" maxOccurs="1" name="SkuEndsWith" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ClassificationName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="LabelName" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="QuantityCheckField" nillable="true" type="tns:InventoryItemQuantityField" />
-          <s:element minOccurs="1" maxOccurs="1" name="QuantityCheckType" nillable="true" type="tns:NumericFilterType" />
+          <s:element minOccurs="0" maxOccurs="1" name="QuantityCheckField" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="QuantityCheckType" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="QuantityCheckValue" nillable="true" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PageNumber" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PageSize" type="s:int" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="InventoryItemDateRangeField">
-        <s:restriction base="s:string">
-          <s:enumeration value="CreateDate" />
-          <s:enumeration value="LastUpdateDate" />
-          <s:enumeration value="QtyLastModifiedDate" />
-        </s:restriction>
-      </s:simpleType>
-      <s:simpleType name="InventoryItemQuantityField">
-        <s:restriction base="s:string">
-          <s:enumeration value="Total" />
-          <s:enumeration value="Available" />
-          <s:enumeration value="Open" />
-          <s:enumeration value="PendingCheckout" />
-          <s:enumeration value="PendingPayment" />
-          <s:enumeration value="PendingShipment" />
-        </s:restriction>
-      </s:simpleType>
-      <s:simpleType name="NumericFilterType">
-        <s:restriction base="s:string">
-          <s:enumeration value="EqualTo" />
-          <s:enumeration value="LessThan" />
-          <s:enumeration value="LessThanOrEqualTo" />
-          <s:enumeration value="GreaterThan" />
-          <s:enumeration value="GreaterThanOrEqualTo" />
-        </s:restriction>
-      </s:simpleType>
       <s:complexType name="InventoryItemDetailLevel">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="IncludeQuantityInfo" nillable="true" type="s:boolean" />
@@ -360,18 +308,6 @@
           <s:element minOccurs="1" maxOccurs="1" name="IncludeClassificationInfo" nillable="true" type="s:boolean" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="InventoryItemSortField">
-        <s:restriction base="s:string">
-          <s:enumeration value="Sku" />
-          <s:enumeration value="Title" />
-        </s:restriction>
-      </s:simpleType>
-      <s:simpleType name="SortDirection">
-        <s:restriction base="s:string">
-          <s:enumeration value="Ascending" />
-          <s:enumeration value="Descending" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="GetFilteredInventoryItemListResponse">
         <s:complexType>
           <s:sequence>
@@ -384,8 +320,8 @@
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="itemCriteria" nillable="true" type="tns:InventoryItemCriteria" />
-            <s:element minOccurs="1" maxOccurs="1" name="sortField" nillable="true" type="tns:InventoryItemSortField" />
-            <s:element minOccurs="1" maxOccurs="1" name="sortDirection" nillable="true" type="tns:SortDirection" />
+            <s:element minOccurs="0" maxOccurs="1" name="sortField" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sortDirection" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -652,89 +588,10 @@
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="SKU" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="tns:ErrorCode" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="ErrorCode">
-        <s:restriction base="s:string">
-          <s:enumeration value="Success" />
-          <s:enumeration value="Unexpected" />
-          <s:enumeration value="AccountIDIsNull" />
-          <s:enumeration value="AccountIDIsBlank" />
-          <s:enumeration value="SkuIsNull" />
-          <s:enumeration value="SkuIsBlank" />
-          <s:enumeration value="CartIDNull" />
-          <s:enumeration value="LineItemOrSKUEmpty" />
-          <s:enumeration value="TooManySKUsRequested" />
-          <s:enumeration value="MultiplePromoCodesSpecified" />
-          <s:enumeration value="AccountIDNotExists" />
-          <s:enumeration value="DataIntegrityViolation" />
-          <s:enumeration value="InvalidArguments" />
-          <s:enumeration value="InvalidCartID" />
-          <s:enumeration value="CartNotFound" />
-          <s:enumeration value="OrderCollectionNull" />
-          <s:enumeration value="FetchFilterInfoNull" />
-          <s:enumeration value="EmptyCartSubmit" />
-          <s:enumeration value="Invalid_CCLast4" />
-          <s:enumeration value="RoverRegionNotFound" />
-          <s:enumeration value="WrongStateInfo" />
-          <s:enumeration value="WrongCountryInfo" />
-          <s:enumeration value="ShippingCostNegative" />
-          <s:enumeration value="TooManyTaxAmounts" />
-          <s:enumeration value="TooManyShippingAmounts" />
-          <s:enumeration value="TooManyInsuranceAmounts" />
-          <s:enumeration value="TooManyVATShippingAmounts" />
-          <s:enumeration value="TooManyGiftWrapAmounts" />
-          <s:enumeration value="TooManyVATGiftWrapAmounts" />
-          <s:enumeration value="TooManyRecyclingFeeAmounts" />
-          <s:enumeration value="VATRangeOutOfRange" />
-          <s:enumeration value="PromoAmountOutOfRange" />
-          <s:enumeration value="NegativeQuantity" />
-          <s:enumeration value="ZeroQuantity" />
-          <s:enumeration value="InvalidSaleSource" />
-          <s:enumeration value="MissingEmailAddress" />
-          <s:enumeration value="EMailAddressBadFormat" />
-          <s:enumeration value="SKUNotFound" />
-          <s:enumeration value="LineItemIDNotFound" />
-          <s:enumeration value="QuantityNotEnough" />
-          <s:enumeration value="ErrorInvoiceCreation" />
-          <s:enumeration value="WrongAccountSettings" />
-          <s:enumeration value="OrderIdIsNullOrEmpty" />
-          <s:enumeration value="Invalid_OrderId" />
-          <s:enumeration value="Invalid_OrderNumberLength" />
-          <s:enumeration value="Invalid_CarrierClassData" />
-          <s:enumeration value="Invalid_TrackingNumberLgth" />
-          <s:enumeration value="Invalid_ShippingInstructionsLgth" />
-          <s:enumeration value="Invalid_FirstNameLength" />
-          <s:enumeration value="Invalid_LastNameLength" />
-          <s:enumeration value="Invalid_AddressLength" />
-          <s:enumeration value="Invalid_CityLength" />
-          <s:enumeration value="Invalid_CountryLength" />
-          <s:enumeration value="Invalid_PostalCodeLength" />
-          <s:enumeration value="Invalid_CustomFieldValue" />
-          <s:enumeration value="Invalid_OrderStatus" />
-          <s:enumeration value="Invalid_TitleLength" />
-          <s:enumeration value="Invalid_SuffixLength" />
-          <s:enumeration value="Invalid_CompanyNameLength" />
-          <s:enumeration value="Invalid_PhoneLength" />
-          <s:enumeration value="Invalid_JobTitleLength" />
-          <s:enumeration value="Error_SavingBillingData" />
-          <s:enumeration value="Error_SavingOrderShippingData" />
-          <s:enumeration value="Error_PromotionNotFound" />
-          <s:enumeration value="Error_NotValidCartID" />
-          <s:enumeration value="Error_SKUDuplicated" />
-          <s:enumeration value="Error_AuctionWinnerValidation" />
-          <s:enumeration value="MergeInvoice_CheckoutNotOpen" />
-          <s:enumeration value="MergeInvoice_SameInvoice" />
-          <s:enumeration value="MergeInvoice_DiffTaxModule" />
-          <s:enumeration value="MergeInvoice_Error" />
-          <s:enumeration value="SplitInvoice_NoLineItems" />
-          <s:enumeration value="SplitInvoice_CheckoutNotOpen" />
-          <s:enumeration value="SplitInvoice_NotEnoughLineItems" />
-          <s:enumeration value="SplitInvoice_Error" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="DeleteInventoryItem">
         <s:complexType>
           <s:sequence>
@@ -769,7 +626,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="SupplierCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="TaxProductCode" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="FlagStyle" nillable="true" type="tns:FlagType" />
+          <s:element minOccurs="0" maxOccurs="1" name="FlagStyle" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="FlagDescription" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="IsBlocked" nillable="true" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="BlockComment" type="s:string" />
@@ -803,19 +660,10 @@
       </s:complexType>
       <s:complexType name="QuantityInfoSubmit">
         <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="UpdateType" type="tns:InventoryQuantityUpdateType" />
+          <s:element minOccurs="0" maxOccurs="1" name="UpdateType" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Total" type="s:int" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="InventoryQuantityUpdateType">
-        <s:restriction base="s:string">
-          <s:enumeration value="Absolute" />
-          <s:enumeration value="Relative" />
-          <s:enumeration value="Available" />
-          <s:enumeration value="InStock" />
-          <s:enumeration value="UnShipped" />
-        </s:restriction>
-      </s:simpleType>
       <s:complexType name="ArrayOfImageInfoSubmit">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="unbounded" name="ImageInfoSubmit" nillable="true" type="tns:ImageInfoSubmit" />
@@ -1980,10 +1828,10 @@
   </wsdl:binding>
   <wsdl:service name="InventoryService">
     <wsdl:port name="InventoryServiceSoap" binding="tns:InventoryServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/InventoryService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/InventoryService.asmx" />
     </wsdl:port>
     <wsdl:port name="InventoryServiceSoap12" binding="tns:InventoryServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v5/InventoryService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/InventoryService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
