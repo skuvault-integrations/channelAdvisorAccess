@@ -1,8 +1,0 @@
-;!@Install@!UTF-8!
-BeginPrompt="Make sure you can see both HIDDEN and SYSTEM files to see all eSafe files."
-ExtractPathText="Specify folder to extract files to"
-CancelPrompt="Are you sure you want to cancel?"
-InstallPath="mypropertyesafe"
-OverwriteMode="0"
-GUIFlags="8+64+256+4096"
-;!@InstallEnd@!

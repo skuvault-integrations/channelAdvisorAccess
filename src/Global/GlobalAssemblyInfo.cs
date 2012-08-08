@@ -3,10 +3,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [ assembly : ComVisible( false ) ]
-[ assembly : AssemblyProduct( "Channel Advisor Access" ) ]
+[ assembly : AssemblyProduct( "ChannelAdvisorAccess" ) ]
 [ assembly : AssemblyCompany( "Bitnox LLC" ) ]
-[ assembly : AssemblyCopyright( "Copyright © 2011 Bitnox LLC" ) ]
-[ assembly : AssemblyDescription( "Channel Advisor webservices API wrapper." ) ]
+[ assembly : AssemblyCopyright( "Copyright (C) 2012 Bitnox LLC" ) ]
+[ assembly : AssemblyDescription( "ChannelAdvisor webservices API wrapper." ) ]
 [ assembly : AssemblyTrademark( "" ) ]
 [ assembly : AssemblyCulture( "" ) ]
 [ assembly : CLSCompliant( false ) ]
@@ -22,5 +22,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[ assembly : AssemblyVersion( "1.0.*" ) ]
-[ assembly : AssemblyFileVersion( "1.0.0.0" ) ]
+[ assembly : AssemblyVersion( "1.0.0.0" ) ]

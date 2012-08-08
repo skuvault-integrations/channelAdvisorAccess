@@ -3,13 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelAdvisorAccess", "ChannelAdvisorAccess\ChannelAdvisorAccess.csproj", "{88234B75-15F8-49E7-A7A9-833916FA20CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{00E8503B-120D-4F94-BD03-4DDE2D1C01EA}"
-	ProjectSection(SolutionItems) = preProject
-		..\psake.cmd = ..\psake.cmd
-		..\tools\psake\psake.ps1 = ..\tools\psake\psake.ps1
-		..\release.cmd = ..\release.cmd
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

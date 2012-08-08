@@ -5,6 +5,7 @@ namespace ChannelAdvisorAccess.Exceptions
 	/// <summary>
 	/// Exception thrown if ChannelAdvisor webservice returns an error.
 	/// </summary>
+	[ Serializable ]
 	public class ChannelAdvisorException : Exception
 	{
 		private readonly int _messageCode;
