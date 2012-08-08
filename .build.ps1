@@ -70,7 +70,7 @@ task Package  {
 # Set $script:Version = assembly version
 task Version {
 	assert (( Get-Item $build_artifacts_dir\ChannelAdvisorAccess.dll ).VersionInfo.FileVersion -match '^(\d+\.\d+\.\d+)')
-	$script:Version = $matches[1]+"-rc0"
+	$script:Version = $matches[1]
 }
 
 task Archive {
@@ -103,7 +103,7 @@ task NuGet Package, Version, {
 		<projectUrl>https://github.com/slav/ChannelAdvisorAccess</projectUrl>
 		<licenseUrl>https://raw.github.com/slav/ChannelAdvisorAccess/master/License.txt</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<copyright>Copyright (C) Bitnox LLC 2012</copyright>
+		<copyright>Copyright (C) Agile Harbor, LLC 2012</copyright>
 		<summary>$text</summary>
 		<description>$text</description>
 		<tags></tags>

@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 
 [ assembly : ComVisible( false ) ]
 [ assembly : AssemblyProduct( "ChannelAdvisorAccess" ) ]
-[ assembly : AssemblyCompany( "Bitnox LLC" ) ]
-[ assembly : AssemblyCopyright( "Copyright (C) 2012 Bitnox LLC" ) ]
+[ assembly : AssemblyCompany( "Agile Harbor, LLC" ) ]
+[ assembly : AssemblyCopyright( "Copyright (C) 2012 Agile Harbor, LLC" ) ]
 [ assembly : AssemblyDescription( "ChannelAdvisor webservices API wrapper." ) ]
 [ assembly : AssemblyTrademark( "" ) ]
 [ assembly : AssemblyCulture( "" ) ]
@@ -22,4 +22,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[ assembly : AssemblyVersion( "1.0.0.0" ) ]
+// Keep in track with CA API version
+[ assembly : AssemblyVersion( "6.0.0.0" ) ]
