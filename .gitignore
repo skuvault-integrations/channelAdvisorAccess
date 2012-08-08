@@ -32,3 +32,4 @@ _ReSharper*/
 #Ignore common build files
 build
 log
+packages

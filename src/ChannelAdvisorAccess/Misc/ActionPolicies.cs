@@ -33,7 +33,7 @@ namespace ChannelAdvisorAccess.Misc
 		private static readonly ActionPolicy _caGetPolicy = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
 			{
 				typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API get call for the {0} time", i );
-				SystemUtil.Sleep( ( 0.5 + i ).Seconds() );
+				SystemUtil.Sleep( TimeSpan.FromSeconds( 0.5 + i ) );
 			} );
 
 		public static ActionPolicy CaSubmitPolicy
@@ -44,7 +44,7 @@ namespace ChannelAdvisorAccess.Misc
 		private static readonly ActionPolicy _caSumbitPolicy = ActionPolicy.Handle< Exception >().Retry( 3, ( ex, i ) =>
 			{
 				typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API submit call for the {0} time", i );
-				SystemUtil.Sleep( ( 0.5 + i ).Seconds() );
+				SystemUtil.Sleep( TimeSpan.FromSeconds( 0.5 + i ) );
 			} );
 	}
 }

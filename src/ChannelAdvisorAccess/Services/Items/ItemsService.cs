@@ -39,7 +39,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			this.Name = name;
 			this._cache = cache;
 			this.SlidingCacheExpiration = ObjectCache.NoSlidingExpiration;
-			this._allItemsCacheKey = "caAllItems_ID_{0}".FormatWith( this.AccountId );
+			this._allItemsCacheKey = string.Format( "caAllItems_ID_{0}", this.AccountId );
 		}
 
 		#region Get items
@@ -438,8 +438,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			if( apiResult.Status != ResultStatus.Success && apiResult.ResultData.Any( r => !IsSkuMissing( r ) ) )
 			{
-				var skusListMsg = string.Join( ", ", apiResult.ResultData.Where( r => !r.Result && !IsSkuMissing( r ) ).Select( r => "{0} ({1})".FormatWith( r.Sku, r.ErrorMessage ) ) );
-				var msg = @"{0}. Invalid Skus: {1}".FormatWith( apiResult.Message, skusListMsg );
+				var skusListMsg = string.Join( ", ", apiResult.ResultData.Where( r => !r.Result && !IsSkuMissing( r ) ).Select( r => string.Format( "{0} ({1})", r.Sku, r.ErrorMessage ) ) );
+				var msg = string.Format( "{0}. Invalid Skus: {1}", apiResult.Message, skusListMsg );
 				throw new ChannelAdvisorException( apiResult.MessageCode, msg );
 			}
 		}
