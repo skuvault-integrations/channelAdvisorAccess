@@ -106,7 +106,7 @@ task NuGet Package, Version, {
 		<copyright>Copyright (C) Agile Harbor, LLC 2012</copyright>
 		<summary>$text</summary>
 		<description>$text</description>
-		<tags></tags>
+		<tags>ChannelAdvisor</tags>
 		<dependencies> 
 			<dependency id="Netco" version="1.0.0" />
 		</dependencies>
