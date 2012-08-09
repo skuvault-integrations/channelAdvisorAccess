@@ -24,7 +24,3 @@ Example initialization
 	var accountUS = new ChannelAdvisorAccount( "accountName", "id", "USD", true, servicesFactory, currencyConverter );
 	var accountUK = new ChannelAdvisorAccount( "accountNameUk", "idUk", "GBP", true, servicesFactory, currencyConverter );
 	var manager = new ChannelAdvisorManager( new []{ accountUS, accountUK });
-
-Build
-=====
-Just launch `release.cmd`. `build\output` will contain resulting build. In addition output will be zipped and archive placed in `release` folder.
