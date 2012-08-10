@@ -1,4 +1,4 @@
-ChannelAdvisorAccess is .NET wrapper around [Channel Advisor API](http://developer.channeladvisor.com/display/cadn/ChannelAdvisor+Developer+Network) I created to simplify and speed up working with it.
+ChannelAdvisorAccess is .NET wrapper around [Channel Advisor API v6](http://developer.channeladvisor.com/display/cadn/ChannelAdvisor+Developer+Network) was created to simplify and speed up working with it.
 
 Features
 ========
@@ -25,6 +25,6 @@ Example initialization
 	var accountUK = new ChannelAdvisorAccount( "accountNameUk", "idUk", "GBP", true, servicesFactory, currencyConverter );
 	var manager = new ChannelAdvisorManager( new []{ accountUS, accountUK });
 
-Build
-=====
-Just launch `release.cmd`. `build\output` will contain resulting build. In addition output will be zipped and archive placed in `release` folder.
+Constants
+======
+CA API v6 went away from enumerations to use strings. Possible pre-defined CA understands are in classes `ChannelAdvisorAccess.Constants` namespace. They're for convenience only (and to avoid magic string problems). When communicating with CA you will still need to supply strings, and strings will be returned back.
