@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
+using System.Text;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
@@ -436,11 +437,24 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		private static void CheckCaSuccess( APIResultOfArrayOfSynchInventoryItemResponse apiResult )
 		{
-			if( apiResult.Status != ResultStatus.Success && apiResult.ResultData.Any( r => !IsSkuMissing( r ) ) )
+			if( apiResult.Status != ResultStatus.Success )
 			{
-				var skusListMsg = string.Join( ", ", apiResult.ResultData.Where( r => !r.Result && !IsSkuMissing( r ) ).Select( r => string.Format( "{0} ({1})", r.Sku, r.ErrorMessage ) ) );
-				var msg = string.Format( "{0}. Invalid Skus: {1}", apiResult.Message, skusListMsg );
-				throw new ChannelAdvisorException( apiResult.MessageCode, msg );
+				// no sku exists, ignore
+				if( apiResult.Message == "All Update requests failed for the SKU list specified!" )
+					return; 
+
+				var msgs = new StringBuilder();
+
+				foreach( var result in apiResult.ResultData )
+				{
+					if( !result.Result && !IsSkuMissing( result ))
+					{
+						msgs.AppendLine( result.ErrorMessage );
+					}
+				}
+
+				if( msgs.Length > 0 )
+					throw new ChannelAdvisorException( apiResult.MessageCode, string.Concat( apiResult.Message, Environment.NewLine, msgs.ToString() ) );
 			}
 		}
 
@@ -453,7 +467,30 @@ namespace ChannelAdvisorAccess.Services.Items
 		private static void CheckCaSuccess( APIResultOfArrayOfUpdateInventoryItemResponse apiResult )
 		{
 			if( apiResult.Status != ResultStatus.Success )
-				throw new ChannelAdvisorException( apiResult.MessageCode, apiResult.Message );
+			{
+				// no sku exists, ignore
+				if( apiResult.Message == "All Update requests failed for the SKU list specified!" )
+					return; 
+
+				var msgs = new StringBuilder();
+
+				foreach( var result in apiResult.ResultData )
+				{
+					if( !result.Result && !IsSkuMissing( result ))
+					{
+						msgs.AppendLine( result.ErrorMessage );
+					}
+				}
+
+				if( msgs.Length > 0 )
+					throw new ChannelAdvisorException( apiResult.MessageCode, string.Concat( apiResult.Message, Environment.NewLine, msgs.ToString() ) );
+			}
+		}
+
+		private static bool IsSkuMissing( UpdateInventoryItemResponse result )
+		{
+			const string skuMissingMsg = "The specified Sku does not exist";
+			return result.ErrorMessage.StartsWith( skuMissingMsg, StringComparison.InvariantCultureIgnoreCase );
 		}
 
 		private static void CheckCaSuccess( APIResultOfInt32 quantityResult )
