@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using CuttingEdge.Conditions;
 using Zayko.Finance;
 
 namespace ChannelAdvisorAccess.CurrencyConversion
@@ -13,7 +14,7 @@ namespace ChannelAdvisorAccess.CurrencyConversion
 
 		public YahooCurrencyConverter( string baseCountryCode )
 		{
-			Contract.Requires< ArgumentNullException >( !string.IsNullOrWhiteSpace( baseCountryCode ) );
+			Condition.Requires( baseCountryCode, "baseCountryCode" ).IsNotNullOrWhiteSpace();
 			_baseCountryCode = baseCountryCode;
 			_currencyConverter = new CurrencyConverter();
 			_conversionRates = new Dictionary< string, decimal >();
@@ -37,8 +38,8 @@ namespace ChannelAdvisorAccess.CurrencyConversion
 
 		private decimal GetRate( string sourceCode, string targetCode )
 		{
-			Contract.Requires< ArgumentNullException >( !string.IsNullOrEmpty( sourceCode ), "sourceCode cannot be null" );
-			Contract.Requires< ArgumentNullException >( !string.IsNullOrEmpty( targetCode ), "targetCode cannot be null" );
+			Condition.Requires( sourceCode, "sourceCode" ).IsNotNullOrWhiteSpace();
+			Condition.Requires( targetCode, "targetCode" ).IsNotNullOrWhiteSpace();
 			
 			var rateKey = sourceCode + targetCode;
 			decimal rate;
