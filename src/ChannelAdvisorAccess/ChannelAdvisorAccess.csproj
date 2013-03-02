@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ChannelAdvisorAccess</RootNamespace>
     <AssemblyName>ChannelAdvisorAccess</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ChannelAdvisorAccessKey.snk</AssemblyOriginatorKeyFile>
@@ -78,6 +78,7 @@
     <CodeContractsContainerAnalysis>False</CodeContractsContainerAnalysis>
     <CodeContractsExtraRewriteOptions />
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -119,13 +120,15 @@
     <CodeContractsExtraRewriteOptions />
     <DocumentationFile>bin\Release\ChannelAdvisorAccess.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CuttingEdge.Conditions">
       <HintPath>..\packages\CuttingEdge.Conditions.1.2.0.0\lib\NET35\CuttingEdge.Conditions.dll</HintPath>
     </Reference>
-    <Reference Include="Netco, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9d732c15ac2ec2c9, processorArchitecture=MSIL">
-      <HintPath>..\packages\Netco.1.0.0\lib\net40\Netco.dll</HintPath>
+    <Reference Include="Netco, Version=1.1.0.0, Culture=neutral, PublicKeyToken=9d732c15ac2ec2c9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Netco.1.1.0\lib\net40\Netco.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -230,25 +233,6 @@
     <None Include="Service References\AdminService\ChannelAdvisorAccess.AdminService.APIResultOfString.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\InventoryService\InventoryService.wsdl" />
-    <None Include="Service References\ListingService\ListingService1.wsdl" />
-    <None Include="Service References\OrderService\OrderService.wsdl" />
-    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfOrderShipmentHistoryResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShipmentResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ShippingService\ShippingService.wsdl" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\AdminService\" />
-    <WCFMetadataStorage Include="Service References\InventoryService\" />
-    <WCFMetadataStorage Include="Service References\ListingService\" />
-    <WCFMetadataStorage Include="Service References\OrderService\" />
-    <WCFMetadataStorage Include="Service References\ShippingService\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfArrayOfBoolean.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -258,12 +242,12 @@
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfBoolean.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfInventoryUpsellInfoResponse.datasource">
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfClassificationConfigurationInformation.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\InventoryService\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfDoesSkuExistResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfImageInfoResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -273,10 +257,19 @@
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfInventoryQuantityResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfInventoryUpsellInfoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfShippingRateInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfString.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfSynchInventoryItemResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfUpdateInventoryItemResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfBoolean.datasource">
@@ -297,6 +290,28 @@
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfVariationInfo.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\InventoryService\InventoryService.wsdl" />
+    <None Include="Service References\ListingService\ListingService1.wsdl" />
+    <None Include="Service References\OrderService\OrderService.wsdl" />
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfOrderShipmentHistoryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShipmentResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ShippingService.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\AdminService\" />
+    <WCFMetadataStorage Include="Service References\InventoryService\" />
+    <WCFMetadataStorage Include="Service References\ListingService\" />
+    <WCFMetadataStorage Include="Service References\OrderService\" />
+    <WCFMetadataStorage Include="Service References\ShippingService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\InventoryService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Service References\InventoryService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -336,18 +351,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfClassificationConfigurationInformation.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfDoesSkuExistResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfShippingRateInfo.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfUpdateInventoryItemResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Service References\InventoryService\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
