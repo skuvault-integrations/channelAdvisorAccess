@@ -109,7 +109,7 @@ task NuGet Package, Version, {
 		<description>$text</description>
 		<tags>ChannelAdvisor</tags>
 		<dependencies> 
-			<dependency id="Netco" version="1.0.0" />
+			<dependency id="Netco" version="1.1.0" />
 		</dependencies>
 	</metadata>
 </package>
