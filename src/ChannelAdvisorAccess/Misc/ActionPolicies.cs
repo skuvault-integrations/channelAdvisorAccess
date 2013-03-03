@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Netco.ActionPolicyServices;
 using Netco.Logging;
 using Netco.Utils;
@@ -16,7 +15,7 @@ namespace ChannelAdvisorAccess.Misc
 		private static T Retry< T >( Func< T > producer, Action< string > message )
 		{
 			Exception e = new NullReferenceException();
-			for( var i = 0; i < 4; i++ )
+			for( var i = 0; i < 5; i++ )
 			{
 				try
 				{
@@ -33,7 +32,7 @@ namespace ChannelAdvisorAccess.Misc
 
 		private static readonly ActionPolicy _caGetPolicy = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
 			{
-				typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API get call for the {0} time", i );
+				typeof( ActionPolicies ).Log().Trace( ex, "Retrying CA API get call for the {0} time", i );
 				SystemUtil.Sleep( TimeSpan.FromSeconds( 0.5 + i ) );
 			} );
 
@@ -42,9 +41,9 @@ namespace ChannelAdvisorAccess.Misc
 			get { return _caSumbitPolicy; }
 		}
 
-		private static readonly ActionPolicy _caSumbitPolicy = ActionPolicy.Handle< Exception >().Retry( 3, ( ex, i ) =>
+		private static readonly ActionPolicy _caSumbitPolicy = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
 			{
-				typeof( ActionPolicies ).Log().Error( ex, "Retrying CA API submit call for the {0} time", i );
+				typeof( ActionPolicies ).Log().Trace( ex, "Retrying CA API submit call for the {0} time", i );
 				SystemUtil.Sleep( TimeSpan.FromSeconds( 0.5 + i ) );
 			} );
 	}
