@@ -233,6 +233,18 @@
     <None Include="Service References\AdminService\ChannelAdvisorAccess.AdminService.APIResultOfString.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\AdminService\ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\AdminService\ChannelAdvisorAccess.AdminService.PingResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\AdminService\ChannelAdvisorAccess.AdminService.RequestAccessResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.AddUpsellRelationshipResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfArrayOfBoolean.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -290,13 +302,145 @@
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfVariationInfo.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.AssignLabelListToInventoryItemListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.DeleteInventoryItemResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.DeleteUpsellRelationshipResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.DoesSkuExistListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.DoesSkuExistResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetClassificationConfigurationInformationResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetFilteredInventoryItemListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetFilteredSkuListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemAttributeListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemImageListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemListWithFullDetailResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemQuantityInfoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemShippingInfoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemStoreInfoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryItemVariationInfoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryQuantityListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetInventoryQuantityResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.GetUpsellRelationshipResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.PingResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.RemoveLabelListFromInventoryItemListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.SynchInventoryItemListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.SynchInventoryItemResponse1.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.UpdateInventoryItemQuantityAndPriceListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.UpdateInventoryItemQuantityAndPriceResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\InventoryService\InventoryService.wsdl" />
+    <None Include="Service References\ListingService\ChannelAdvisorAccess.ListingService.PingResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ListingService\ChannelAdvisorAccess.ListingService.WithdrawListingsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\ListingService\ListingService1.wsdl" />
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.GetOrderListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.OrderMergeResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.OrderSplitResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.PingResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.SubmitOrderResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.UpdateOrderListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\OrderService\OrderService.wsdl" />
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfOrderShipmentHistoryResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShipmentResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.GetOrderShipmentHistoryListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.GetShippingCarrierListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.GetShippingRateListResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.OrderShippedResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.PingResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.SubmitOrderShipmentListResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ShippingService\ShippingService.wsdl" />

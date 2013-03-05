@@ -20,20 +20,16 @@ namespace ChannelAdvisorAccess.ListingService {
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.ListingService.WithdrawListingsResponse WithdrawListings(ChannelAdvisorAccess.ListingService.WithdrawListingsRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/WithdrawListings", ReplyAction="*")]
-        System.IAsyncResult BeginWithdrawListings(ChannelAdvisorAccess.ListingService.WithdrawListingsRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.ListingService.WithdrawListingsResponse EndWithdrawListings(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/WithdrawListings", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.ListingService.WithdrawListingsResponse> WithdrawListingsAsync(ChannelAdvisorAccess.ListingService.WithdrawListingsRequest request);
         
         // CODEGEN: Generating message contract since message PingRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.ListingService.PingResponse Ping(ChannelAdvisorAccess.ListingService.PingRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
-        System.IAsyncResult BeginPing(ChannelAdvisorAccess.ListingService.PingRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.ListingService.PingResponse EndPing(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.ListingService.PingResponse> PingAsync(ChannelAdvisorAccess.ListingService.PingRequest request);
     }
     
     /// <remarks/>
@@ -376,57 +372,7 @@ namespace ChannelAdvisorAccess.ListingService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class WithdrawListingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public WithdrawListingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.ListingService.APIResultOfInt32 Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.ListingService.APIResultOfInt32)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class PingCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public PingCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.ListingService.APIResultOfString Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.ListingService.APIResultOfString)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ListingServiceSoapClient : System.ServiceModel.ClientBase<ChannelAdvisorAccess.ListingService.ListingServiceSoap>, ChannelAdvisorAccess.ListingService.ListingServiceSoap {
-        
-        private BeginOperationDelegate onBeginWithdrawListingsDelegate;
-        
-        private EndOperationDelegate onEndWithdrawListingsDelegate;
-        
-        private System.Threading.SendOrPostCallback onWithdrawListingsCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginPingDelegate;
-        
-        private EndOperationDelegate onEndPingDelegate;
-        
-        private System.Threading.SendOrPostCallback onPingCompletedDelegate;
         
         public ListingServiceSoapClient() {
         }
@@ -447,10 +393,6 @@ namespace ChannelAdvisorAccess.ListingService {
                 base(binding, remoteAddress) {
         }
         
-        public event System.EventHandler<WithdrawListingsCompletedEventArgs> WithdrawListingsCompleted;
-        
-        public event System.EventHandler<PingCompletedEventArgs> PingCompleted;
-        
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         ChannelAdvisorAccess.ListingService.WithdrawListingsResponse ChannelAdvisorAccess.ListingService.ListingServiceSoap.WithdrawListings(ChannelAdvisorAccess.ListingService.WithdrawListingsRequest request) {
             return base.Channel.WithdrawListings(request);
@@ -468,74 +410,18 @@ namespace ChannelAdvisorAccess.ListingService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.ListingService.ListingServiceSoap.BeginWithdrawListings(ChannelAdvisorAccess.ListingService.WithdrawListingsRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginWithdrawListings(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.ListingService.WithdrawListingsResponse> ChannelAdvisorAccess.ListingService.ListingServiceSoap.WithdrawListingsAsync(ChannelAdvisorAccess.ListingService.WithdrawListingsRequest request) {
+            return base.Channel.WithdrawListingsAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginWithdrawListings(ChannelAdvisorAccess.ListingService.APICredentials APICredentials, string accountID, string[] skuList, string[] listingIDList, string withdrawReason, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.ListingService.WithdrawListingsResponse> WithdrawListingsAsync(ChannelAdvisorAccess.ListingService.APICredentials APICredentials, string accountID, string[] skuList, string[] listingIDList, string withdrawReason) {
             ChannelAdvisorAccess.ListingService.WithdrawListingsRequest inValue = new ChannelAdvisorAccess.ListingService.WithdrawListingsRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.skuList = skuList;
             inValue.listingIDList = listingIDList;
             inValue.withdrawReason = withdrawReason;
-            return ((ChannelAdvisorAccess.ListingService.ListingServiceSoap)(this)).BeginWithdrawListings(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.ListingService.WithdrawListingsResponse ChannelAdvisorAccess.ListingService.ListingServiceSoap.EndWithdrawListings(System.IAsyncResult result) {
-            return base.Channel.EndWithdrawListings(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.ListingService.APIResultOfInt32 EndWithdrawListings(System.IAsyncResult result) {
-            ChannelAdvisorAccess.ListingService.WithdrawListingsResponse retVal = ((ChannelAdvisorAccess.ListingService.ListingServiceSoap)(this)).EndWithdrawListings(result);
-            return retVal.WithdrawListingsResult;
-        }
-        
-        private System.IAsyncResult OnBeginWithdrawListings(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.ListingService.APICredentials APICredentials = ((ChannelAdvisorAccess.ListingService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            string[] skuList = ((string[])(inValues[2]));
-            string[] listingIDList = ((string[])(inValues[3]));
-            string withdrawReason = ((string)(inValues[4]));
-            return this.BeginWithdrawListings(APICredentials, accountID, skuList, listingIDList, withdrawReason, callback, asyncState);
-        }
-        
-        private object[] OnEndWithdrawListings(System.IAsyncResult result) {
-            ChannelAdvisorAccess.ListingService.APIResultOfInt32 retVal = this.EndWithdrawListings(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnWithdrawListingsCompleted(object state) {
-            if ((this.WithdrawListingsCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.WithdrawListingsCompleted(this, new WithdrawListingsCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void WithdrawListingsAsync(ChannelAdvisorAccess.ListingService.APICredentials APICredentials, string accountID, string[] skuList, string[] listingIDList, string withdrawReason) {
-            this.WithdrawListingsAsync(APICredentials, accountID, skuList, listingIDList, withdrawReason, null);
-        }
-        
-        public void WithdrawListingsAsync(ChannelAdvisorAccess.ListingService.APICredentials APICredentials, string accountID, string[] skuList, string[] listingIDList, string withdrawReason, object userState) {
-            if ((this.onBeginWithdrawListingsDelegate == null)) {
-                this.onBeginWithdrawListingsDelegate = new BeginOperationDelegate(this.OnBeginWithdrawListings);
-            }
-            if ((this.onEndWithdrawListingsDelegate == null)) {
-                this.onEndWithdrawListingsDelegate = new EndOperationDelegate(this.OnEndWithdrawListings);
-            }
-            if ((this.onWithdrawListingsCompletedDelegate == null)) {
-                this.onWithdrawListingsCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnWithdrawListingsCompleted);
-            }
-            base.InvokeAsync(this.onBeginWithdrawListingsDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        skuList,
-                        listingIDList,
-                        withdrawReason}, this.onEndWithdrawListingsDelegate, this.onWithdrawListingsCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.ListingService.ListingServiceSoap)(this)).WithdrawListingsAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -551,62 +437,14 @@ namespace ChannelAdvisorAccess.ListingService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.ListingService.ListingServiceSoap.BeginPing(ChannelAdvisorAccess.ListingService.PingRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginPing(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.ListingService.PingResponse> ChannelAdvisorAccess.ListingService.ListingServiceSoap.PingAsync(ChannelAdvisorAccess.ListingService.PingRequest request) {
+            return base.Channel.PingAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginPing(ChannelAdvisorAccess.ListingService.APICredentials APICredentials, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.ListingService.PingResponse> PingAsync(ChannelAdvisorAccess.ListingService.APICredentials APICredentials) {
             ChannelAdvisorAccess.ListingService.PingRequest inValue = new ChannelAdvisorAccess.ListingService.PingRequest();
             inValue.APICredentials = APICredentials;
-            return ((ChannelAdvisorAccess.ListingService.ListingServiceSoap)(this)).BeginPing(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.ListingService.PingResponse ChannelAdvisorAccess.ListingService.ListingServiceSoap.EndPing(System.IAsyncResult result) {
-            return base.Channel.EndPing(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.ListingService.APIResultOfString EndPing(System.IAsyncResult result) {
-            ChannelAdvisorAccess.ListingService.PingResponse retVal = ((ChannelAdvisorAccess.ListingService.ListingServiceSoap)(this)).EndPing(result);
-            return retVal.PingResult;
-        }
-        
-        private System.IAsyncResult OnBeginPing(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.ListingService.APICredentials APICredentials = ((ChannelAdvisorAccess.ListingService.APICredentials)(inValues[0]));
-            return this.BeginPing(APICredentials, callback, asyncState);
-        }
-        
-        private object[] OnEndPing(System.IAsyncResult result) {
-            ChannelAdvisorAccess.ListingService.APIResultOfString retVal = this.EndPing(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnPingCompleted(object state) {
-            if ((this.PingCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.PingCompleted(this, new PingCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void PingAsync(ChannelAdvisorAccess.ListingService.APICredentials APICredentials) {
-            this.PingAsync(APICredentials, null);
-        }
-        
-        public void PingAsync(ChannelAdvisorAccess.ListingService.APICredentials APICredentials, object userState) {
-            if ((this.onBeginPingDelegate == null)) {
-                this.onBeginPingDelegate = new BeginOperationDelegate(this.OnBeginPing);
-            }
-            if ((this.onEndPingDelegate == null)) {
-                this.onEndPingDelegate = new EndOperationDelegate(this.OnEndPing);
-            }
-            if ((this.onPingCompletedDelegate == null)) {
-                this.onPingCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnPingCompleted);
-            }
-            base.InvokeAsync(this.onBeginPingDelegate, new object[] {
-                        APICredentials}, this.onEndPingDelegate, this.onPingCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.ListingService.ListingServiceSoap)(this)).PingAsync(inValue);
         }
     }
 }

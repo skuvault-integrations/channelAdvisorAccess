@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
@@ -41,6 +42,18 @@ namespace ChannelAdvisorAccess.Services.Orders
 			                    	};
 
 			return this.GetOrders< T >( orderCriteria );
+		}
+		
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
+			where T : OrderResponseItem
+		{
+			var orderCriteria = new OrderCriteria
+			                    	{
+			                    		StatusUpdateFilterBeginTimeGMT = startDate,
+			                    		StatusUpdateFilterEndTimeGMT = endDate
+			                    	};
+
+			return await this.GetOrdersAsync< T >( orderCriteria );
 		}
 
 		/// <summary>
@@ -97,6 +110,44 @@ namespace ChannelAdvisorAccess.Services.Orders
 					yield break;
 			}
 		}
+		
+		/// <summary>
+		/// Gets the orders.
+		/// </summary>
+		/// <typeparam name="T">Type of order response.</typeparam>
+		/// <param name="orderCriteria">The order criteria.</param>
+		/// <returns>Orders matching supplied criteria.</returns>
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria )
+			where T : OrderResponseItem
+		{
+			if( string.IsNullOrEmpty( orderCriteria.DetailLevel) )
+				orderCriteria.DetailLevel = "High";
+
+			orderCriteria.PageSize = _pageSizes[ orderCriteria.DetailLevel ];
+			orderCriteria.PageNumberFilter = 0;
+
+			var orders = new List< T >();
+
+			while( true )
+			{
+				var ordersFromPage = await this.GetNextOrdersPageAsync( orderCriteria );
+
+				if( ordersFromPage == null )
+					break;
+
+				foreach( var order in ordersFromPage )
+				{
+					var orderT = order as T;
+					if( orderT != null )
+						orders.Add( orderT );
+				}
+
+				if( ordersFromPage.Length == 0 )
+					break;
+			}
+
+			return orders;
+		}
 
 		/// <summary>
 		/// Submits the order.
@@ -135,6 +186,16 @@ namespace ChannelAdvisorAccess.Services.Orders
 			CheckCaSuccess( orderList );
 
 			return orderList.ResultData;
+		}
+
+		private async Task< OrderResponseItem[] > GetNextOrdersPageAsync( OrderCriteria orderCriteria )
+		{
+			orderCriteria.PageNumberFilter += 1;
+
+			var orderList = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
+			CheckCaSuccess( orderList.GetOrderListResult );
+
+			return orderList.GetOrderListResult.ResultData;
 		}
 
 		private static void CheckCaSuccess( APIResultOfArrayOfOrderResponseItem orderList )

@@ -20,30 +20,24 @@ namespace ChannelAdvisorAccess.AdminService {
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse GetAuthorizationList(ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/GetAuthorizationList", ReplyAction="*")]
-        System.IAsyncResult BeginGetAuthorizationList(ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse EndGetAuthorizationList(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetAuthorizationList", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse> GetAuthorizationListAsync(ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest request);
         
         // CODEGEN: Generating message contract since message RequestAccessRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/RequestAccess", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.AdminService.RequestAccessResponse RequestAccess(ChannelAdvisorAccess.AdminService.RequestAccessRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/RequestAccess", ReplyAction="*")]
-        System.IAsyncResult BeginRequestAccess(ChannelAdvisorAccess.AdminService.RequestAccessRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.AdminService.RequestAccessResponse EndRequestAccess(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/RequestAccess", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.RequestAccessResponse> RequestAccessAsync(ChannelAdvisorAccess.AdminService.RequestAccessRequest request);
         
         // CODEGEN: Generating message contract since message PingRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         ChannelAdvisorAccess.AdminService.PingResponse Ping(ChannelAdvisorAccess.AdminService.PingRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
-        System.IAsyncResult BeginPing(ChannelAdvisorAccess.AdminService.PingRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.AdminService.PingResponse EndPing(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.PingResponse> PingAsync(ChannelAdvisorAccess.AdminService.PingRequest request);
     }
     
     /// <remarks/>
@@ -602,82 +596,7 @@ namespace ChannelAdvisorAccess.AdminService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class GetAuthorizationListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public GetAuthorizationListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.AdminService.APIResultOfArrayOfAuthorizationResponse Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.AdminService.APIResultOfArrayOfAuthorizationResponse)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class RequestAccessCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public RequestAccessCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.AdminService.APIResultOfBoolean Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.AdminService.APIResultOfBoolean)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class PingCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public PingCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.AdminService.APIResultOfString Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.AdminService.APIResultOfString)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class AdminServiceSoapClient : System.ServiceModel.ClientBase<ChannelAdvisorAccess.AdminService.AdminServiceSoap>, ChannelAdvisorAccess.AdminService.AdminServiceSoap {
-        
-        private BeginOperationDelegate onBeginGetAuthorizationListDelegate;
-        
-        private EndOperationDelegate onEndGetAuthorizationListDelegate;
-        
-        private System.Threading.SendOrPostCallback onGetAuthorizationListCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginRequestAccessDelegate;
-        
-        private EndOperationDelegate onEndRequestAccessDelegate;
-        
-        private System.Threading.SendOrPostCallback onRequestAccessCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginPingDelegate;
-        
-        private EndOperationDelegate onEndPingDelegate;
-        
-        private System.Threading.SendOrPostCallback onPingCompletedDelegate;
         
         public AdminServiceSoapClient() {
         }
@@ -698,12 +617,6 @@ namespace ChannelAdvisorAccess.AdminService {
                 base(binding, remoteAddress) {
         }
         
-        public event System.EventHandler<GetAuthorizationListCompletedEventArgs> GetAuthorizationListCompleted;
-        
-        public event System.EventHandler<RequestAccessCompletedEventArgs> RequestAccessCompleted;
-        
-        public event System.EventHandler<PingCompletedEventArgs> PingCompleted;
-        
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse ChannelAdvisorAccess.AdminService.AdminServiceSoap.GetAuthorizationList(ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest request) {
             return base.Channel.GetAuthorizationList(request);
@@ -718,65 +631,15 @@ namespace ChannelAdvisorAccess.AdminService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.AdminService.AdminServiceSoap.BeginGetAuthorizationList(ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetAuthorizationList(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse> ChannelAdvisorAccess.AdminService.AdminServiceSoap.GetAuthorizationListAsync(ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest request) {
+            return base.Channel.GetAuthorizationListAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginGetAuthorizationList(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, string localID, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse> GetAuthorizationListAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, string localID) {
             ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest inValue = new ChannelAdvisorAccess.AdminService.GetAuthorizationListRequest();
             inValue.APICredentials = APICredentials;
             inValue.localID = localID;
-            return ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).BeginGetAuthorizationList(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse ChannelAdvisorAccess.AdminService.AdminServiceSoap.EndGetAuthorizationList(System.IAsyncResult result) {
-            return base.Channel.EndGetAuthorizationList(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.AdminService.APIResultOfArrayOfAuthorizationResponse EndGetAuthorizationList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.AdminService.GetAuthorizationListResponse retVal = ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).EndGetAuthorizationList(result);
-            return retVal.GetAuthorizationListResult;
-        }
-        
-        private System.IAsyncResult OnBeginGetAuthorizationList(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.AdminService.APICredentials APICredentials = ((ChannelAdvisorAccess.AdminService.APICredentials)(inValues[0]));
-            string localID = ((string)(inValues[1]));
-            return this.BeginGetAuthorizationList(APICredentials, localID, callback, asyncState);
-        }
-        
-        private object[] OnEndGetAuthorizationList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.AdminService.APIResultOfArrayOfAuthorizationResponse retVal = this.EndGetAuthorizationList(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnGetAuthorizationListCompleted(object state) {
-            if ((this.GetAuthorizationListCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.GetAuthorizationListCompleted(this, new GetAuthorizationListCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void GetAuthorizationListAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, string localID) {
-            this.GetAuthorizationListAsync(APICredentials, localID, null);
-        }
-        
-        public void GetAuthorizationListAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, string localID, object userState) {
-            if ((this.onBeginGetAuthorizationListDelegate == null)) {
-                this.onBeginGetAuthorizationListDelegate = new BeginOperationDelegate(this.OnBeginGetAuthorizationList);
-            }
-            if ((this.onEndGetAuthorizationListDelegate == null)) {
-                this.onEndGetAuthorizationListDelegate = new EndOperationDelegate(this.OnEndGetAuthorizationList);
-            }
-            if ((this.onGetAuthorizationListCompletedDelegate == null)) {
-                this.onGetAuthorizationListCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetAuthorizationListCompleted);
-            }
-            base.InvokeAsync(this.onBeginGetAuthorizationListDelegate, new object[] {
-                        APICredentials,
-                        localID}, this.onEndGetAuthorizationListDelegate, this.onGetAuthorizationListCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).GetAuthorizationListAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -793,65 +656,15 @@ namespace ChannelAdvisorAccess.AdminService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.AdminService.AdminServiceSoap.BeginRequestAccess(ChannelAdvisorAccess.AdminService.RequestAccessRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginRequestAccess(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.RequestAccessResponse> ChannelAdvisorAccess.AdminService.AdminServiceSoap.RequestAccessAsync(ChannelAdvisorAccess.AdminService.RequestAccessRequest request) {
+            return base.Channel.RequestAccessAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginRequestAccess(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, int localID, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.RequestAccessResponse> RequestAccessAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, int localID) {
             ChannelAdvisorAccess.AdminService.RequestAccessRequest inValue = new ChannelAdvisorAccess.AdminService.RequestAccessRequest();
             inValue.APICredentials = APICredentials;
             inValue.localID = localID;
-            return ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).BeginRequestAccess(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.AdminService.RequestAccessResponse ChannelAdvisorAccess.AdminService.AdminServiceSoap.EndRequestAccess(System.IAsyncResult result) {
-            return base.Channel.EndRequestAccess(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.AdminService.APIResultOfBoolean EndRequestAccess(System.IAsyncResult result) {
-            ChannelAdvisorAccess.AdminService.RequestAccessResponse retVal = ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).EndRequestAccess(result);
-            return retVal.RequestAccessResult;
-        }
-        
-        private System.IAsyncResult OnBeginRequestAccess(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.AdminService.APICredentials APICredentials = ((ChannelAdvisorAccess.AdminService.APICredentials)(inValues[0]));
-            int localID = ((int)(inValues[1]));
-            return this.BeginRequestAccess(APICredentials, localID, callback, asyncState);
-        }
-        
-        private object[] OnEndRequestAccess(System.IAsyncResult result) {
-            ChannelAdvisorAccess.AdminService.APIResultOfBoolean retVal = this.EndRequestAccess(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnRequestAccessCompleted(object state) {
-            if ((this.RequestAccessCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.RequestAccessCompleted(this, new RequestAccessCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void RequestAccessAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, int localID) {
-            this.RequestAccessAsync(APICredentials, localID, null);
-        }
-        
-        public void RequestAccessAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, int localID, object userState) {
-            if ((this.onBeginRequestAccessDelegate == null)) {
-                this.onBeginRequestAccessDelegate = new BeginOperationDelegate(this.OnBeginRequestAccess);
-            }
-            if ((this.onEndRequestAccessDelegate == null)) {
-                this.onEndRequestAccessDelegate = new EndOperationDelegate(this.OnEndRequestAccess);
-            }
-            if ((this.onRequestAccessCompletedDelegate == null)) {
-                this.onRequestAccessCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnRequestAccessCompleted);
-            }
-            base.InvokeAsync(this.onBeginRequestAccessDelegate, new object[] {
-                        APICredentials,
-                        localID}, this.onEndRequestAccessDelegate, this.onRequestAccessCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).RequestAccessAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -867,62 +680,14 @@ namespace ChannelAdvisorAccess.AdminService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.AdminService.AdminServiceSoap.BeginPing(ChannelAdvisorAccess.AdminService.PingRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginPing(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.PingResponse> ChannelAdvisorAccess.AdminService.AdminServiceSoap.PingAsync(ChannelAdvisorAccess.AdminService.PingRequest request) {
+            return base.Channel.PingAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginPing(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.AdminService.PingResponse> PingAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials) {
             ChannelAdvisorAccess.AdminService.PingRequest inValue = new ChannelAdvisorAccess.AdminService.PingRequest();
             inValue.APICredentials = APICredentials;
-            return ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).BeginPing(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.AdminService.PingResponse ChannelAdvisorAccess.AdminService.AdminServiceSoap.EndPing(System.IAsyncResult result) {
-            return base.Channel.EndPing(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.AdminService.APIResultOfString EndPing(System.IAsyncResult result) {
-            ChannelAdvisorAccess.AdminService.PingResponse retVal = ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).EndPing(result);
-            return retVal.PingResult;
-        }
-        
-        private System.IAsyncResult OnBeginPing(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.AdminService.APICredentials APICredentials = ((ChannelAdvisorAccess.AdminService.APICredentials)(inValues[0]));
-            return this.BeginPing(APICredentials, callback, asyncState);
-        }
-        
-        private object[] OnEndPing(System.IAsyncResult result) {
-            ChannelAdvisorAccess.AdminService.APIResultOfString retVal = this.EndPing(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnPingCompleted(object state) {
-            if ((this.PingCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.PingCompleted(this, new PingCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void PingAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials) {
-            this.PingAsync(APICredentials, null);
-        }
-        
-        public void PingAsync(ChannelAdvisorAccess.AdminService.APICredentials APICredentials, object userState) {
-            if ((this.onBeginPingDelegate == null)) {
-                this.onBeginPingDelegate = new BeginOperationDelegate(this.OnBeginPing);
-            }
-            if ((this.onEndPingDelegate == null)) {
-                this.onEndPingDelegate = new EndOperationDelegate(this.OnEndPing);
-            }
-            if ((this.onPingCompletedDelegate == null)) {
-                this.onPingCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnPingCompleted);
-            }
-            base.InvokeAsync(this.onBeginPingDelegate, new object[] {
-                        APICredentials}, this.onEndPingDelegate, this.onPingCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.AdminService.AdminServiceSoap)(this)).PingAsync(inValue);
         }
     }
 }

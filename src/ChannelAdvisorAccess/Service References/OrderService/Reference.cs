@@ -23,10 +23,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse SetOrdersExportStatus(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/SetOrdersExportStatus", ReplyAction="*")]
-        System.IAsyncResult BeginSetOrdersExportStatus(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse EndSetOrdersExportStatus(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SetOrdersExportStatus", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse> SetOrdersExportStatusAsync(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request);
         
         // CODEGEN: Generating message contract since message SubmitOrderRefundRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SubmitOrderRefund", ReplyAction="*")]
@@ -36,10 +34,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse SubmitOrderRefund(ChannelAdvisorAccess.OrderService.SubmitOrderRefundRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/SubmitOrderRefund", ReplyAction="*")]
-        System.IAsyncResult BeginSubmitOrderRefund(ChannelAdvisorAccess.OrderService.SubmitOrderRefundRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse EndSubmitOrderRefund(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SubmitOrderRefund", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse> SubmitOrderRefundAsync(ChannelAdvisorAccess.OrderService.SubmitOrderRefundRequest request);
         
         // CODEGEN: Generating message contract since message SetSellerOrderIDRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SetSellerOrderID", ReplyAction="*")]
@@ -49,10 +45,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse SetSellerOrderID(ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/SetSellerOrderID", ReplyAction="*")]
-        System.IAsyncResult BeginSetSellerOrderID(ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse EndSetSellerOrderID(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SetSellerOrderID", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse> SetSellerOrderIDAsync(ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest request);
         
         // CODEGEN: Generating message contract since message SetSellerOrderItemIDListRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SetSellerOrderItemIDList", ReplyAction="*")]
@@ -62,10 +56,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse SetSellerOrderItemIDList(ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/SetSellerOrderItemIDList", ReplyAction="*")]
-        System.IAsyncResult BeginSetSellerOrderItemIDList(ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse EndSetSellerOrderItemIDList(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SetSellerOrderItemIDList", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse> SetSellerOrderItemIDListAsync(ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest request);
         
         // CODEGEN: Generating message contract since message GetOrderRefundHistoryRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetOrderRefundHistory", ReplyAction="*")]
@@ -75,10 +67,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse GetOrderRefundHistory(ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/GetOrderRefundHistory", ReplyAction="*")]
-        System.IAsyncResult BeginGetOrderRefundHistory(ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse EndGetOrderRefundHistory(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetOrderRefundHistory", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse> GetOrderRefundHistoryAsync(ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest request);
         
         // CODEGEN: Generating message contract since message UpdateOrderListRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/UpdateOrderList", ReplyAction="*")]
@@ -88,10 +78,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.UpdateOrderListResponse UpdateOrderList(ChannelAdvisorAccess.OrderService.UpdateOrderListRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/UpdateOrderList", ReplyAction="*")]
-        System.IAsyncResult BeginUpdateOrderList(ChannelAdvisorAccess.OrderService.UpdateOrderListRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.UpdateOrderListResponse EndUpdateOrderList(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/UpdateOrderList", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.UpdateOrderListResponse> UpdateOrderListAsync(ChannelAdvisorAccess.OrderService.UpdateOrderListRequest request);
         
         // CODEGEN: Generating message contract since message OrderMergeRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/OrderMerge", ReplyAction="*")]
@@ -101,10 +89,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.OrderMergeResponse OrderMerge(ChannelAdvisorAccess.OrderService.OrderMergeRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/OrderMerge", ReplyAction="*")]
-        System.IAsyncResult BeginOrderMerge(ChannelAdvisorAccess.OrderService.OrderMergeRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.OrderMergeResponse EndOrderMerge(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/OrderMerge", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.OrderMergeResponse> OrderMergeAsync(ChannelAdvisorAccess.OrderService.OrderMergeRequest request);
         
         // CODEGEN: Generating message contract since message OrderSplitRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/OrderSplit", ReplyAction="*")]
@@ -114,10 +100,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.OrderSplitResponse OrderSplit(ChannelAdvisorAccess.OrderService.OrderSplitRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/OrderSplit", ReplyAction="*")]
-        System.IAsyncResult BeginOrderSplit(ChannelAdvisorAccess.OrderService.OrderSplitRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.OrderSplitResponse EndOrderSplit(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/OrderSplit", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.OrderSplitResponse> OrderSplitAsync(ChannelAdvisorAccess.OrderService.OrderSplitRequest request);
         
         // CODEGEN: Generating message contract since message SubmitOrderRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SubmitOrder", ReplyAction="*")]
@@ -127,10 +111,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.SubmitOrderResponse SubmitOrder(ChannelAdvisorAccess.OrderService.SubmitOrderRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/SubmitOrder", ReplyAction="*")]
-        System.IAsyncResult BeginSubmitOrder(ChannelAdvisorAccess.OrderService.SubmitOrderRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.SubmitOrderResponse EndSubmitOrder(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/SubmitOrder", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SubmitOrderResponse> SubmitOrderAsync(ChannelAdvisorAccess.OrderService.SubmitOrderRequest request);
         
         // CODEGEN: Generating message contract since message GetOrderListRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetOrderList", ReplyAction="*")]
@@ -140,10 +122,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.GetOrderListResponse GetOrderList(ChannelAdvisorAccess.OrderService.GetOrderListRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/GetOrderList", ReplyAction="*")]
-        System.IAsyncResult BeginGetOrderList(ChannelAdvisorAccess.OrderService.GetOrderListRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.GetOrderListResponse EndGetOrderList(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/GetOrderList", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.GetOrderListResponse> GetOrderListAsync(ChannelAdvisorAccess.OrderService.GetOrderListRequest request);
         
         // CODEGEN: Generating message contract since message PingRequest has headers
         [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
@@ -153,10 +133,8 @@ namespace ChannelAdvisorAccess.OrderService {
         [System.ServiceModel.ServiceKnownTypeAttribute(typeof(AddressInfo))]
         ChannelAdvisorAccess.OrderService.PingResponse Ping(ChannelAdvisorAccess.OrderService.PingRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
-        System.IAsyncResult BeginPing(ChannelAdvisorAccess.OrderService.PingRequest request, System.AsyncCallback callback, object asyncState);
-        
-        ChannelAdvisorAccess.OrderService.PingResponse EndPing(System.IAsyncResult result);
+        [System.ServiceModel.OperationContractAttribute(Action="http://api.channeladvisor.com/webservices/Ping", ReplyAction="*")]
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.PingResponse> PingAsync(ChannelAdvisorAccess.OrderService.PingRequest request);
     }
     
     /// <remarks/>
@@ -4786,282 +4764,7 @@ namespace ChannelAdvisorAccess.OrderService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SetOrdersExportStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public SetOrdersExportStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SubmitOrderRefundCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public SubmitOrderRefundCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfRefundOrderResponse Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfRefundOrderResponse)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SetSellerOrderIDCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public SetSellerOrderIDCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfInt32 Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfArrayOfInt32)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SetSellerOrderItemIDListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public SetSellerOrderItemIDListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class GetOrderRefundHistoryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public GetOrderRefundHistoryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfOrderRefundHistoryResponse Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfOrderRefundHistoryResponse)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class UpdateOrderListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public UpdateOrderListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class OrderMergeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public OrderMergeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfBoolean)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class OrderSplitCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public OrderSplitCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfBoolean)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class SubmitOrderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public SubmitOrderCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfInt32 Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfInt32)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class GetOrderListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public GetOrderListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderResponseItem Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderResponseItem)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class PingCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public PingCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public ChannelAdvisorAccess.OrderService.APIResultOfString Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((ChannelAdvisorAccess.OrderService.APIResultOfString)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class OrderServiceSoapClient : System.ServiceModel.ClientBase<ChannelAdvisorAccess.OrderService.OrderServiceSoap>, ChannelAdvisorAccess.OrderService.OrderServiceSoap {
-        
-        private BeginOperationDelegate onBeginSetOrdersExportStatusDelegate;
-        
-        private EndOperationDelegate onEndSetOrdersExportStatusDelegate;
-        
-        private System.Threading.SendOrPostCallback onSetOrdersExportStatusCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginSubmitOrderRefundDelegate;
-        
-        private EndOperationDelegate onEndSubmitOrderRefundDelegate;
-        
-        private System.Threading.SendOrPostCallback onSubmitOrderRefundCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginSetSellerOrderIDDelegate;
-        
-        private EndOperationDelegate onEndSetSellerOrderIDDelegate;
-        
-        private System.Threading.SendOrPostCallback onSetSellerOrderIDCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginSetSellerOrderItemIDListDelegate;
-        
-        private EndOperationDelegate onEndSetSellerOrderItemIDListDelegate;
-        
-        private System.Threading.SendOrPostCallback onSetSellerOrderItemIDListCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginGetOrderRefundHistoryDelegate;
-        
-        private EndOperationDelegate onEndGetOrderRefundHistoryDelegate;
-        
-        private System.Threading.SendOrPostCallback onGetOrderRefundHistoryCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginUpdateOrderListDelegate;
-        
-        private EndOperationDelegate onEndUpdateOrderListDelegate;
-        
-        private System.Threading.SendOrPostCallback onUpdateOrderListCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginOrderMergeDelegate;
-        
-        private EndOperationDelegate onEndOrderMergeDelegate;
-        
-        private System.Threading.SendOrPostCallback onOrderMergeCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginOrderSplitDelegate;
-        
-        private EndOperationDelegate onEndOrderSplitDelegate;
-        
-        private System.Threading.SendOrPostCallback onOrderSplitCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginSubmitOrderDelegate;
-        
-        private EndOperationDelegate onEndSubmitOrderDelegate;
-        
-        private System.Threading.SendOrPostCallback onSubmitOrderCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginGetOrderListDelegate;
-        
-        private EndOperationDelegate onEndGetOrderListDelegate;
-        
-        private System.Threading.SendOrPostCallback onGetOrderListCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginPingDelegate;
-        
-        private EndOperationDelegate onEndPingDelegate;
-        
-        private System.Threading.SendOrPostCallback onPingCompletedDelegate;
         
         public OrderServiceSoapClient() {
         }
@@ -5082,28 +4785,6 @@ namespace ChannelAdvisorAccess.OrderService {
                 base(binding, remoteAddress) {
         }
         
-        public event System.EventHandler<SetOrdersExportStatusCompletedEventArgs> SetOrdersExportStatusCompleted;
-        
-        public event System.EventHandler<SubmitOrderRefundCompletedEventArgs> SubmitOrderRefundCompleted;
-        
-        public event System.EventHandler<SetSellerOrderIDCompletedEventArgs> SetSellerOrderIDCompleted;
-        
-        public event System.EventHandler<SetSellerOrderItemIDListCompletedEventArgs> SetSellerOrderItemIDListCompleted;
-        
-        public event System.EventHandler<GetOrderRefundHistoryCompletedEventArgs> GetOrderRefundHistoryCompleted;
-        
-        public event System.EventHandler<UpdateOrderListCompletedEventArgs> UpdateOrderListCompleted;
-        
-        public event System.EventHandler<OrderMergeCompletedEventArgs> OrderMergeCompleted;
-        
-        public event System.EventHandler<OrderSplitCompletedEventArgs> OrderSplitCompleted;
-        
-        public event System.EventHandler<SubmitOrderCompletedEventArgs> SubmitOrderCompleted;
-        
-        public event System.EventHandler<GetOrderListCompletedEventArgs> GetOrderListCompleted;
-        
-        public event System.EventHandler<PingCompletedEventArgs> PingCompleted;
-        
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.SetOrdersExportStatus(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request) {
             return base.Channel.SetOrdersExportStatus(request);
@@ -5120,71 +4801,17 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginSetOrdersExportStatus(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSetOrdersExportStatus(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.SetOrdersExportStatusAsync(ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest request) {
+            return base.Channel.SetOrdersExportStatusAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSetOrdersExportStatus(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string[] clientOrderIdentifiers, bool markAsExported, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse> SetOrdersExportStatusAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string[] clientOrderIdentifiers, bool markAsExported) {
             ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest inValue = new ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.clientOrderIdentifiers = clientOrderIdentifiers;
             inValue.markAsExported = markAsExported;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginSetOrdersExportStatus(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndSetOrdersExportStatus(System.IAsyncResult result) {
-            return base.Channel.EndSetOrdersExportStatus(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean EndSetOrdersExportStatus(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndSetOrdersExportStatus(result);
-            return retVal.SetOrdersExportStatusResult;
-        }
-        
-        private System.IAsyncResult OnBeginSetOrdersExportStatus(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            string[] clientOrderIdentifiers = ((string[])(inValues[2]));
-            bool markAsExported = ((bool)(inValues[3]));
-            return this.BeginSetOrdersExportStatus(APICredentials, accountID, clientOrderIdentifiers, markAsExported, callback, asyncState);
-        }
-        
-        private object[] OnEndSetOrdersExportStatus(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean retVal = this.EndSetOrdersExportStatus(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnSetOrdersExportStatusCompleted(object state) {
-            if ((this.SetOrdersExportStatusCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.SetOrdersExportStatusCompleted(this, new SetOrdersExportStatusCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void SetOrdersExportStatusAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string[] clientOrderIdentifiers, bool markAsExported) {
-            this.SetOrdersExportStatusAsync(APICredentials, accountID, clientOrderIdentifiers, markAsExported, null);
-        }
-        
-        public void SetOrdersExportStatusAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string[] clientOrderIdentifiers, bool markAsExported, object userState) {
-            if ((this.onBeginSetOrdersExportStatusDelegate == null)) {
-                this.onBeginSetOrdersExportStatusDelegate = new BeginOperationDelegate(this.OnBeginSetOrdersExportStatus);
-            }
-            if ((this.onEndSetOrdersExportStatusDelegate == null)) {
-                this.onEndSetOrdersExportStatusDelegate = new EndOperationDelegate(this.OnEndSetOrdersExportStatus);
-            }
-            if ((this.onSetOrdersExportStatusCompletedDelegate == null)) {
-                this.onSetOrdersExportStatusCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSetOrdersExportStatusCompleted);
-            }
-            base.InvokeAsync(this.onBeginSetOrdersExportStatusDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        clientOrderIdentifiers,
-                        markAsExported}, this.onEndSetOrdersExportStatusDelegate, this.onSetOrdersExportStatusCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SetOrdersExportStatusAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5202,68 +4829,16 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginSubmitOrderRefund(ChannelAdvisorAccess.OrderService.SubmitOrderRefundRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSubmitOrderRefund(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.SubmitOrderRefundAsync(ChannelAdvisorAccess.OrderService.SubmitOrderRefundRequest request) {
+            return base.Channel.SubmitOrderRefundAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSubmitOrderRefund(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.RefundOrderRequest request, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse> SubmitOrderRefundAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.RefundOrderRequest request) {
             ChannelAdvisorAccess.OrderService.SubmitOrderRefundRequest inValue = new ChannelAdvisorAccess.OrderService.SubmitOrderRefundRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.request = request;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginSubmitOrderRefund(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndSubmitOrderRefund(System.IAsyncResult result) {
-            return base.Channel.EndSubmitOrderRefund(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfRefundOrderResponse EndSubmitOrderRefund(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.SubmitOrderRefundResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndSubmitOrderRefund(result);
-            return retVal.SubmitOrderRefundResult;
-        }
-        
-        private System.IAsyncResult OnBeginSubmitOrderRefund(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            ChannelAdvisorAccess.OrderService.RefundOrderRequest request = ((ChannelAdvisorAccess.OrderService.RefundOrderRequest)(inValues[2]));
-            return this.BeginSubmitOrderRefund(APICredentials, accountID, request, callback, asyncState);
-        }
-        
-        private object[] OnEndSubmitOrderRefund(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfRefundOrderResponse retVal = this.EndSubmitOrderRefund(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnSubmitOrderRefundCompleted(object state) {
-            if ((this.SubmitOrderRefundCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.SubmitOrderRefundCompleted(this, new SubmitOrderRefundCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void SubmitOrderRefundAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.RefundOrderRequest request) {
-            this.SubmitOrderRefundAsync(APICredentials, accountID, request, null);
-        }
-        
-        public void SubmitOrderRefundAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.RefundOrderRequest request, object userState) {
-            if ((this.onBeginSubmitOrderRefundDelegate == null)) {
-                this.onBeginSubmitOrderRefundDelegate = new BeginOperationDelegate(this.OnBeginSubmitOrderRefund);
-            }
-            if ((this.onEndSubmitOrderRefundDelegate == null)) {
-                this.onEndSubmitOrderRefundDelegate = new EndOperationDelegate(this.OnEndSubmitOrderRefund);
-            }
-            if ((this.onSubmitOrderRefundCompletedDelegate == null)) {
-                this.onSubmitOrderRefundCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSubmitOrderRefundCompleted);
-            }
-            base.InvokeAsync(this.onBeginSubmitOrderRefundDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        request}, this.onEndSubmitOrderRefundDelegate, this.onSubmitOrderRefundCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SubmitOrderRefundAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5282,71 +4857,17 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginSetSellerOrderID(ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSetSellerOrderID(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.SetSellerOrderIDAsync(ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest request) {
+            return base.Channel.SetSellerOrderIDAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSetSellerOrderID(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] sellerOrderIDList, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse> SetSellerOrderIDAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] sellerOrderIDList) {
             ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest inValue = new ChannelAdvisorAccess.OrderService.SetSellerOrderIDRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.orderIDList = orderIDList;
             inValue.sellerOrderIDList = sellerOrderIDList;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginSetSellerOrderID(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndSetSellerOrderID(System.IAsyncResult result) {
-            return base.Channel.EndSetSellerOrderID(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfInt32 EndSetSellerOrderID(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.SetSellerOrderIDResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndSetSellerOrderID(result);
-            return retVal.SetSellerOrderIDResult;
-        }
-        
-        private System.IAsyncResult OnBeginSetSellerOrderID(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            int[] orderIDList = ((int[])(inValues[2]));
-            string[] sellerOrderIDList = ((string[])(inValues[3]));
-            return this.BeginSetSellerOrderID(APICredentials, accountID, orderIDList, sellerOrderIDList, callback, asyncState);
-        }
-        
-        private object[] OnEndSetSellerOrderID(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfArrayOfInt32 retVal = this.EndSetSellerOrderID(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnSetSellerOrderIDCompleted(object state) {
-            if ((this.SetSellerOrderIDCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.SetSellerOrderIDCompleted(this, new SetSellerOrderIDCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void SetSellerOrderIDAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] sellerOrderIDList) {
-            this.SetSellerOrderIDAsync(APICredentials, accountID, orderIDList, sellerOrderIDList, null);
-        }
-        
-        public void SetSellerOrderIDAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] sellerOrderIDList, object userState) {
-            if ((this.onBeginSetSellerOrderIDDelegate == null)) {
-                this.onBeginSetSellerOrderIDDelegate = new BeginOperationDelegate(this.OnBeginSetSellerOrderID);
-            }
-            if ((this.onEndSetSellerOrderIDDelegate == null)) {
-                this.onEndSetSellerOrderIDDelegate = new EndOperationDelegate(this.OnEndSetSellerOrderID);
-            }
-            if ((this.onSetSellerOrderIDCompletedDelegate == null)) {
-                this.onSetSellerOrderIDCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSetSellerOrderIDCompleted);
-            }
-            base.InvokeAsync(this.onBeginSetSellerOrderIDDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        orderIDList,
-                        sellerOrderIDList}, this.onEndSetSellerOrderIDDelegate, this.onSetSellerOrderIDCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SetSellerOrderIDAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5366,74 +4887,18 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginSetSellerOrderItemIDList(ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSetSellerOrderItemIDList(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.SetSellerOrderItemIDListAsync(ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest request) {
+            return base.Channel.SetSellerOrderItemIDListAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSetSellerOrderItemIDList(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, string[] sellerOrderItemIDList, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse> SetSellerOrderItemIDListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, string[] sellerOrderItemIDList) {
             ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest inValue = new ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.orderID = orderID;
             inValue.lineItemIDList = lineItemIDList;
             inValue.sellerOrderItemIDList = sellerOrderItemIDList;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginSetSellerOrderItemIDList(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndSetSellerOrderItemIDList(System.IAsyncResult result) {
-            return base.Channel.EndSetSellerOrderItemIDList(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean EndSetSellerOrderItemIDList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.SetSellerOrderItemIDListResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndSetSellerOrderItemIDList(result);
-            return retVal.SetSellerOrderItemIDListResult;
-        }
-        
-        private System.IAsyncResult OnBeginSetSellerOrderItemIDList(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            int orderID = ((int)(inValues[2]));
-            int[] lineItemIDList = ((int[])(inValues[3]));
-            string[] sellerOrderItemIDList = ((string[])(inValues[4]));
-            return this.BeginSetSellerOrderItemIDList(APICredentials, accountID, orderID, lineItemIDList, sellerOrderItemIDList, callback, asyncState);
-        }
-        
-        private object[] OnEndSetSellerOrderItemIDList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean retVal = this.EndSetSellerOrderItemIDList(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnSetSellerOrderItemIDListCompleted(object state) {
-            if ((this.SetSellerOrderItemIDListCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.SetSellerOrderItemIDListCompleted(this, new SetSellerOrderItemIDListCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void SetSellerOrderItemIDListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, string[] sellerOrderItemIDList) {
-            this.SetSellerOrderItemIDListAsync(APICredentials, accountID, orderID, lineItemIDList, sellerOrderItemIDList, null);
-        }
-        
-        public void SetSellerOrderItemIDListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, string[] sellerOrderItemIDList, object userState) {
-            if ((this.onBeginSetSellerOrderItemIDListDelegate == null)) {
-                this.onBeginSetSellerOrderItemIDListDelegate = new BeginOperationDelegate(this.OnBeginSetSellerOrderItemIDList);
-            }
-            if ((this.onEndSetSellerOrderItemIDListDelegate == null)) {
-                this.onEndSetSellerOrderItemIDListDelegate = new EndOperationDelegate(this.OnEndSetSellerOrderItemIDList);
-            }
-            if ((this.onSetSellerOrderItemIDListCompletedDelegate == null)) {
-                this.onSetSellerOrderItemIDListCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSetSellerOrderItemIDListCompleted);
-            }
-            base.InvokeAsync(this.onBeginSetSellerOrderItemIDListDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        orderID,
-                        lineItemIDList,
-                        sellerOrderItemIDList}, this.onEndSetSellerOrderItemIDListDelegate, this.onSetSellerOrderItemIDListCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SetSellerOrderItemIDListAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5451,68 +4916,16 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginGetOrderRefundHistory(ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetOrderRefundHistory(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.GetOrderRefundHistoryAsync(ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest request) {
+            return base.Channel.GetOrderRefundHistoryAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginGetOrderRefundHistory(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse> GetOrderRefundHistoryAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID) {
             ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest inValue = new ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.orderID = orderID;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginGetOrderRefundHistory(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndGetOrderRefundHistory(System.IAsyncResult result) {
-            return base.Channel.EndGetOrderRefundHistory(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfOrderRefundHistoryResponse EndGetOrderRefundHistory(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.GetOrderRefundHistoryResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndGetOrderRefundHistory(result);
-            return retVal.GetOrderRefundHistoryResult;
-        }
-        
-        private System.IAsyncResult OnBeginGetOrderRefundHistory(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            int orderID = ((int)(inValues[2]));
-            return this.BeginGetOrderRefundHistory(APICredentials, accountID, orderID, callback, asyncState);
-        }
-        
-        private object[] OnEndGetOrderRefundHistory(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfOrderRefundHistoryResponse retVal = this.EndGetOrderRefundHistory(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnGetOrderRefundHistoryCompleted(object state) {
-            if ((this.GetOrderRefundHistoryCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.GetOrderRefundHistoryCompleted(this, new GetOrderRefundHistoryCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void GetOrderRefundHistoryAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID) {
-            this.GetOrderRefundHistoryAsync(APICredentials, accountID, orderID, null);
-        }
-        
-        public void GetOrderRefundHistoryAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, object userState) {
-            if ((this.onBeginGetOrderRefundHistoryDelegate == null)) {
-                this.onBeginGetOrderRefundHistoryDelegate = new BeginOperationDelegate(this.OnBeginGetOrderRefundHistory);
-            }
-            if ((this.onEndGetOrderRefundHistoryDelegate == null)) {
-                this.onEndGetOrderRefundHistoryDelegate = new EndOperationDelegate(this.OnEndGetOrderRefundHistory);
-            }
-            if ((this.onGetOrderRefundHistoryCompletedDelegate == null)) {
-                this.onGetOrderRefundHistoryCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetOrderRefundHistoryCompleted);
-            }
-            base.InvokeAsync(this.onBeginGetOrderRefundHistoryDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        orderID}, this.onEndGetOrderRefundHistoryDelegate, this.onGetOrderRefundHistoryCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).GetOrderRefundHistoryAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5530,68 +4943,16 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginUpdateOrderList(ChannelAdvisorAccess.OrderService.UpdateOrderListRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginUpdateOrderList(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.UpdateOrderListResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.UpdateOrderListAsync(ChannelAdvisorAccess.OrderService.UpdateOrderListRequest request) {
+            return base.Channel.UpdateOrderListAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginUpdateOrderList(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderUpdateSubmit[] updateOrderSubmitList, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.UpdateOrderListResponse> UpdateOrderListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderUpdateSubmit[] updateOrderSubmitList) {
             ChannelAdvisorAccess.OrderService.UpdateOrderListRequest inValue = new ChannelAdvisorAccess.OrderService.UpdateOrderListRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.updateOrderSubmitList = updateOrderSubmitList;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginUpdateOrderList(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.UpdateOrderListResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndUpdateOrderList(System.IAsyncResult result) {
-            return base.Channel.EndUpdateOrderList(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse EndUpdateOrderList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.UpdateOrderListResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndUpdateOrderList(result);
-            return retVal.UpdateOrderListResult;
-        }
-        
-        private System.IAsyncResult OnBeginUpdateOrderList(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            ChannelAdvisorAccess.OrderService.OrderUpdateSubmit[] updateOrderSubmitList = ((ChannelAdvisorAccess.OrderService.OrderUpdateSubmit[])(inValues[2]));
-            return this.BeginUpdateOrderList(APICredentials, accountID, updateOrderSubmitList, callback, asyncState);
-        }
-        
-        private object[] OnEndUpdateOrderList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderUpdateResponse retVal = this.EndUpdateOrderList(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnUpdateOrderListCompleted(object state) {
-            if ((this.UpdateOrderListCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.UpdateOrderListCompleted(this, new UpdateOrderListCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void UpdateOrderListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderUpdateSubmit[] updateOrderSubmitList) {
-            this.UpdateOrderListAsync(APICredentials, accountID, updateOrderSubmitList, null);
-        }
-        
-        public void UpdateOrderListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderUpdateSubmit[] updateOrderSubmitList, object userState) {
-            if ((this.onBeginUpdateOrderListDelegate == null)) {
-                this.onBeginUpdateOrderListDelegate = new BeginOperationDelegate(this.OnBeginUpdateOrderList);
-            }
-            if ((this.onEndUpdateOrderListDelegate == null)) {
-                this.onEndUpdateOrderListDelegate = new EndOperationDelegate(this.OnEndUpdateOrderList);
-            }
-            if ((this.onUpdateOrderListCompletedDelegate == null)) {
-                this.onUpdateOrderListCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnUpdateOrderListCompleted);
-            }
-            base.InvokeAsync(this.onBeginUpdateOrderListDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        updateOrderSubmitList}, this.onEndUpdateOrderListDelegate, this.onUpdateOrderListCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).UpdateOrderListAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5610,71 +4971,17 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginOrderMerge(ChannelAdvisorAccess.OrderService.OrderMergeRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginOrderMerge(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.OrderMergeResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.OrderMergeAsync(ChannelAdvisorAccess.OrderService.OrderMergeRequest request) {
+            return base.Channel.OrderMergeAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginOrderMerge(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int primaryOrderID, int[] orderIDMergeList, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.OrderMergeResponse> OrderMergeAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int primaryOrderID, int[] orderIDMergeList) {
             ChannelAdvisorAccess.OrderService.OrderMergeRequest inValue = new ChannelAdvisorAccess.OrderService.OrderMergeRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.primaryOrderID = primaryOrderID;
             inValue.orderIDMergeList = orderIDMergeList;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginOrderMerge(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.OrderMergeResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndOrderMerge(System.IAsyncResult result) {
-            return base.Channel.EndOrderMerge(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean EndOrderMerge(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.OrderMergeResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndOrderMerge(result);
-            return retVal.OrderMergeResult;
-        }
-        
-        private System.IAsyncResult OnBeginOrderMerge(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            int primaryOrderID = ((int)(inValues[2]));
-            int[] orderIDMergeList = ((int[])(inValues[3]));
-            return this.BeginOrderMerge(APICredentials, accountID, primaryOrderID, orderIDMergeList, callback, asyncState);
-        }
-        
-        private object[] OnEndOrderMerge(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfBoolean retVal = this.EndOrderMerge(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnOrderMergeCompleted(object state) {
-            if ((this.OrderMergeCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.OrderMergeCompleted(this, new OrderMergeCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void OrderMergeAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int primaryOrderID, int[] orderIDMergeList) {
-            this.OrderMergeAsync(APICredentials, accountID, primaryOrderID, orderIDMergeList, null);
-        }
-        
-        public void OrderMergeAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int primaryOrderID, int[] orderIDMergeList, object userState) {
-            if ((this.onBeginOrderMergeDelegate == null)) {
-                this.onBeginOrderMergeDelegate = new BeginOperationDelegate(this.OnBeginOrderMerge);
-            }
-            if ((this.onEndOrderMergeDelegate == null)) {
-                this.onEndOrderMergeDelegate = new EndOperationDelegate(this.OnEndOrderMerge);
-            }
-            if ((this.onOrderMergeCompletedDelegate == null)) {
-                this.onOrderMergeCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnOrderMergeCompleted);
-            }
-            base.InvokeAsync(this.onBeginOrderMergeDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        primaryOrderID,
-                        orderIDMergeList}, this.onEndOrderMergeDelegate, this.onOrderMergeCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).OrderMergeAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5693,71 +5000,17 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginOrderSplit(ChannelAdvisorAccess.OrderService.OrderSplitRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginOrderSplit(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.OrderSplitResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.OrderSplitAsync(ChannelAdvisorAccess.OrderService.OrderSplitRequest request) {
+            return base.Channel.OrderSplitAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginOrderSplit(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.OrderSplitResponse> OrderSplitAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList) {
             ChannelAdvisorAccess.OrderService.OrderSplitRequest inValue = new ChannelAdvisorAccess.OrderService.OrderSplitRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.orderID = orderID;
             inValue.lineItemIDList = lineItemIDList;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginOrderSplit(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.OrderSplitResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndOrderSplit(System.IAsyncResult result) {
-            return base.Channel.EndOrderSplit(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfBoolean EndOrderSplit(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.OrderSplitResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndOrderSplit(result);
-            return retVal.OrderSplitResult;
-        }
-        
-        private System.IAsyncResult OnBeginOrderSplit(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            int orderID = ((int)(inValues[2]));
-            int[] lineItemIDList = ((int[])(inValues[3]));
-            return this.BeginOrderSplit(APICredentials, accountID, orderID, lineItemIDList, callback, asyncState);
-        }
-        
-        private object[] OnEndOrderSplit(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfBoolean retVal = this.EndOrderSplit(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnOrderSplitCompleted(object state) {
-            if ((this.OrderSplitCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.OrderSplitCompleted(this, new OrderSplitCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void OrderSplitAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList) {
-            this.OrderSplitAsync(APICredentials, accountID, orderID, lineItemIDList, null);
-        }
-        
-        public void OrderSplitAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int orderID, int[] lineItemIDList, object userState) {
-            if ((this.onBeginOrderSplitDelegate == null)) {
-                this.onBeginOrderSplitDelegate = new BeginOperationDelegate(this.OnBeginOrderSplit);
-            }
-            if ((this.onEndOrderSplitDelegate == null)) {
-                this.onEndOrderSplitDelegate = new EndOperationDelegate(this.OnEndOrderSplit);
-            }
-            if ((this.onOrderSplitCompletedDelegate == null)) {
-                this.onOrderSplitCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnOrderSplitCompleted);
-            }
-            base.InvokeAsync(this.onBeginOrderSplitDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        orderID,
-                        lineItemIDList}, this.onEndOrderSplitDelegate, this.onOrderSplitCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).OrderSplitAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5775,68 +5028,16 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginSubmitOrder(ChannelAdvisorAccess.OrderService.SubmitOrderRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSubmitOrder(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SubmitOrderResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.SubmitOrderAsync(ChannelAdvisorAccess.OrderService.SubmitOrderRequest request) {
+            return base.Channel.SubmitOrderAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSubmitOrder(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderSubmit order, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SubmitOrderResponse> SubmitOrderAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderSubmit order) {
             ChannelAdvisorAccess.OrderService.SubmitOrderRequest inValue = new ChannelAdvisorAccess.OrderService.SubmitOrderRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.order = order;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginSubmitOrder(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.SubmitOrderResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndSubmitOrder(System.IAsyncResult result) {
-            return base.Channel.EndSubmitOrder(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfInt32 EndSubmitOrder(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.SubmitOrderResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndSubmitOrder(result);
-            return retVal.SubmitOrderResult;
-        }
-        
-        private System.IAsyncResult OnBeginSubmitOrder(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            ChannelAdvisorAccess.OrderService.OrderSubmit order = ((ChannelAdvisorAccess.OrderService.OrderSubmit)(inValues[2]));
-            return this.BeginSubmitOrder(APICredentials, accountID, order, callback, asyncState);
-        }
-        
-        private object[] OnEndSubmitOrder(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfInt32 retVal = this.EndSubmitOrder(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnSubmitOrderCompleted(object state) {
-            if ((this.SubmitOrderCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.SubmitOrderCompleted(this, new SubmitOrderCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void SubmitOrderAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderSubmit order) {
-            this.SubmitOrderAsync(APICredentials, accountID, order, null);
-        }
-        
-        public void SubmitOrderAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderSubmit order, object userState) {
-            if ((this.onBeginSubmitOrderDelegate == null)) {
-                this.onBeginSubmitOrderDelegate = new BeginOperationDelegate(this.OnBeginSubmitOrder);
-            }
-            if ((this.onEndSubmitOrderDelegate == null)) {
-                this.onEndSubmitOrderDelegate = new EndOperationDelegate(this.OnEndSubmitOrder);
-            }
-            if ((this.onSubmitOrderCompletedDelegate == null)) {
-                this.onSubmitOrderCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSubmitOrderCompleted);
-            }
-            base.InvokeAsync(this.onBeginSubmitOrderDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        order}, this.onEndSubmitOrderDelegate, this.onSubmitOrderCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SubmitOrderAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5854,68 +5055,16 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginGetOrderList(ChannelAdvisorAccess.OrderService.GetOrderListRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetOrderList(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.GetOrderListResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.GetOrderListAsync(ChannelAdvisorAccess.OrderService.GetOrderListRequest request) {
+            return base.Channel.GetOrderListAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginGetOrderList(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderCriteria orderCriteria, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.GetOrderListResponse> GetOrderListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderCriteria orderCriteria) {
             ChannelAdvisorAccess.OrderService.GetOrderListRequest inValue = new ChannelAdvisorAccess.OrderService.GetOrderListRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
             inValue.orderCriteria = orderCriteria;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginGetOrderList(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.GetOrderListResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndGetOrderList(System.IAsyncResult result) {
-            return base.Channel.EndGetOrderList(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderResponseItem EndGetOrderList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.GetOrderListResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndGetOrderList(result);
-            return retVal.GetOrderListResult;
-        }
-        
-        private System.IAsyncResult OnBeginGetOrderList(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            string accountID = ((string)(inValues[1]));
-            ChannelAdvisorAccess.OrderService.OrderCriteria orderCriteria = ((ChannelAdvisorAccess.OrderService.OrderCriteria)(inValues[2]));
-            return this.BeginGetOrderList(APICredentials, accountID, orderCriteria, callback, asyncState);
-        }
-        
-        private object[] OnEndGetOrderList(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfArrayOfOrderResponseItem retVal = this.EndGetOrderList(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnGetOrderListCompleted(object state) {
-            if ((this.GetOrderListCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.GetOrderListCompleted(this, new GetOrderListCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void GetOrderListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderCriteria orderCriteria) {
-            this.GetOrderListAsync(APICredentials, accountID, orderCriteria, null);
-        }
-        
-        public void GetOrderListAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, ChannelAdvisorAccess.OrderService.OrderCriteria orderCriteria, object userState) {
-            if ((this.onBeginGetOrderListDelegate == null)) {
-                this.onBeginGetOrderListDelegate = new BeginOperationDelegate(this.OnBeginGetOrderList);
-            }
-            if ((this.onEndGetOrderListDelegate == null)) {
-                this.onEndGetOrderListDelegate = new EndOperationDelegate(this.OnEndGetOrderList);
-            }
-            if ((this.onGetOrderListCompletedDelegate == null)) {
-                this.onGetOrderListCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetOrderListCompleted);
-            }
-            base.InvokeAsync(this.onBeginGetOrderListDelegate, new object[] {
-                        APICredentials,
-                        accountID,
-                        orderCriteria}, this.onEndGetOrderListDelegate, this.onGetOrderListCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).GetOrderListAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -5931,62 +5080,14 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult ChannelAdvisorAccess.OrderService.OrderServiceSoap.BeginPing(ChannelAdvisorAccess.OrderService.PingRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginPing(request, callback, asyncState);
+        System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.PingResponse> ChannelAdvisorAccess.OrderService.OrderServiceSoap.PingAsync(ChannelAdvisorAccess.OrderService.PingRequest request) {
+            return base.Channel.PingAsync(request);
         }
         
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginPing(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, System.AsyncCallback callback, object asyncState) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.PingResponse> PingAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials) {
             ChannelAdvisorAccess.OrderService.PingRequest inValue = new ChannelAdvisorAccess.OrderService.PingRequest();
             inValue.APICredentials = APICredentials;
-            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).BeginPing(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        ChannelAdvisorAccess.OrderService.PingResponse ChannelAdvisorAccess.OrderService.OrderServiceSoap.EndPing(System.IAsyncResult result) {
-            return base.Channel.EndPing(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfString EndPing(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.PingResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).EndPing(result);
-            return retVal.PingResult;
-        }
-        
-        private System.IAsyncResult OnBeginPing(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ChannelAdvisorAccess.OrderService.APICredentials APICredentials = ((ChannelAdvisorAccess.OrderService.APICredentials)(inValues[0]));
-            return this.BeginPing(APICredentials, callback, asyncState);
-        }
-        
-        private object[] OnEndPing(System.IAsyncResult result) {
-            ChannelAdvisorAccess.OrderService.APIResultOfString retVal = this.EndPing(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnPingCompleted(object state) {
-            if ((this.PingCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.PingCompleted(this, new PingCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void PingAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials) {
-            this.PingAsync(APICredentials, null);
-        }
-        
-        public void PingAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, object userState) {
-            if ((this.onBeginPingDelegate == null)) {
-                this.onBeginPingDelegate = new BeginOperationDelegate(this.OnBeginPing);
-            }
-            if ((this.onEndPingDelegate == null)) {
-                this.onEndPingDelegate = new EndOperationDelegate(this.OnEndPing);
-            }
-            if ((this.onPingCompletedDelegate == null)) {
-                this.onPingCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnPingCompleted);
-            }
-            base.InvokeAsync(this.onBeginPingDelegate, new object[] {
-                        APICredentials}, this.onEndPingDelegate, this.onPingCompletedDelegate, userState);
+            return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).PingAsync(inValue);
         }
     }
 }

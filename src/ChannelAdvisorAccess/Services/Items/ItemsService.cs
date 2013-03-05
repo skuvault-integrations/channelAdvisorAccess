@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
+using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
@@ -324,6 +325,26 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
+		public async Task SynchItemsAsync( List< InventoryItemSubmit > items )
+		{
+			const int pageSize = 100;
+			var length = pageSize;
+
+			for( var i = 0; i < items.Count; i += pageSize )
+			{
+				// adjust count of items
+				if( i + length > items.Count )
+					length = items.Count - i;
+
+				var itemInfoArray = new InventoryItemSubmit[ length ];
+				items.CopyTo( i, itemInfoArray, 0, length - 1 );
+				itemInfoArray[ length - 1 ] = items[ length - 1 ];
+
+				var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, itemInfoArray );
+				CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
+			}
+		}
+
 		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice )
 		{
 			ActionPolicies.CaSubmitPolicy.Do( () =>
@@ -354,6 +375,27 @@ namespace ChannelAdvisorAccess.Services.Items
 						var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemInfoArray );
 						CheckCaSuccess( resultOfBoolean );
 					} );
+			}
+		}
+		
+		public async Task UpdateQuantityAndPricesAsync( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
+		{
+			// max number of items to submit to CA
+			const int pageSize = 500;
+			var length = pageSize;
+
+			for( var i = 0; i < itemQuantityAndPrices.Count; i += pageSize )
+			{
+				// adjust count of items
+				if( i + length > itemQuantityAndPrices.Count )
+					length = itemQuantityAndPrices.Count - i;
+
+				var itemInfoArray = new InventoryItemQuantityAndPrice[ length ];
+				itemQuantityAndPrices.CopyTo( i, itemInfoArray, 0, length - 1 );
+				itemInfoArray[ length - 1 ] = itemQuantityAndPrices[ length - 1 ]; // Work around MS Contracts bug
+
+				var resultOfBoolean = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, itemInfoArray );
+				CheckCaSuccess( resultOfBoolean.UpdateInventoryItemQuantityAndPriceListResult );
 			}
 		}
 		#endregion
