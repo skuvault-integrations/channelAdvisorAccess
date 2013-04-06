@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ChannelAdvisorAccess.OrderService;
 
 namespace ChannelAdvisorAccess.Services.Orders
@@ -14,6 +15,16 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <returns>Iterator to go over orders 1 order at a time.</returns>
 		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
 		IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate )
+			where T: OrderResponseItem;
+
+		/// <summary>
+		/// Gets the orders.
+		/// </summary>
+		/// <param name="startDate">The start date.</param>
+		/// <param name="endDate">The end date.</param>
+		/// <returns>Iterator to go over orders 1 order at a time.</returns>
+		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
+		Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
 			where T: OrderResponseItem;
 
 		/// <summary>
@@ -33,6 +44,15 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
 		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
+			where T : OrderResponseItem;
+
+		/// <summary>
+		/// Gets the orders.
+		/// </summary>
+		/// <typeparam name="T">Type of order response.</typeparam>
+		/// <param name="orderCriteria">The order criteria.</param>
+		/// <returns>Orders matching supplied criteria.</returns>
+		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria )
 			where T : OrderResponseItem;
 
 		/// <summary>Updates the order list.</summary>

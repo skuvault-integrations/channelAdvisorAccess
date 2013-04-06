@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
+using System.Text;
+using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
@@ -39,7 +41,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			this.Name = name;
 			this._cache = cache;
 			this.SlidingCacheExpiration = ObjectCache.NoSlidingExpiration;
-			this._allItemsCacheKey = "caAllItems_ID_{0}".FormatWith( this.AccountId );
+			this._allItemsCacheKey = string.Format( "caAllItems_ID_{0}", this.AccountId );
 		}
 
 		#region Get items
@@ -323,6 +325,26 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
+		public async Task SynchItemsAsync( List< InventoryItemSubmit > items )
+		{
+			const int pageSize = 100;
+			var length = pageSize;
+
+			for( var i = 0; i < items.Count; i += pageSize )
+			{
+				// adjust count of items
+				if( i + length > items.Count )
+					length = items.Count - i;
+
+				var itemInfoArray = new InventoryItemSubmit[ length ];
+				items.CopyTo( i, itemInfoArray, 0, length - 1 );
+				itemInfoArray[ length - 1 ] = items[ length - 1 ];
+
+				var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, itemInfoArray );
+				CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
+			}
+		}
+
 		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice )
 		{
 			ActionPolicies.CaSubmitPolicy.Do( () =>
@@ -353,6 +375,27 @@ namespace ChannelAdvisorAccess.Services.Items
 						var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemInfoArray );
 						CheckCaSuccess( resultOfBoolean );
 					} );
+			}
+		}
+		
+		public async Task UpdateQuantityAndPricesAsync( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
+		{
+			// max number of items to submit to CA
+			const int pageSize = 500;
+			var length = pageSize;
+
+			for( var i = 0; i < itemQuantityAndPrices.Count; i += pageSize )
+			{
+				// adjust count of items
+				if( i + length > itemQuantityAndPrices.Count )
+					length = itemQuantityAndPrices.Count - i;
+
+				var itemInfoArray = new InventoryItemQuantityAndPrice[ length ];
+				itemQuantityAndPrices.CopyTo( i, itemInfoArray, 0, length - 1 );
+				itemInfoArray[ length - 1 ] = itemQuantityAndPrices[ length - 1 ]; // Work around MS Contracts bug
+
+				var resultOfBoolean = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, itemInfoArray );
+				CheckCaSuccess( resultOfBoolean.UpdateInventoryItemQuantityAndPriceListResult );
 			}
 		}
 		#endregion
@@ -436,11 +479,24 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		private static void CheckCaSuccess( APIResultOfArrayOfSynchInventoryItemResponse apiResult )
 		{
-			if( apiResult.Status != ResultStatus.Success && apiResult.ResultData.Any( r => !IsSkuMissing( r ) ) )
+			if( apiResult.Status != ResultStatus.Success )
 			{
-				var skusListMsg = string.Join( ", ", apiResult.ResultData.Where( r => !r.Result && !IsSkuMissing( r ) ).Select( r => "{0} ({1})".FormatWith( r.Sku, r.ErrorMessage ) ) );
-				var msg = @"{0}. Invalid Skus: {1}".FormatWith( apiResult.Message, skusListMsg );
-				throw new ChannelAdvisorException( apiResult.MessageCode, msg );
+				// no sku exists, ignore
+				if( apiResult.Message == "All Update requests failed for the SKU list specified!" )
+					return; 
+
+				var msgs = new StringBuilder();
+
+				foreach( var result in apiResult.ResultData )
+				{
+					if( !result.Result && !IsSkuMissing( result ))
+					{
+						msgs.AppendLine( result.ErrorMessage );
+					}
+				}
+
+				if( msgs.Length > 0 )
+					throw new ChannelAdvisorException( apiResult.MessageCode, string.Concat( apiResult.Message, Environment.NewLine, msgs.ToString() ) );
 			}
 		}
 
@@ -453,7 +509,30 @@ namespace ChannelAdvisorAccess.Services.Items
 		private static void CheckCaSuccess( APIResultOfArrayOfUpdateInventoryItemResponse apiResult )
 		{
 			if( apiResult.Status != ResultStatus.Success )
-				throw new ChannelAdvisorException( apiResult.MessageCode, apiResult.Message );
+			{
+				// no sku exists, ignore
+				if( apiResult.Message == "All Update requests failed for the SKU list specified!" )
+					return; 
+
+				var msgs = new StringBuilder();
+
+				foreach( var result in apiResult.ResultData )
+				{
+					if( !result.Result && !IsSkuMissing( result ))
+					{
+						msgs.AppendLine( result.ErrorMessage );
+					}
+				}
+
+				if( msgs.Length > 0 )
+					throw new ChannelAdvisorException( apiResult.MessageCode, string.Concat( apiResult.Message, Environment.NewLine, msgs.ToString() ) );
+			}
+		}
+
+		private static bool IsSkuMissing( UpdateInventoryItemResponse result )
+		{
+			const string skuMissingMsg = "The specified Sku does not exist";
+			return result.ErrorMessage.StartsWith( skuMissingMsg, StringComparison.InvariantCultureIgnoreCase );
 		}
 
 		private static void CheckCaSuccess( APIResultOfInt32 quantityResult )

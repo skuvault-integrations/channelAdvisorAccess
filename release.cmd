@@ -1,1 +1,1 @@
-@call psake Release
+@call .build.cmd Release

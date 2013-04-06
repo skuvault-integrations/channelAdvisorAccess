@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
 
 namespace ChannelAdvisorAccess.Services.Items
@@ -52,6 +53,13 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="items">The items.</param>
 		/// <remarks>Only non-default fields will be updated.</remarks>
 		void SynchItems( List< InventoryItemSubmit > items );
+
+		/// <summary>
+		/// Updates items.
+		/// </summary>
+		/// <param name="items">The items.</param>
+		/// <remarks>Only non-default fields will be updated.</remarks>
+		Task SynchItemsAsync( List< InventoryItemSubmit > items );
 
 		/// <summary>
 		/// Deletes the item.
@@ -137,6 +145,12 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// </summary>
 		/// <param name="itemQuantityAndPrices">The item quantity and prices.</param>
 		void UpdateQuantityAndPrices( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices );
+		
+		/// <summary>
+		/// Updates both quantity and price on all supplied items.
+		/// </summary>
+		/// <param name="itemQuantityAndPrices">The item quantity and prices.</param>
+		Task UpdateQuantityAndPricesAsync( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices );
 
 		/// <summary>
 		/// Gets the account name.

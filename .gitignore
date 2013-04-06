@@ -3,7 +3,6 @@ Thumbs.db
 
 #Ignore files build by Visual Studio
 *.obj
-*.exe
 *.user
 *.aps
 *.pch
@@ -32,3 +31,4 @@ _ReSharper*/
 #Ignore common build files
 build
 log
+packages
