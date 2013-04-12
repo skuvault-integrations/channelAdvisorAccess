@@ -514,6 +514,9 @@ namespace ChannelAdvisorAccess.Services.Items
 				if( apiResult.Message == "All Update requests failed for the SKU list specified!" )
 					return; 
 
+				if( apiResult.ResultData == null || apiResult.ResultData.Length == 0 )
+					throw new ChannelAdvisorException( apiResult.MessageCode, apiResult.Message );
+
 				var msgs = new StringBuilder();
 
 				foreach( var result in apiResult.ResultData )
