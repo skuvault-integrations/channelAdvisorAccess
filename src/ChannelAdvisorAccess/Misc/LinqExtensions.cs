@@ -20,7 +20,9 @@ namespace ChannelAdvisorAccess.Misc
 			Parallel.For( 0, pagesCount, options, pageNumber =>
 				{
 					var dataPage = dataList.Skip( pageNumber * pageSize ).Take( pageSize );
-					pages[ pageNumber ] = processor( dataPage );
+					var resultPage = processor( dataPage );
+					if( resultPage != null )
+						pages[ pageNumber ] = resultPage;
 				});
 
 			// NOTE: force ToList to avoid possible multiple redownloads to reiterate over the list
