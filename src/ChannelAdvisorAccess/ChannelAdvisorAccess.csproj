@@ -169,6 +169,7 @@
     <Compile Include="Exceptions\ChannelAdvisorException.cs" />
     <Compile Include="Misc\ActionPolicies.cs" />
     <Compile Include="Misc\ItemExtensions.cs" />
+    <Compile Include="Misc\LinqExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\AdminService\Reference.cs">
       <AutoGen>True</AutoGen>

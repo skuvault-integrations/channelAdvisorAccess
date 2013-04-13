@@ -51,6 +51,16 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
 		}
 
+		public IEnumerable< DoesSkuExistResponse > DoesSkuExist( IEnumerable< string > skus )
+		{
+			return skus.ProcessWithPages( 500, skusPage =>
+				ActionPolicies.CaGetPolicy.Get( delegate
+					{
+						var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray());
+						return this.GetResultWithSuccessCheck( skusResult, skusResult.ResultData );
+					} ) );
+		}
+
 		public IEnumerable< InventoryItemResponse > GetAllItems()
 		{
 			if( this.UseCache() )
@@ -109,20 +119,15 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// This results in slower performance.</remarks>
 		public IEnumerable< InventoryItemResponse > GetItems( string[] skus )
 		{
-			foreach( var sku in skus )
-			{
-				var itemList = ActionPolicies.CaGetPolicy.Get(
-					() =>
-					this._client.GetInventoryItemList( this._credentials, this.AccountId, new[] { sku } ) );
+			var checkedSkus = DoesSkuExist( skus );
 
-				if( !this.IsRequestSuccessful( itemList ) )
-					continue;
+			var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
 
-				foreach( var item in itemList.ResultData )
+			return existingSkus.ProcessWithPages( 100, skusPage =>
 				{
-					yield return item;
-				}
-			}
+					var itemsResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemList( this._credentials, this.AccountId, skusPage.ToArray() ) );
+					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.ResultData );
+				});
 		}
 
 		/// <summary>
@@ -140,10 +145,10 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				filter.Criteria.PageNumber += 1;
 				var itemResponse = ActionPolicies.CaGetPolicy.Get( () => this._client.GetFilteredInventoryItemList
-				                                                         	(
-				                                                         		this._credentials,
-				                                                         		this.AccountId, filter.Criteria, filter.DetailLevel,
-				                                                         		filter.SortField, filter.SortDirection ) );
+					(
+						this._credentials,
+						this.AccountId, filter.Criteria, filter.DetailLevel,
+						filter.SortField, filter.SortDirection ) );
 
 				if( !this.IsRequestSuccessful( itemResponse ) )
 				{
@@ -170,7 +175,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			var attributeList = ActionPolicies.CaGetPolicy.Get(
 				() =>
-				this._client.GetInventoryItemAttributeList( this._credentials, this.AccountId, sku ) );
+					this._client.GetInventoryItemAttributeList( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
 		}
 
@@ -185,7 +190,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		public QuantityInfoResponse GetItemQuantities( string sku )
 		{
 			var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
-			                                                    this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
+				this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
@@ -260,9 +265,9 @@ namespace ChannelAdvisorAccess.Services.Items
 				filter.Criteria.PageNumber += 1;
 				var itemResponse = ActionPolicies.CaGetPolicy.Get(
 					() => this._client.GetFilteredSkuList
-					      	(
-					      		this._credentials, this.AccountId, filter.Criteria,
-					      		filter.SortField, filter.SortDirection ) );
+						(
+							this._credentials, this.AccountId, filter.Criteria,
+							filter.SortField, filter.SortDirection ) );
 
 				if( !this.IsRequestSuccessful( itemResponse ) )
 				{
@@ -356,28 +361,14 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public void UpdateQuantityAndPrices( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
 		{
-			// max number of items to submit to CA
-			const int pageSize = 500;
-			var length = pageSize;
 
-			for( var i = 0; i < itemQuantityAndPrices.Count; i += pageSize )
-			{
-				// adjust count of items
-				if( i + length > itemQuantityAndPrices.Count )
-					length = itemQuantityAndPrices.Count - i;
-
-				var itemInfoArray = new InventoryItemQuantityAndPrice[ length ];
-				itemQuantityAndPrices.CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = itemQuantityAndPrices[ length - 1 ]; // Work around MS Contracts bug
-
-				ActionPolicies.CaSubmitPolicy.Do( () =>
-					{
-						var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemInfoArray );
-						CheckCaSuccess( resultOfBoolean );
-					} );
-			}
+			itemQuantityAndPrices.DoWithPages( 1000, itemsPage =>
+				{
+					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemsPage.ToArray() );
+					CheckCaSuccess( resultOfBoolean );
+				});
 		}
-		
+
 		public async Task UpdateQuantityAndPricesAsync( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
 		{
 			// max number of items to submit to CA
@@ -483,16 +474,14 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				// no sku exists, ignore
 				if( apiResult.Message == "All Update requests failed for the SKU list specified!" )
-					return; 
+					return;
 
 				var msgs = new StringBuilder();
 
 				foreach( var result in apiResult.ResultData )
 				{
-					if( !result.Result && !IsSkuMissing( result ))
-					{
+					if( !result.Result && !IsSkuMissing( result ) )
 						msgs.AppendLine( result.ErrorMessage );
-					}
 				}
 
 				if( msgs.Length > 0 )
@@ -512,7 +501,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				// no sku exists, ignore
 				if( apiResult.Message == "All Update requests failed for the SKU list specified!" )
-					return; 
+					return;
 
 				if( apiResult.ResultData == null || apiResult.ResultData.Length == 0 )
 					throw new ChannelAdvisorException( apiResult.MessageCode, apiResult.Message );
@@ -521,10 +510,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				foreach( var result in apiResult.ResultData )
 				{
-					if( !result.Result && !IsSkuMissing( result ))
-					{
+					if( !result.Result && !IsSkuMissing( result ) )
 						msgs.AppendLine( result.ErrorMessage );
-					}
 				}
 
 				if( msgs.Length > 0 )
