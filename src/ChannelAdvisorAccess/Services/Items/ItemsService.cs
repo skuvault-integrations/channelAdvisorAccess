@@ -398,6 +398,36 @@ namespace ChannelAdvisorAccess.Services.Items
 				CheckCaSuccess( resultOfBoolean.UpdateInventoryItemQuantityAndPriceListResult );
 			}
 		}
+
+		public void RemoveLabelListFromItemList( string[] labels, string[] skus, string reason )
+		{
+			ActionPolicies.CaSubmitPolicy.Do( () =>
+				{
+					var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, skus, reason );
+					CheckCaSuccess( resultOfBoolean );
+				} );
+		}
+
+		public async Task RemoveLabelListFromItemListAsync( string[] labels, string[] skus, string reason )
+		{
+			var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, skus, reason );
+			CheckCaSuccess( resultOfBoolean.RemoveLabelListFromInventoryItemListResult );
+		}
+
+		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
+		{
+			ActionPolicies.CaSubmitPolicy.Do( () =>
+				{
+					var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, skus, reason );
+					CheckCaSuccess( resultOfBoolean );
+				} );
+		}
+
+		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
+		{
+			var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, skus, reason );
+			CheckCaSuccess( resultOfBoolean.AssignLabelListToInventoryItemListResult );
+		}
 		#endregion
 
 		#region Delete item
