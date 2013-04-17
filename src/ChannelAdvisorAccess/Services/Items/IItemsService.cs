@@ -156,7 +156,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Removes the list of Labels from the list of SKUs.
 		/// </summary>
 		/// <param name="labels">List of Labels (Maximum of 3 Labels)</param>
-		/// <param name="skus">List of SKUs (Maximum of 500 SKUs)</param>
+		/// <param name="skus">List of SKUs</param>
 		/// <param name="reason">Specifies the reason for removing the assignment of the Labels</param>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/RemoveLabelListFromInventoryItemList"/>
 		void RemoveLabelListFromItemList( string[] labels, string[] skus, string reason );
@@ -165,7 +165,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Removes the list of Labels from the list of SKUs.
 		/// </summary>
 		/// <param name="labels">List of Labels (Maximum of 3 Labels)</param>
-		/// <param name="skus">List of SKUs (Maximum of 500 SKUs)</param>
+		/// <param name="skus">List of SKUs</param>
 		/// <param name="reason">Specifies the reason for removing the assignment of the Labels</param>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/RemoveLabelListFromInventoryItemList"/>
 		Task RemoveLabelListFromItemListAsync( string[] labels, string[] skus, string reason );
@@ -175,7 +175,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// </summary>
 		/// <param name="labels">List of Labels (Maximum of 3 Labels)</param>
 		/// <param name="createLabelIfNotExist">Specifies whether or not to create the Label if it does not already exist.</param>
-		/// <param name="skus">List of SKUs (Maximum of 500 SKUs)</param>
+		/// <param name="skus">List of SKUs</param>
 		/// <param name="reason">Specifies the reason for the assignment of the Labels</param>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/AssignLabelListToInventoryItemList"/>
 		void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, string[] skus, string reason );
@@ -185,7 +185,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// </summary>
 		/// <param name="labels">List of Labels (Maximum of 3 Labels)</param>
 		/// <param name="createLabelIfNotExist">Specifies whether or not to create the Label if it does not already exist.</param>
-		/// <param name="skus">List of SKUs (Maximum of 500 SKUs)</param>
+		/// <param name="skus">List of SKUs</param>
 		/// <param name="reason">Specifies the reason for the assignment of the Labels</param>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/AssignLabelListToInventoryItemList"/>
 		Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, string[] skus, string reason );
