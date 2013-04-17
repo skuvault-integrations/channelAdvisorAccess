@@ -391,6 +391,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public void RemoveLabelListFromItemList( string[] labels, string[] skus, string reason )
 		{
+			this.CheckLabelsCount( labels );
+
 			const int pageSize = 500;
 			var length = pageSize;
 
@@ -414,6 +416,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task RemoveLabelListFromItemListAsync( string[] labels, string[] skus, string reason )
 		{
+			this.CheckLabelsCount( labels );
+
 			const int pageSize = 500;
 			var length = pageSize;
 
@@ -427,13 +431,15 @@ namespace ChannelAdvisorAccess.Services.Items
 				skus.ToList().CopyTo( i, itemInfoArray, 0, length - 1 );
 				itemInfoArray[ length - 1 ] = skus[ length - 1 ];
 
-				var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync(this._credentials, this.AccountId, labels, itemInfoArray, reason);
+				var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, itemInfoArray, reason );
 				CheckCaSuccess( resultOfBoolean.RemoveLabelListFromInventoryItemListResult );
 			}
 		}
 
 		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
 		{
+			this.CheckLabelsCount( labels );
+
 			const int pageSize = 500;
 			var length = pageSize;
 
@@ -457,6 +463,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
 		{
+			this.CheckLabelsCount( labels );
+
 			const int pageSize = 500;
 			var length = pageSize;
 
@@ -473,6 +481,12 @@ namespace ChannelAdvisorAccess.Services.Items
 				var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, itemInfoArray, reason );
 				CheckCaSuccess( resultOfBoolean.AssignLabelListToInventoryItemListResult );
 			}
+		}
+
+		private void CheckLabelsCount( string[] labels )
+		{
+			if( labels.Length > 3 )
+				throw new ChannelAdvisorException( "Not more than 3 labels allowed." );
 		}
 		#endregion
 
