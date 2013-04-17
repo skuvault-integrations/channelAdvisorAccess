@@ -199,5 +199,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the account id.
 		/// </summary>
 		string AccountId{ get; }
+
+		IEnumerable< DoesSkuExistResponse > DoesSkuExist( IEnumerable< string > skus );
 	}
 }
