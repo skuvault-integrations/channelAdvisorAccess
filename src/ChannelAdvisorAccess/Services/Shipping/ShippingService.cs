@@ -1,6 +1,7 @@
 using System;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.ShippingService;
 using Netco.Logging;
 using APICredentials=ChannelAdvisorAccess.ShippingService.APICredentials;
@@ -28,42 +29,24 @@ namespace ChannelAdvisorAccess.Services.Shipping
 
 		public string Name { get; private set; }
 		public string AccountId{ get; private set; }
-
-		public void MarkOrderShippedOld( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
-		{
-			try
-			{
-				ActionPolicies.CaSubmitPolicy.Do( () =>
-					{
-						var result = _client.OrderShipped( _credentials, this.AccountId, orderId, dateShipped.ToUniversalTime(), carrierCode, classCode, trackingNumber, null );
-						CheckCaSuccess( result );
-					});
-			}
-			catch( Exception e )
-			{
-				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
-				                  orderId, this.AccountId, carrierCode, classCode, trackingNumber );
-				throw;
-			}
-		}
-
+		
 		public void MarkOrderShipped( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
 		{
 			try
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new[]{
 							new OrderShipment{ 
-								OrderId = orderId,
+								OrderID = orderId,
 								ShipmentType = "Full",
 								FullShipment = new FullShipmentContents{
-									carrierCode = carrierCode,
-									classCode = classCode,
-									dateShippedGMT = dateShipped.ToUniversalTime(),
-									trackingNumber = trackingNumber
+									CarrierCode = carrierCode,
+									ClassCode = classCode,
+									DateShippedGMT = dateShipped.ToUniversalTime(),
+									TrackingNumber = trackingNumber
 								}
-							}}});
+							}});
 						CheckCaSuccess( result );
 					});
 			}
@@ -81,17 +64,17 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new[]{
 							new OrderShipment{ 
 								ClientOrderIdentifier = clientOrderId,
 								ShipmentType = "Full",
 								FullShipment = new FullShipmentContents{
-									carrierCode = carrierCode,
-									classCode = classCode,
-									dateShippedGMT = dateShipped.ToUniversalTime(),
-									trackingNumber = trackingNumber
+									CarrierCode = carrierCode,
+									ClassCode = classCode,
+									DateShippedGMT = dateShipped.ToUniversalTime(),
+									TrackingNumber = trackingNumber
 								}
-							}}});
+							}});
 						CheckCaSuccess( result );
 					});
 			}
@@ -109,19 +92,19 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId,  new[]{
 							new OrderShipment{ 
-								OrderId = orderId,
+								OrderID = orderId,
 								ShipmentType = "Partial",
 								PartialShipment = partialShipmentContents
-							}}});
+							}});
 						CheckCaSuccess( result );
 					});
 			}
 			catch( Exception e )
 			{
 				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
-					orderId, this.AccountId, partialShipmentContents.carrierCode, partialShipmentContents.classCode, partialShipmentContents.trackingNumber );
+					orderId, this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber );
 				throw;
 			}
 		}
@@ -132,19 +115,19 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new OrderShipmentList{ ShipmentList = new[]{
+						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new[]{
 							new OrderShipment{ 
 								ClientOrderIdentifier = clientOrderId,
 								ShipmentType = "Partial",
 								PartialShipment = partialShipmentContents
-							}}});
+							}});
 						CheckCaSuccess( result );
 					});
 			}
 			catch( Exception e )
 			{
 				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
-					clientOrderId, this.AccountId, partialShipmentContents.carrierCode, partialShipmentContents.classCode, partialShipmentContents.trackingNumber );
+					clientOrderId, this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber );
 				throw;
 			}
 		}
@@ -163,7 +146,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 					ActionPolicies.CaSubmitPolicy.Do( () =>
 				                                  	{
 				                                  		var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId,
-												new OrderShipmentList{ ShipmentList = shipmentsToSubmit });
+												shipmentsToSubmit );
 											CheckCaSuccess( result );
 				                                  	} );
 				}
@@ -222,18 +205,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			if( exceptionToThrow != null )
 				throw exceptionToThrow;
 		}
-
-		/// <summary>
-		/// Checks the ca success.
-		/// </summary>
-		/// <param name="result">The result.</param>
-		/// <exception cref="ChannelAdvisorException">Thrown if CA call failed.</exception>
-		private static void CheckCaSuccess( APIResultOfBoolean result )
-		{
-			if( result.Status != ResultStatus.Success )
-				throw new ChannelAdvisorException( result.MessageCode, result.Message );
-		}
-
+		
 		/// <summary>
 		/// Checks the ca success.
 		/// </summary>

@@ -19,10 +19,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx?WSDL" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ListingService.asmx?WSDL" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ListingService1.wsdl" MetadataType="Wsdl" ID="775b7d36-4e9a-4c8e-934c-4a614061a9c7" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx?WSDL" />
+    <MetadataFile FileName="ListingService.wsdl" MetadataType="Wsdl" ID="d2496e87-09b6-4d71-9368-0229425c0257" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ListingService.asmx?WSDL" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

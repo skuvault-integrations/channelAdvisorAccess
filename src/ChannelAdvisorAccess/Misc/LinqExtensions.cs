@@ -23,7 +23,7 @@ namespace ChannelAdvisorAccess.Misc
 					var resultPage = processor( dataPage );
 					if( resultPage != null )
 						pages[ pageNumber ] = resultPage;
-				});
+				} );
 
 			// NOTE: force ToList to avoid possible multiple redownloads to reiterate over the list
 			return pages.OrderBy( kv => kv.Key ).SelectMany( kv => kv.Value ).ToList();
@@ -39,7 +39,7 @@ namespace ChannelAdvisorAccess.Misc
 				{
 					var dataPage = dataList.Skip( pageNumber * pageSize ).Take( pageSize );
 					processor( dataPage );
-				});
+				} );
 		}
 	}
 }

@@ -7,11 +7,17 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="clientOrderIdentifiers" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="orderIDList" type="tns:ArrayOfInt" />
+            <s:element minOccurs="0" maxOccurs="1" name="clientOrderIdentifierList" type="tns:ArrayOfString" />
             <s:element minOccurs="1" maxOccurs="1" name="markAsExported" type="s:boolean" />
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:complexType name="ArrayOfInt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
+        </s:sequence>
+      </s:complexType>
       <s:complexType name="ArrayOfString">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
@@ -20,17 +26,17 @@
       <s:element name="SetOrdersExportStatusResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="SetOrdersExportStatusResult" type="tns:APIResultOfArrayOfBoolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="SetOrdersExportStatusResult" type="tns:APIResultOfArrayOfSetExportStatusResponse" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="APIResultOfArrayOfBoolean">
+      <s:complexType name="APIResultOfArrayOfSetExportStatusResponse">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
           <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfBoolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfSetExportStatusResponse" />
         </s:sequence>
       </s:complexType>
       <s:simpleType name="ResultStatus">
@@ -39,9 +45,16 @@
           <s:enumeration value="Failure" />
         </s:restriction>
       </s:simpleType>
-      <s:complexType name="ArrayOfBoolean">
+      <s:complexType name="ArrayOfSetExportStatusResponse">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="boolean" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SetExportStatusResponse" nillable="true" type="tns:SetExportStatusResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SetExportStatusResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="OrderID" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClientOrderIdentifier" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Success" type="s:boolean" />
         </s:sequence>
       </s:complexType>
       <s:element name="APICredentials" type="tns:APICredentials" />
@@ -85,11 +98,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="ArrayOfInt">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
-        </s:sequence>
-      </s:complexType>
       <s:element name="SetSellerOrderIDResponse">
         <s:complexType>
           <s:sequence>
@@ -123,6 +131,20 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:complexType name="APIResultOfArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfBoolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBoolean">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="boolean" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="GetOrderRefundHistory">
         <s:complexType>
           <s:sequence>
@@ -599,7 +621,7 @@
               <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
               <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
-              <s:element minOccurs="1" maxOccurs="1" name="IsFBA" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsExternallyFulfilled" type="s:boolean" />
               <s:element minOccurs="0" maxOccurs="1" name="ItemSaleSourceTransactionID" type="s:string" />
             </s:sequence>
           </s:extension>
@@ -684,6 +706,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="ShippingStatusFilter" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="RefundStatusFilter" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FulfillmentTypeFilter" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="PageNumberFilter" nillable="true" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PageSize" nillable="true" type="s:int" />
         </s:sequence>
@@ -1136,10 +1159,10 @@
   </wsdl:binding>
   <wsdl:service name="OrderService">
     <wsdl:port name="OrderServiceSoap" binding="tns:OrderServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/OrderService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/OrderService.asmx" />
     </wsdl:port>
     <wsdl:port name="OrderServiceSoap12" binding="tns:OrderServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/OrderService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/OrderService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

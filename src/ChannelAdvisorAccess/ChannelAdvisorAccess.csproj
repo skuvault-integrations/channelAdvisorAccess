@@ -258,6 +258,9 @@
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfClassificationConfigurationInformation.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfDistributionCenterInfoResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfDoesSkuExistResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -271,9 +274,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfInventoryUpsellInfoResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfShippingRateInfo.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\InventoryService\ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfString.datasource">
@@ -385,7 +385,10 @@
     <None Include="Service References\ListingService\ChannelAdvisorAccess.ListingService.WithdrawListingsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ListingService\ListingService1.wsdl" />
+    <None Include="Service References\ListingService\ListingService.wsdl" />
+    <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.APIResultOfArrayOfSetExportStatusResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\OrderService\ChannelAdvisorAccess.OrderService.GetOrderListResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -433,9 +436,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.GetShippingRateListResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.OrderShippedResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.PingResponse.datasource">
@@ -518,9 +518,6 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfArrayOfShippingCarrier.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfBoolean.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ShippingService\ChannelAdvisorAccess.ShippingService.APIResultOfShippingRateResult.datasource">

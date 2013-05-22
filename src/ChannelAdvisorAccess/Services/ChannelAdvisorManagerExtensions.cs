@@ -67,20 +67,6 @@ namespace ChannelAdvisorAccess.Services
 		}
 
 		/// <summary>
-		/// Gets all items in the inventory for the specified account as a list.
-		/// </summary>
-		/// <param name="manager">The manager.</param>
-		/// <param name="accountId">The account id.</param>
-		/// <returns>
-		/// List of all items in the account inventory.
-		/// </returns>
-		public static IList< InventoryItemResponse > GetAllItemsList( this IChannelAdvisorManager manager, string accountId )
-		{
-			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetAllItemsList();
-		}
-
-		/// <summary>
 		/// Gets the items by skus.
 		/// </summary>
 		/// <param name="manager">The manager.</param>

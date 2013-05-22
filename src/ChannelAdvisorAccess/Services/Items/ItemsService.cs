@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
+using CuttingEdge.Conditions;
 using Netco.Logging;
+using Netco.Extensions;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -98,15 +100,6 @@ namespace ChannelAdvisorAccess.Services.Items
 		private bool UseCache()
 		{
 			return this._cache != null;
-		}
-
-		/// <summary>
-		/// Gets all items in a list.
-		/// </summary>
-		/// <returns>Downloads and returns all items.</returns>
-		public IList< InventoryItemResponse > GetAllItemsList()
-		{
-			return this.GetAllItems().ToList();
 		}
 
 		/// <summary>
@@ -212,7 +205,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public ShippingRateInfo[] GetShippingInfo( string sku )
+		public DistributionCenterInfoResponse[] GetShippingInfo( string sku )
 		{
 			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
@@ -370,45 +363,27 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task UpdateQuantityAndPricesAsync( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
 		{
-			// max number of items to submit to CA
 			const int pageSize = 500;
-			var length = pageSize;
 
-			for( var i = 0; i < itemQuantityAndPrices.Count; i += pageSize )
+			foreach( var slice in itemQuantityAndPrices.Slice( pageSize ) )
 			{
-				// adjust count of items
-				if( i + length > itemQuantityAndPrices.Count )
-					length = itemQuantityAndPrices.Count - i;
-
-				var itemInfoArray = new InventoryItemQuantityAndPrice[ length ];
-				itemQuantityAndPrices.CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = itemQuantityAndPrices[ length - 1 ]; // Work around MS Contracts bug
-
-				var resultOfBoolean = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, itemInfoArray );
-				CheckCaSuccess( resultOfBoolean.UpdateInventoryItemQuantityAndPriceListResult );
+				var result = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, slice );
+				CheckCaSuccess( result.UpdateInventoryItemQuantityAndPriceListResult );
 			}
 		}
 
 		public void RemoveLabelListFromItemList( string[] labels, string[] skus, string reason )
 		{
-			this.CheckLabelsCount( labels );
+			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
 			const int pageSize = 500;
-			var length = pageSize;
 
-			for( var i = 0; i < skus.Length; i += pageSize )
+			foreach( var slice in skus.Slice( pageSize ) )
 			{
-				// adjust count of items
-				if( i + length > skus.Length )
-					length = skus.Length - i;
-
-				var itemInfoArray = new string[ length ];
-				skus.ToList().CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = skus[ length - 1 ];
-
+				var localSlice = slice;
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, itemInfoArray, reason );
+						var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, localSlice, reason );
 						CheckCaSuccess( resultOfBoolean );
 					} );
 			}
@@ -416,46 +391,29 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task RemoveLabelListFromItemListAsync( string[] labels, string[] skus, string reason )
 		{
-			this.CheckLabelsCount( labels );
+			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
 			const int pageSize = 500;
-			var length = pageSize;
 
-			for( var i = 0; i < skus.Length; i += pageSize )
+			foreach( var slice in skus.Slice( pageSize ) )
 			{
-				// adjust count of items
-				if( i + length > skus.Length )
-					length = skus.Length - i;
-
-				var itemInfoArray = new string[ length ];
-				skus.ToList().CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = skus[ length - 1 ];
-
-				var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, itemInfoArray, reason );
+				var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, slice, reason );
 				CheckCaSuccess( resultOfBoolean.RemoveLabelListFromInventoryItemListResult );
 			}
 		}
 
 		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
 		{
-			this.CheckLabelsCount( labels );
+			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
 			const int pageSize = 500;
-			var length = pageSize;
 
-			for( var i = 0; i < skus.Length; i += pageSize )
+			foreach( var slice in skus.Slice( pageSize ) )
 			{
-				// adjust count of items
-				if( i + length > skus.Length )
-					length = skus.Length - i;
-
-				var itemInfoArray = new string[ length ];
-				skus.ToList().CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = skus[ length - 1 ];
-
+				var localSlice = slice;
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, itemInfoArray, reason );
+						var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, localSlice, reason );
 						CheckCaSuccess( resultOfBoolean );
 					} );
 			}
@@ -463,30 +421,14 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
 		{
-			this.CheckLabelsCount( labels );
+			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
 			const int pageSize = 500;
-			var length = pageSize;
-
-			for( var i = 0; i < skus.Length; i += pageSize )
+			foreach( var slice in skus.Slice( pageSize ) )
 			{
-				// adjust count of items
-				if( i + length > skus.Length )
-					length = skus.Length - i;
-
-				var itemInfoArray = new string[ length ];
-				skus.ToList().CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = skus[ length - 1 ];
-
-				var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, itemInfoArray, reason );
+				var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, slice, reason );
 				CheckCaSuccess( resultOfBoolean.AssignLabelListToInventoryItemListResult );
 			}
-		}
-
-		private void CheckLabelsCount( string[] labels )
-		{
-			if( labels.Length > 3 )
-				throw new ChannelAdvisorException( "Not more than 3 labels allowed." );
 		}
 		#endregion
 

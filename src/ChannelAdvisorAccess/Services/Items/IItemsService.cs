@@ -98,7 +98,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="sku">The sku.</param>
 		/// <returns>Shipping rates for the specified sku.</returns>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemShippingInfo"/>
-		ShippingRateInfo[] GetShippingInfo( string sku );
+		DistributionCenterInfoResponse[] GetShippingInfo( string sku );
 
 		/// <summary>Gets the variation info.</summary>
 		/// <param name="sku">The sku.</param>
@@ -127,12 +127,6 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="filter">The filter.</param>
 		/// <returns>skus matching supplied filter.</returns>
 		IEnumerable< string > GetSkus ( ItemsFilter filter );
-
-		/// <summary>
-		/// Gets all items in a list.
-		/// </summary>
-		/// <returns>Downloads and returns all items.</returns>
-		IList< InventoryItemResponse > GetAllItemsList();
 
 		/// <summary>
 		/// Updates both quantity and price on a single item.

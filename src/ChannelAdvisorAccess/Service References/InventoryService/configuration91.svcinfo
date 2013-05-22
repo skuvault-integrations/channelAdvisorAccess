@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="esF257NivXh92wi+EF8lIMiN5pc=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="Ib8B+U6nOSaA7+sc9V5Ql6JbiNw=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="InventoryServiceSoap">
       <properties>
@@ -221,10 +221,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="InventoryServiceSoap" contract="InventoryService.InventoryServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/InventoryService.asmx" bindingConfiguration="InventoryServiceSoap">
+    <endpoint name="InventoryServiceSoap" contract="InventoryService.InventoryServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/InventoryService.asmx" bindingConfiguration="InventoryServiceSoap">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v6/InventoryService.asmx</serializedValue>
+          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v7/InventoryService.asmx</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
