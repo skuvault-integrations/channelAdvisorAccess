@@ -164,6 +164,42 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
+		/// <summary>
+		/// Gets the items matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <returns>Items matching supplied filter.</returns>
+		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
+		public async Task< IEnumerable< InventoryItemResponse >> GetItemsAsync( ItemsFilter filter )
+		{
+			filter.Criteria.PageSize = 100;
+			filter.Criteria.PageNumber = 0;
+
+			var items = new List< InventoryItemResponse >();
+			while( true )
+			{
+				filter.Criteria.PageNumber += 1;
+				var itemResponse = await this._client.GetFilteredInventoryItemListAsync
+					( this._credentials,
+						this.AccountId, filter.Criteria, filter.DetailLevel,
+						filter.SortField, filter.SortDirection );
+
+				if( !this.IsRequestSuccessful( itemResponse ) )
+				{
+					continue;
+				}
+
+				var pageItems = itemResponse.GetFilteredInventoryItemListResult.ResultData;
+				if( pageItems == null )
+					return items;
+
+				items.AddRange( pageItems );
+
+				if( pageItems.Length == 0 || pageItems.Length < filter.Criteria.PageSize )
+					return items;
+			}
+		}
+
 		public AttributeInfo[] GetAttributes( string sku )
 		{
 			var attributeList = ActionPolicies.CaGetPolicy.Get(

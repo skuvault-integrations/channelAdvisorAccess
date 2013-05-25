@@ -195,5 +195,13 @@ namespace ChannelAdvisorAccess.Services.Items
 		string AccountId{ get; }
 
 		IEnumerable< DoesSkuExistResponse > DoesSkuExist( IEnumerable< string > skus );
+
+		/// <summary>
+		/// Gets the items matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <returns>Items matching supplied filter.</returns>
+		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
+		Task< IEnumerable< InventoryItemResponse >> GetItemsAsync( ItemsFilter filter );
 	}
 }
