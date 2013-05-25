@@ -98,7 +98,7 @@ task NuGet Package, Version, {
 <package>
 	<metadata>
 		<id>ChannelAdvisorAccess</id>
-		<version>$Version-alpha1</version>
+		<version>$Version-alpha3</version>
 		<authors>Slav Ivanyuk</authors>
 		<owners>Slav Ivanyuk</owners>
 		<projectUrl>https://github.com/slav/ChannelAdvisorAccess</projectUrl>

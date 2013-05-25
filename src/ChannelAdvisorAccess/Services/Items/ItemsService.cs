@@ -184,7 +184,7 @@ namespace ChannelAdvisorAccess.Services.Items
 						this.AccountId, filter.Criteria, filter.DetailLevel,
 						filter.SortField, filter.SortDirection );
 
-				if( !this.IsRequestSuccessful( itemResponse ) )
+				if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
 				{
 					continue;
 				}
