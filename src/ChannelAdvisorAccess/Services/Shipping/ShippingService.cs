@@ -1,12 +1,9 @@
 using System;
+using System.Linq;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
-using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.ShippingService;
 using Netco.Logging;
-using APICredentials=ChannelAdvisorAccess.ShippingService.APICredentials;
-using ResultStatus=ChannelAdvisorAccess.ShippingService.ResultStatus;
-using System.Linq;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {
@@ -28,27 +25,34 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		}
 
 		public string Name { get; private set; }
-		public string AccountId{ get; private set; }
-		
+		public string AccountId { get; private set; }
+
 		public void MarkOrderShipped( int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
 		{
 			try
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new[]{
-							new OrderShipment{ 
-								OrderID = orderId,
-								ShipmentType = "Full",
-								FullShipment = new FullShipmentContents{
-									CarrierCode = carrierCode,
-									ClassCode = classCode,
-									DateShippedGMT = dateShipped.ToUniversalTime(),
-									TrackingNumber = trackingNumber
-								}
-							}});
+						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
+							{
+								ShipmentList = new[]
+									{
+										new OrderShipment
+											{
+												OrderId = orderId,
+												ShipmentType = "Full",
+												FullShipment = new FullShipmentContents
+													{
+														carrierCode = carrierCode,
+														classCode = classCode,
+														dateShippedGMT = dateShipped.ToUniversalTime(),
+														trackingNumber = trackingNumber
+													}
+											}
+									}
+							} );
 						CheckCaSuccess( result );
-					});
+					} );
 			}
 			catch( Exception e )
 			{
@@ -64,19 +68,26 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new[]{
-							new OrderShipment{ 
-								ClientOrderIdentifier = clientOrderId,
-								ShipmentType = "Full",
-								FullShipment = new FullShipmentContents{
-									CarrierCode = carrierCode,
-									ClassCode = classCode,
-									DateShippedGMT = dateShipped.ToUniversalTime(),
-									TrackingNumber = trackingNumber
-								}
-							}});
+						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
+							{
+								ShipmentList = new[]
+									{
+										new OrderShipment
+											{
+												ClientOrderIdentifier = clientOrderId,
+												ShipmentType = "Full",
+												FullShipment = new FullShipmentContents
+													{
+														carrierCode = carrierCode,
+														classCode = classCode,
+														dateShippedGMT = dateShipped.ToUniversalTime(),
+														trackingNumber = trackingNumber
+													}
+											}
+									}
+							} );
 						CheckCaSuccess( result );
-					});
+					} );
 			}
 			catch( Exception e )
 			{
@@ -92,19 +103,25 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId,  new[]{
-							new OrderShipment{ 
-								OrderID = orderId,
-								ShipmentType = "Partial",
-								PartialShipment = partialShipmentContents
-							}});
+						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
+							{
+								ShipmentList = new[]
+									{
+										new OrderShipment
+											{
+												OrderId = orderId,
+												ShipmentType = "Partial",
+												PartialShipment = partialShipmentContents
+											}
+									}
+							} );
 						CheckCaSuccess( result );
-					});
+					} );
 			}
 			catch( Exception e )
 			{
 				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
-					orderId, this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber );
+					orderId, this.AccountId, partialShipmentContents.carrierCode, partialShipmentContents.classCode, partialShipmentContents.trackingNumber );
 				throw;
 			}
 		}
@@ -115,19 +132,25 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				ActionPolicies.CaSubmitPolicy.Do( () =>
 					{
-						var result = _client.SubmitOrderShipmentList( _credentials, this.AccountId, new[]{
-							new OrderShipment{ 
-								ClientOrderIdentifier = clientOrderId,
-								ShipmentType = "Partial",
-								PartialShipment = partialShipmentContents
-							}});
+						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
+							{
+								ShipmentList = new[]
+									{
+										new OrderShipment
+											{
+												ClientOrderIdentifier = clientOrderId,
+												ShipmentType = "Partial",
+												PartialShipment = partialShipmentContents
+											}
+									}
+							} );
 						CheckCaSuccess( result );
-					});
+					} );
 			}
 			catch( Exception e )
 			{
 				this.Log().Error( e, "Failed to mark order '{0}' shipped for account '{1}' with carrier code '{2}' and class code '{3}'. Tracking number is '{4}'.",
-					clientOrderId, this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber );
+					clientOrderId, this.AccountId, partialShipmentContents.carrierCode, partialShipmentContents.classCode, partialShipmentContents.trackingNumber );
 				throw;
 			}
 		}
@@ -137,18 +160,18 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			try
 			{
 				const int pageSize = 50;
-				var pagesCount = orderShipments.Length / pageSize + (orderShipments.Length % pageSize > 0 ? 1 : 0);
+				var pagesCount = orderShipments.Length / pageSize + ( orderShipments.Length % pageSize > 0 ? 1 : 0 );
 
-				for( int pageNumber = 0; pageNumber < pagesCount; pageNumber++ )
+				for( var pageNumber = 0; pageNumber < pagesCount; pageNumber++ )
 				{
 					var shipmentsToSubmit = orderShipments.Skip( pageNumber * pageSize ).Take( pageSize ).ToArray();
 
 					ActionPolicies.CaSubmitPolicy.Do( () =>
-				                                  	{
-				                                  		var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId,
-												shipmentsToSubmit );
-											CheckCaSuccess( result );
-				                                  	} );
+						{
+							var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId,
+								new OrderShipmentList { ShipmentList = shipmentsToSubmit } );
+							CheckCaSuccess( result );
+						} );
 				}
 			}
 			catch( Exception e )
@@ -160,29 +183,28 @@ namespace ChannelAdvisorAccess.Services.Shipping
 
 		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList )
 		{
-			return GetOrderShipmentHistoryList( orderIdList, new string[]{} );
+			return this.GetOrderShipmentHistoryList( orderIdList, new string[] { } );
 		}
 
-		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( string [] clientOrderIdentifierList )
+		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( string[] clientOrderIdentifierList )
 		{
-			return GetOrderShipmentHistoryList( new int[]{}, clientOrderIdentifierList );
+			return this.GetOrderShipmentHistoryList( new int[] { }, clientOrderIdentifierList );
 		}
 
-		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList, string [] clientOrderIdentifierList )
+		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList, string[] clientOrderIdentifierList )
 		{
 			return ActionPolicies.CaSubmitPolicy.Get( () =>
-					{
-						var result = _client.GetOrderShipmentHistoryList( _credentials, this.AccountId, orderIdList, clientOrderIdentifierList );
-						CheckCaSuccess( result );
-						return result.ResultData;
-					});
+				{
+					var result = this._client.GetOrderShipmentHistoryList( this._credentials, this.AccountId, orderIdList, clientOrderIdentifierList );
+					CheckCaSuccess( result );
+					return result.ResultData;
+				} );
 		}
-
 
 		public ShippingCarrier[] GetShippingCarrierList()
 		{
 			var result = this._client.GetShippingCarrierList( this._credentials, this.AccountId );
-			CheckCaSuccess( result ); 
+			CheckCaSuccess( result );
 			return result.ResultData;
 		}
 
@@ -205,7 +227,18 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			if( exceptionToThrow != null )
 				throw exceptionToThrow;
 		}
-		
+
+		/// <summary>
+		/// Checks the ca success.
+		/// </summary>
+		/// <param name="result">The result.</param>
+		/// <exception cref="ChannelAdvisorException">Thrown if CA call failed.</exception>
+		private static void CheckCaSuccess( APIResultOfBoolean result )
+		{
+			if( result.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( result.MessageCode, result.Message );
+		}
+
 		/// <summary>
 		/// Checks the ca success.
 		/// </summary>
