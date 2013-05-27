@@ -965,11 +965,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string skuField;
         
-        private string distributionCenterCodeField;
-        
-        private System.Nullable<int> quantityField;
-        
-        private string updateTypeField;
+        private QuantityInfoSubmit quantityInfoField;
         
         private PriceInfo priceInfoField;
         
@@ -987,30 +983,52 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string DistributionCenterCode {
+        public QuantityInfoSubmit QuantityInfo {
             get {
-                return this.distributionCenterCodeField;
+                return this.quantityInfoField;
             }
             set {
-                this.distributionCenterCodeField = value;
-                this.RaisePropertyChanged("DistributionCenterCode");
+                this.quantityInfoField = value;
+                this.RaisePropertyChanged("QuantityInfo");
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=2)]
-        public System.Nullable<int> Quantity {
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public PriceInfo PriceInfo {
             get {
-                return this.quantityField;
+                return this.priceInfoField;
             }
             set {
-                this.quantityField = value;
-                this.RaisePropertyChanged("Quantity");
+                this.priceInfoField = value;
+                this.RaisePropertyChanged("PriceInfo");
             }
         }
         
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class QuantityInfoSubmit : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string updateTypeField;
+        
+        private int totalField;
+        
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
         public string UpdateType {
             get {
                 return this.updateTypeField;
@@ -1022,14 +1040,14 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public PriceInfo PriceInfo {
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int Total {
             get {
-                return this.priceInfoField;
+                return this.totalField;
             }
             set {
-                this.priceInfoField = value;
-                this.RaisePropertyChanged("PriceInfo");
+                this.totalField = value;
+                this.RaisePropertyChanged("Total");
             }
         }
         
@@ -1373,294 +1391,6 @@ namespace ChannelAdvisorAccess.InventoryService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class DistributionCenterInfoSubmit : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string distributionCenterCodeField;
-        
-        private System.Nullable<int> quantityField;
-        
-        private string quantityUpdateTypeField;
-        
-        private string warehouseLocationField;
-        
-        private System.Nullable<System.DateTime> receivedInInventoryField;
-        
-        private ShippingRateInfo[] shippingRateListField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string DistributionCenterCode {
-            get {
-                return this.distributionCenterCodeField;
-            }
-            set {
-                this.distributionCenterCodeField = value;
-                this.RaisePropertyChanged("DistributionCenterCode");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
-        public System.Nullable<int> Quantity {
-            get {
-                return this.quantityField;
-            }
-            set {
-                this.quantityField = value;
-                this.RaisePropertyChanged("Quantity");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string QuantityUpdateType {
-            get {
-                return this.quantityUpdateTypeField;
-            }
-            set {
-                this.quantityUpdateTypeField = value;
-                this.RaisePropertyChanged("QuantityUpdateType");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public string WarehouseLocation {
-            get {
-                return this.warehouseLocationField;
-            }
-            set {
-                this.warehouseLocationField = value;
-                this.RaisePropertyChanged("WarehouseLocation");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=4)]
-        public System.Nullable<System.DateTime> ReceivedInInventory {
-            get {
-                return this.receivedInInventoryField;
-            }
-            set {
-                this.receivedInInventoryField = value;
-                this.RaisePropertyChanged("ReceivedInInventory");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=5)]
-        public ShippingRateInfo[] ShippingRateList {
-            get {
-                return this.shippingRateListField;
-            }
-            set {
-                this.shippingRateListField = value;
-                this.RaisePropertyChanged("ShippingRateList");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class ShippingRateInfo : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string destinationZoneNameField;
-        
-        private string carrierCodeField;
-        
-        private string classCodeField;
-        
-        private System.Nullable<decimal> firstItemRateField;
-        
-        private System.Nullable<decimal> additionalItemRateField;
-        
-        private System.Nullable<decimal> firstItemHandlingRateField;
-        
-        private System.Nullable<decimal> additionalItemHandlingRateField;
-        
-        private bool freeShippingIfBuyItNowField;
-        
-        private string firstItemRateAttributeField;
-        
-        private string firstItemHandlingRateAttributeField;
-        
-        private string additionalItemRateAttributeField;
-        
-        private string additionalItemHandlingRateAttributeField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string DestinationZoneName {
-            get {
-                return this.destinationZoneNameField;
-            }
-            set {
-                this.destinationZoneNameField = value;
-                this.RaisePropertyChanged("DestinationZoneName");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string CarrierCode {
-            get {
-                return this.carrierCodeField;
-            }
-            set {
-                this.carrierCodeField = value;
-                this.RaisePropertyChanged("CarrierCode");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string ClassCode {
-            get {
-                return this.classCodeField;
-            }
-            set {
-                this.classCodeField = value;
-                this.RaisePropertyChanged("ClassCode");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
-        public System.Nullable<decimal> FirstItemRate {
-            get {
-                return this.firstItemRateField;
-            }
-            set {
-                this.firstItemRateField = value;
-                this.RaisePropertyChanged("FirstItemRate");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=4)]
-        public System.Nullable<decimal> AdditionalItemRate {
-            get {
-                return this.additionalItemRateField;
-            }
-            set {
-                this.additionalItemRateField = value;
-                this.RaisePropertyChanged("AdditionalItemRate");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
-        public System.Nullable<decimal> FirstItemHandlingRate {
-            get {
-                return this.firstItemHandlingRateField;
-            }
-            set {
-                this.firstItemHandlingRateField = value;
-                this.RaisePropertyChanged("FirstItemHandlingRate");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
-        public System.Nullable<decimal> AdditionalItemHandlingRate {
-            get {
-                return this.additionalItemHandlingRateField;
-            }
-            set {
-                this.additionalItemHandlingRateField = value;
-                this.RaisePropertyChanged("AdditionalItemHandlingRate");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
-        public bool FreeShippingIfBuyItNow {
-            get {
-                return this.freeShippingIfBuyItNowField;
-            }
-            set {
-                this.freeShippingIfBuyItNowField = value;
-                this.RaisePropertyChanged("FreeShippingIfBuyItNow");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
-        public string FirstItemRateAttribute {
-            get {
-                return this.firstItemRateAttributeField;
-            }
-            set {
-                this.firstItemRateAttributeField = value;
-                this.RaisePropertyChanged("FirstItemRateAttribute");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=9)]
-        public string FirstItemHandlingRateAttribute {
-            get {
-                return this.firstItemHandlingRateAttributeField;
-            }
-            set {
-                this.firstItemHandlingRateAttributeField = value;
-                this.RaisePropertyChanged("FirstItemHandlingRateAttribute");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=10)]
-        public string AdditionalItemRateAttribute {
-            get {
-                return this.additionalItemRateAttributeField;
-            }
-            set {
-                this.additionalItemRateAttributeField = value;
-                this.RaisePropertyChanged("AdditionalItemRateAttribute");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=11)]
-        public string AdditionalItemHandlingRateAttribute {
-            get {
-                return this.additionalItemHandlingRateAttributeField;
-            }
-            set {
-                this.additionalItemHandlingRateAttributeField = value;
-                this.RaisePropertyChanged("AdditionalItemHandlingRateAttribute");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
     public partial class InventoryItemSubmit : object, System.ComponentModel.INotifyPropertyChanged {
         
         private string skuField;
@@ -1673,7 +1403,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string descriptionField;
         
-        private System.Nullable<decimal> weightField;
+        private System.Nullable<double> weightField;
         
         private string supplierCodeField;
         
@@ -1711,6 +1441,8 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string supplierPOField;
         
+        private System.Nullable<System.DateTime> receivedInInventoryField;
+        
         private string harmonizedCodeField;
         
         private System.Nullable<decimal> heightField;
@@ -1721,7 +1453,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string classificationField;
         
-        private DistributionCenterInfoSubmit[] distributionCenterListField;
+        private QuantityInfoSubmit quantityInfoField;
         
         private PriceInfo priceInfoField;
         
@@ -1732,6 +1464,8 @@ namespace ChannelAdvisorAccess.InventoryService {
         private StoreInfo storeInfoField;
         
         private ImageInfoSubmit[] imageListField;
+        
+        private ShippingInfo shippingInfoField;
         
         private string[] labelListField;
         
@@ -1799,7 +1533,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
-        public System.Nullable<decimal> Weight {
+        public System.Nullable<double> Weight {
             get {
                 return this.weightField;
             }
@@ -2026,7 +1760,19 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=24)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=24)]
+        public System.Nullable<System.DateTime> ReceivedInInventory {
+            get {
+                return this.receivedInInventoryField;
+            }
+            set {
+                this.receivedInInventoryField = value;
+                this.RaisePropertyChanged("ReceivedInInventory");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=25)]
         public string HarmonizedCode {
             get {
                 return this.harmonizedCodeField;
@@ -2038,7 +1784,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=25)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=26)]
         public System.Nullable<decimal> Height {
             get {
                 return this.heightField;
@@ -2050,7 +1796,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=26)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=27)]
         public System.Nullable<decimal> Length {
             get {
                 return this.lengthField;
@@ -2062,7 +1808,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=27)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=28)]
         public System.Nullable<decimal> Width {
             get {
                 return this.widthField;
@@ -2074,7 +1820,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=28)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=29)]
         public string Classification {
             get {
                 return this.classificationField;
@@ -2086,19 +1832,19 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=29)]
-        public DistributionCenterInfoSubmit[] DistributionCenterList {
+        [System.Xml.Serialization.XmlElementAttribute(Order=30)]
+        public QuantityInfoSubmit QuantityInfo {
             get {
-                return this.distributionCenterListField;
+                return this.quantityInfoField;
             }
             set {
-                this.distributionCenterListField = value;
-                this.RaisePropertyChanged("DistributionCenterList");
+                this.quantityInfoField = value;
+                this.RaisePropertyChanged("QuantityInfo");
             }
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=30)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=31)]
         public PriceInfo PriceInfo {
             get {
                 return this.priceInfoField;
@@ -2110,7 +1856,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=31)]
+        [System.Xml.Serialization.XmlArrayAttribute(Order=32)]
         public AttributeInfo[] AttributeList {
             get {
                 return this.attributeListField;
@@ -2122,7 +1868,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=32)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=33)]
         public VariationInfo VariationInfo {
             get {
                 return this.variationInfoField;
@@ -2134,7 +1880,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=33)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=34)]
         public StoreInfo StoreInfo {
             get {
                 return this.storeInfoField;
@@ -2146,7 +1892,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=34)]
+        [System.Xml.Serialization.XmlArrayAttribute(Order=35)]
         public ImageInfoSubmit[] ImageList {
             get {
                 return this.imageListField;
@@ -2158,7 +1904,19 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=35)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=36)]
+        public ShippingInfo ShippingInfo {
+            get {
+                return this.shippingInfoField;
+            }
+            set {
+                this.shippingInfoField = value;
+                this.RaisePropertyChanged("ShippingInfo");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=37)]
         public string[] LabelList {
             get {
                 return this.labelListField;
@@ -2170,7 +1928,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=36)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=38)]
         public string MetaDescription {
             get {
                 return this.metaDescriptionField;
@@ -2372,6 +2130,252 @@ namespace ChannelAdvisorAccess.InventoryService {
             set {
                 this.categoryIDField = value;
                 this.RaisePropertyChanged("CategoryID");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class ShippingInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string distributionCenterCodeField;
+        
+        private bool isFBAField;
+        
+        private ShippingRateInfo[] shippingRateListField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string DistributionCenterCode {
+            get {
+                return this.distributionCenterCodeField;
+            }
+            set {
+                this.distributionCenterCodeField = value;
+                this.RaisePropertyChanged("DistributionCenterCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public bool IsFBA {
+            get {
+                return this.isFBAField;
+            }
+            set {
+                this.isFBAField = value;
+                this.RaisePropertyChanged("IsFBA");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(Order=2)]
+        public ShippingRateInfo[] ShippingRateList {
+            get {
+                return this.shippingRateListField;
+            }
+            set {
+                this.shippingRateListField = value;
+                this.RaisePropertyChanged("ShippingRateList");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
+    public partial class ShippingRateInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string destinationZoneNameField;
+        
+        private string carrierCodeField;
+        
+        private string classCodeField;
+        
+        private System.Nullable<decimal> firstItemRateField;
+        
+        private System.Nullable<decimal> additionalItemRateField;
+        
+        private System.Nullable<decimal> firstItemHandlingRateField;
+        
+        private System.Nullable<decimal> additionalItemHandlingRateField;
+        
+        private bool freeShippingIfBuyItNowField;
+        
+        private string firstItemRateAttributeField;
+        
+        private string firstItemHandlingRateAttributeField;
+        
+        private string additionalItemRateAttributeField;
+        
+        private string additionalItemHandlingRateAttributeField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string DestinationZoneName {
+            get {
+                return this.destinationZoneNameField;
+            }
+            set {
+                this.destinationZoneNameField = value;
+                this.RaisePropertyChanged("DestinationZoneName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string CarrierCode {
+            get {
+                return this.carrierCodeField;
+            }
+            set {
+                this.carrierCodeField = value;
+                this.RaisePropertyChanged("CarrierCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string ClassCode {
+            get {
+                return this.classCodeField;
+            }
+            set {
+                this.classCodeField = value;
+                this.RaisePropertyChanged("ClassCode");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
+        public System.Nullable<decimal> FirstItemRate {
+            get {
+                return this.firstItemRateField;
+            }
+            set {
+                this.firstItemRateField = value;
+                this.RaisePropertyChanged("FirstItemRate");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=4)]
+        public System.Nullable<decimal> AdditionalItemRate {
+            get {
+                return this.additionalItemRateField;
+            }
+            set {
+                this.additionalItemRateField = value;
+                this.RaisePropertyChanged("AdditionalItemRate");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
+        public System.Nullable<decimal> FirstItemHandlingRate {
+            get {
+                return this.firstItemHandlingRateField;
+            }
+            set {
+                this.firstItemHandlingRateField = value;
+                this.RaisePropertyChanged("FirstItemHandlingRate");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
+        public System.Nullable<decimal> AdditionalItemHandlingRate {
+            get {
+                return this.additionalItemHandlingRateField;
+            }
+            set {
+                this.additionalItemHandlingRateField = value;
+                this.RaisePropertyChanged("AdditionalItemHandlingRate");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
+        public bool FreeShippingIfBuyItNow {
+            get {
+                return this.freeShippingIfBuyItNowField;
+            }
+            set {
+                this.freeShippingIfBuyItNowField = value;
+                this.RaisePropertyChanged("FreeShippingIfBuyItNow");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
+        public string FirstItemRateAttribute {
+            get {
+                return this.firstItemRateAttributeField;
+            }
+            set {
+                this.firstItemRateAttributeField = value;
+                this.RaisePropertyChanged("FirstItemRateAttribute");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=9)]
+        public string FirstItemHandlingRateAttribute {
+            get {
+                return this.firstItemHandlingRateAttributeField;
+            }
+            set {
+                this.firstItemHandlingRateAttributeField = value;
+                this.RaisePropertyChanged("FirstItemHandlingRateAttribute");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=10)]
+        public string AdditionalItemRateAttribute {
+            get {
+                return this.additionalItemRateAttributeField;
+            }
+            set {
+                this.additionalItemRateAttributeField = value;
+                this.RaisePropertyChanged("AdditionalItemRateAttribute");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=11)]
+        public string AdditionalItemHandlingRateAttribute {
+            get {
+                return this.additionalItemHandlingRateAttributeField;
+            }
+            set {
+                this.additionalItemHandlingRateAttributeField = value;
+                this.RaisePropertyChanged("AdditionalItemHandlingRateAttribute");
             }
         }
         
@@ -3397,11 +3401,11 @@ namespace ChannelAdvisorAccess.InventoryService {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
     public partial class QuantityInfoResponse : object, System.ComponentModel.INotifyPropertyChanged {
         
+        private int totalField;
+        
         private int availableField;
         
-        private int openAllocatedField;
-        
-        private int openUnallocatedField;
+        private int openField;
         
         private int pendingCheckoutField;
         
@@ -3409,11 +3413,9 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private int pendingShipmentField;
         
-        private int totalField;
+        private bool isScheduledField;
         
-        private int openAllocatedPooledField;
-        
-        private int openUnallocatedPooledField;
+        private int openPooledField;
         
         private int pendingCheckoutPooledField;
         
@@ -3425,6 +3427,18 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int Total {
+            get {
+                return this.totalField;
+            }
+            set {
+                this.totalField = value;
+                this.RaisePropertyChanged("Total");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
         public int Available {
             get {
                 return this.availableField;
@@ -3436,26 +3450,14 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public int OpenAllocated {
-            get {
-                return this.openAllocatedField;
-            }
-            set {
-                this.openAllocatedField = value;
-                this.RaisePropertyChanged("OpenAllocated");
-            }
-        }
-        
-        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public int OpenUnallocated {
+        public int Open {
             get {
-                return this.openUnallocatedField;
+                return this.openField;
             }
             set {
-                this.openUnallocatedField = value;
-                this.RaisePropertyChanged("OpenUnallocated");
+                this.openField = value;
+                this.RaisePropertyChanged("Open");
             }
         }
         
@@ -3497,42 +3499,30 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=6)]
-        public int Total {
+        public bool IsScheduled {
             get {
-                return this.totalField;
+                return this.isScheduledField;
             }
             set {
-                this.totalField = value;
-                this.RaisePropertyChanged("Total");
+                this.isScheduledField = value;
+                this.RaisePropertyChanged("IsScheduled");
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=7)]
-        public int OpenAllocatedPooled {
+        public int OpenPooled {
             get {
-                return this.openAllocatedPooledField;
+                return this.openPooledField;
             }
             set {
-                this.openAllocatedPooledField = value;
-                this.RaisePropertyChanged("OpenAllocatedPooled");
+                this.openPooledField = value;
+                this.RaisePropertyChanged("OpenPooled");
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=8)]
-        public int OpenUnallocatedPooled {
-            get {
-                return this.openUnallocatedPooledField;
-            }
-            set {
-                this.openUnallocatedPooledField = value;
-                this.RaisePropertyChanged("OpenUnallocatedPooled");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=9)]
         public int PendingCheckoutPooled {
             get {
                 return this.pendingCheckoutPooledField;
@@ -3544,7 +3534,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=10)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=9)]
         public int PendingPaymentPooled {
             get {
                 return this.pendingPaymentPooledField;
@@ -3556,7 +3546,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=11)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=10)]
         public int PendingShipmentPooled {
             get {
                 return this.pendingShipmentPooledField;
@@ -3568,7 +3558,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=12)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=11)]
         public int TotalPooled {
             get {
                 return this.totalPooledField;
@@ -3595,7 +3585,7 @@ namespace ChannelAdvisorAccess.InventoryService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class APIResultOfArrayOfDistributionCenterInfoResponse : object, System.ComponentModel.INotifyPropertyChanged {
+    public partial class APIResultOfArrayOfShippingRateInfo : object, System.ComponentModel.INotifyPropertyChanged {
         
         private ResultStatus statusField;
         
@@ -3605,7 +3595,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string dataField;
         
-        private DistributionCenterInfoResponse[] resultDataField;
+        private ShippingRateInfo[] resultDataField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
@@ -3657,129 +3647,13 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
-        public DistributionCenterInfoResponse[] ResultData {
+        public ShippingRateInfo[] ResultData {
             get {
                 return this.resultDataField;
             }
             set {
                 this.resultDataField = value;
                 this.RaisePropertyChanged("ResultData");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class DistributionCenterInfoResponse : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private string distributionCenterCodeField;
-        
-        private System.Nullable<int> availableQuantityField;
-        
-        private System.Nullable<int> openAllocatedQuantityField;
-        
-        private System.Nullable<int> openAllocatedPooledQuantityField;
-        
-        private string warehouseLocationField;
-        
-        private System.Nullable<System.DateTime> receivedInInventoryField;
-        
-        private ShippingRateInfo[] shippingRateListField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string DistributionCenterCode {
-            get {
-                return this.distributionCenterCodeField;
-            }
-            set {
-                this.distributionCenterCodeField = value;
-                this.RaisePropertyChanged("DistributionCenterCode");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
-        public System.Nullable<int> AvailableQuantity {
-            get {
-                return this.availableQuantityField;
-            }
-            set {
-                this.availableQuantityField = value;
-                this.RaisePropertyChanged("AvailableQuantity");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=2)]
-        public System.Nullable<int> OpenAllocatedQuantity {
-            get {
-                return this.openAllocatedQuantityField;
-            }
-            set {
-                this.openAllocatedQuantityField = value;
-                this.RaisePropertyChanged("OpenAllocatedQuantity");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
-        public System.Nullable<int> OpenAllocatedPooledQuantity {
-            get {
-                return this.openAllocatedPooledQuantityField;
-            }
-            set {
-                this.openAllocatedPooledQuantityField = value;
-                this.RaisePropertyChanged("OpenAllocatedPooledQuantity");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public string WarehouseLocation {
-            get {
-                return this.warehouseLocationField;
-            }
-            set {
-                this.warehouseLocationField = value;
-                this.RaisePropertyChanged("WarehouseLocation");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
-        public System.Nullable<System.DateTime> ReceivedInInventory {
-            get {
-                return this.receivedInInventoryField;
-            }
-            set {
-                this.receivedInInventoryField = value;
-                this.RaisePropertyChanged("ReceivedInInventory");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=6)]
-        public ShippingRateInfo[] ShippingRateList {
-            get {
-                return this.shippingRateListField;
-            }
-            set {
-                this.shippingRateListField = value;
-                this.RaisePropertyChanged("ShippingRateList");
             }
         }
         
@@ -4159,7 +4033,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string descriptionField;
         
-        private System.Nullable<decimal> weightField;
+        private System.Nullable<double> weightField;
         
         private string supplierCodeField;
         
@@ -4197,6 +4071,8 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string supplierPOField;
         
+        private System.Nullable<System.DateTime> receivedInInventoryField;
+        
         private string harmonizedCodeField;
         
         private System.Nullable<decimal> heightField;
@@ -4207,9 +4083,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         private string classificationField;
         
-        private DistributionCenterInfoResponse[] distributionCenterListField;
-        
-        private QuantityInfoResponse quantityField;
+        private QuantityInfoResponse quantityInfoField;
         
         private PriceInfo priceInfoField;
         
@@ -4220,6 +4094,8 @@ namespace ChannelAdvisorAccess.InventoryService {
         private StoreInfo storeInfoField;
         
         private ImageInfoResponse[] imageListField;
+        
+        private ShippingInfo shippingInfoField;
         
         private string metaDescriptionField;
         
@@ -4285,7 +4161,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
-        public System.Nullable<decimal> Weight {
+        public System.Nullable<double> Weight {
             get {
                 return this.weightField;
             }
@@ -4512,7 +4388,19 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=24)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=24)]
+        public System.Nullable<System.DateTime> ReceivedInInventory {
+            get {
+                return this.receivedInInventoryField;
+            }
+            set {
+                this.receivedInInventoryField = value;
+                this.RaisePropertyChanged("ReceivedInInventory");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=25)]
         public string HarmonizedCode {
             get {
                 return this.harmonizedCodeField;
@@ -4524,7 +4412,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=25)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=26)]
         public System.Nullable<decimal> Height {
             get {
                 return this.heightField;
@@ -4536,7 +4424,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=26)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=27)]
         public System.Nullable<decimal> Length {
             get {
                 return this.lengthField;
@@ -4548,7 +4436,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=27)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=28)]
         public System.Nullable<decimal> Width {
             get {
                 return this.widthField;
@@ -4560,7 +4448,7 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=28)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=29)]
         public string Classification {
             get {
                 return this.classificationField;
@@ -4572,26 +4460,14 @@ namespace ChannelAdvisorAccess.InventoryService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=29)]
-        public DistributionCenterInfoResponse[] DistributionCenterList {
-            get {
-                return this.distributionCenterListField;
-            }
-            set {
-                this.distributionCenterListField = value;
-                this.RaisePropertyChanged("DistributionCenterList");
-            }
-        }
-        
-        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=30)]
-        public QuantityInfoResponse Quantity {
+        public QuantityInfoResponse QuantityInfo {
             get {
-                return this.quantityField;
+                return this.quantityInfoField;
             }
             set {
-                this.quantityField = value;
-                this.RaisePropertyChanged("Quantity");
+                this.quantityInfoField = value;
+                this.RaisePropertyChanged("QuantityInfo");
             }
         }
         
@@ -4657,6 +4533,18 @@ namespace ChannelAdvisorAccess.InventoryService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=36)]
+        public ShippingInfo ShippingInfo {
+            get {
+                return this.shippingInfoField;
+            }
+            set {
+                this.shippingInfoField = value;
+                this.RaisePropertyChanged("ShippingInfo");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=37)]
         public string MetaDescription {
             get {
                 return this.metaDescriptionField;
@@ -5316,12 +5204,12 @@ namespace ChannelAdvisorAccess.InventoryService {
     public partial class GetInventoryItemShippingInfoResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfDistributionCenterInfoResponse GetInventoryItemShippingInfoResult;
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfShippingRateInfo GetInventoryItemShippingInfoResult;
         
         public GetInventoryItemShippingInfoResponse() {
         }
         
-        public GetInventoryItemShippingInfoResponse(ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfDistributionCenterInfoResponse GetInventoryItemShippingInfoResult) {
+        public GetInventoryItemShippingInfoResponse(ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfShippingRateInfo GetInventoryItemShippingInfoResult) {
             this.GetInventoryItemShippingInfoResult = GetInventoryItemShippingInfoResult;
         }
     }
@@ -6368,7 +6256,7 @@ namespace ChannelAdvisorAccess.InventoryService {
             return base.Channel.GetInventoryItemShippingInfo(request);
         }
         
-        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfDistributionCenterInfoResponse GetInventoryItemShippingInfo(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string sku) {
+        public ChannelAdvisorAccess.InventoryService.APIResultOfArrayOfShippingRateInfo GetInventoryItemShippingInfo(ChannelAdvisorAccess.InventoryService.APICredentials APICredentials, string accountID, string sku) {
             ChannelAdvisorAccess.InventoryService.GetInventoryItemShippingInfoRequest inValue = new ChannelAdvisorAccess.InventoryService.GetInventoryItemShippingInfoRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;

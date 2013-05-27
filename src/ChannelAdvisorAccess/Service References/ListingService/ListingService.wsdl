@@ -144,10 +144,10 @@
   </wsdl:binding>
   <wsdl:service name="ListingService">
     <wsdl:port name="ListingServiceSoap" binding="tns:ListingServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ListingService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx" />
     </wsdl:port>
     <wsdl:port name="ListingServiceSoap12" binding="tns:ListingServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ListingService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

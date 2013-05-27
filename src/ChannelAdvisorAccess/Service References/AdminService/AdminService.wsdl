@@ -207,10 +207,10 @@
   </wsdl:binding>
   <wsdl:service name="AdminService">
     <wsdl:port name="AdminServiceSoap" binding="tns:AdminServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/AdminService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/AdminService.asmx" />
     </wsdl:port>
     <wsdl:port name="AdminServiceSoap12" binding="tns:AdminServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/AdminService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/AdminService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

@@ -1865,7 +1865,7 @@ namespace ChannelAdvisorAccess.OrderService {
         
         private string distributionCenterCodeField;
         
-        private bool isExternallyFulfilledField;
+        private bool isFBAField;
         
         private string itemSaleSourceTransactionIDField;
         
@@ -1919,13 +1919,13 @@ namespace ChannelAdvisorAccess.OrderService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=4)]
-        public bool IsExternallyFulfilled {
+        public bool IsFBA {
             get {
-                return this.isExternallyFulfilledField;
+                return this.isFBAField;
             }
             set {
-                this.isExternallyFulfilledField = value;
-                this.RaisePropertyChanged("IsExternallyFulfilled");
+                this.isFBAField = value;
+                this.RaisePropertyChanged("IsFBA");
             }
         }
         
@@ -2211,8 +2211,6 @@ namespace ChannelAdvisorAccess.OrderService {
         
         private string distributionCenterCodeField;
         
-        private string fulfillmentTypeFilterField;
-        
         private System.Nullable<int> pageNumberFilterField;
         
         private System.Nullable<int> pageSizeField;
@@ -2398,19 +2396,7 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=15)]
-        public string FulfillmentTypeFilter {
-            get {
-                return this.fulfillmentTypeFilterField;
-            }
-            set {
-                this.fulfillmentTypeFilterField = value;
-                this.RaisePropertyChanged("FulfillmentTypeFilter");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=16)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=15)]
         public System.Nullable<int> PageNumberFilter {
             get {
                 return this.pageNumberFilterField;
@@ -2422,7 +2408,7 @@ namespace ChannelAdvisorAccess.OrderService {
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=17)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=16)]
         public System.Nullable<int> PageSize {
             get {
                 return this.pageSizeField;
@@ -3833,94 +3819,6 @@ namespace ChannelAdvisorAccess.OrderService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class APIResultOfArrayOfBoolean : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private ResultStatus statusField;
-        
-        private int messageCodeField;
-        
-        private string messageField;
-        
-        private string dataField;
-        
-        private bool[] resultDataField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public ResultStatus Status {
-            get {
-                return this.statusField;
-            }
-            set {
-                this.statusField = value;
-                this.RaisePropertyChanged("Status");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public int MessageCode {
-            get {
-                return this.messageCodeField;
-            }
-            set {
-                this.messageCodeField = value;
-                this.RaisePropertyChanged("MessageCode");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public string Message {
-            get {
-                return this.messageField;
-            }
-            set {
-                this.messageField = value;
-                this.RaisePropertyChanged("Message");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
-        public string Data {
-            get {
-                return this.dataField;
-            }
-            set {
-                this.dataField = value;
-                this.RaisePropertyChanged("Data");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
-        public bool[] ResultData {
-            get {
-                return this.resultDataField;
-            }
-            set {
-                this.resultDataField = value;
-                this.RaisePropertyChanged("ResultData");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
     public partial class APIResultOfArrayOfInt32 : object, System.ComponentModel.INotifyPropertyChanged {
         
         private ResultStatus statusField;
@@ -4287,67 +4185,7 @@ namespace ChannelAdvisorAccess.OrderService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class SetExportStatusResponse : object, System.ComponentModel.INotifyPropertyChanged {
-        
-        private System.Nullable<int> orderIDField;
-        
-        private string clientOrderIdentifierField;
-        
-        private bool successField;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=0)]
-        public System.Nullable<int> OrderID {
-            get {
-                return this.orderIDField;
-            }
-            set {
-                this.orderIDField = value;
-                this.RaisePropertyChanged("OrderID");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string ClientOrderIdentifier {
-            get {
-                return this.clientOrderIdentifierField;
-            }
-            set {
-                this.clientOrderIdentifierField = value;
-                this.RaisePropertyChanged("ClientOrderIdentifier");
-            }
-        }
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
-        public bool Success {
-            get {
-                return this.successField;
-            }
-            set {
-                this.successField = value;
-                this.RaisePropertyChanged("Success");
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.18046")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://api.channeladvisor.com/webservices/")]
-    public partial class APIResultOfArrayOfSetExportStatusResponse : object, System.ComponentModel.INotifyPropertyChanged {
+    public partial class APIResultOfArrayOfBoolean : object, System.ComponentModel.INotifyPropertyChanged {
         
         private ResultStatus statusField;
         
@@ -4357,7 +4195,7 @@ namespace ChannelAdvisorAccess.OrderService {
         
         private string dataField;
         
-        private SetExportStatusResponse[] resultDataField;
+        private bool[] resultDataField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
@@ -4409,7 +4247,7 @@ namespace ChannelAdvisorAccess.OrderService {
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Order=4)]
-        public SetExportStatusResponse[] ResultData {
+        public bool[] ResultData {
             get {
                 return this.resultDataField;
             }
@@ -4443,22 +4281,18 @@ namespace ChannelAdvisorAccess.OrderService {
         public string accountID;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=1)]
-        public int[] orderIDList;
+        public string[] clientOrderIdentifiers;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=2)]
-        public string[] clientOrderIdentifierList;
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=3)]
         public bool markAsExported;
         
         public SetOrdersExportStatusRequest() {
         }
         
-        public SetOrdersExportStatusRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] clientOrderIdentifierList, bool markAsExported) {
+        public SetOrdersExportStatusRequest(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string[] clientOrderIdentifiers, bool markAsExported) {
             this.APICredentials = APICredentials;
             this.accountID = accountID;
-            this.orderIDList = orderIDList;
-            this.clientOrderIdentifierList = clientOrderIdentifierList;
+            this.clientOrderIdentifiers = clientOrderIdentifiers;
             this.markAsExported = markAsExported;
         }
     }
@@ -4470,12 +4304,12 @@ namespace ChannelAdvisorAccess.OrderService {
     public partial class SetOrdersExportStatusResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://api.channeladvisor.com/webservices/", Order=0)]
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfSetExportStatusResponse SetOrdersExportStatusResult;
+        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean SetOrdersExportStatusResult;
         
         public SetOrdersExportStatusResponse() {
         }
         
-        public SetOrdersExportStatusResponse(ChannelAdvisorAccess.OrderService.APIResultOfArrayOfSetExportStatusResponse SetOrdersExportStatusResult) {
+        public SetOrdersExportStatusResponse(ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean SetOrdersExportStatusResult) {
             this.SetOrdersExportStatusResult = SetOrdersExportStatusResult;
         }
     }
@@ -4956,12 +4790,11 @@ namespace ChannelAdvisorAccess.OrderService {
             return base.Channel.SetOrdersExportStatus(request);
         }
         
-        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfSetExportStatusResponse SetOrdersExportStatus(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] clientOrderIdentifierList, bool markAsExported) {
+        public ChannelAdvisorAccess.OrderService.APIResultOfArrayOfBoolean SetOrdersExportStatus(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string[] clientOrderIdentifiers, bool markAsExported) {
             ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest inValue = new ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
-            inValue.orderIDList = orderIDList;
-            inValue.clientOrderIdentifierList = clientOrderIdentifierList;
+            inValue.clientOrderIdentifiers = clientOrderIdentifiers;
             inValue.markAsExported = markAsExported;
             ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse retVal = ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SetOrdersExportStatus(inValue);
             return retVal.SetOrdersExportStatusResult;
@@ -4972,12 +4805,11 @@ namespace ChannelAdvisorAccess.OrderService {
             return base.Channel.SetOrdersExportStatusAsync(request);
         }
         
-        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse> SetOrdersExportStatusAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, int[] orderIDList, string[] clientOrderIdentifierList, bool markAsExported) {
+        public System.Threading.Tasks.Task<ChannelAdvisorAccess.OrderService.SetOrdersExportStatusResponse> SetOrdersExportStatusAsync(ChannelAdvisorAccess.OrderService.APICredentials APICredentials, string accountID, string[] clientOrderIdentifiers, bool markAsExported) {
             ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest inValue = new ChannelAdvisorAccess.OrderService.SetOrdersExportStatusRequest();
             inValue.APICredentials = APICredentials;
             inValue.accountID = accountID;
-            inValue.orderIDList = orderIDList;
-            inValue.clientOrderIdentifierList = clientOrderIdentifierList;
+            inValue.clientOrderIdentifiers = clientOrderIdentifiers;
             inValue.markAsExported = markAsExported;
             return ((ChannelAdvisorAccess.OrderService.OrderServiceSoap)(this)).SetOrdersExportStatusAsync(inValue);
         }

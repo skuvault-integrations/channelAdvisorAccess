@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="tlicBmBR0RQ4gRRkRfz8NBzItlc=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="sAJnm9GOBqUYSDma69Il5fyK/kM=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="ShippingServiceSoap">
       <properties>
@@ -221,10 +221,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="ShippingServiceSoap" contract="ShippingService.ShippingServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ShippingService.asmx" bindingConfiguration="ShippingServiceSoap">
+    <endpoint name="ShippingServiceSoap" contract="ShippingService.ShippingServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ShippingService.asmx" bindingConfiguration="ShippingServiceSoap">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ShippingService.asmx</serializedValue>
+          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ShippingService.asmx</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

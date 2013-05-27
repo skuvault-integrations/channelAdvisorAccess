@@ -98,7 +98,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="sku">The sku.</param>
 		/// <returns>Shipping rates for the specified sku.</returns>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemShippingInfo"/>
-		DistributionCenterInfoResponse[] GetShippingInfo( string sku );
+		ShippingRateInfo[] GetShippingInfo( string sku );
 
 		/// <summary>Gets the variation info.</summary>
 		/// <param name="sku">The sku.</param>

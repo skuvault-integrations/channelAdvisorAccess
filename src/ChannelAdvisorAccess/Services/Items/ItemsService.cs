@@ -241,7 +241,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public DistributionCenterInfoResponse[] GetShippingInfo( string sku )
+		public ShippingRateInfo[] GetShippingInfo( string sku )
 		{
 			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
