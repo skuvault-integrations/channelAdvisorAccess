@@ -221,50 +221,6 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public int GetItemQuantity( string sku )
-		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
-				this._client.GetInventoryQuantity( this._credentials, this.AccountId, sku ) );
-			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
-		}
-
-		public IEnumerable< InventoryQuantityResponse > GetItemQuantities( IEnumerable< string > skus )
-		{
-			var skusAsList = skus as IList< string > ?? skus.ToList();
-
-			var itemQuantities = new List< InventoryQuantityResponse >();
-
-			foreach( var skusSlice in skusAsList.Slice( 100 ) )
-			{
-				string[] slice = skusSlice;
-				var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
-					this._client.GetInventoryQuantityList( this._credentials, this.AccountId, slice ) );
-
-				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
-				itemQuantities.AddRange( sliceQuantities);
-			}
-
-			return itemQuantities;
-		}
-
-		public async Task< IEnumerable< InventoryQuantityResponse > > GetItemQuantitiesAsync( IEnumerable< string > skus )
-		{
-			var skusAsList = skus as IList< string > ?? skus.ToList();
-
-			var itemQuantities = new List< InventoryQuantityResponse >();
-
-			foreach( var skusSlice in skusAsList.Slice( 100 ) )
-			{
-				string[] slice = skusSlice;
-				var requestResult = await this._client.GetInventoryQuantityListAsync( this._credentials, this.AccountId, slice );
-
-				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult.GetInventoryQuantityListResult, requestResult.GetInventoryQuantityListResult.ResultData );
-				itemQuantities.AddRange( sliceQuantities);
-			}
-
-			return itemQuantities;
-		}
-
 		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
 		{
 			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ) );
@@ -314,6 +270,43 @@ namespace ChannelAdvisorAccess.Services.Items
 			var quantityResult = this._client.GetInventoryQuantity( this._credentials, this.AccountId, sku );
 			CheckCaSuccess( quantityResult );
 			return quantityResult;
+		}
+
+		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus )
+		{
+			var skusAsList = skus as IList< string > ?? skus.ToList();
+
+			var itemQuantities = new List< InventoryQuantityResponse >();
+
+			foreach( var skusSlice in skusAsList.Slice( 100 ) )
+			{
+				string[] slice = skusSlice;
+				var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
+					this._client.GetInventoryQuantityList( this._credentials, this.AccountId, slice ) );
+
+				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+				itemQuantities.AddRange( sliceQuantities);
+			}
+
+			return itemQuantities;
+		}
+
+		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus )
+		{
+			var skusAsList = skus as IList< string > ?? skus.ToList();
+
+			var itemQuantities = new List< InventoryQuantityResponse >();
+
+			foreach( var skusSlice in skusAsList.Slice( 100 ) )
+			{
+				string[] slice = skusSlice;
+				var requestResult = await this._client.GetInventoryQuantityListAsync( this._credentials, this.AccountId, slice );
+
+				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult.GetInventoryQuantityListResult, requestResult.GetInventoryQuantityListResult.ResultData );
+				itemQuantities.AddRange( sliceQuantities);
+			}
+
+			return itemQuantities;
 		}
 
 		#region  Skus

@@ -123,6 +123,20 @@ namespace ChannelAdvisorAccess.Services.Items
 		int GetAvailableQuantity( string sku );
 
 		/// <summary>
+		/// Gets the available quantities for all items specified.
+		/// </summary>
+		/// <param name="skus">The skus.</param>
+		/// <returns>Collection of item quantities.</returns>
+		IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus );
+
+		/// <summary>
+		/// Gets the available quantities for all items specified.
+		/// </summary>
+		/// <param name="skus">The skus.</param>
+		/// <returns>Collection of item quantities.</returns>
+		Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus );
+
+		/// <summary>
 		/// Checks whether the sku exist.
 		/// </summary>
 		/// <param name="sku">The sku.</param>
@@ -215,26 +229,5 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the account id.
 		/// </summary>
 		string AccountId{ get; }
-
-		/// <summary>
-		/// Gets the item available quantity.
-		/// </summary>
-		/// <param name="sku">The item sku.</param>
-		/// <returns>Available quantity for the sku.</returns>
-		int GetItemQuantity( string sku );
-
-		/// <summary>
-		/// Gets the available quantities for all items specified.
-		/// </summary>
-		/// <param name="skus">The skus.</param>
-		/// <returns>Collection of item quantities.</returns>
-		IEnumerable< InventoryQuantityResponse > GetItemQuantities( IEnumerable< string > skus );
-
-		/// <summary>
-		/// Gets the available quantities for all items specified.
-		/// </summary>
-		/// <param name="skus">The skus.</param>
-		/// <returns>Collection of item quantities.</returns>
-		Task< IEnumerable< InventoryQuantityResponse > > GetItemQuantitiesAsync( IEnumerable< string > skus );
 	}
 }
