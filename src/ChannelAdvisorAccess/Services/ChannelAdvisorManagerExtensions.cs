@@ -95,7 +95,7 @@ namespace ChannelAdvisorAccess.Services
 		public static IEnumerable< InventoryItemResponse > GetFilteredItems( this IChannelAdvisorManager manager, string accountId, ItemsFilter filter )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetItems( filter );
+			return itemService.GetFilteredItems( filter );
 		}
 
 		/// <summary>

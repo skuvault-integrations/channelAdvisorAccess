@@ -31,8 +31,16 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// </summary>
 		/// <param name="filter">The filter.</param>
 		/// <returns>Items matching supplied filter.</returns>
-		IEnumerable< InventoryItemResponse > GetItems( ItemsFilter filter );
-		
+		IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter );
+
+		/// <summary>
+		/// Gets the items matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <returns>Items matching supplied filter.</returns>
+		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
+		Task< IEnumerable< InventoryItemResponse >> GetFilteredItemsAsync( ItemsFilter filter );
+
 		/// <summary>
 		/// Gets the items.
 		/// </summary>
@@ -115,18 +123,32 @@ namespace ChannelAdvisorAccess.Services.Items
 		int GetAvailableQuantity( string sku );
 
 		/// <summary>
-		/// Doeses the sku exist.
+		/// Checks whether the sku exist.
 		/// </summary>
 		/// <param name="sku">The sku.</param>
 		/// <returns><c>true</c> if sku exists; <c>false</c> otherwise.</returns>
 		bool DoesSkuExist ( string sku );
-		
+
+		/// <summary>
+		/// Verifies if supplied SKUs exist.
+		/// </summary>
+		/// <param name="skus">The skus.</param>
+		/// <returns>Response with information on whether each sku exists or not.</returns>
+		IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus );
+
 		/// <summary>
 		/// Gets the skus matching filter.
 		/// </summary>
 		/// <param name="filter">The filter.</param>
 		/// <returns>skus matching supplied filter.</returns>
-		IEnumerable< string > GetSkus ( ItemsFilter filter );
+		IEnumerable< string > GetFilteredSkus ( ItemsFilter filter );
+
+		/// <summary>
+		/// Gets the skus matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <returns>skus matching supplied filter.</returns>
+		Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter );
 
 		/// <summary>
 		/// Updates both quantity and price on a single item.
@@ -194,14 +216,25 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// </summary>
 		string AccountId{ get; }
 
-		IEnumerable< DoesSkuExistResponse > DoesSkuExist( IEnumerable< string > skus );
+		/// <summary>
+		/// Gets the item available quantity.
+		/// </summary>
+		/// <param name="sku">The item sku.</param>
+		/// <returns>Available quantity for the sku.</returns>
+		int GetItemQuantity( string sku );
 
 		/// <summary>
-		/// Gets the items matching filter.
+		/// Gets the available quantities for all items specified.
 		/// </summary>
-		/// <param name="filter">The filter.</param>
-		/// <returns>Items matching supplied filter.</returns>
-		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		Task< IEnumerable< InventoryItemResponse >> GetItemsAsync( ItemsFilter filter );
+		/// <param name="skus">The skus.</param>
+		/// <returns>Collection of item quantities.</returns>
+		IEnumerable< InventoryQuantityResponse > GetItemQuantities( IEnumerable< string > skus );
+
+		/// <summary>
+		/// Gets the available quantities for all items specified.
+		/// </summary>
+		/// <param name="skus">The skus.</param>
+		/// <returns>Collection of item quantities.</returns>
+		Task< IEnumerable< InventoryQuantityResponse > > GetItemQuantitiesAsync( IEnumerable< string > skus );
 	}
 }

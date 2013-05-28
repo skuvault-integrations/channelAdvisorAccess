@@ -8,8 +8,8 @@ using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
 using CuttingEdge.Conditions;
-using Netco.Logging;
 using Netco.Extensions;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -53,12 +53,12 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
 		}
 
-		public IEnumerable< DoesSkuExistResponse > DoesSkuExist( IEnumerable< string > skus )
+		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus )
 		{
 			return skus.ProcessWithPages( 500, skusPage =>
 				ActionPolicies.CaGetPolicy.Get( delegate
 					{
-						var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray());
+						var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray() );
 						return this.GetResultWithSuccessCheck( skusResult, skusResult.ResultData );
 					} ) );
 		}
@@ -94,7 +94,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
 				};
 
-			return this.GetItems( filter );
+			return this.GetFilteredItems( filter );
 		}
 
 		private bool UseCache()
@@ -112,7 +112,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// This results in slower performance.</remarks>
 		public IEnumerable< InventoryItemResponse > GetItems( string[] skus )
 		{
-			var checkedSkus = DoesSkuExist( skus );
+			var checkedSkus = this.DoSkusExist( skus );
 
 			var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
 
@@ -120,7 +120,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					var itemsResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemList( this._credentials, this.AccountId, skusPage.ToArray() ) );
 					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.ResultData );
-				});
+				} );
 		}
 
 		/// <summary>
@@ -129,7 +129,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="filter">The filter.</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public IEnumerable< InventoryItemResponse > GetItems( ItemsFilter filter )
+		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter )
 		{
 			filter.Criteria.PageSize = 100;
 			filter.Criteria.PageNumber = 0;
@@ -170,7 +170,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="filter">The filter.</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public async Task< IEnumerable< InventoryItemResponse >> GetItemsAsync( ItemsFilter filter )
+		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter )
 		{
 			filter.Criteria.PageSize = 100;
 			filter.Criteria.PageNumber = 0;
@@ -185,9 +185,7 @@ namespace ChannelAdvisorAccess.Services.Items
 						filter.SortField, filter.SortDirection );
 
 				if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
-				{
 					continue;
-				}
 
 				var pageItems = itemResponse.GetFilteredInventoryItemListResult.ResultData;
 				if( pageItems == null )
@@ -221,6 +219,50 @@ namespace ChannelAdvisorAccess.Services.Items
 			var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
 				this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public int GetItemQuantity( string sku )
+		{
+			var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
+				this._client.GetInventoryQuantity( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public IEnumerable< InventoryQuantityResponse > GetItemQuantities( IEnumerable< string > skus )
+		{
+			var skusAsList = skus as IList< string > ?? skus.ToList();
+
+			var itemQuantities = new List< InventoryQuantityResponse >();
+
+			foreach( var skusSlice in skusAsList.Slice( 100 ) )
+			{
+				string[] slice = skusSlice;
+				var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
+					this._client.GetInventoryQuantityList( this._credentials, this.AccountId, slice ) );
+
+				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+				itemQuantities.AddRange( sliceQuantities);
+			}
+
+			return itemQuantities;
+		}
+
+		public async Task< IEnumerable< InventoryQuantityResponse > > GetItemQuantitiesAsync( IEnumerable< string > skus )
+		{
+			var skusAsList = skus as IList< string > ?? skus.ToList();
+
+			var itemQuantities = new List< InventoryQuantityResponse >();
+
+			foreach( var skusSlice in skusAsList.Slice( 100 ) )
+			{
+				string[] slice = skusSlice;
+				var requestResult = await this._client.GetInventoryQuantityListAsync( this._credentials, this.AccountId, slice );
+
+				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult.GetInventoryQuantityListResult, requestResult.GetInventoryQuantityListResult.ResultData );
+				itemQuantities.AddRange( sliceQuantities);
+			}
+
+			return itemQuantities;
 		}
 
 		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
@@ -277,10 +319,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region  Skus
 		public IEnumerable< string > GetAllSkus()
 		{
-			return this.GetSkus( new ItemsFilter() );
+			return this.GetFilteredSkus( new ItemsFilter() );
 		}
 
-		public IEnumerable< string > GetSkus( ItemsFilter filter )
+		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter )
 		{
 			filter.Criteria.PageSize = 100;
 			filter.Criteria.PageNumber = 0;
@@ -316,6 +358,33 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				if( items.Length == 0 || items.Length < filter.Criteria.PageSize )
 					yield break;
+			}
+		}
+
+		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter )
+		{
+			filter.Criteria.PageSize = 100;
+			filter.Criteria.PageNumber = 0;
+
+			var skus = new List< string >();
+			while( true )
+			{
+				filter.Criteria.PageNumber += 1;
+				var itemResponse = await this._client.GetFilteredSkuListAsync
+					( this._credentials, this.AccountId, filter.Criteria,
+						filter.SortField, filter.SortDirection );
+
+				if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
+					continue;
+
+				var pageSkus = itemResponse.GetFilteredSkuListResult.ResultData;
+				if( pageSkus == null )
+					return skus;
+
+				skus.AddRange( pageSkus );
+
+				if( pageSkus.Length == 0 || pageSkus.Length < filter.Criteria.PageSize )
+					return skus;
 			}
 		}
 		#endregion
@@ -394,7 +463,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemsPage.ToArray() );
 					CheckCaSuccess( resultOfBoolean );
-				});
+				} );
 		}
 
 		public async Task UpdateQuantityAndPricesAsync( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
