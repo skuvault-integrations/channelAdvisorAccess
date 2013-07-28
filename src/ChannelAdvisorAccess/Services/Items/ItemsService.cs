@@ -49,14 +49,14 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region Get items
 		public bool DoesSkuExist( string sku )
 		{
-			var skuExist = ActionPolicies.CaGetPolicy.Get( () => this._client.DoesSkuExist( this._credentials, this.AccountId, sku ) );
+			var skuExist = AP.Query.Get( () => this._client.DoesSkuExist( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
 		}
 
 		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus )
 		{
 			return skus.ProcessWithPages( 500, skusPage =>
-				ActionPolicies.CaGetPolicy.Get( delegate
+				AP.Query.Get( delegate
 					{
 						var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray() );
 						return this.GetResultWithSuccessCheck( skusResult, skusResult.ResultData );
@@ -118,7 +118,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 			return existingSkus.ProcessWithPages( 100, skusPage =>
 				{
-					var itemsResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemList( this._credentials, this.AccountId, skusPage.ToArray() ) );
+					var itemsResult = AP.Query.Get( () => this._client.GetInventoryItemList( this._credentials, this.AccountId, skusPage.ToArray() ) );
 					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.ResultData );
 				} );
 		}
@@ -137,7 +137,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			while( true )
 			{
 				filter.Criteria.PageNumber += 1;
-				var itemResponse = ActionPolicies.CaGetPolicy.Get( () => this._client.GetFilteredInventoryItemList
+				var itemResponse = AP.Query.Get( () => this._client.GetFilteredInventoryItemList
 					(
 						this._credentials,
 						this.AccountId, filter.Criteria, filter.DetailLevel,
@@ -200,7 +200,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public AttributeInfo[] GetAttributes( string sku )
 		{
-			var attributeList = ActionPolicies.CaGetPolicy.Get(
+			var attributeList = AP.Query.Get(
 				() =>
 					this._client.GetInventoryItemAttributeList( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
@@ -216,38 +216,38 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
 		public QuantityInfoResponse GetItemQuantities( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
+			var requestResult = AP.Query.Get( () =>
 				this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ) );
+			var requestResult = AP.Query.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public StoreInfo GetStoreInfo( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemStoreInfo( this._credentials, this.AccountId, sku ) );
+			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemStoreInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public ImageInfoResponse[] GetImageList( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ) );
+			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public ShippingRateInfo[] GetShippingInfo( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ) );
+			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
 		public VariationInfo GetVariationInfo( string sku )
 		{
-			var requestResult = ActionPolicies.CaGetPolicy.Get( () => this._client.GetInventoryItemVariationInfo( this._credentials, this.AccountId, sku ) );
+			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemVariationInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
@@ -261,7 +261,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryQuantity"/>
 		public int GetAvailableQuantity( string sku )
 		{
-			var quantityResult = ActionPolicies.CaGetPolicy.Get( () => this.InternalGetAvailableQuantity( sku ) );
+			var quantityResult = AP.Query.Get( () => this.InternalGetAvailableQuantity( sku ) );
 			return quantityResult.ResultData;
 		}
 
@@ -281,7 +281,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			foreach( var skusSlice in skusAsList.Slice( 100 ) )
 			{
 				string[] slice = skusSlice;
-				var requestResult = ActionPolicies.CaGetPolicy.Get( () =>
+				var requestResult = AP.Query.Get( () =>
 					this._client.GetInventoryQuantityList( this._credentials, this.AccountId, slice ) );
 
 				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
@@ -327,7 +327,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			while( true )
 			{
 				filter.Criteria.PageNumber += 1;
-				var itemResponse = ActionPolicies.CaGetPolicy.Get(
+				var itemResponse = AP.Query.Get(
 					() => this._client.GetFilteredSkuList
 						(
 							this._credentials, this.AccountId, filter.Criteria,
@@ -387,7 +387,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region Update items
 		public void SynchItem( InventoryItemSubmit item )
 		{
-			ActionPolicies.CaSubmitPolicy.Do(
+			AP.Submit.Do(
 				() =>
 					{
 						var resultOfBoolean = this._client.SynchInventoryItem( this._credentials, this.AccountId, item );
@@ -413,7 +413,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				items.CopyTo( i, itemInfoArray, 0, length - 1 );
 				itemInfoArray[ length - 1 ] = items[ length - 1 ];
 
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				AP.Submit.Do( () =>
 					{
 						var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, itemInfoArray );
 						CheckCaSuccess( resultOfBoolean );
@@ -443,7 +443,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice )
 		{
-			ActionPolicies.CaSubmitPolicy.Do( () =>
+			AP.Submit.Do( () =>
 				{
 					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPrice( this._credentials, this.AccountId, itemQuantityAndPrice );
 					CheckCaSuccess( resultOfBoolean );
@@ -479,7 +479,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			foreach( var slice in skus.Slice( pageSize ) )
 			{
 				var localSlice = slice;
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				AP.Submit.Do( () =>
 					{
 						var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, localSlice, reason );
 						CheckCaSuccess( resultOfBoolean );
@@ -509,7 +509,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			foreach( var slice in skus.Slice( pageSize ) )
 			{
 				var localSlice = slice;
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				AP.Submit.Do( () =>
 					{
 						var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, localSlice, reason );
 						CheckCaSuccess( resultOfBoolean );
@@ -533,7 +533,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region Delete item
 		public void DeleteItem( string sku )
 		{
-			ActionPolicies.CaSubmitPolicy.Do( () =>
+			AP.Submit.Do( () =>
 				{
 					var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
 					CheckCaSuccess( resultOfBoolean );
@@ -544,7 +544,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region Get Config Info
 		public ClassificationConfigurationInformation[] GetClassificationConfigInfo()
 		{
-			return ActionPolicies.CaGetPolicy.Get( () =>
+			return AP.Query.Get( () =>
 				{
 					var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
 					CheckCaSuccess( result );

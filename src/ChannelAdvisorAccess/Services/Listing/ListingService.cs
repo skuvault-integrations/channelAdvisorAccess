@@ -34,7 +34,7 @@ namespace ChannelAdvisorAccess.Services.Listing
 			foreach( var skusSlice in itemSkus.Slice( 100 ) )
 			{
 				string[] slice = skusSlice;
-				ActionPolicies.CaSubmitPolicy.Do( () => _client.WithdrawListings( _credentials, AccountId, slice, null, withdrawReason ) );
+				AP.Submit.Do( () => _client.WithdrawListings( _credentials, AccountId, slice, null, withdrawReason ) );
 			}
 		}
 	}

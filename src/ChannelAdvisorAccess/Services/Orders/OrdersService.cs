@@ -94,7 +94,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 			while( true )
 			{
-				var orders = ActionPolicies.CaGetPolicy.Get( () => this.GetNextOrdersPage( orderCriteria ) );
+				var orders = AP.Query.Get( () => this.GetNextOrdersPage( orderCriteria ) );
 
 				if( orders == null )
 					yield break;
@@ -156,7 +156,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <returns>New order CA id.</returns>
 		public int SubmitOrder( OrderSubmit orderSubmit )
 		{
-			var results = ActionPolicies.CaSubmitPolicy.Get( () => this.InternalSubmitOrder( orderSubmit ) );
+			var results = AP.Submit.Get( () => this.InternalSubmitOrder( orderSubmit ) );
 			return results.ResultData;
 		}
 
@@ -170,7 +170,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
 		{
-			return ActionPolicies.CaSubmitPolicy.Get( () => 
+			return AP.Submit.Get( () => 
 				{
 					var results = this._client.UpdateOrderList( _credentials, AccountId, orderUpdates );
 					this.CheckCaSuccess( results );

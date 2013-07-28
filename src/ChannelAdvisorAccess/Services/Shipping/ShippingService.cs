@@ -31,7 +31,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				AP.Submit.Do( () =>
 					{
 						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
 							{
@@ -66,7 +66,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				AP.Submit.Do( () =>
 					{
 						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
 							{
@@ -101,7 +101,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				AP.Submit.Do( () =>
 					{
 						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
 							{
@@ -130,7 +130,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				ActionPolicies.CaSubmitPolicy.Do( () =>
+				AP.Submit.Do( () =>
 					{
 						var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, new OrderShipmentList
 							{
@@ -166,7 +166,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 				{
 					var shipmentsToSubmit = orderShipments.Skip( pageNumber * pageSize ).Take( pageSize ).ToArray();
 
-					ActionPolicies.CaSubmitPolicy.Do( () =>
+					AP.Submit.Do( () =>
 						{
 							var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId,
 								new OrderShipmentList { ShipmentList = shipmentsToSubmit } );
@@ -193,7 +193,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 
 		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList, string[] clientOrderIdentifierList )
 		{
-			return ActionPolicies.CaSubmitPolicy.Get( () =>
+			return AP.Submit.Get( () =>
 				{
 					var result = this._client.GetOrderShipmentHistoryList( this._credentials, this.AccountId, orderIdList, clientOrderIdentifierList );
 					CheckCaSuccess( result );
