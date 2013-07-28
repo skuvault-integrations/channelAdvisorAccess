@@ -39,7 +39,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			return this.GetAuthorizationList( string.Empty );
 		}
 
-		public async Task< AuthorizationResponse[] > GetAuthorizationListAwait()
+		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync()
 		{
 			return await this.GetAuthorizationListAsync( string.Empty );
 		}

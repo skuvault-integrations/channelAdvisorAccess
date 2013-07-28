@@ -1,4 +1,5 @@
-﻿using ChannelAdvisorAccess.AdminService;
+﻿using System.Threading.Tasks;
+using ChannelAdvisorAccess.AdminService;
 
 namespace ChannelAdvisorAccess.Services.Admin
 {
@@ -23,5 +24,11 @@ namespace ChannelAdvisorAccess.Services.Admin
 		/// <param name="localId">A number which uniquely identifies a ChannelAdvisor Account</param>
 		/// <returns>True if the request was created. False otherwise</returns>
 		bool RequestAccess( int localId );
+
+		void Ping();
+		Task PingAsync();
+		Task< AuthorizationResponse[] > GetAuthorizationListAsync();
+		Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId );
+		Task< bool > RequestAccessAsync( int localId );
 	}
 }
