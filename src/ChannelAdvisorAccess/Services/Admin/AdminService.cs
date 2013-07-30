@@ -16,6 +16,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			this._client = new AdminServiceSoapClient();
 		}
 
+		#region Ping
 		public void Ping()
 		{
 			AP.Query.Do( () =>
@@ -33,6 +34,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 					CheckCaSuccess( result.PingResult );
 				} );
 		}
+		#endregion
 
 		public AuthorizationResponse[] GetAuthorizationList()
 		{

@@ -46,6 +46,26 @@ namespace ChannelAdvisorAccess.Services.Items
 			this._allItemsCacheKey = string.Format( "caAllItems_ID_{0}", this.AccountId );
 		}
 
+		#region Ping
+		public void Ping()
+		{
+			AP.Query.Do( () =>
+				{
+					var result = this._client.Ping( this._credentials );
+					CheckCaSuccess( result );
+				} );
+		}
+
+		public async Task PingAsync()
+		{
+			await AP.QueryAsync.Do( async () =>
+				{
+					var result = await this._client.PingAsync( this._credentials );
+					CheckCaSuccess( result.PingResult );
+				} );
+		}
+		#endregion
+
 		#region Get items
 		public bool DoesSkuExist( string sku )
 		{
@@ -53,13 +73,29 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
 		}
 
+		public async Task< bool > DoesSkuExistAsync( string sku )
+		{
+			var skuExist = await AP.QueryAsync.Get( () => this._client.DoesSkuExistAsync( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( skuExist, skuExist.DoesSkuExistResult.ResultData );
+		}
+
 		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus )
 		{
 			return skus.ProcessWithPages( 500, skusPage =>
-				AP.Query.Get( delegate
+				AP.Query.Get( () =>
 					{
 						var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray() );
 						return this.GetResultWithSuccessCheck( skusResult, skusResult.ResultData );
+					} ) );
+		}
+
+		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus )
+		{
+			return await skus.ProcessWithPagesAsync< string, DoesSkuExistResponse >( 500, async skusPage =>
+				await AP.QueryAsync.Get( async () =>
+					{
+						var skusResult = await this._client.DoesSkuExistListAsync( this._credentials, this.AccountId, skusPage.ToArray() );
+						return this.GetResultWithSuccessCheck( skusResult, skusResult.DoesSkuExistListResult.ResultData );
 					} ) );
 		}
 
@@ -110,7 +146,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// for non-existing skus.</returns>
 		/// <remarks>Items are pulled 1 at a time to handle non-existing skus.
 		/// This results in slower performance.</remarks>
-		public IEnumerable< InventoryItemResponse > GetItems( string[] skus )
+		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus )
 		{
 			var checkedSkus = this.DoSkusExist( skus );
 
@@ -120,6 +156,19 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					var itemsResult = AP.Query.Get( () => this._client.GetInventoryItemList( this._credentials, this.AccountId, skusPage.ToArray() ) );
 					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.ResultData );
+				} );
+		}
+
+		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus )
+		{
+			var checkedSkus = await this.DoSkusExistAsync( skus );
+
+			var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
+
+			return await existingSkus.ProcessWithPagesAsync< string, InventoryItemResponse >( 100, async skusPage =>
+				{
+					var itemsResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemListAsync( this._credentials, this.AccountId, skusPage.ToArray() ) );
+					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.GetInventoryItemListResult.ResultData );
 				} );
 		}
 
@@ -179,10 +228,10 @@ namespace ChannelAdvisorAccess.Services.Items
 			while( true )
 			{
 				filter.Criteria.PageNumber += 1;
-				var itemResponse = await this._client.GetFilteredInventoryItemListAsync
+				var itemResponse = await AP.QueryAsync.Get( async () => await this._client.GetFilteredInventoryItemListAsync
 					( this._credentials,
 						this.AccountId, filter.Criteria, filter.DetailLevel,
-						filter.SortField, filter.SortDirection );
+						filter.SortField, filter.SortDirection ) );
 
 				if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
 					continue;
@@ -206,13 +255,18 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
 		}
 
+		public async Task< AttributeInfo[] > GetAttributesAsync( string sku )
+		{
+			var attributeList = await AP.QueryAsync.Get( async () =>
+				await this._client.GetInventoryItemAttributeListAsync( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( attributeList, attributeList.GetInventoryItemAttributeListResult.ResultData );
+		}
+
 		/// <summary>
 		/// Gets the additional item quantities.
 		/// </summary>
 		/// <param name="sku">The sku.</param>
 		/// <returns>Item quantities.</returns>
-		/// <remarks>This is required since <see cref="GetItems(string[])"/> returns
-		/// only available quantity.</remarks>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
 		public QuantityInfoResponse GetItemQuantities( string sku )
 		{
@@ -221,10 +275,23 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
+		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku )
+		{
+			var requestResult = await AP.QueryAsync.Get( async () =>
+				await this._client.GetInventoryItemQuantityInfoAsync( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemQuantityInfoResult.ResultData );
+		}
+
 		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync()
+		{
+			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetClassificationConfigurationInformationResult.ResultData );
 		}
 
 		public StoreInfo GetStoreInfo( string sku )
@@ -233,10 +300,22 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
+		public async Task< StoreInfo > GetStoreInfoAsync( string sku )
+		{
+			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemStoreInfoAsync( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemStoreInfoResult.ResultData );
+		}
+
 		public ImageInfoResponse[] GetImageList( string sku )
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku )
+		{
+			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemImageListAsync( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemImageListResult.ResultData );
 		}
 
 		public ShippingRateInfo[] GetShippingInfo( string sku )
@@ -245,10 +324,22 @@ namespace ChannelAdvisorAccess.Services.Items
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
+		public async Task< ShippingRateInfo[] > GetShippingInfoAsync( string sku )
+		{
+			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemShippingInfoAsync( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemShippingInfoResult.ResultData );
+		}
+
 		public VariationInfo GetVariationInfo( string sku )
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemVariationInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+		}
+
+		public async Task< VariationInfo > GetVariationInfoAsync( string sku )
+		{
+			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemVariationInfoAsync( this._credentials, this.AccountId, sku ) );
+			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemVariationInfoResult.ResultData );
 		}
 
 		/// <summary>
@@ -261,58 +352,54 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryQuantity"/>
 		public int GetAvailableQuantity( string sku )
 		{
-			var quantityResult = AP.Query.Get( () => this.InternalGetAvailableQuantity( sku ) );
+			var quantityResult = AP.Query.Get( () =>
+				{
+					var result = this._client.GetInventoryQuantity( this._credentials, this.AccountId, sku );
+					CheckCaSuccess( result );
+					return result;
+				} );
 			return quantityResult.ResultData;
 		}
 
-		private APIResultOfInt32 InternalGetAvailableQuantity( string sku )
+		public async Task< int > GetAvailableQuantityAsync( string sku )
 		{
-			var quantityResult = this._client.GetInventoryQuantity( this._credentials, this.AccountId, sku );
-			CheckCaSuccess( quantityResult );
-			return quantityResult;
+			var quantityResult = await AP.QueryAsync.Get( async () =>
+				{
+					var result = await this._client.GetInventoryQuantityAsync( this._credentials, this.AccountId, sku );
+					CheckCaSuccess( result.GetInventoryQuantityResult );
+					return result.GetInventoryQuantityResult;
+				} );
+			return quantityResult.ResultData;
 		}
 
 		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus )
 		{
-			var skusAsList = skus as IList< string > ?? skus.ToList();
+			return skus.ProcessWithPages( 100, s =>
+				{
+					var requestResult = AP.Query.Get( () => this._client.GetInventoryQuantityList( this._credentials, this.AccountId, s.ToArray() ) );
 
-			var itemQuantities = new List< InventoryQuantityResponse >();
-
-			foreach( var skusSlice in skusAsList.Slice( 100 ) )
-			{
-				string[] slice = skusSlice;
-				var requestResult = AP.Query.Get( () =>
-					this._client.GetInventoryQuantityList( this._credentials, this.AccountId, slice ) );
-
-				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
-				itemQuantities.AddRange( sliceQuantities);
-			}
-
-			return itemQuantities;
+					return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+				} );
 		}
 
 		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus )
 		{
-			var skusAsList = skus as IList< string > ?? skus.ToList();
-
-			var itemQuantities = new List< InventoryQuantityResponse >();
-
-			foreach( var skusSlice in skusAsList.Slice( 100 ) )
-			{
-				string[] slice = skusSlice;
-				var requestResult = await this._client.GetInventoryQuantityListAsync( this._credentials, this.AccountId, slice );
-
-				var sliceQuantities = this.GetResultWithSuccessCheck( requestResult.GetInventoryQuantityListResult, requestResult.GetInventoryQuantityListResult.ResultData );
-				itemQuantities.AddRange( sliceQuantities);
-			}
-
-			return itemQuantities;
+			return await skus.ProcessWithPagesAsync< string, InventoryQuantityResponse >( 100, async s =>
+				{
+					var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryQuantityListAsync( this._credentials, this.AccountId, s.ToArray() ) );
+					return this.GetResultWithSuccessCheck( requestResult.GetInventoryQuantityListResult, requestResult.GetInventoryQuantityListResult.ResultData );
+				} );
 		}
 
 		#region  Skus
 		public IEnumerable< string > GetAllSkus()
 		{
 			return this.GetFilteredSkus( new ItemsFilter() );
+		}
+
+		public async Task< IEnumerable< string > > GetAllSkusAsync()
+		{
+			return await this.GetFilteredSkusAsync( new ItemsFilter() );
 		}
 
 		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter )
@@ -363,9 +450,9 @@ namespace ChannelAdvisorAccess.Services.Items
 			while( true )
 			{
 				filter.Criteria.PageNumber += 1;
-				var itemResponse = await this._client.GetFilteredSkuListAsync
+				var itemResponse = await AP.QueryAsync.Get( async () => await this._client.GetFilteredSkuListAsync
 					( this._credentials, this.AccountId, filter.Criteria,
-						filter.SortField, filter.SortDirection );
+						filter.SortField, filter.SortDirection ) );
 
 				if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
 					continue;
@@ -387,58 +474,41 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region Update items
 		public void SynchItem( InventoryItemSubmit item )
 		{
-			AP.Submit.Do(
-				() =>
-					{
-						var resultOfBoolean = this._client.SynchInventoryItem( this._credentials, this.AccountId, item );
-						CheckCaSuccess( resultOfBoolean );
-					} );
+			AP.Submit.Do( () =>
+				{
+					var resultOfBoolean = this._client.SynchInventoryItem( this._credentials, this.AccountId, item );
+					CheckCaSuccess( resultOfBoolean );
+				} );
 		}
 
-		public void SynchItems( List< InventoryItemSubmit > items )
+		public async Task SynchItemAsync( InventoryItemSubmit item )
 		{
-			// max number of items to submit to CA
-			//			const int PageSize = 1000;
-			//			const int PageSize = 500;
-			const int pageSize = 100;
-			var length = pageSize;
-
-			for( var i = 0; i < items.Count; i += pageSize )
-			{
-				// adjust count of items
-				if( i + length > items.Count )
-					length = items.Count - i;
-
-				var itemInfoArray = new InventoryItemSubmit[ length ];
-				items.CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = items[ length - 1 ];
-
-				AP.Submit.Do( () =>
-					{
-						var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, itemInfoArray );
-						CheckCaSuccess( resultOfBoolean );
-					} );
-			}
+			await AP.SubmitAsync.Do( async () =>
+				{
+					var resultOfBoolean = await this._client.SynchInventoryItemAsync( this._credentials, this.AccountId, item );
+					CheckCaSuccess( resultOfBoolean.SynchInventoryItemResult );
+				} );
 		}
 
-		public async Task SynchItemsAsync( List< InventoryItemSubmit > items )
+		public void SynchItems( IEnumerable< InventoryItemSubmit > items )
 		{
-			const int pageSize = 100;
-			var length = pageSize;
+			items.DoWithPages( 100, i => AP.Submit.Do( () =>
+				{
+					var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, i.ToArray() );
+					CheckCaSuccess( resultOfBoolean );
+				} ) );
+		}
 
-			for( var i = 0; i < items.Count; i += pageSize )
-			{
-				// adjust count of items
-				if( i + length > items.Count )
-					length = items.Count - i;
-
-				var itemInfoArray = new InventoryItemSubmit[ length ];
-				items.CopyTo( i, itemInfoArray, 0, length - 1 );
-				itemInfoArray[ length - 1 ] = items[ length - 1 ];
-
-				var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, itemInfoArray );
-				CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
-			}
+		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items )
+		{
+			await items.DoWithPagesAsync( 100, async i => await AP.SubmitAsync.Do( async () =>
+				{
+					await AP.SubmitAsync.Do( async () =>
+						{
+							var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, i.ToArray() );
+							CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
+						} );
+				} ) );
 		}
 
 		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice )
@@ -450,83 +520,75 @@ namespace ChannelAdvisorAccess.Services.Items
 				} );
 		}
 
-		public void UpdateQuantityAndPrices( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
+		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice )
 		{
-			itemQuantityAndPrices.DoWithPages( 1000, itemsPage =>
+			await AP.SubmitAsync.Do( async () =>
+				{
+					var resultOfBoolean = await this._client.UpdateInventoryItemQuantityAndPriceAsync( this._credentials, this.AccountId, itemQuantityAndPrice );
+					CheckCaSuccess( resultOfBoolean.UpdateInventoryItemQuantityAndPriceResult );
+				} );
+		}
+
+		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
+		{
+			itemQuantityAndPrices.DoWithPages( 5000, itemsPage =>
 				{
 					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemsPage.ToArray() );
 					CheckCaSuccess( resultOfBoolean );
 				} );
 		}
 
-		public async Task UpdateQuantityAndPricesAsync( List< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
+		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
 		{
-			const int pageSize = 500;
-
-			foreach( var slice in itemQuantityAndPrices.Slice( pageSize ) )
-			{
-				var result = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, slice );
-				CheckCaSuccess( result.UpdateInventoryItemQuantityAndPriceListResult );
-			}
+			await itemQuantityAndPrices.DoWithPagesAsync( 500, async i =>
+				{
+					var result = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, i.ToArray() );
+					CheckCaSuccess( result.UpdateInventoryItemQuantityAndPriceListResult );
+				} );
 		}
 
-		public void RemoveLabelListFromItemList( string[] labels, string[] skus, string reason )
+		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
-			const int pageSize = 500;
-
-			foreach( var slice in skus.Slice( pageSize ) )
-			{
-				var localSlice = slice;
-				AP.Submit.Do( () =>
-					{
-						var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, localSlice, reason );
-						CheckCaSuccess( resultOfBoolean );
-					} );
-			}
+			skus.DoWithPages( 500, s => AP.Submit.Do( () =>
+				{
+					var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, s.ToArray(), reason );
+					CheckCaSuccess( resultOfBoolean );
+				} ) );
 		}
 
-		public async Task RemoveLabelListFromItemListAsync( string[] labels, string[] skus, string reason )
+		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
-			const int pageSize = 500;
-
-			foreach( var slice in skus.Slice( pageSize ) )
-			{
-				var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, slice, reason );
-				CheckCaSuccess( resultOfBoolean.RemoveLabelListFromInventoryItemListResult );
-			}
+			await skus.DoWithPagesAsync( 500, async s => await AP.SubmitAsync.Do( async () =>
+				{
+					var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, s.ToArray(), reason );
+					CheckCaSuccess( resultOfBoolean.RemoveLabelListFromInventoryItemListResult );
+				} ) );
 		}
 
-		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
+		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
-			const int pageSize = 500;
-
-			foreach( var slice in skus.Slice( pageSize ) )
-			{
-				var localSlice = slice;
-				AP.Submit.Do( () =>
-					{
-						var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, localSlice, reason );
-						CheckCaSuccess( resultOfBoolean );
-					} );
-			}
+			skus.DoWithPages( 500, s => AP.Submit.Do( () =>
+				{
+					var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, s.ToArray(), reason );
+					CheckCaSuccess( resultOfBoolean );
+				} ) );
 		}
 
-		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, string[] skus, string reason )
+		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
-			const int pageSize = 500;
-			foreach( var slice in skus.Slice( pageSize ) )
-			{
-				var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, slice, reason );
-				CheckCaSuccess( resultOfBoolean.AssignLabelListToInventoryItemListResult );
-			}
+			await skus.DoWithPagesAsync( 500, async s => await AP.SubmitAsync.Do( async () =>
+				{
+					var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, s.ToArray(), reason );
+					CheckCaSuccess( resultOfBoolean.AssignLabelListToInventoryItemListResult );
+				} ) );
 		}
 		#endregion
 
@@ -537,6 +599,15 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
 					CheckCaSuccess( resultOfBoolean );
+				} );
+		}
+
+		public async Task DeleteItemAsync( string sku )
+		{
+			await AP.SubmitAsync.Do( async () =>
+				{
+					var resultOfBoolean = await this._client.DeleteInventoryItemAsync( this._credentials, this.AccountId, sku );
+					CheckCaSuccess( resultOfBoolean.DeleteInventoryItemResult );
 				} );
 		}
 		#endregion
@@ -551,9 +622,19 @@ namespace ChannelAdvisorAccess.Services.Items
 					return result.ResultData;
 				} );
 		}
+
+		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync()
+		{
+			return await AP.QueryAsync.Get( async () =>
+				{
+					var result = await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId );
+					CheckCaSuccess( result.GetClassificationConfigurationInformationResult );
+					return result.GetClassificationConfigurationInformationResult.ResultData;
+				} );
+		}
 		#endregion
 
-		#region  Check for Success
+		#region Check for Success
 		/// <summary>
 		/// Gets the result with success check.
 		/// </summary>
@@ -664,16 +745,22 @@ namespace ChannelAdvisorAccess.Services.Items
 			return result.ErrorMessage.StartsWith( skuMissingMsg, StringComparison.InvariantCultureIgnoreCase );
 		}
 
-		private static void CheckCaSuccess( APIResultOfInt32 quantityResult )
+		private static void CheckCaSuccess( APIResultOfInt32 result )
 		{
-			if( quantityResult.Status != ResultStatus.Success )
-				throw new ChannelAdvisorException( quantityResult.MessageCode, quantityResult.Message );
+			if( result.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
 
-		private static void CheckCaSuccess( APIResultOfArrayOfClassificationConfigurationInformation quantityResult )
+		private static void CheckCaSuccess( APIResultOfArrayOfClassificationConfigurationInformation result )
 		{
-			if( quantityResult.Status != ResultStatus.Success )
-				throw new ChannelAdvisorException( quantityResult.MessageCode, quantityResult.Message );
+			if( result.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( result.MessageCode, result.Message );
+		}
+
+		private void CheckCaSuccess( APIResultOfString result )
+		{
+			if( result.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
 		#endregion
 	}
