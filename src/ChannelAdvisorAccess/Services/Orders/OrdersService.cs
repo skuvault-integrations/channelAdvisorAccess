@@ -29,7 +29,26 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._credentials = credentials;
 			this.AccountId = accountId;
 			this._client = new OrderServiceSoapClient();
+		}
+		#region Ping
+		public void Ping()
+		{
+			AP.Query.Do( () =>
+				{
+					var result = this._client.Ping( this._credentials );
+					CheckCaSuccess( result );
+				} );
 		}
+
+		public async Task PingAsync()
+		{
+			await AP.QueryAsync.Do( async () =>
+				{
+					var result = await this._client.PingAsync( this._credentials );
+					CheckCaSuccess( result.PingResult );
+				} );
+		}
+		#endregion
 
 		#region API methods
 		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate )
@@ -130,7 +149,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 			while( true )
 			{
-				var ordersFromPage = await this.GetNextOrdersPageAsync( orderCriteria );
+				var ordersFromPage = await AP.QueryAsync.Get( async () => await this.GetNextOrdersPageAsync( orderCriteria ) );
 
 				if( ordersFromPage == null )
 					break;
@@ -214,6 +233,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			if( results.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( results.MessageCode, results.Message );
+		}
+		private void CheckCaSuccess( APIResultOfString result )
+		{
+			if( result.Status != ResultStatus.Success )
+				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
 	}
 }
