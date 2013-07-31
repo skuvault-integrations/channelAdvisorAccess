@@ -29,7 +29,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._credentials = credentials;
 			this.AccountId = accountId;
 			this._client = new OrderServiceSoapClient();
-		}
+		}
+
 		#region Ping
 		public void Ping()
 		{
@@ -55,22 +56,22 @@ namespace ChannelAdvisorAccess.Services.Orders
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
-			                    	{
-			                    		StatusUpdateFilterBeginTimeGMT = startDate,
-			                    		StatusUpdateFilterEndTimeGMT = endDate
-			                    	};
+				{
+					StatusUpdateFilterBeginTimeGMT = startDate,
+					StatusUpdateFilterEndTimeGMT = endDate
+				};
 
 			return this.GetOrders< T >( orderCriteria );
 		}
-		
+
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
-			                    	{
-			                    		StatusUpdateFilterBeginTimeGMT = startDate,
-			                    		StatusUpdateFilterEndTimeGMT = endDate
-			                    	};
+				{
+					StatusUpdateFilterBeginTimeGMT = startDate,
+					StatusUpdateFilterEndTimeGMT = endDate
+				};
 
 			return await this.GetOrdersAsync< T >( orderCriteria );
 		}
@@ -105,31 +106,38 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
 			where T : OrderResponseItem
 		{
-			if( string.IsNullOrEmpty(  orderCriteria.DetailLevel) )
+			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 				orderCriteria.DetailLevel = "High";
 
-			orderCriteria.PageSize = _pageSizes[ orderCriteria.DetailLevel ];
-			orderCriteria.PageNumberFilter = 0;
+			int pageSize;
+			orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
+			orderCriteria.PageNumberFilter = 1;
+
+			var orders = new List< T >();
 
 			while( true )
 			{
-				var orders = AP.Query.Get( () => this.GetNextOrdersPage( orderCriteria ) );
+				var ordersFromPage = this.GetOrdersPage( orderCriteria );
 
-				if( orders == null )
-					yield break;
+				if( ordersFromPage == null || ordersFromPage.Length == 0 )
+					break;
 
-				foreach( var order in orders )
-				{
-					var orderT = order as T;
-					if( orderT != null )
-						yield return orderT;
-				}
-
-				if( orders.Length == 0 ) //|| orders.Length < orderCriteria.PageSize )
-					yield break;
+				orders.AddRange( ordersFromPage.OfType< T >() );
+				orderCriteria.PageNumberFilter += 1;
 			}
+			return orders;
 		}
-		
+
+		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria )
+		{
+			return AP.Query.Get( () =>
+				{
+					var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+					CheckCaSuccess( results );
+					return results.ResultData;
+				} );
+		}
+
 		/// <summary>
 		/// Gets the orders.
 		/// </summary>
@@ -139,33 +147,37 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria )
 			where T : OrderResponseItem
 		{
-			if( string.IsNullOrEmpty( orderCriteria.DetailLevel) )
+			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 				orderCriteria.DetailLevel = "High";
 
-			orderCriteria.PageSize = _pageSizes[ orderCriteria.DetailLevel ];
-			orderCriteria.PageNumberFilter = 0;
+			int pageSize;
+			orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
+			orderCriteria.PageNumberFilter = 1;
 
 			var orders = new List< T >();
 
 			while( true )
 			{
-				var ordersFromPage = await AP.QueryAsync.Get( async () => await this.GetNextOrdersPageAsync( orderCriteria ) );
+				var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria );
 
-				if( ordersFromPage == null )
+				if( ordersFromPage == null || ordersFromPage.Length == 0 )
 					break;
 
-				foreach( var order in ordersFromPage )
-				{
-					var orderT = order as T;
-					if( orderT != null )
-						orders.Add( orderT );
-				}
-
-				if( ordersFromPage.Length == 0 )
-					break;
+				orders.AddRange( ordersFromPage.OfType< T >() );
+				orderCriteria.PageNumberFilter += 1;
 			}
 
 			return orders;
+		}
+
+		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria )
+		{
+			return await AP.QueryAsync.Get( async () =>
+				{
+					var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
+					CheckCaSuccess( results.GetOrderListResult );
+					return results.GetOrderListResult.ResultData;
+				} );
 		}
 
 		/// <summary>
@@ -175,46 +187,43 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <returns>New order CA id.</returns>
 		public int SubmitOrder( OrderSubmit orderSubmit )
 		{
-			var results = AP.Submit.Get( () => this.InternalSubmitOrder( orderSubmit ) );
-			return results.ResultData;
+			return AP.Submit.Get( () =>
+				{
+					var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
+					this.CheckCaSuccess( apiResults );
+					return apiResults.ResultData;
+				} );
 		}
 
-		private APIResultOfInt32 InternalSubmitOrder( OrderSubmit orderSubmit )
+		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit )
 		{
-			var results = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
-			this.CheckCaSuccess( results );
-			return results;
+			return await AP.SubmitAsync.Get( async () =>
+				{
+					var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit );
+					this.CheckCaSuccess( apiResults.SubmitOrderResult );
+					return apiResults.SubmitOrderResult.ResultData;
+				} );
 		}
 		#endregion
 
 		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
 		{
-			return AP.Submit.Get( () => 
+			return AP.Submit.Get( () =>
 				{
-					var results = this._client.UpdateOrderList( _credentials, AccountId, orderUpdates );
+					var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
 					this.CheckCaSuccess( results );
 					return results.ResultData;
-				});
-		}
-		
-		private OrderResponseItem[] GetNextOrdersPage( OrderCriteria orderCriteria )
-		{
-			orderCriteria.PageNumberFilter += 1;
-
-			var orderList = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
-			CheckCaSuccess( orderList );
-
-			return orderList.ResultData;
+				} );
 		}
 
-		private async Task< OrderResponseItem[] > GetNextOrdersPageAsync( OrderCriteria orderCriteria )
+		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates )
 		{
-			orderCriteria.PageNumberFilter += 1;
-
-			var orderList = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
-			CheckCaSuccess( orderList.GetOrderListResult );
-
-			return orderList.GetOrderListResult.ResultData;
+			return await AP.SubmitAsync.Get( async () =>
+				{
+					var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates );
+					this.CheckCaSuccess( results.UpdateOrderListResult );
+					return results.UpdateOrderListResult.ResultData;
+				} );
 		}
 
 		private static void CheckCaSuccess( APIResultOfArrayOfOrderResponseItem orderList )
@@ -233,7 +242,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			if( results.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( results.MessageCode, results.Message );
-		}
+		}
+
 		private void CheckCaSuccess( APIResultOfString result )
 		{
 			if( result.Status != ResultStatus.Success )

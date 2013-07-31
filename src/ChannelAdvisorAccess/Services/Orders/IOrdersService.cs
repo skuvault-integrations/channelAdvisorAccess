@@ -8,6 +8,20 @@ namespace ChannelAdvisorAccess.Services.Orders
 	public interface IOrdersService
 	{
 		/// <summary>
+		/// Gets the account name.
+		/// </summary>
+		string Name { get; }
+
+		/// <summary>
+		/// Gets the account id.
+		/// </summary>
+		string AccountId { get; }
+
+		void Ping();
+
+		Task PingAsync();
+
+		/// <summary>
 		/// Gets the orders.
 		/// </summary>
 		/// <param name="startDate">The start date.</param>
@@ -58,17 +72,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <summary>Updates the order list.</summary>
 		/// <param name="orderUpdates">The order updates.</param>
 		/// <returns>Result of updates.</returns>
-		IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates ); 
+		IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates );
 
-		/// <summary>
-		/// Gets the account name.
-		/// </summary>
-		string Name { get; }
-
-		/// <summary>
-		/// Gets the account id.
-		/// </summary>
-		string AccountId { get; }
+		Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates );
 
 		/// <summary>
 		/// Submits the order.
@@ -76,5 +82,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderSubmit">The order submit.</param>
 		/// <returns>New order CA id.</returns>
 		int SubmitOrder( OrderSubmit orderSubmit );
+
+		Task< int > SubmitOrderAsync( OrderSubmit orderSubmit );
 	}
 }
