@@ -211,6 +211,7 @@
     <Compile Include="ChannelAdvisorAccount.cs" />
     <Compile Include="Services\Orders\OrdersService.cs" />
     <Compile Include="Services\Orders\IOrdersService.cs" />
+    <Compile Include="Services\Shipping\MarkOrderShippedException.cs" />
     <Compile Include="Services\Shipping\ShippingService.cs" />
     <Compile Include="Services\Shipping\IShippingService.cs" />
   </ItemGroup>
