@@ -98,7 +98,7 @@ task NuGet Package, Version, {
 <package>
 	<metadata>
 		<id>ChannelAdvisorAccess</id>
-		<version>$Version-alpha8</version>
+		<version>$Version-alpha9</version>
 		<authors>Slav Ivanyuk</authors>
 		<owners>Slav Ivanyuk</owners>
 		<projectUrl>https://github.com/slav/ChannelAdvisorAccess</projectUrl>
@@ -109,7 +109,7 @@ task NuGet Package, Version, {
 		<description>$text</description>
 		<tags>ChannelAdvisor</tags>
 		<dependencies> 
-			<dependency id="Netco" version="1.3.0" />
+			<dependency id="Netco" version="1.3.1" />
 		</dependencies>
 	</metadata>
 </package>
