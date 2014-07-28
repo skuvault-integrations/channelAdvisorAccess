@@ -1,6 +1,5 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelAdvisorAccess", "ChannelAdvisorAccess\ChannelAdvisorAccess.csproj", "{88234B75-15F8-49E7-A7A9-833916FA20CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6FCC1ABF-7B7F-4E39-A309-15ACF68243F0}"
