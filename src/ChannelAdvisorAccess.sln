@@ -5,14 +5,14 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelAdvisorAccess", "ChannelAdvisorAccess\ChannelAdvisorAccess.csproj", "{88234B75-15F8-49E7-A7A9-833916FA20CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6FCC1ABF-7B7F-4E39-A309-15ACF68243F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelAdvisorAccessTests", "ChannelAdvisorAccessTests\ChannelAdvisorAccessTests.csproj", "{F091FD0C-8054-4449-9F4A-466EF07D726F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E39D312F-BA14-44F9-94C1-05A3AA9FBB15}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\nuget.exe = .nuget\nuget.exe
+		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelAdvisorAccessTests", "ChannelAdvisorAccessTests\ChannelAdvisorAccessTests.csproj", "{F091FD0C-8054-4449-9F4A-466EF07D726F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

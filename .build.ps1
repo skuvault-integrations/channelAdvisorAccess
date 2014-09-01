@@ -1,32 +1,9 @@
-<#
-.Synopsis
-	Build script (https://github.com/nightroman/Invoke-Build)
-
-.Description
-	How to use this script and build the module:
-
-	Get the utility script Invoke-Build.ps1:
-	https://github.com/nightroman/Invoke-Build
-
-	Copy it to the path. Set location to this directory. Build:
-	PS> Invoke-Build Build
-
-	This command builds the module and installs it to the $ModuleRoot which is
-	the working location of the module. The build fails if the module is
-	currently in use. Ensure it is not and then repeat.
-
-	The build task Help fails if the help builder Helps is not installed.
-	Ignore this or better get and use the script (it is really easy):
-	https://github.com/nightroman/Helps
-#>
-
-param
+﻿param
 (
-	$Configuration = 'Release',
-	$logfile = $null
 )
 
-$project_name = "ChannelAdvisorAccess"
+$project_short_name = "ChannelAdvisor"
+$project_name = "$($project_short_name)Access"
 
 # Folder structure:
 # \build - Contains all code during the build process
@@ -42,13 +19,13 @@ $release_dir = "$BuildRoot\release"
 $archive_dir = "$release_dir\archive"
 
 $src_dir = "$BuildRoot\src"
-$solution_file = "$src_dir\ChannelAdvisorAccess.sln"
+$solution_file = "$src_dir\$($project_name).sln"
 	
 # Use MSBuild.
 use Framework\v4.0.30319 MSBuild
 
 task Clean { 
-	exec { MSBuild "$solution_file" /t:Clean /p:Configuration=$configuration /v:quiet } 
+	exec { MSBuild "$solution_file" /t:Clean /p:Configuration=Release /v:quiet } 
 	Remove-Item -force -recurse $build_dir -ErrorAction SilentlyContinue | Out-Null
 }
 
@@ -59,18 +36,17 @@ task Init Clean, {
 }
 
 task Build {
-	exec { MSBuild "$solution_file" /t:Build /p:Configuration=$configuration /v:minimal /p:OutDir="$build_artifacts_dir\" }
+	exec { MSBuild "$solution_file" /t:Build /p:Configuration=Release /v:minimal /p:OutDir="$build_artifacts_dir\" }
 }
 
 task Package  {
-	New-Item $build_output_dir\ChannelAdvisorAccess\lib\net45 -itemType directory -force | Out-Null
-	Copy-Item $build_artifacts_dir\ChannelAdvisorAccess.??? $build_output_dir\ChannelAdvisorAccess\lib\net45 -PassThru |% { Write-Host "Copied " $_.FullName }
-	Copy-Item $build_artifacts_dir\Zayko.Finance.CurrencyConverter.??? $build_output_dir\ChannelAdvisorAccess\lib\net45 -PassThru |% { Write-Host "Copied " $_.FullName }
+	New-Item $build_output_dir\$project_name\lib\net45 -itemType directory -force | Out-Null
+	Copy-Item $build_artifacts_dir\$project_name.??? $build_output_dir\$project_name\lib\net45 -PassThru |% { Write-Host "Copied " $_.FullName }
 }
 
 # Set $script:Version = assembly version
 task Version {
-	assert (( Get-Item $build_artifacts_dir\ChannelAdvisorAccess.dll ).VersionInfo.FileVersion -match '^(\d+\.\d+\.\d+)')
+	assert (( Get-Item $build_artifacts_dir\$project_name.dll ).VersionInfo.FileVersion -match '^(\d+\.\d+\.\d+)')
 	$script:Version = $matches[1]
 }
 
@@ -82,45 +58,51 @@ task Archive {
 
 task Zip Version, {
 	$release_zip_file = "$release_dir\$project_name.$Version.zip"
+	$7z = Get-ChildItem -recurse $src_dir\packages -include 7za.exe | Sort-Object LastWriteTime -descending | Select-Object -First 1
 	
 	Write-Host "Zipping release to: " $release_zip_file
 	
-	exec { & 7za.exe a $release_zip_file $build_output_dir\ChannelAdvisorAccess\lib\net45\* -mx9 }
+	exec { & $7z a $release_zip_file $build_output_dir\$project_name\lib\net45\* -mx9 }
 }
 
 task NuGet Package, Version, {
 
-	Write-Host ================= Preparing ChannelAdvisorAccess Nuget package =================
-	$text = "ChannelAdvisor webservices API wrapper."
+	Write-Host ================= Preparing $project_name Nuget package =================
+	$text = "$project_short_name webservices API wrapper."
 	# nuspec
-	Set-Content $build_output_dir\ChannelAdvisorAccess\ChannelAdvisorAccess.nuspec @"
+	Set-Content $build_output_dir\$project_name\$project_name.nuspec @"
 <?xml version="1.0"?>
 <package>
 	<metadata>
-		<id>ChannelAdvisorAccess</id>
-		<version>$Version-alpha9</version>
-		<authors>Slav Ivanyuk</authors>
-		<owners>Slav Ivanyuk</owners>
-		<projectUrl>https://github.com/slav/ChannelAdvisorAccess</projectUrl>
-		<licenseUrl>https://raw.github.com/slav/ChannelAdvisorAccess/master/License.txt</licenseUrl>
+		<id>$project_name</id>
+		<version>$Version</version>
+		<authors>Agile Harbor</authors>
+		<owners>Agile Harbor</owners>
+		<projectUrl>https://github.com/agileharbor/$project_name</projectUrl>
+		<licenseUrl>https://raw.github.com/agileharbor/$project_name/master/License.txt</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<copyright>Copyright (C) Agile Harbor, LLC 2012</copyright>
+		<copyright>Copyright (C) Agile Harbor, LLC</copyright>
 		<summary>$text</summary>
 		<description>$text</description>
-		<tags>ChannelAdvisor</tags>
+		<tags>$project_short_name</tags>
 		<dependencies> 
-			<dependency id="Netco" version="1.3.1" />
+			<group targetFramework="net45">
+				<dependency id="Netco" version="1.3.1" />
+				<dependency id="CuttingEdge.Conditions" version="1.2.0.0" />
+			</group>
 		</dependencies>
 	</metadata>
 </package>
 "@
 	# pack
-	exec { NuGet pack $build_output_dir\ChannelAdvisorAccess\ChannelAdvisorAccess.nuspec -Output $build_dir }
+	$nuget = "$($src_dir)\.nuget\NuGet"
 	
-	$pushChannelAdvisorAccess = Read-Host 'Push ChannelAdvisorAccess ' $Version ' to NuGet? (Y/N)'
-	Write-Host $pushChannelAdvisorAccess
-	if( $pushChannelAdvisorAccess -eq "y" -or $pushChannelAdvisorAccess -eq "Y" )	{
-		Get-ChildItem $build_dir\*.nupkg |% { exec { NuGet push  $_.FullName }}
+	exec { & $nuget pack $build_output_dir\$project_name\$project_name.nuspec -Output $build_dir }
+	
+	$push_project = Read-Host "Push $($project_name) " $Version " to NuGet? (Y/N)"
+	Write-Host $push_project
+	if( $push_project -eq "y" -or $push_project -eq "Y" )	{
+		Get-ChildItem $build_dir\*.nupkg |% { exec { & $nuget push  $_.FullName }}
 	}
 }
 
