@@ -9,7 +9,9 @@
     <GenerateInternalTypes>false</GenerateInternalTypes>
     <GenerateMessageContracts>false</GenerateMessageContracts>
     <NamespaceMappings />
-    <CollectionMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
     <GenerateSerializableTypes>true</GenerateSerializableTypes>
     <Serializer>Auto</Serializer>
     <UseSerializerForFaults>true</UseSerializerForFaults>
@@ -19,10 +21,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx?WSDL" Protocol="http" SourceId="1" />
+    <MetadataSource Address="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ListingService.asmx?WSDL" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ListingService.wsdl" MetadataType="Wsdl" ID="69cc9800-b3e5-4e1e-8426-2164a1e73c0b" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/ListingService.asmx?WSDL" />
+    <MetadataFile FileName="ListingService.wsdl" MetadataType="Wsdl" ID="13ff357b-70bc-4f9d-9847-d4a05788521e" SourceId="1" SourceUrl="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/ListingService.asmx?WSDL" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

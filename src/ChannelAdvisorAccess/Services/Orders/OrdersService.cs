@@ -11,15 +11,15 @@ namespace ChannelAdvisorAccess.Services.Orders
 	/// <summary>
 	/// Facade to work with CA orders.
 	/// </summary>
-	public class OrdersService : IOrdersService
+	public class OrdersService: IOrdersService
 	{
 		private readonly APICredentials _credentials;
 		private readonly OrderServiceSoapClient _client;
-		public string AccountId { get; private set; }
+		public string AccountId{ get; private set; }
 
-		public string Name { get; private set; }
+		public string Name{ get; private set; }
 
-		public OrdersService( APICredentials credentials, string accountName, string accountId ) : this( credentials, accountId )
+		public OrdersService( APICredentials credentials, string accountName, string accountId ): this( credentials, accountId )
 		{
 			this.Name = accountName;
 		}
@@ -35,45 +35,45 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public void Ping()
 		{
 			AP.Query.Do( () =>
-				{
-					var result = this._client.Ping( this._credentials );
-					CheckCaSuccess( result );
-				} );
+			{
+				var result = this._client.Ping( this._credentials );
+				CheckCaSuccess( result );
+			} );
 		}
 
 		public async Task PingAsync()
 		{
 			await AP.QueryAsync.Do( async () =>
-				{
-					var result = await this._client.PingAsync( this._credentials );
-					CheckCaSuccess( result.PingResult );
-				} );
+			{
+				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+				CheckCaSuccess( result.PingResult );
+			} ).ConfigureAwait( false );
 		}
 		#endregion
 
 		#region API methods
 		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate )
-			where T : OrderResponseItem
+			where T: OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
-				{
-					StatusUpdateFilterBeginTimeGMT = startDate,
-					StatusUpdateFilterEndTimeGMT = endDate
-				};
+			{
+				StatusUpdateFilterBeginTimeGMT = startDate,
+				StatusUpdateFilterEndTimeGMT = endDate
+			};
 
 			return this.GetOrders< T >( orderCriteria );
 		}
 
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
-			where T : OrderResponseItem
+			where T: OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
-				{
-					StatusUpdateFilterBeginTimeGMT = startDate,
-					StatusUpdateFilterEndTimeGMT = endDate
-				};
+			{
+				StatusUpdateFilterBeginTimeGMT = startDate,
+				StatusUpdateFilterEndTimeGMT = endDate
+			};
 
-			return await this.GetOrdersAsync< T >( orderCriteria );
+			return await this.GetOrdersAsync< T >( orderCriteria ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -84,18 +84,18 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
 		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate )
-			where T : OrderResponseItem
+			where T: OrderResponseItem
 		{
 			return this.GetOrders< T >( startDate, endDate ).ToList();
 		}
 
 		private readonly Dictionary< string, int > _pageSizes = new Dictionary< string, int >
-			{
-				{ "Low", 200 },
-				{ "Medium", 100 },
-				{ "High", 50 },
-				{ "Complete", 20 },
-			};
+		{
+			{ "Low", 200 },
+			{ "Medium", 100 },
+			{ "High", 50 },
+			{ "Complete", 20 },
+		};
 
 		/// <summary>
 		/// Gets the orders.
@@ -104,7 +104,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
 		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
-			where T : OrderResponseItem
+			where T: OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 				orderCriteria.DetailLevel = "High";
@@ -131,11 +131,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria )
 		{
 			return AP.Query.Get( () =>
-				{
-					var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
-					CheckCaSuccess( results );
-					return results.ResultData;
-				} );
+			{
+				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+				CheckCaSuccess( results );
+				return results.ResultData;
+			} );
 		}
 
 		/// <summary>
@@ -145,7 +145,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria )
-			where T : OrderResponseItem
+			where T: OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 				orderCriteria.DetailLevel = "High";
@@ -158,7 +158,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 			while( true )
 			{
-				var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria );
+				var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria ).ConfigureAwait( false );
 
 				if( ordersFromPage == null || ordersFromPage.Length == 0 )
 					break;
@@ -173,11 +173,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria )
 		{
 			return await AP.QueryAsync.Get( async () =>
-				{
-					var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
-					CheckCaSuccess( results.GetOrderListResult );
-					return results.GetOrderListResult.ResultData;
-				} );
+			{
+				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
+				CheckCaSuccess( results.GetOrderListResult );
+				return results.GetOrderListResult.ResultData;
+			} ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -188,42 +188,42 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public int SubmitOrder( OrderSubmit orderSubmit )
 		{
 			return AP.Submit.Get( () =>
-				{
-					var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
-					this.CheckCaSuccess( apiResults );
-					return apiResults.ResultData;
-				} );
+			{
+				var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
+				this.CheckCaSuccess( apiResults );
+				return apiResults.ResultData;
+			} );
 		}
 
 		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit )
 		{
 			return await AP.SubmitAsync.Get( async () =>
-				{
-					var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit );
-					this.CheckCaSuccess( apiResults.SubmitOrderResult );
-					return apiResults.SubmitOrderResult.ResultData;
-				} );
+			{
+				var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit ).ConfigureAwait( false );
+				this.CheckCaSuccess( apiResults.SubmitOrderResult );
+				return apiResults.SubmitOrderResult.ResultData;
+			} ).ConfigureAwait( false );
 		}
 		#endregion
 
 		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
 		{
 			return AP.Submit.Get( () =>
-				{
-					var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
-					this.CheckCaSuccess( results );
-					return results.ResultData;
-				} );
+			{
+				var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
+				this.CheckCaSuccess( results );
+				return results.ResultData;
+			} );
 		}
 
 		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates )
 		{
 			return await AP.SubmitAsync.Get( async () =>
-				{
-					var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates );
-					this.CheckCaSuccess( results.UpdateOrderListResult );
-					return results.UpdateOrderListResult.ResultData;
-				} );
+			{
+				var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates ).ConfigureAwait( false );
+				this.CheckCaSuccess( results.UpdateOrderListResult );
+				return results.UpdateOrderListResult.ResultData;
+			} ).ConfigureAwait( false );
 		}
 
 		private static void CheckCaSuccess( APIResultOfArrayOfOrderResponseItem orderList )

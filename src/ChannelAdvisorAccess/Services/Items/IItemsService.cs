@@ -72,8 +72,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task< StoreInfo > GetStoreInfoAsync( string sku );
 		ImageInfoResponse[] GetImageList( string sku );
 		Task< ImageInfoResponse[] > GetImageListAsync( string sku );
-		ShippingRateInfo[] GetShippingInfo( string sku );
-		Task< ShippingRateInfo[] > GetShippingInfoAsync( string sku );
+		DistributionCenterInfoResponse[] GetShippingInfo( string sku );
+		Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku );
 		VariationInfo GetVariationInfo( string sku );
 		Task< VariationInfo > GetVariationInfoAsync( string sku );
 
@@ -110,5 +110,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task DeleteItemAsync( string sku );
 		ClassificationConfigurationInformation[] GetClassificationConfigInfo();
 		Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync();
+
+		DistributionCenterResponse[] GetDistributionCenterList();
+		Task< DistributionCenterResponse[] > GetDistributionCenterListAsync();
 	}
 }

@@ -1,19 +1,19 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.ListingService;
 using ChannelAdvisorAccess.Misc;
 using Netco.Extensions;
-using System.Linq;
 
 namespace ChannelAdvisorAccess.Services.Listing
 {
-	public class ListingService : IListingService
+	public class ListingService: IListingService
 	{
 		private readonly APICredentials _credentials;
 		private readonly ListingServiceSoapClient _client;
-		public string Name { get; private set; }
-		public string AccountId { get; private set; }
+		public string Name{ get; private set; }
+		public string AccountId{ get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListingService"/> class.
@@ -33,19 +33,19 @@ namespace ChannelAdvisorAccess.Services.Listing
 		public void Ping()
 		{
 			AP.Query.Do( () =>
-				{
-					var result = this._client.Ping( this._credentials );
-					CheckCaSuccess( result );
-				} );
+			{
+				var result = this._client.Ping( this._credentials );
+				CheckCaSuccess( result );
+			} );
 		}
 
 		public async Task PingAsync()
 		{
 			await AP.QueryAsync.Do( async () =>
-				{
-					var result = await this._client.PingAsync( this._credentials );
-					CheckCaSuccess( result.PingResult );
-				} );
+			{
+				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+				CheckCaSuccess( result.PingResult );
+			} ).ConfigureAwait( false );
 		}
 		#endregion
 
@@ -55,10 +55,10 @@ namespace ChannelAdvisorAccess.Services.Listing
 				return;
 
 			itemSkus.DoWithPages( 100, s => AP.Submit.Do( () =>
-				{
-					var result = this._client.WithdrawListings( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason );
-					this.CheckCaSuccess( result );
-				} ) );
+			{
+				var result = this._client.WithdrawListings( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason );
+				this.CheckCaSuccess( result );
+			} ) );
 		}
 
 		public async Task WithdrawListingAsync( IList< string > itemSkus, string withdrawReason )
@@ -67,10 +67,10 @@ namespace ChannelAdvisorAccess.Services.Listing
 				return;
 
 			await itemSkus.DoWithPagesAsync( 100, async s => await AP.SubmitAsync.Do( async () =>
-				{
-					var result = await this._client.WithdrawListingsAsync( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason );
-					this.CheckCaSuccess( result.WithdrawListingsResult );
-				} ) );
+			{
+				var result = await this._client.WithdrawListingsAsync( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason ).ConfigureAwait( false );
+				this.CheckCaSuccess( result.WithdrawListingsResult );
+			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 		}
 
 		private void CheckCaSuccess( APIResultOfInt32 result )

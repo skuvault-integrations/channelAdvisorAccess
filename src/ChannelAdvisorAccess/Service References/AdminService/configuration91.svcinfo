@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="7sAMColSOrqzqPlYAMxRSenXBjo=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="Vk5QbsktwWa74PoIUmzF9Wh+QkQ=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="AdminServiceSoap">
       <properties>
@@ -221,10 +221,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="AdminServiceSoap" contract="AdminService.AdminServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/AdminService.asmx" bindingConfiguration="AdminServiceSoap">
+    <endpoint name="AdminServiceSoap" contract="AdminService.AdminServiceSoap" bindingType="basicHttpBinding" address="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/AdminService.asmx" bindingConfiguration="AdminServiceSoap">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v6/AdminService.asmx</serializedValue>
+          <serializedValue>https://api.channeladvisor.com/ChannelAdvisorAPI/v7/AdminService.asmx</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

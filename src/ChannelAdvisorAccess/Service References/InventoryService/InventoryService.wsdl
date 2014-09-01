@@ -117,7 +117,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="Subtitle" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ShortDescription" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="Weight" nillable="true" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="Weight" nillable="true" type="s:decimal" />
           <s:element minOccurs="0" maxOccurs="1" name="SupplierCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="TaxProductCode" type="s:string" />
@@ -136,32 +136,69 @@
           <s:element minOccurs="0" maxOccurs="1" name="Warranty" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="ProductMargin" nillable="true" type="s:decimal" />
           <s:element minOccurs="0" maxOccurs="1" name="SupplierPO" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="ReceivedInInventory" nillable="true" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="HarmonizedCode" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Height" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="Length" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="Width" nillable="true" type="s:decimal" />
           <s:element minOccurs="0" maxOccurs="1" name="Classification" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="QuantityInfo" type="tns:QuantityInfoResponse" />
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterList" type="tns:ArrayOfDistributionCenterInfoResponse" />
+          <s:element minOccurs="0" maxOccurs="1" name="Quantity" type="tns:QuantityInfoResponse" />
           <s:element minOccurs="0" maxOccurs="1" name="PriceInfo" type="tns:PriceInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="AttributeList" type="tns:ArrayOfAttributeInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="VariationInfo" type="tns:VariationInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="StoreInfo" type="tns:StoreInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="ImageList" type="tns:ArrayOfImageInfoResponse" />
-          <s:element minOccurs="0" maxOccurs="1" name="ShippingInfo" type="tns:ShippingInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="MetaDescription" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDistributionCenterInfoResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DistributionCenterInfoResponse" nillable="true" type="tns:DistributionCenterInfoResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DistributionCenterInfoResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="AvailableQuantity" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OpenAllocatedQuantity" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OpenAllocatedPooledQuantity" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReceivedInInventory" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShippingRateList" type="tns:ArrayOfShippingRateInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfShippingRateInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ShippingRateInfo" nillable="true" type="tns:ShippingRateInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ShippingRateInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DestinationZoneName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClassCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FirstItemRate" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="AdditionalItemRate" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="FirstItemHandlingRate" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="AdditionalItemHandlingRate" nillable="true" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="FreeShippingIfBuyItNow" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstItemRateAttribute" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FirstItemHandlingRateAttribute" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdditionalItemRateAttribute" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AdditionalItemHandlingRateAttribute" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="QuantityInfoResponse">
         <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Total" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="Available" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="Open" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OpenAllocated" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OpenUnallocated" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PendingCheckout" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PendingPayment" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PendingShipment" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsScheduled" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="OpenPooled" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Total" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OpenAllocatedPooled" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="OpenUnallocatedPooled" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PendingCheckoutPooled" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PendingPaymentPooled" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="PendingShipmentPooled" type="s:int" />
@@ -228,34 +265,6 @@
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="TypeName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Url" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ShippingInfo">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsFBA" type="s:boolean" />
-          <s:element minOccurs="0" maxOccurs="1" name="ShippingRateList" type="tns:ArrayOfShippingRateInfo" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfShippingRateInfo">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="ShippingRateInfo" nillable="true" type="tns:ShippingRateInfo" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ShippingRateInfo">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="DestinationZoneName" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="CarrierCode" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="ClassCode" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="FirstItemRate" nillable="true" type="s:decimal" />
-          <s:element minOccurs="1" maxOccurs="1" name="AdditionalItemRate" nillable="true" type="s:decimal" />
-          <s:element minOccurs="1" maxOccurs="1" name="FirstItemHandlingRate" nillable="true" type="s:decimal" />
-          <s:element minOccurs="1" maxOccurs="1" name="AdditionalItemHandlingRate" nillable="true" type="s:decimal" />
-          <s:element minOccurs="1" maxOccurs="1" name="FreeShippingIfBuyItNow" type="s:boolean" />
-          <s:element minOccurs="0" maxOccurs="1" name="FirstItemRateAttribute" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="FirstItemHandlingRateAttribute" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="AdditionalItemRateAttribute" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="AdditionalItemHandlingRateAttribute" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="GetInventoryItemListWithFullDetail">
@@ -352,17 +361,17 @@
       <s:element name="GetInventoryItemShippingInfoResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetInventoryItemShippingInfoResult" type="tns:APIResultOfArrayOfShippingRateInfo" />
+            <s:element minOccurs="0" maxOccurs="1" name="GetInventoryItemShippingInfoResult" type="tns:APIResultOfArrayOfDistributionCenterInfoResponse" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:complexType name="APIResultOfArrayOfShippingRateInfo">
+      <s:complexType name="APIResultOfArrayOfDistributionCenterInfoResponse">
         <s:sequence>
           <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
           <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfShippingRateInfo" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfDistributionCenterInfoResponse" />
         </s:sequence>
       </s:complexType>
       <s:element name="GetInventoryItemQuantityInfo">
@@ -592,6 +601,54 @@
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="GetDistributionCenterList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" nillable="true" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDistributionCenterListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDistributionCenterListResult" type="tns:APIResultOfArrayOfDistributionCenterResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="APIResultOfArrayOfDistributionCenterResponse">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:ResultStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="MessageCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ResultData" type="tns:ArrayOfDistributionCenterResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDistributionCenterResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DistributionCenterResponse" nillable="true" type="tns:DistributionCenterResponse" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DistributionCenterResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactEmail" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ContactPhone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RegionName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CountryName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PostalCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsDefault" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsExternallyManaged" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsPickupLocation" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsShipLocation" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="DeleteInventoryItem">
         <s:complexType>
           <s:sequence>
@@ -622,7 +679,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="Subtitle" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ShortDescription" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="Weight" nillable="true" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="Weight" nillable="true" type="s:decimal" />
           <s:element minOccurs="0" maxOccurs="1" name="SupplierCode" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="TaxProductCode" type="s:string" />
@@ -630,6 +687,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="FlagDescription" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="IsBlocked" nillable="true" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="BlockComment" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="BlockExternalQuantity" nillable="true" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="ASIN" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ISBN" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="UPC" type="s:string" />
@@ -641,27 +699,35 @@
           <s:element minOccurs="0" maxOccurs="1" name="Warranty" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="ProductMargin" nillable="true" type="s:decimal" />
           <s:element minOccurs="0" maxOccurs="1" name="SupplierPO" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="ReceivedInInventory" nillable="true" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="HarmonizedCode" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Height" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="Length" nillable="true" type="s:decimal" />
           <s:element minOccurs="1" maxOccurs="1" name="Width" nillable="true" type="s:decimal" />
           <s:element minOccurs="0" maxOccurs="1" name="Classification" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="QuantityInfo" type="tns:QuantityInfoSubmit" />
+          <s:element minOccurs="0" maxOccurs="1" name="DCQuantityUpdateType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterList" type="tns:ArrayOfDistributionCenterInfoSubmit" />
           <s:element minOccurs="0" maxOccurs="1" name="PriceInfo" type="tns:PriceInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="AttributeList" type="tns:ArrayOfAttributeInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="VariationInfo" type="tns:VariationInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="StoreInfo" type="tns:StoreInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="ImageList" type="tns:ArrayOfImageInfoSubmit" />
-          <s:element minOccurs="0" maxOccurs="1" name="ShippingInfo" type="tns:ShippingInfo" />
           <s:element minOccurs="0" maxOccurs="1" name="LabelList" type="tns:ArrayOfString" />
           <s:element minOccurs="0" maxOccurs="1" name="MetaDescription" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:complexType name="QuantityInfoSubmit">
+      <s:complexType name="ArrayOfDistributionCenterInfoSubmit">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="UpdateType" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="Total" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DistributionCenterInfoSubmit" nillable="true" type="tns:DistributionCenterInfoSubmit" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DistributionCenterInfoSubmit">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="QuantityUpdateType" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WarehouseLocation" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ReceivedInInventory" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="ShippingRateList" type="tns:ArrayOfShippingRateInfo" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="ArrayOfImageInfoSubmit">
@@ -735,7 +801,9 @@
       <s:complexType name="InventoryItemQuantityAndPrice">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="Sku" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="QuantityInfo" type="tns:QuantityInfoSubmit" />
+          <s:element minOccurs="0" maxOccurs="1" name="DistributionCenterCode" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UpdateType" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="PriceInfo" type="tns:PriceInfo" />
         </s:sequence>
       </s:complexType>
@@ -1095,6 +1163,15 @@
   <wsdl:message name="GetInventoryQuantityListAPICredentials">
     <wsdl:part name="APICredentials" element="tns:APICredentials" />
   </wsdl:message>
+  <wsdl:message name="GetDistributionCenterListSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDistributionCenterList" />
+  </wsdl:message>
+  <wsdl:message name="GetDistributionCenterListSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDistributionCenterListResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDistributionCenterListAPICredentials">
+    <wsdl:part name="APICredentials" element="tns:APICredentials" />
+  </wsdl:message>
   <wsdl:message name="DeleteInventoryItemSoapIn">
     <wsdl:part name="parameters" element="tns:DeleteInventoryItem" />
   </wsdl:message>
@@ -1254,6 +1331,10 @@
     <wsdl:operation name="GetInventoryQuantityList">
       <wsdl:input message="tns:GetInventoryQuantityListSoapIn" />
       <wsdl:output message="tns:GetInventoryQuantityListSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDistributionCenterList">
+      <wsdl:input message="tns:GetDistributionCenterListSoapIn" />
+      <wsdl:output message="tns:GetDistributionCenterListSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="DeleteInventoryItem">
       <wsdl:input message="tns:DeleteInventoryItemSoapIn" />
@@ -1447,6 +1528,16 @@
       <wsdl:input>
         <soap:body use="literal" />
         <soap:header message="tns:GetInventoryQuantityListAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDistributionCenterList">
+      <soap:operation soapAction="http://api.channeladvisor.com/webservices/GetDistributionCenterList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetDistributionCenterListAPICredentials" part="APICredentials" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
@@ -1715,6 +1806,16 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetDistributionCenterList">
+      <soap12:operation soapAction="http://api.channeladvisor.com/webservices/GetDistributionCenterList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetDistributionCenterListAPICredentials" part="APICredentials" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="DeleteInventoryItem">
       <soap12:operation soapAction="http://api.channeladvisor.com/webservices/DeleteInventoryItem" style="document" />
       <wsdl:input>
@@ -1828,10 +1929,10 @@
   </wsdl:binding>
   <wsdl:service name="InventoryService">
     <wsdl:port name="InventoryServiceSoap" binding="tns:InventoryServiceSoap">
-      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/InventoryService.asmx" />
+      <soap:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/InventoryService.asmx" />
     </wsdl:port>
     <wsdl:port name="InventoryServiceSoap12" binding="tns:InventoryServiceSoap12">
-      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v6/InventoryService.asmx" />
+      <soap12:address location="https://api.channeladvisor.com/ChannelAdvisorAPI/v7/InventoryService.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
