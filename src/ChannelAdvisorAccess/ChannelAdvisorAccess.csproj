@@ -164,6 +164,7 @@
     <Compile Include="Constants\OrderStateCodes.cs" />
     <Compile Include="Constants\PaymentStatusCodes.cs" />
     <Compile Include="Constants\ShippingStatusCodes.cs" />
+    <Compile Include="Constants\TimeStampFields.cs" />
     <Compile Include="CurrencyConversion\YahooCurrencyConverter.cs" />
     <Compile Include="Exceptions\ChannelAdvisorException.cs" />
     <Compile Include="Misc\AP.cs" />
