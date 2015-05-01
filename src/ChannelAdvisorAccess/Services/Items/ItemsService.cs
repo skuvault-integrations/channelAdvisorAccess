@@ -247,6 +247,43 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
+		/// <summary>
+		/// Gets the items matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <param name="startPage">The first page number to query.</param>
+		/// <param name="pageLimit">The max number of pages to query.</param>
+		/// <returns>Items matching supplied filter.</returns>
+		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
+		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit )
+		{
+			filter.Criteria.PageSize = 100;
+			filter.Criteria.PageNumber = ( startPage > 0 ) ? startPage - 1 : 1;
+
+			var items = new List< InventoryItemResponse >();
+			for( var iteration = 0; iteration < pageLimit; iteration++ )
+			{
+				filter.Criteria.PageNumber += 1;
+
+				var itemResponse = await AP.QueryAsync.Get( async () => 
+					await this._client.GetFilteredInventoryItemListAsync( this._credentials, this.AccountId, filter.Criteria, filter.DetailLevel, filter.SortField, filter.SortDirection )
+					.ConfigureAwait( false ) ).ConfigureAwait( false );
+
+				if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
+					continue;
+
+				var pageItems = itemResponse.GetFilteredInventoryItemListResult.ResultData;
+				if( pageItems == null )
+					return new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, true );
+
+				items.AddRange( pageItems );
+				if( pageItems.Length == 0 || pageItems.Length < filter.Criteria.PageSize )
+					return new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, true );
+			}
+
+			return new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, false );
+		}
+
 		public AttributeInfo[] GetAttributes( string sku )
 		{
 			var attributeList = AP.Query.Get(
@@ -466,6 +503,36 @@ namespace ChannelAdvisorAccess.Services.Items
 				if( pageSkus.Length == 0 || pageSkus.Length < filter.Criteria.PageSize )
 					return skus;
 			}
+		}
+
+		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit )
+		{
+			filter.Criteria.PageSize = 100;
+			filter.Criteria.PageNumber = ( startPage > 0 ) ? startPage -1 : 1;
+
+			var skus = new List< string >();
+			for( var iteration = 0; iteration < pageLimit; iteration++ )
+			{
+				filter.Criteria.PageNumber += 1;
+
+				var itemResponse = await AP.QueryAsync.Get( async () => 
+					await this._client.GetFilteredSkuListAsync( this._credentials, this.AccountId, filter.Criteria, filter.SortField, filter.SortDirection )
+					.ConfigureAwait( false ) ).ConfigureAwait( false );
+
+				if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
+					continue;
+
+				var pageSkus = itemResponse.GetFilteredSkuListResult.ResultData;
+				if( pageSkus == null )
+					return new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, true );
+
+				skus.AddRange( pageSkus );
+
+				if( pageSkus.Length == 0 || pageSkus.Length < filter.Criteria.PageSize )
+					return new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, true );
+			}
+
+			return new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, false );
 		}
 		#endregion
 

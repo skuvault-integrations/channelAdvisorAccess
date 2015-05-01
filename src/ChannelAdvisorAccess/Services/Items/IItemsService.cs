@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
+using ChannelAdvisorAccess.Misc;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -52,6 +53,16 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
 		Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter );
 
+		/// <summary>
+		/// Gets the items matching filter.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <param name="startPage">The first page number to query.</param>
+		/// <param name="pageLimit">The max number of pages to query.</param>
+		/// <returns>Items matching supplied filter.</returns>
+		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
+		Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit );
+
 		AttributeInfo[] GetAttributes( string sku );
 		Task< AttributeInfo[] > GetAttributesAsync( string sku );
 
@@ -94,6 +105,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task< IEnumerable< string > > GetAllSkusAsync();
 		IEnumerable< string > GetFilteredSkus( ItemsFilter filter );
 		Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter );
+		Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit );
 		void SynchItem( InventoryItemSubmit item );
 		Task SynchItemAsync( InventoryItemSubmit item );
 		void SynchItems( IEnumerable< InventoryItemSubmit > items );
