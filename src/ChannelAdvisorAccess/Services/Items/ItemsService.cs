@@ -298,7 +298,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			var attributeList = await AP.QueryAsync.Get( async () =>
 				await this._client.GetInventoryItemAttributeListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
 
-			if (!this.IsRequestSuccessfulAttribute(attributeList.GetInventoryItemAttributeListResult.ResultData))
+			if (!this.IsRequestSuccessfulAttribute(attributeList))
 				return default(AttributeInfo[]);
 
 			return attributeList.GetInventoryItemAttributeListResult.ResultData;
@@ -358,7 +358,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemImageListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
 
-			if (!this.IsRequestSuccessfulImage(requestResult.GetInventoryItemImageListResult))
+			if (!this.IsRequestSuccessfulImage(requestResult))
 				return default(ImageInfoResponse[]);
 
 			return requestResult.GetInventoryItemImageListResult.ResultData;
