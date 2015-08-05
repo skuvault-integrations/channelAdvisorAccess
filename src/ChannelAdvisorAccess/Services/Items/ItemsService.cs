@@ -297,7 +297,11 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			var attributeList = await AP.QueryAsync.Get( async () =>
 				await this._client.GetInventoryItemAttributeListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
-			return this.GetResultWithSuccessCheckAsync( attributeList, attributeList.GetInventoryItemAttributeListResult.ResultData );
+
+			if (!this.IsRequestSuccessfulAttribute(attributeList.GetInventoryItemAttributeListResult.ResultData))
+				return default(AttributeInfo[]);
+
+			return attributeList.GetInventoryItemAttributeListResult.ResultData;
 		}
 
 		/// <summary>
@@ -353,7 +357,11 @@ namespace ChannelAdvisorAccess.Services.Items
 		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku )
 		{
 			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemImageListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
-			return this.GetResultWithSuccessCheckAsync( requestResult, requestResult.GetInventoryItemImageListResult.ResultData );
+
+			if (!this.IsRequestSuccessfulImage(requestResult.GetInventoryItemImageListResult))
+				return default(ImageInfoResponse[]);
+
+			return requestResult.GetInventoryItemImageListResult.ResultData;
 		}
 
 		public DistributionCenterInfoResponse[] GetShippingInfo( string sku )
@@ -733,78 +741,62 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// with API call, otherwise returns result.</returns>
 		private T GetResultWithSuccessCheck< T >( object apiResult, T resultData )
 		{
-			if( !this.IsRequestSuccessful( apiResult ) )
+			if (!this.IsRequestSuccessful(apiResult))
 				return default( T );
 
 			return resultData;
 		}
-
-		/// <summary>
-		/// Gets the result with success check async
-		/// </summary>
-		/// <typeparam name="T">Type of the result.</typeparam>
-		/// <param name="apiResult">The API result.</param>
-		/// <param name="resultData">The result data.</param>
-		/// <returns>Returns result default value (typically <c>null</c>) if there was a problem
-		/// with API call, otherwise returns result.</returns>
-		private T GetResultWithSuccessCheckAsync<T>(object apiResult, T resultData)
+		
+		private bool IsRequestSuccessful(object obj)
 		{
-			if (!this.IsRequestSuccessfulAsync(apiResult))
-				return default(T);
+			var type = obj.GetType();
 
-			return resultData;
+			var statusProp = type.GetProperty("Status");
+			var status = (ResultStatus)statusProp.GetValue(obj, null);
+
+			var messageCodeProp = type.GetProperty("MessageCode");
+			var messageCode = (int)messageCodeProp.GetValue(obj, null);
+
+			var message = (string)type.GetProperty("Message").GetValue(obj, null);
+
+			return IsRequestSuccessfulCommon(status, message, messageCode);
 		}
 
-		/// <summary>
-		/// Determines whether request was successful or not.
-		/// </summary>
-		/// <param name="apiResult">The API result.</param>
-		/// <returns>
-		/// 	<c>true</c> if request was successful; otherwise, <c>false</c>.
-		/// </returns>
-		private bool IsRequestSuccessful( object apiResult )
+		private bool IsRequestSuccessfulImage(object obj)
 		{
-			var type = apiResult.GetType();
-
-			var statusProp = type.GetProperty( "Status" );
-			var status = ( ResultStatus )statusProp.GetValue( apiResult, null );
-
-			var messageCodeProp = type.GetProperty( "MessageCode" );
-			var messageCode = ( int )messageCodeProp.GetValue( apiResult, null );
-
-			var isRequestSuccessful = status == ResultStatus.Success && messageCode == 0;
-
-			if( !isRequestSuccessful )
-			{
-				var message = ( string )type.GetProperty( "Message" ).GetValue( apiResult, null );
-				if( message.Contains( "The specified SKU was not found" ) || message.Contains( "All DoesSkuExist requests failed for the SKU list specified!" ) )
-					this.Log().Trace( "CA Api Request for '{0}' failed with message: {1}", AccountId, message );
-				else
-					this.Log().Error( "CA Api Request for '{0}' failed with message: {1}", AccountId, message );
-			}
-
-			return isRequestSuccessful;
-		}
-
-		/// <summary>
-		/// Determines whether request was successful or not.
-		/// </summary>
-		/// <param name="apiResult">The API result.</param>
-		/// <returns>
-		/// 	<c>true</c> if request was successful; otherwise, <c>false</c>.
-		/// </returns>
-		private bool IsRequestSuccessfulAsync(object obj)
-		{
-			GetInventoryItemImageListResponse apiResult = (GetInventoryItemImageListResponse) obj;
+			GetInventoryItemImageListResponse apiResult = (GetInventoryItemImageListResponse)obj;
 
 			var status = apiResult.GetInventoryItemImageListResult.Status;
+			var message = apiResult.GetInventoryItemImageListResult.Message;
 			var messageCode = apiResult.GetInventoryItemImageListResult.MessageCode;
 
+			return IsRequestSuccessfulCommon(status, message, messageCode);
+		}
+
+		private bool IsRequestSuccessfulAttribute(object obj)
+		{
+			GetInventoryItemAttributeListResponse apiResult = (GetInventoryItemAttributeListResponse)obj;
+
+			var status = apiResult.GetInventoryItemAttributeListResult.Status;
+			var message = apiResult.GetInventoryItemAttributeListResult.Message;
+			var messageCode = apiResult.GetInventoryItemAttributeListResult.MessageCode;
+
+			return IsRequestSuccessfulCommon(status, message, messageCode);
+		}
+
+		/// <summary>
+		/// Determines whether request was successful or not.
+		/// </summary>
+		/// <param name="apiResult">The API result.</param>
+		/// <returns>
+		/// 	<c>true</c> if request was successful; otherwise, <c>false</c>.
+		/// </returns>
+		private bool IsRequestSuccessfulCommon(ResultStatus status, string message, int messageCode)
+		{
 			var isRequestSuccessful = status == ResultStatus.Success && messageCode == 0;
 
 			if (!isRequestSuccessful)
 			{
-				var message = apiResult.GetInventoryItemImageListResult.Message;
 				if (message.Contains("The specified SKU was not found") || message.Contains("All DoesSkuExist requests failed for the SKU list specified!"))
 					this.Log().Trace("CA Api Request for '{0}' failed with message: {1}", AccountId, message);
 				else
