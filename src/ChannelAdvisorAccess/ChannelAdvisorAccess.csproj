@@ -167,6 +167,7 @@
     <Compile Include="Constants\TimeStampFields.cs" />
     <Compile Include="CurrencyConversion\YahooCurrencyConverter.cs" />
     <Compile Include="Exceptions\ChannelAdvisorException.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Misc\AP.cs" />
     <Compile Include="Misc\PagedApiResponse.cs" />
     <Compile Include="Misc\ItemExtensions.cs" />

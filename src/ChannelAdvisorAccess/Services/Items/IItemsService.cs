@@ -83,6 +83,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task< StoreInfo > GetStoreInfoAsync( string sku );
 		ImageInfoResponse[] GetImageList( string sku );
 		Task< ImageInfoResponse[] > GetImageListAsync( string sku );
+		
 		DistributionCenterInfoResponse[] GetShippingInfo( string sku );
 		Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku );
 		VariationInfo GetVariationInfo( string sku );
