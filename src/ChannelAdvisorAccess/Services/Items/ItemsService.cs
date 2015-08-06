@@ -607,20 +607,20 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
 		{
-			itemQuantityAndPrices.DoWithPages( 5000, itemsPage =>
+			itemQuantityAndPrices.DoWithPages( 5000, itemsPage => AP.Submit.Do( () =>
 			{
 				var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemsPage.ToArray() );
 				CheckCaSuccess( resultOfBoolean );
-			} );
+			} ) );
 		}
 
 		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
 		{
-			await itemQuantityAndPrices.DoWithPagesAsync( 500, async i =>
+			await itemQuantityAndPrices.DoWithPagesAsync( 500, async i => await AP.SubmitAsync.Do( async () =>
 			{
 				var result = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, i.ToArray() ).ConfigureAwait( false );
 				CheckCaSuccess( result.UpdateInventoryItemQuantityAndPriceListResult );
-			} ).ConfigureAwait( false );
+			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 		}
 
 		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason )
