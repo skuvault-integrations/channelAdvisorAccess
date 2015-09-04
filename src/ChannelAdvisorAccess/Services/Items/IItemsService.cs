@@ -107,10 +107,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		IEnumerable< string > GetFilteredSkus( ItemsFilter filter );
 		Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter );
 		Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit );
-		void SynchItem( InventoryItemSubmit item );
-		Task SynchItemAsync( InventoryItemSubmit item );
-		void SynchItems( IEnumerable< InventoryItemSubmit > items );
-		Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items );
+		void SynchItem( InventoryItemSubmit item, bool isCreateNew = false );
+		Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false );
+		void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false );
+		Task SynchItemsAsync( IEnumerable<InventoryItemSubmit> items, bool isCreateNew = false );
 		void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice );
 		Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice );
 		void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices );

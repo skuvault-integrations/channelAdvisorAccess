@@ -548,26 +548,38 @@ namespace ChannelAdvisorAccess.Services.Items
 		#endregion
 
 		#region Update items
-		public void SynchItem( InventoryItemSubmit item )
+		public void SynchItem( InventoryItemSubmit item, bool isCreateNew = false )
 		{
 			AP.Submit.Do( () =>
 			{
+				if( !isCreateNew && !this.DoesSkuExist( item.Sku ) )
+					return;
+
 				var resultOfBoolean = this._client.SynchInventoryItem( this._credentials, this.AccountId, item );
 				CheckCaSuccess( resultOfBoolean );
 			} );
 		}
 
-		public async Task SynchItemAsync( InventoryItemSubmit item )
+		public async Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false )
 		{
 			await AP.SubmitAsync.Do( async () =>
 			{
+				if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku ) ) )
+					return;
+
 				var resultOfBoolean = await this._client.SynchInventoryItemAsync( this._credentials, this.AccountId, item ).ConfigureAwait( false );
 				CheckCaSuccess( resultOfBoolean.SynchInventoryItemResult );
 			} ).ConfigureAwait( false );
 		}
 
-		public void SynchItems( IEnumerable< InventoryItemSubmit > items )
+		public void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false )
 		{
+			if( !isCreateNew )
+			{
+				var existSkus = this.DoSkusExist( items.Select( x => x.Sku ) ).Select( x => x.Sku );
+				items = items.Where( x => existSkus.Contains( x.Sku ) );
+			}
+
 			items.DoWithPages( 100, i => AP.Submit.Do( () =>
 			{
 				var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, i.ToArray() );
@@ -575,8 +587,14 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ) );
 		}
 
-		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items )
+		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false )
 		{
+			if( !isCreateNew )
+			{
+				var existSkus = ( this.DoSkusExist( items.Select( x => x.Sku ) ) ).Select( x => x.Sku );
+				items = items.Where( x => existSkus.Contains( x.Sku ) );
+			}
+
 			await items.DoWithPagesAsync( 100, async i => await AP.SubmitAsync.Do( async () =>
 			{
 				await AP.SubmitAsync.Do( async () =>
