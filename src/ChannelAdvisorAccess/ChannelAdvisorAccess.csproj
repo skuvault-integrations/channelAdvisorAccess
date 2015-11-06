@@ -172,6 +172,7 @@
     <Compile Include="Exceptions\ChannelAdvisorException.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Misc\AP.cs" />
+    <Compile Include="Misc\ExtensionsInternal.cs" />
     <Compile Include="Misc\Logger.cs" />
     <Compile Include="Misc\Mark.cs" />
     <Compile Include="Misc\PagedApiResponse.cs" />

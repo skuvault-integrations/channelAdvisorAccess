@@ -21,6 +21,12 @@ namespace ChannelAdvisorAccess.Exceptions
 		{
 		}
 
+		public ChannelAdvisorException( string message, Exception exception )
+			: base( message, exception )
+		{
+			this._errorMessage = message;
+		}
+
 		public int MessageCode
 		{
 			get { return this._messageCode; }
@@ -41,7 +47,7 @@ namespace ChannelAdvisorAccess.Exceptions
 		///<filterpriority>2</filterpriority>
 		public override string ToString()
 		{
-			return string.Format( "ErrorCode={0}, ErrorMessage={1}\n" +  base.ToString(), this.MessageCode, this.ErrorMessage );
+			return string.Format( "ErrorCode={0}, ErrorMessage={1}\n" + base.ToString(), this.MessageCode, this.ErrorMessage );
 		}
 	}
 }

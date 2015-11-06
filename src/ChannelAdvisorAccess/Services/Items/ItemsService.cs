@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
@@ -22,7 +23,28 @@ namespace ChannelAdvisorAccess.Services.Items
 		private readonly ObjectCache _cache;
 		private readonly string _allItemsCacheKey;
 		private readonly object _inventoryCacheLock = new Object();
+		public Func< string > AdditionalLogInfo{ get; set; }
 
+		private string AdditionalLogInfoString
+		{
+			get
+			{
+				if( this.AdditionalLogInfo == null )
+					return null;
+
+				string res;
+				try
+				{
+					res = this.AdditionalLogInfo();
+				}
+				catch
+				{
+					return null;
+				}
+
+				return res;
+			}
+		}
 		public string Name{ get; private set; }
 		public string AccountId{ get; private set; }
 		public TimeSpan SlidingCacheExpiration{ get; set; }
@@ -48,13 +70,29 @@ namespace ChannelAdvisorAccess.Services.Items
 		}
 
 		#region Ping
-		public void Ping()
+		public void Ping( Mark mark = null )
 		{
-			AP.Query.Do( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var result = this._client.Ping( this._credentials );
-				CheckCaSuccess( result );
-			} );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+				AP.Query.Do( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+					var result = this._client.Ping( this._credentials );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : result.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					this.CheckCaSuccess( result );
+				} );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task PingAsync()
@@ -911,5 +949,23 @@ namespace ChannelAdvisorAccess.Services.Items
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
 		#endregion
+
+		private string CreateMethodCallInfo( string methodParameters = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "" )
+		{
+			mark = mark ?? Mark.Blank();
+			var connectionInfo = this.ToJson();
+			var str = string.Format(
+				"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters:{2} {4}{5}{6}{7}}}",
+				memberName,
+				connectionInfo,
+				methodParameters,
+				mark,
+				string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
+				string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
+				string.IsNullOrWhiteSpace( notes ) ? string.Empty : ",Notes: " + notes,
+				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
+				);
+			return str;
+		}
 	}
 }

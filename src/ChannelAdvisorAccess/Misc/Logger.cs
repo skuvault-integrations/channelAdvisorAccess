@@ -37,5 +37,15 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			Log().Trace( "[channelAdvisor] Trace info:{0}.", info );
 		}
+
+		public static void LogTraceRetryStarted( string info )
+		{
+			Log().Trace( "[channelAdvisor] TraceRetryStarted info:{0}.", info );
+		}
+
+		public static void LogTraceRetryEnd( string info )
+		{
+			Log().Trace( "[channelAdvisor] TraceRetryEnd info:{0}.", info );
+		}
 	}
 }

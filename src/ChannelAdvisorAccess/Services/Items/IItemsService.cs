@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
@@ -17,7 +18,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// </summary>
 		string AccountId{ get; }
 
-		void Ping();
+		void Ping( Mark mark = null );
+		Func< string > AdditionalLogInfo{ get; set; }
 		Task PingAsync();
 		bool DoesSkuExist( string sku );
 		Task< bool > DoesSkuExistAsync( string sku );
