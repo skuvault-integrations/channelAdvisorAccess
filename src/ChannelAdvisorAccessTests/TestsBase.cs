@@ -5,6 +5,8 @@ using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.Services.Listing;
 using ChannelAdvisorAccess.Services.Orders;
 using ChannelAdvisorAccess.Services.Shipping;
+using Netco.Logging;
+using Netco.Logging.NLogIntegration;
 using NUnit.Framework;
 
 namespace ChannelAdvisorAccessTests
@@ -23,6 +25,8 @@ namespace ChannelAdvisorAccessTests
 			this.ListingService = factory.CreateListingService( "test", Credentials.AccountId );
 			this.OrdersService = factory.CreateOrdersService( "test", Credentials.AccountId );
 			this.ShippingService = factory.CreateShippingService( "test", Credentials.AccountId );
+
+			NetcoLogger.LoggerFactory = new NLogLoggerFactory();
 		}
 
 		public IShippingService ShippingService{ get; private set; }

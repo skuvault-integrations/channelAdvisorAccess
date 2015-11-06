@@ -132,6 +132,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
@@ -173,7 +176,7 @@
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Misc\AP.cs" />
     <Compile Include="Misc\ExtensionsInternal.cs" />
-    <Compile Include="Misc\Logger.cs" />
+    <Compile Include="Misc\ChannelAdvisorLogger.cs" />
     <Compile Include="Misc\Mark.cs" />
     <Compile Include="Misc\PagedApiResponse.cs" />
     <Compile Include="Misc\ItemExtensions.cs" />
