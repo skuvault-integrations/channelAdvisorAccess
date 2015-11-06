@@ -22,7 +22,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		Func< string > AdditionalLogInfo{ get; set; }
 		Task PingAsync( Mark mark = null );
 		bool DoesSkuExist( string sku, Mark mark = null );
-		Task< bool > DoesSkuExistAsync( string sku );
+		Task< bool > DoesSkuExistAsync( string sku, Mark mark = null );
 		IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus );
 		Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus );
 		IEnumerable< InventoryItemResponse > GetAllItems();
