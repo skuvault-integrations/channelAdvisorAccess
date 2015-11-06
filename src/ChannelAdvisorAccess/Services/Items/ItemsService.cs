@@ -211,14 +211,34 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus )
+		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus, Mark mark = null )
 		{
-			return await skus.ProcessWithPagesAsync< string, DoesSkuExistResponse >( 500, async skusPage =>
-				await AP.QueryAsync.Get( async () =>
-				{
-					var skusResult = await this._client.DoesSkuExistListAsync( this._credentials, this.AccountId, skusPage.ToArray() ).ConfigureAwait( false );
-					return this.GetResultWithSuccessCheck( skusResult, skusResult.DoesSkuExistListResult.ResultData );
-				} ) ).ConfigureAwait( false );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				var doesSkuExistResponses = await skus.ProcessWithPagesAsync< string, DoesSkuExistResponse >( 500, async skusPage =>
+					await AP.QueryAsync.Get( async () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+						var skusResult = await this._client.DoesSkuExistListAsync( this._credentials, this.AccountId, skusPage.ToArray() ).ConfigureAwait( false );
+						var resultWithSuccessCheck = this.GetResultWithSuccessCheck( skusResult, skusResult.DoesSkuExistListResult.ResultData );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+						return resultWithSuccessCheck;
+					} ) ).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : doesSkuExistResponses.ToJson() ) );
+				return doesSkuExistResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public IEnumerable< InventoryItemResponse > GetAllItems()

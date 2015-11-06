@@ -24,7 +24,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		bool DoesSkuExist( string sku, Mark mark = null );
 		Task< bool > DoesSkuExistAsync( string sku, Mark mark = null );
 		IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, Mark mark = null );
-		Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus );
+		Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus, Mark mark = null );
 		IEnumerable< InventoryItemResponse > GetAllItems();
 
 		/// <summary>
