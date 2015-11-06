@@ -12,6 +12,7 @@ using ChannelAdvisorAccess.Misc;
 using CuttingEdge.Conditions;
 using Netco.Extensions;
 using Netco.Logging;
+using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -23,6 +24,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		private readonly ObjectCache _cache;
 		private readonly string _allItemsCacheKey;
 		private readonly object _inventoryCacheLock = new Object();
+
+		[ JsonIgnore ]
 		public Func< string > AdditionalLogInfo{ get; set; }
 
 		private string AdditionalLogInfoString
