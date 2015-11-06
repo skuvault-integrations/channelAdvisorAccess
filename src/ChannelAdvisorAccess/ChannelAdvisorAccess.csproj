@@ -169,8 +169,10 @@
     <Compile Include="Exceptions\ChannelAdvisorException.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Misc\AP.cs" />
+    <Compile Include="Misc\Mark.cs" />
     <Compile Include="Misc\PagedApiResponse.cs" />
     <Compile Include="Misc\ItemExtensions.cs" />
+    <Compile Include="Misc\PredefinedValues.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\AdminService\Reference.cs">
       <AutoGen>True</AutoGen>
