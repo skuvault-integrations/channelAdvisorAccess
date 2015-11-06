@@ -171,10 +171,8 @@ namespace ChannelAdvisorAccess.Services.Items
 				}
 					);
 				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : skuExist.ToJson() ) );
-
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( skuExist, skuExist.DoesSkuExistResult.ResultData );
 				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : resultWithSuccessCheck.ToJson() ) );
-
 				return resultWithSuccessCheck;
 			}
 			catch( Exception exception )
@@ -185,14 +183,32 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus )
+		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, Mark mark = null )
 		{
-			return skus.ProcessWithPages( 500, skusPage =>
-				AP.Query.Get( () =>
-				{
-					var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray() );
-					return this.GetResultWithSuccessCheck( skusResult, skusResult.ResultData );
-				} ) );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+				var doesSkuExistResponses = skus.ProcessWithPages( 500, skusPage =>
+					AP.Query.Get( () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+						var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray() );
+						var resultWithSuccessCheck = this.GetResultWithSuccessCheck( skusResult, skusResult.ResultData );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+						return resultWithSuccessCheck;
+					} ) );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : doesSkuExistResponses.ToJson() ) );
+				return doesSkuExistResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus )
