@@ -125,10 +125,31 @@ namespace ChannelAdvisorAccess.Services.Items
 		#endregion
 
 		#region Get items
-		public bool DoesSkuExist( string sku )
+		public bool DoesSkuExist( string sku, Mark mark = null )
 		{
-			var skuExist = AP.Query.Get( () => this._client.DoesSkuExist( this._credentials, this.AccountId, sku ) );
-			return this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+				var skuExist = AP.Query.Get( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+					var result = this._client.DoesSkuExist( this._credentials, this.AccountId, sku );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : result.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					return result;
+				} );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : skuExist.ToJson() ) );
+				return this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task< bool > DoesSkuExistAsync( string sku )
