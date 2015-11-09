@@ -64,11 +64,12 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="filter">The filter.</param>
 		/// <param name="startPage">The first page number to query.</param>
 		/// <param name="pageLimit">The max number of pages to query.</param>
+		/// <param name="mark"></param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit );
+		Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null );
 
-		AttributeInfo[] GetAttributes( string sku );
+		AttributeInfo[] GetAttributes( string sku, Mark mark = null );
 		Task< AttributeInfo[] > GetAttributesAsync( string sku );
 
 		/// <summary>

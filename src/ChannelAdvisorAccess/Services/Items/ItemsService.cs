@@ -313,7 +313,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items by skus.
 		/// </summary>
 		/// <param name="skus">The skus.</param>
-		/// <param name="mark"></param>
+		/// <param name="mark">use it to simplify navigation inside log, allows to view call ierarchy</param>
 		/// <returns>Enumerator to process items. <c>null</c> is returned
 		/// for non-existing skus.</returns>
 		/// <remarks>Items are pulled 1 at a time to handle non-existing skus.
@@ -391,7 +391,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items matching filter.
 		/// </summary>
 		/// <param name="filter">The filter.</param>
-		/// <param name="mark"></param>
+		/// <param name="mark">use it to simplify navigation inside log, allows to view call ierarchy</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
 		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark = null )
@@ -456,7 +456,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items matching filter.
 		/// </summary>
 		/// <param name="filter">The filter.</param>
-		/// <param name="mark"></param>
+		/// <param name="mark">use it to simplify navigation inside log, allows to view call ierarchy</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
 		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark = null )
@@ -467,7 +467,6 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
-
 				filter.Criteria.PageSize = 100;
 				filter.Criteria.PageNumber = 0;
 
@@ -520,43 +519,94 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="filter">The filter.</param>
 		/// <param name="startPage">The first page number to query.</param>
 		/// <param name="pageLimit">The max number of pages to query.</param>
+		/// <param name="mark">use it to simplify navigation inside log, allows to view call ierarchy</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit )
+		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null )
 		{
-			filter.Criteria.PageSize = 100;
-			filter.Criteria.PageNumber = ( startPage > 0 ) ? startPage - 1 : 1;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			var items = new List< InventoryItemResponse >();
-			for( var iteration = 0; iteration < pageLimit; iteration++ )
+			try
 			{
-				filter.Criteria.PageNumber += 1;
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+				filter.Criteria.PageSize = 100;
+				filter.Criteria.PageNumber = ( startPage > 0 ) ? startPage - 1 : 1;
 
-				var itemResponse = await AP.QueryAsync.Get( async () => 
-					await this._client.GetFilteredInventoryItemListAsync( this._credentials, this.AccountId, filter.Criteria, filter.DetailLevel, filter.SortField, filter.SortDirection )
-					.ConfigureAwait( false ) ).ConfigureAwait( false );
+				var items = new List< InventoryItemResponse >();
+				for( var iteration = 0; iteration < pageLimit; iteration++ )
+				{
+					filter.Criteria.PageNumber += 1;
 
-				if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
-					continue;
+					var itemResponse = await AP.QueryAsync.Get( async () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						var getFilteredInventoryItemListResponse = await this._client.GetFilteredInventoryItemListAsync( this._credentials, this.AccountId, filter.Criteria, filter.DetailLevel, filter.SortField, filter.SortDirection )
+							.ConfigureAwait( false );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getFilteredInventoryItemListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return getFilteredInventoryItemListResponse;
+					}
+						).ConfigureAwait( false );
 
-				var pageItems = itemResponse.GetFilteredInventoryItemListResult.ResultData;
-				if( pageItems == null )
-					return new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, true );
+					if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
+						continue;
 
-				items.AddRange( pageItems );
-				if( pageItems.Length == 0 || pageItems.Length < filter.Criteria.PageSize )
-					return new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, true );
+					var pageItems = itemResponse.GetFilteredInventoryItemListResult.ResultData;
+					if( pageItems == null )
+					{
+						var pagedApiResponse = new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, true );
+						ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, notes : "PageResponse", methodResult : pagedApiResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return pagedApiResponse;
+					}
+
+					items.AddRange( pageItems );
+					if( pageItems.Length == 0 || pageItems.Length < filter.Criteria.PageSize )
+					{
+						var pagedApiResponse = new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, true );
+						ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, notes : "PageResponse", methodResult : pagedApiResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return pagedApiResponse;
+					}
+				}
+
+				var apiResponse = new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+				return apiResponse;
 			}
-
-			return new PagedApiResponse< InventoryItemResponse >( items, filter.Criteria.PageNumber, false );
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public AttributeInfo[] GetAttributes( string sku )
+		public AttributeInfo[] GetAttributes( string sku, Mark mark = null )
 		{
-			var attributeList = AP.Query.Get(
-				() =>
-					this._client.GetInventoryItemAttributeList( this._credentials, this.AccountId, sku ) );
-			return this.GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var attributeList = AP.Query.Get( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var apiResultOfArrayOfAttributeInfo = this._client.GetInventoryItemAttributeList( this._credentials, this.AccountId, sku );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfAttributeInfo.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					return apiResultOfArrayOfAttributeInfo;
+				}
+					);
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : attributeList.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				return resultWithSuccessCheck;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task< AttributeInfo[] > GetAttributesAsync( string sku )
