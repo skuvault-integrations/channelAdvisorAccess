@@ -1351,7 +1351,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		#endregion
 
 		#region Update items
-		public void SynchItem( InventoryItemSubmit item, bool isCreateNew = false )
+		public void SynchItem( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null )
 		{
 			AP.Submit.Do( () =>
 			{
@@ -1363,7 +1363,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} );
 		}
 
-		public async Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false )
+		public async Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null )
 		{
 			await AP.SubmitAsync.Do( async () =>
 			{
@@ -1375,7 +1375,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ).ConfigureAwait( false );
 		}
 
-		public void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false )
+		public void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null )
 		{
 			if( !isCreateNew )
 			{
@@ -1390,7 +1390,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ) );
 		}
 
-		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false )
+		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null )
 		{
 			if( !isCreateNew )
 			{
@@ -1408,7 +1408,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ) ).ConfigureAwait( false );
 		}
 
-		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice )
+		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark = null )
 		{
 			AP.Submit.Do( () =>
 			{
@@ -1417,7 +1417,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} );
 		}
 
-		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice )
+		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark = null )
 		{
 			await AP.SubmitAsync.Do( async () =>
 			{
@@ -1426,7 +1426,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ).ConfigureAwait( false );
 		}
 
-		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
+		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark = null )
 		{
 			itemQuantityAndPrices.DoWithPages( 5000, itemsPage => AP.Submit.Do( () =>
 			{
@@ -1435,7 +1435,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ) );
 		}
 
-		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices )
+		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark = null )
 		{
 			await itemQuantityAndPrices.DoWithPagesAsync( 500, async i => await AP.SubmitAsync.Do( async () =>
 			{
@@ -1444,7 +1444,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 		}
 
-		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason )
+		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason, Mark mark = null )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
@@ -1455,7 +1455,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ) );
 		}
 
-		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason )
+		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason, Mark mark = null )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
@@ -1466,7 +1466,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 		}
 
-		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason )
+		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark = null )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
@@ -1477,7 +1477,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ) );
 		}
 
-		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason )
+		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark = null )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
