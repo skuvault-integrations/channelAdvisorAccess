@@ -362,7 +362,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
-				var checkedSkus = await this.DoSkusExistAsync( skus ).ConfigureAwait( false );
+				var checkedSkus = await this.DoSkusExistAsync( skus, mark ).ConfigureAwait( false );
 				var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
 
 				var message = "{\"ExistingSkus\":\"" + existingSkus.ToJson() + "\"}";
@@ -370,9 +370,15 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				var inventoryItemResponses = await existingSkus.ProcessWithPagesAsync< string, InventoryItemResponse >( 100, async skusPage =>
 				{
-					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : skusPage.ToJson() ) );
-					var itemsResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemListAsync( this._credentials, this.AccountId, skusPage.ToArray() ) ).ConfigureAwait( false );
-					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : itemsResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : skusPage.ToJson() ) );
+					var itemsResult = await AP.QueryAsync.Get( async () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : skusPage.ToJson() ) );
+						var getInventoryItemListResponse = await this._client.GetInventoryItemListAsync( this._credentials, this.AccountId, skusPage.ToArray() );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getInventoryItemListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : skusPage.ToJson() ) );
+						return getInventoryItemListResponse;
+					} ).ConfigureAwait( false );
+
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson(), methodResult : itemsResult.ToJson() ) );
 
 					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.GetInventoryItemListResult.ResultData );
 				} ).ConfigureAwait( false );
@@ -1134,7 +1140,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
-				var filteredSkus = this.GetFilteredSkus( new ItemsFilter() );
+				var filteredSkus = this.GetFilteredSkus( new ItemsFilter(), mark );
 				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				return filteredSkus;
 			}
@@ -1154,7 +1160,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
-				var filteredSkus = await this.GetFilteredSkusAsync( new ItemsFilter() );
+				var filteredSkus = await this.GetFilteredSkusAsync( new ItemsFilter(), mark );
 				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				return filteredSkus;
 			}
@@ -1451,7 +1457,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			if( !isCreateNew )
 			{
-				var existSkus = ( this.DoSkusExist( items.Select( x => x.Sku ) ) ).Select( x => x.Sku );
+				var existSkus = ( this.DoSkusExist( items.Select( x => x.Sku ), mark ) ).Select( x => x.Sku );
 				items = items.Where( x => existSkus.Contains( x.Sku ) );
 			}
 
