@@ -1233,28 +1233,55 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark = null )
 		{
-			filter.Criteria.PageSize = 100;
-			filter.Criteria.PageNumber = 0;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			var skus = new List< string >();
-			while( true )
+			try
 			{
-				filter.Criteria.PageNumber += 1;
-				var itemResponse = await AP.QueryAsync.Get( async () => await this._client.GetFilteredSkuListAsync
-					( this._credentials, this.AccountId, filter.Criteria,
-						filter.SortField, filter.SortDirection ).ConfigureAwait( false ) ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+				filter.Criteria.PageSize = 100;
+				filter.Criteria.PageNumber = 0;
 
-				if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
-					continue;
+				var skus = new List< string >();
+				while( true )
+				{
+					filter.Criteria.PageNumber += 1;
+					var itemResponse = await AP.QueryAsync.Get( async () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						var getFilteredSkuListResponse = await this._client.GetFilteredSkuListAsync
+							( this._credentials, this.AccountId, filter.Criteria,
+								filter.SortField, filter.SortDirection ).ConfigureAwait( false );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getFilteredSkuListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return getFilteredSkuListResponse;
+					} ).ConfigureAwait( false );
 
-				var pageSkus = itemResponse.GetFilteredSkuListResult.ResultData;
-				if( pageSkus == null )
-					return skus;
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 
-				skus.AddRange( pageSkus );
+					if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
+						continue;
 
-				if( pageSkus.Length == 0 || pageSkus.Length < filter.Criteria.PageSize )
-					return skus;
+					var pageSkus = itemResponse.GetFilteredSkuListResult.ResultData;
+					if( pageSkus == null )
+					{
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : skus.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return skus;
+					}
+
+					skus.AddRange( pageSkus );
+
+					if( pageSkus.Length == 0 || pageSkus.Length < filter.Criteria.PageSize )
+					{
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : skus.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return skus;
+					}
+				}
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
 			}
 		}
 
