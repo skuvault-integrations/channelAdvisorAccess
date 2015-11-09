@@ -1353,14 +1353,33 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region Update items
 		public void SynchItem( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null )
 		{
-			AP.Submit.Do( () =>
-			{
-				if( !isCreateNew && !this.DoesSkuExist( item.Sku ) )
-					return;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-				var resultOfBoolean = this._client.SynchInventoryItem( this._credentials, this.AccountId, item );
-				CheckCaSuccess( resultOfBoolean );
-			} );
+			var parameters = new { item, isCreateNew };
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+
+				AP.Submit.Do( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+					if( !isCreateNew && !this.DoesSkuExist( item.Sku, mark ) )
+						return;
+
+					var resultOfBoolean = this._client.SynchInventoryItem( this._credentials, this.AccountId, item );
+					CheckCaSuccess( resultOfBoolean );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+				} );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : "void", additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null )
