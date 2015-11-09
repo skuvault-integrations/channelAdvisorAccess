@@ -1686,31 +1686,84 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
-			await skus.DoWithPagesAsync( 500, async s => await AP.SubmitAsync.Do( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			var parameters = new { labels, createLabelIfNotExist, skus, reason };
+
+			try
 			{
-				var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, s.ToArray(), reason ).ConfigureAwait( false );
-				CheckCaSuccess( resultOfBoolean.AssignLabelListToInventoryItemListResult );
-			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+
+				await skus.DoWithPagesAsync( 500, async s => await AP.SubmitAsync.Do( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : s.ToJson() ) );
+					var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, s.ToArray(), reason ).ConfigureAwait( false );
+					CheckCaSuccess( resultOfBoolean.AssignLabelListToInventoryItemListResult );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : s.ToJson() ) );
+				} ).ConfigureAwait( false ) ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 		#endregion
 
 		#region Delete item
-		public void DeleteItem( string sku )
+		public void DeleteItem( string sku, Mark mark = null )
 		{
-			AP.Submit.Do( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
-				CheckCaSuccess( resultOfBoolean );
-			} );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+
+				AP.Submit.Do( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
+					CheckCaSuccess( resultOfBoolean );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				} );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task DeleteItemAsync( string sku )
+		public async Task DeleteItemAsync( string sku, Mark mark = null )
 		{
-			await AP.SubmitAsync.Do( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var resultOfBoolean = await this._client.DeleteInventoryItemAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false );
-				CheckCaSuccess( resultOfBoolean.DeleteInventoryItemResult );
-			} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+
+				await AP.SubmitAsync.Do( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var resultOfBoolean = await this._client.DeleteInventoryItemAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false );
+					CheckCaSuccess( resultOfBoolean.DeleteInventoryItemResult );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 		#endregion
 
@@ -1922,20 +1975,27 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		private string CreateMethodCallInfo( string methodParameters = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "" )
 		{
-			mark = mark ?? Mark.Blank();
-			var connectionInfo = this.ToJson();
-			var str = string.Format(
-				"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters:{2} {4}{5}{6}{7}}}",
-				memberName,
-				connectionInfo,
-				string.IsNullOrWhiteSpace( methodParameters ) ? PredefinedValues.EmptyJsonObject : methodParameters,
-				mark,
-				string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
-				string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
-				string.IsNullOrWhiteSpace( notes ) ? string.Empty : ",Notes: " + notes,
-				string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
-				);
-			return str;
+			try
+			{
+				mark = mark ?? Mark.Blank();
+				var connectionInfo = this.ToJson();
+				var str = string.Format(
+					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters:{2} {4}{5}{6}{7}}}",
+					memberName,
+					connectionInfo,
+					string.IsNullOrWhiteSpace( methodParameters ) ? PredefinedValues.EmptyJsonObject : methodParameters,
+					mark,
+					string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
+					string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
+					string.IsNullOrWhiteSpace( notes ) ? string.Empty : ",Notes: " + notes,
+					string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
+					);
+				return str;
+			}
+			catch( Exception exception )
+			{
+				return PredefinedValues.EmptyJsonObject;
+			}
 		}
 	}
 }

@@ -127,8 +127,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason, Mark mark = null );
 		void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark = null );
 		Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark = null );
-		void DeleteItem( string sku );
-		Task DeleteItemAsync( string sku );
+		void DeleteItem( string sku, Mark mark = null );
+		Task DeleteItemAsync( string sku, Mark mark = null );
 		ClassificationConfigurationInformation[] GetClassificationConfigInfo();
 		Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync();
 
