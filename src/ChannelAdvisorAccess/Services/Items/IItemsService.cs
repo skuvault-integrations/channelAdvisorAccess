@@ -129,10 +129,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark = null );
 		void DeleteItem( string sku, Mark mark = null );
 		Task DeleteItemAsync( string sku, Mark mark = null );
-		ClassificationConfigurationInformation[] GetClassificationConfigInfo();
-		Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync();
+		ClassificationConfigurationInformation[] GetClassificationConfigInfo( Mark mark = null );
+		Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( Mark mark = null );
 
-		DistributionCenterResponse[] GetDistributionCenterList();
-		Task< DistributionCenterResponse[] > GetDistributionCenterListAsync();
+		DistributionCenterResponse[] GetDistributionCenterList( Mark mark = null );
+		Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( Mark mark = null );
 	}
 }
