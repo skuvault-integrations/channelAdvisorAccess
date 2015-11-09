@@ -76,11 +76,12 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the additional item quantities.
 		/// </summary>
 		/// <param name="sku">The sku.</param>
+		/// <param name="mark"></param>
 		/// <returns>Item quantities.</returns>
 		/// <remarks>This is required since <see cref="ItemsService.GetItems"/> returns
 		/// only available quantity.</remarks>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
-		QuantityInfoResponse GetItemQuantities( string sku );
+		QuantityInfoResponse GetItemQuantities( string sku, Mark mark = null );
 
 		Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku );
 		ClassificationConfigurationInformation[] GetClassificationConfigurationInformation();

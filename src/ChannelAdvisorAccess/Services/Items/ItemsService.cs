@@ -621,7 +621,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 					var getInventoryItemAttributeListResponse = await this._client.GetInventoryItemAttributeListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false );
-					ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getInventoryItemAttributeListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getInventoryItemAttributeListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 					return getInventoryItemAttributeListResponse;
 				}
 					).ConfigureAwait( false );
@@ -643,13 +643,38 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the additional item quantities.
 		/// </summary>
 		/// <param name="sku">The sku.</param>
+		/// <param name="mark"></param>
 		/// <returns>Item quantities.</returns>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
-		public QuantityInfoResponse GetItemQuantities( string sku )
+		public QuantityInfoResponse GetItemQuantities( string sku, Mark mark = null )
 		{
-			var requestResult = AP.Query.Get( () =>
-				this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku ) );
-			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var requestResult = AP.Query.Get( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var apiResultOfQuantityInfoResponse = this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku );
+					ChannelAdvisorLogger.LogTraceRetryEnd(this.CreateMethodCallInfo(mark: mark, methodResult: apiResultOfQuantityInfoResponse.ToJson(), additionalInfo: this.AdditionalLogInfoString, methodParameters: sku));
+
+					return apiResultOfQuantityInfoResponse;
+				}
+					);
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+
+				return resultWithSuccessCheck;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku )
