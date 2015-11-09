@@ -1128,50 +1128,106 @@ namespace ChannelAdvisorAccess.Services.Items
 		#region  Skus
 		public IEnumerable< string > GetAllSkus( Mark mark = null )
 		{
-			return this.GetFilteredSkus( new ItemsFilter() );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+				var filteredSkus = this.GetFilteredSkus( new ItemsFilter() );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				return filteredSkus;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task< IEnumerable< string > > GetAllSkusAsync( Mark mark = null )
 		{
-			return await this.GetFilteredSkusAsync( new ItemsFilter() );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+				var filteredSkus = await this.GetFilteredSkusAsync( new ItemsFilter() );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				return filteredSkus;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter, Mark mark = null )
 		{
-			filter.Criteria.PageSize = 100;
-			filter.Criteria.PageNumber = 0;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			filter.DetailLevel.IncludeClassificationInfo = true;
-			filter.DetailLevel.IncludePriceInfo = true;
-			filter.DetailLevel.IncludeQuantityInfo = true;
-
-			while( true )
+			try
 			{
-				filter.Criteria.PageNumber += 1;
-				var itemResponse = AP.Query.Get(
-					() => this._client.GetFilteredSkuList
-						(
-							this._credentials, this.AccountId, filter.Criteria,
-							filter.SortField, filter.SortDirection ) );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
 
-				if( !this.IsRequestSuccessful( itemResponse ) )
+				filter.Criteria.PageSize = 100;
+				filter.Criteria.PageNumber = 0;
+
+				filter.DetailLevel.IncludeClassificationInfo = true;
+				filter.DetailLevel.IncludePriceInfo = true;
+				filter.DetailLevel.IncludeQuantityInfo = true;
+
+				var filteredSkus = new List< string >();
+				while( true )
 				{
-					yield return null;
-					continue;
+					filter.Criteria.PageNumber += 1;
+					var itemResponse = AP.Query.Get(
+						() =>
+						{
+							ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+							var apiResultOfArrayOfString = this._client.GetFilteredSkuList
+								(
+									this._credentials, this.AccountId, filter.Criteria,
+									filter.SortField, filter.SortDirection );
+							ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfString.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+
+							return apiResultOfArrayOfString;
+						} );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+
+					if( !this.IsRequestSuccessful( itemResponse ) )
+					{
+						filteredSkus.Add( null );
+						continue;
+					}
+
+					var items = itemResponse.ResultData;
+
+					if( items == null )
+					{
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return filteredSkus;
+					}
+
+					filteredSkus.AddRange( items );
+
+					if( items.Length == 0 || items.Length < filter.Criteria.PageSize )
+					{
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return filteredSkus;
+					}
 				}
-
-				var items = itemResponse.ResultData;
-
-				if( items == null )
-					yield break;
-
-				foreach( var item in items )
-				{
-					yield return item;
-				}
-
-				if( items.Length == 0 || items.Length < filter.Criteria.PageSize )
-					yield break;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
 			}
 		}
 
