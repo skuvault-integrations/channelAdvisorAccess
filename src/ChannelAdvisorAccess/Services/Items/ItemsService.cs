@@ -827,18 +827,59 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public ImageInfoResponse[] GetImageList( string sku, Mark mark = null )
 		{
-			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ) );
-			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var requestResult = AP.Query.Get( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var apiResultOfArrayOfImageInfoResponse = this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfImageInfoResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					return apiResultOfArrayOfImageInfoResponse;
+				} );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				return resultWithSuccessCheck;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark = null )
 		{
-			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemImageListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			if (!this.IsRequestSuccessfulImage(requestResult))
-				return default(ImageInfoResponse[]);
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var requestResult = await AP.QueryAsync.Get( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var getInventoryItemImageListResponse = await this._client.GetInventoryItemImageListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getInventoryItemImageListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					return getInventoryItemImageListResponse;
+				} ).ConfigureAwait( false );
 
-			return requestResult.GetInventoryItemImageListResult.ResultData;
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				var imageInfoResponses = !this.IsRequestSuccessfulImage( requestResult ) ? default( ImageInfoResponse[] ) : requestResult.GetInventoryItemImageListResult.ResultData;
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : imageInfoResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				return imageInfoResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public DistributionCenterInfoResponse[] GetShippingInfo( string sku, Mark mark = null )
