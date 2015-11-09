@@ -31,11 +31,12 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items by skus.
 		/// </summary>
 		/// <param name="skus">The skus.</param>
+		/// <param name="mark"></param>
 		/// <returns>Enumerator to process items. <c>null</c> is returned
 		/// for non-existing skus.</returns>
 		/// <remarks>Items are pulled 1 at a time to handle non-existing skus.
 		/// This results in slower performance.</remarks>
-		IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus );
+		IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, Mark mark = null );
 
 		Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus );
 

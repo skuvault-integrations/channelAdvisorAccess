@@ -313,21 +313,45 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items by skus.
 		/// </summary>
 		/// <param name="skus">The skus.</param>
+		/// <param name="mark"></param>
 		/// <returns>Enumerator to process items. <c>null</c> is returned
 		/// for non-existing skus.</returns>
 		/// <remarks>Items are pulled 1 at a time to handle non-existing skus.
 		/// This results in slower performance.</remarks>
-		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus )
+		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, Mark mark = null )
 		{
-			var checkedSkus = this.DoSkusExist( skus );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
-
-			return existingSkus.ProcessWithPages( 100, skusPage =>
+			try
 			{
-				var itemsResult = AP.Query.Get( () => this._client.GetInventoryItemList( this._credentials, this.AccountId, skusPage.ToArray() ) );
-				return this.GetResultWithSuccessCheck( itemsResult, itemsResult.ResultData );
-			} );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+				var checkedSkus = this.DoSkusExist( skus, mark );
+				var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
+
+				var message = "{\"ExistingSkus\":\"" + existingSkus.ToJson() + "\"}";
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, notes : message ) );
+
+				var inventoryItemResponses = existingSkus.ProcessWithPages( 100, skusPage =>
+				{
+					var itemsResult = AP.Query.Get( () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : skusPage.ToJson() ) );
+						var apiResultOfArrayOfInventoryItemResponse = this._client.GetInventoryItemList( this._credentials, this.AccountId, skusPage.ToArray() );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : apiResultOfArrayOfInventoryItemResponse.ToJson(), methodParameters : skusPage.ToJson() ) );
+						return apiResultOfArrayOfInventoryItemResponse;
+					} );
+					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.ResultData );
+				} );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson(), methodResult : inventoryItemResponses.ToJson() ) );
+				return inventoryItemResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus )
