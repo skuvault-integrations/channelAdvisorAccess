@@ -1287,32 +1287,65 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null )
 		{
-			filter.Criteria.PageSize = 100;
-			filter.Criteria.PageNumber = ( startPage > 0 ) ? startPage -1 : 1;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			var skus = new List< string >();
-			for( var iteration = 0; iteration < pageLimit; iteration++ )
+			var parameters = new { filter, startPage, pageLimit };
+
+			try
 			{
-				filter.Criteria.PageNumber += 1;
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				var itemResponse = await AP.QueryAsync.Get( async () => 
-					await this._client.GetFilteredSkuListAsync( this._credentials, this.AccountId, filter.Criteria, filter.SortField, filter.SortDirection )
-					.ConfigureAwait( false ) ).ConfigureAwait( false );
+				filter.Criteria.PageSize = 100;
+				filter.Criteria.PageNumber = ( startPage > 0 ) ? startPage - 1 : 1;
 
-				if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
-					continue;
+				var skus = new List< string >();
+				for( var iteration = 0; iteration < pageLimit; iteration++ )
+				{
+					filter.Criteria.PageNumber += 1;
 
-				var pageSkus = itemResponse.GetFilteredSkuListResult.ResultData;
-				if( pageSkus == null )
-					return new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, true );
+					var itemResponse = await AP.QueryAsync.Get( async () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+						var getFilteredSkuListResponse = await this._client.GetFilteredSkuListAsync( this._credentials, this.AccountId, filter.Criteria, filter.SortField, filter.SortDirection )
+							.ConfigureAwait( false );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getFilteredSkuListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+						return getFilteredSkuListResponse;
+					} ).ConfigureAwait( false );
 
-				skus.AddRange( pageSkus );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				if( pageSkus.Length == 0 || pageSkus.Length < filter.Criteria.PageSize )
-					return new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, true );
+					if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
+						continue;
+
+					var pageSkus = itemResponse.GetFilteredSkuListResult.ResultData;
+					if( pageSkus == null )
+					{
+						var pagedApiResponse = new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, true );
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : pagedApiResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+						return pagedApiResponse;
+					}
+
+					skus.AddRange( pageSkus );
+
+					if( pageSkus.Length == 0 || pageSkus.Length < filter.Criteria.PageSize )
+					{
+						var pagedApiResponse = new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, true );
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : pagedApiResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+						return pagedApiResponse;
+					}
+				}
+
+				var apiResponse = new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+				return apiResponse;
 			}
-
-			return new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, false );
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		#endregion
