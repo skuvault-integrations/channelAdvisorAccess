@@ -25,7 +25,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task< bool > DoesSkuExistAsync( string sku, Mark mark = null );
 		IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, Mark mark = null );
 		Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus, Mark mark = null );
-		IEnumerable< InventoryItemResponse > GetAllItems();
+		IEnumerable< InventoryItemResponse > GetAllItems( Mark mark = null );
 
 		/// <summary>
 		/// Gets the items by skus.
@@ -43,9 +43,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items matching filter.
 		/// </summary>
 		/// <param name="filter">The filter.</param>
+		/// <param name="mark"></param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter );
+		IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark = null );
 
 		/// <summary>
 		/// Gets the items matching filter.

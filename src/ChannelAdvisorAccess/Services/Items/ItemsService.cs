@@ -240,38 +240,68 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public IEnumerable< InventoryItemResponse > GetAllItems()
+		public IEnumerable< InventoryItemResponse > GetAllItems( Mark mark = null )
 		{
-			if( this.UseCache() )
-				return this.GetCachedInventory();
-			else
-				return this.DownloadAllItems();
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				IEnumerable< InventoryItemResponse > inventoryItemResponses;
+				if( this.UseCache() )
+					inventoryItemResponses = this.GetCachedInventory();
+				else
+					inventoryItemResponses = this.DownloadAllItems();
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : inventoryItemResponses.ToJson() ) );
+
+				return inventoryItemResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		private IEnumerable< InventoryItemResponse > GetCachedInventory()
+		private IEnumerable< InventoryItemResponse > GetCachedInventory( Mark mark = null )
 		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+			IEnumerable< InventoryItemResponse > inventoryItemResponses;
 			lock( this._inventoryCacheLock )
 			{
 				var cachedInventory = this._cache.Get( this._allItemsCacheKey ) as IEnumerable< InventoryItemResponse >;
 				if( cachedInventory != null )
-					return cachedInventory;
+					inventoryItemResponses = cachedInventory;
 				else
 				{
-					var items = this.DownloadAllItems().ToList();
+					var items = this.DownloadAllItems( mark ).ToList();
 					this._cache.Set( this._allItemsCacheKey, items, new CacheItemPolicy { SlidingExpiration = this.SlidingCacheExpiration } );
-					return items;
+					inventoryItemResponses = items;
 				}
 			}
+			ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : inventoryItemResponses.ToJson() ) );
+			return inventoryItemResponses;
 		}
 
-		private IEnumerable< InventoryItemResponse > DownloadAllItems()
+		private IEnumerable< InventoryItemResponse > DownloadAllItems( Mark mark = null )
 		{
+			ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
 			var filter = new ItemsFilter
 			{
 				DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
 			};
 
-			return this.GetFilteredItems( filter );
+			var inventoryItemResponses = this.GetFilteredItems( filter );
+			ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : inventoryItemResponses.ToJson() ) );
+
+			return inventoryItemResponses;
 		}
 
 		private bool UseCache()
@@ -317,40 +347,53 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items matching filter.
 		/// </summary>
 		/// <param name="filter">The filter.</param>
+		/// <param name="mark"></param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter )
+		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark = null )
 		{
+			ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+
 			filter.Criteria.PageSize = 100;
 			filter.Criteria.PageNumber = 0;
 
+			var filteredItems = new List< InventoryItemResponse >();
 			while( true )
 			{
 				filter.Criteria.PageNumber += 1;
-				var itemResponse = AP.Query.Get( () => this._client.GetFilteredInventoryItemList
-					(
-						this._credentials,
-						this.AccountId, filter.Criteria, filter.DetailLevel,
-						filter.SortField, filter.SortDirection ) );
+				var itemResponse = AP.Query.Get( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+					var apiResultOfArrayOfInventoryItemResponse = this._client.GetFilteredInventoryItemList
+						(
+							this._credentials,
+							this.AccountId, filter.Criteria, filter.DetailLevel,
+							filter.SortField, filter.SortDirection );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfInventoryItemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+					return apiResultOfArrayOfInventoryItemResponse;
+				} );
 
 				if( !this.IsRequestSuccessful( itemResponse ) )
 				{
-					yield return null;
+					filteredItems.Add( null );
 					continue;
 				}
 
 				var items = itemResponse.ResultData;
 
 				if( items == null )
-					yield break;
-
-				foreach( var item in items )
 				{
-					yield return item;
+					ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : filteredItems.ToJson(), methodParameters : filter.ToJson() ) );
+					return filteredItems;
 				}
 
+				filteredItems.AddRange( items );
+
 				if( items.Length == 0 || items.Length < filter.Criteria.PageSize )
-					yield break;
+				{
+					ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : filteredItems.ToJson(), methodParameters : filter.ToJson() ) );
+					return filteredItems;
+				}
 			}
 		}
 
