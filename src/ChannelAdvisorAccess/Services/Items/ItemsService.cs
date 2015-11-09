@@ -1384,14 +1384,33 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null )
 		{
-			await AP.SubmitAsync.Do( async () =>
-			{
-				if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku ) ) )
-					return;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-				var resultOfBoolean = await this._client.SynchInventoryItemAsync( this._credentials, this.AccountId, item ).ConfigureAwait( false );
-				CheckCaSuccess( resultOfBoolean.SynchInventoryItemResult );
-			} ).ConfigureAwait( false );
+			var parameters = new { item, isCreateNew };
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+
+				await AP.SubmitAsync.Do( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+					if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku, mark ) ) )
+						return;
+
+					var resultOfBoolean = await this._client.SynchInventoryItemAsync( this._credentials, this.AccountId, item ).ConfigureAwait( false );
+					CheckCaSuccess( resultOfBoolean.SynchInventoryItemResult );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+				} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : "void", additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null )
