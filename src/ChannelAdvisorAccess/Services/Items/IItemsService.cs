@@ -38,7 +38,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// This results in slower performance.</remarks>
 		IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, Mark mark = null );
 
-		Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus );
+		Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus, Mark mark = null );
 
 		/// <summary>
 		/// Gets the items matching filter.
