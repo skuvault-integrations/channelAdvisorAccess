@@ -709,37 +709,37 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
+		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation( Mark mark = null )
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync()
+		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync( Mark mark = null )
 		{
 			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId ).ConfigureAwait( false ) ).ConfigureAwait( false );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetClassificationConfigurationInformationResult.ResultData );
 		}
 
-		public StoreInfo GetStoreInfo( string sku )
+		public StoreInfo GetStoreInfo( string sku, Mark mark = null )
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemStoreInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public async Task< StoreInfo > GetStoreInfoAsync( string sku )
+		public async Task< StoreInfo > GetStoreInfoAsync( string sku, Mark mark = null )
 		{
 			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemStoreInfoAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemStoreInfoResult.ResultData );
 		}
 
-		public ImageInfoResponse[] GetImageList( string sku )
+		public ImageInfoResponse[] GetImageList( string sku, Mark mark = null )
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemImageList( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku )
+		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark = null )
 		{
 			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemImageListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
 
@@ -749,25 +749,25 @@ namespace ChannelAdvisorAccess.Services.Items
 			return requestResult.GetInventoryItemImageListResult.ResultData;
 		}
 
-		public DistributionCenterInfoResponse[] GetShippingInfo( string sku )
+		public DistributionCenterInfoResponse[] GetShippingInfo( string sku, Mark mark = null )
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemShippingInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku )
+		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, Mark mark = null )
 		{
 			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemShippingInfoAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemShippingInfoResult.ResultData );
 		}
 
-		public VariationInfo GetVariationInfo( string sku )
+		public VariationInfo GetVariationInfo( string sku, Mark mark = null )
 		{
 			var requestResult = AP.Query.Get( () => this._client.GetInventoryItemVariationInfo( this._credentials, this.AccountId, sku ) );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 		}
 
-		public async Task< VariationInfo > GetVariationInfoAsync( string sku )
+		public async Task< VariationInfo > GetVariationInfoAsync( string sku, Mark mark = null )
 		{
 			var requestResult = await AP.QueryAsync.Get( async () => await this._client.GetInventoryItemVariationInfoAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
 			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemVariationInfoResult.ResultData );
@@ -777,11 +777,12 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the available quantity.
 		/// </summary>
 		/// <param name="sku">The sku of the item.</param>
+		/// <param name="mark"></param>
 		/// <returns>
 		/// The Available quantity for the specified sku.
 		/// </returns>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryQuantity"/>
-		public int GetAvailableQuantity( string sku )
+		public int GetAvailableQuantity( string sku, Mark mark = null )
 		{
 			var quantityResult = AP.Query.Get( () =>
 			{
@@ -792,7 +793,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			return quantityResult.ResultData;
 		}
 
-		public async Task< int > GetAvailableQuantityAsync( string sku )
+		public async Task< int > GetAvailableQuantityAsync( string sku, Mark mark = null )
 		{
 			var quantityResult = await AP.QueryAsync.Get( async () =>
 			{
@@ -803,7 +804,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			return quantityResult.ResultData;
 		}
 
-		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus )
+		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null )
 		{
 			return skus.ProcessWithPages( 100, s =>
 			{
@@ -813,7 +814,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			} );
 		}
 
-		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus )
+		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, Mark mark = null )
 		{
 			return await skus.ProcessWithPagesAsync< string, InventoryQuantityResponse >( 100, async s =>
 			{
@@ -822,18 +823,20 @@ namespace ChannelAdvisorAccess.Services.Items
 			} ).ConfigureAwait( false );
 		}
 
+		#endregion
+
 		#region  Skus
-		public IEnumerable< string > GetAllSkus()
+		public IEnumerable< string > GetAllSkus( Mark mark = null )
 		{
 			return this.GetFilteredSkus( new ItemsFilter() );
 		}
 
-		public async Task< IEnumerable< string > > GetAllSkusAsync()
+		public async Task< IEnumerable< string > > GetAllSkusAsync( Mark mark = null )
 		{
 			return await this.GetFilteredSkusAsync( new ItemsFilter() );
 		}
 
-		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter )
+		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter, Mark mark = null )
 		{
 			filter.Criteria.PageSize = 100;
 			filter.Criteria.PageNumber = 0;
@@ -872,7 +875,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter )
+		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark = null )
 		{
 			filter.Criteria.PageSize = 100;
 			filter.Criteria.PageNumber = 0;
@@ -899,7 +902,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit )
+		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null )
 		{
 			filter.Criteria.PageSize = 100;
 			filter.Criteria.PageNumber = ( startPage > 0 ) ? startPage -1 : 1;
@@ -928,7 +931,6 @@ namespace ChannelAdvisorAccess.Services.Items
 
 			return new PagedApiResponse< string >( skus, filter.Criteria.PageNumber, false );
 		}
-		#endregion
 
 		#endregion
 

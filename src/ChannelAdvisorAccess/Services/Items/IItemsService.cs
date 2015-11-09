@@ -84,36 +84,37 @@ namespace ChannelAdvisorAccess.Services.Items
 		QuantityInfoResponse GetItemQuantities( string sku, Mark mark = null );
 
 		Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, Mark mark = null );
-		ClassificationConfigurationInformation[] GetClassificationConfigurationInformation();
-		Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync();
-		StoreInfo GetStoreInfo( string sku );
-		Task< StoreInfo > GetStoreInfoAsync( string sku );
-		ImageInfoResponse[] GetImageList( string sku );
-		Task< ImageInfoResponse[] > GetImageListAsync( string sku );
+		ClassificationConfigurationInformation[] GetClassificationConfigurationInformation( Mark mark = null );
+		Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync( Mark mark = null );
+		StoreInfo GetStoreInfo( string sku, Mark mark = null );
+		Task< StoreInfo > GetStoreInfoAsync( string sku, Mark mark = null );
+		ImageInfoResponse[] GetImageList( string sku, Mark mark = null );
+		Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark = null );
 		
-		DistributionCenterInfoResponse[] GetShippingInfo( string sku );
-		Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku );
-		VariationInfo GetVariationInfo( string sku );
-		Task< VariationInfo > GetVariationInfoAsync( string sku );
+		DistributionCenterInfoResponse[] GetShippingInfo( string sku, Mark mark = null );
+		Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, Mark mark = null );
+		VariationInfo GetVariationInfo( string sku, Mark mark = null );
+		Task< VariationInfo > GetVariationInfoAsync( string sku, Mark mark = null );
 
 		/// <summary>
 		/// Gets the available quantity.
 		/// </summary>
 		/// <param name="sku">The sku of the item.</param>
+		/// <param name="mark"></param>
 		/// <returns>
 		/// The Available quantity for the specified sku.
 		/// </returns>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryQuantity"/>
-		int GetAvailableQuantity( string sku );
+		int GetAvailableQuantity( string sku, Mark mark = null );
 
-		Task< int > GetAvailableQuantityAsync( string sku );
-		IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus );
-		Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus );
-		IEnumerable< string > GetAllSkus();
-		Task< IEnumerable< string > > GetAllSkusAsync();
-		IEnumerable< string > GetFilteredSkus( ItemsFilter filter );
-		Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter );
-		Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit );
+		Task< int > GetAvailableQuantityAsync( string sku, Mark mark = null );
+		IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null );
+		Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, Mark mark = null );
+		IEnumerable< string > GetAllSkus( Mark mark = null );
+		Task< IEnumerable< string > > GetAllSkusAsync( Mark mark = null );
+		IEnumerable< string > GetFilteredSkus( ItemsFilter filter, Mark mark = null );
+		Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark = null );
+		Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null );
 		void SynchItem( InventoryItemSubmit item, bool isCreateNew = false );
 		Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false );
 		void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false );
