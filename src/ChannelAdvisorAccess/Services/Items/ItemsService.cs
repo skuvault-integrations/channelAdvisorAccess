@@ -1073,7 +1073,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					{
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson() ) );
 						var apiResultOfArrayOfInventoryQuantityResponse = this._client.GetInventoryQuantityList( this._credentials, this.AccountId, s.ToArray() );
-						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfInventoryQuantityResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfInventoryQuantityResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson() ) );
 						return apiResultOfArrayOfInventoryQuantityResponse;
 					} );
 
@@ -1081,7 +1081,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters : s.ToJson(), methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 					return resultWithSuccessCheck;
 				} );
-				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : inventoryQuantityResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : inventoryQuantityResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson() ) );
 				return inventoryQuantityResponses;
 			}
 			catch( Exception exception )
