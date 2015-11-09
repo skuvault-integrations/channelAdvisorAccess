@@ -1768,44 +1768,116 @@ namespace ChannelAdvisorAccess.Services.Items
 		#endregion
 
 		#region Get Config Info
-		public ClassificationConfigurationInformation[] GetClassificationConfigInfo()
+		public ClassificationConfigurationInformation[] GetClassificationConfigInfo( Mark mark = null )
 		{
-			return AP.Query.Get( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
-				CheckCaSuccess( result );
-				return result.ResultData;
-			} );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				var classificationConfigurationInformations = AP.Query.Get( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+					var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
+					CheckCaSuccess( result );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : result.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					return result.ResultData;
+				} );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : classificationConfigurationInformations.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				return classificationConfigurationInformations;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync()
+		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( Mark mark = null )
 		{
-			return await AP.QueryAsync.Get( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var result = await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
-				CheckCaSuccess( result.GetClassificationConfigurationInformationResult );
-				return result.GetClassificationConfigurationInformationResult.ResultData;
-			} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				var classificationConfigurationInformations = await AP.QueryAsync.Get( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+					var result = await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
+					CheckCaSuccess( result.GetClassificationConfigurationInformationResult );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : result.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					return result.GetClassificationConfigurationInformationResult.ResultData;
+				} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : classificationConfigurationInformations.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				return classificationConfigurationInformations;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public DistributionCenterResponse[] GetDistributionCenterList()
+		public DistributionCenterResponse[] GetDistributionCenterList( Mark mark = null )
 		{
-			return AP.Query.Get( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var result = this._client.GetDistributionCenterList( this._credentials, this.AccountId );
-				CheckCaSuccess( result );
-				return result.ResultData;
-			} );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				var distributionCenterResponses = AP.Query.Get( () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+					var result = this._client.GetDistributionCenterList( this._credentials, this.AccountId );
+					this.CheckCaSuccess( result );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : result.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					return result.ResultData;
+				} );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenterResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				return distributionCenterResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync()
+		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( Mark mark = null )
 		{
-			return await AP.QueryAsync.Get( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var result = await this._client.GetDistributionCenterListAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
-				CheckCaSuccess( result.GetDistributionCenterListResult );
-				return result.GetDistributionCenterListResult.ResultData;
-			} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+
+				var distributionCenterResponses = await AP.QueryAsync.Get( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var result = await this._client.GetDistributionCenterListAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
+					this.CheckCaSuccess( result.GetDistributionCenterListResult );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : result.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					return result.GetDistributionCenterListResult.ResultData;
+				} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenterResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				return distributionCenterResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 		#endregion
 
