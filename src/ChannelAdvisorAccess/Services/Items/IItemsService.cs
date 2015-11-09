@@ -83,7 +83,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
 		QuantityInfoResponse GetItemQuantities( string sku, Mark mark = null );
 
-		Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku );
+		Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, Mark mark = null );
 		ClassificationConfigurationInformation[] GetClassificationConfigurationInformation();
 		Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync();
 		StoreInfo GetStoreInfo( string sku );

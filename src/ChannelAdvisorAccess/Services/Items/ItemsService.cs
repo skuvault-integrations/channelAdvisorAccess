@@ -677,11 +677,36 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku )
+		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, Mark mark = null )
 		{
-			var requestResult = await AP.QueryAsync.Get( async () =>
-				await this._client.GetInventoryItemQuantityInfoAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
-			return this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemQuantityInfoResult.ResultData );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var requestResult = await AP.QueryAsync.Get( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var getInventoryItemQuantityInfoResponse = await this._client.GetInventoryItemQuantityInfoAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getInventoryItemQuantityInfoResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+
+					return getInventoryItemQuantityInfoResponse;
+				}
+					).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemQuantityInfoResult.ResultData );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+
+				return resultWithSuccessCheck;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation()
