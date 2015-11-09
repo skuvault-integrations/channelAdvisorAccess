@@ -1455,20 +1455,39 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null )
 		{
-			if( !isCreateNew )
-			{
-				var existSkus = ( this.DoSkusExist( items.Select( x => x.Sku ), mark ) ).Select( x => x.Sku );
-				items = items.Where( x => existSkus.Contains( x.Sku ) );
-			}
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			await items.DoWithPagesAsync( 100, async i => await AP.SubmitAsync.Do( async () =>
+			var parameters = new { items, isCreateNew };
+
+			try
 			{
-				await AP.SubmitAsync.Do( async () =>
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+
+				if( !isCreateNew )
 				{
-					var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, i.ToArray() ).ConfigureAwait( false );
-					CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
-				} ).ConfigureAwait( false );
-			} ) ).ConfigureAwait( false );
+					var existSkus = ( this.DoSkusExist( items.Select( x => x.Sku ), mark ) ).Select( x => x.Sku );
+					items = items.Where( x => existSkus.Contains( x.Sku ) );
+				}
+
+				await items.DoWithPagesAsync( 100, async i => await AP.SubmitAsync.Do( async () =>
+				{
+					await AP.SubmitAsync.Do( async () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+						var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, i.ToArray() ).ConfigureAwait( false );
+						CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+					} ).ConfigureAwait( false );
+				} ) ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : "void", additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark = null )
