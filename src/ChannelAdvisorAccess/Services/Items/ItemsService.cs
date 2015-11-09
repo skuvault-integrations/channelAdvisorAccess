@@ -298,7 +298,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
 			};
 
-			var inventoryItemResponses = this.GetFilteredItems( filter );
+			var inventoryItemResponses = this.GetFilteredItems( filter, mark );
 			ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : inventoryItemResponses.ToJson() ) );
 
 			return inventoryItemResponses;
