@@ -70,7 +70,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null );
 
 		AttributeInfo[] GetAttributes( string sku, Mark mark = null );
-		Task< AttributeInfo[] > GetAttributesAsync( string sku );
+		Task< AttributeInfo[] > GetAttributesAsync( string sku, Mark mark = null );
 
 		/// <summary>
 		/// Gets the additional item quantities.

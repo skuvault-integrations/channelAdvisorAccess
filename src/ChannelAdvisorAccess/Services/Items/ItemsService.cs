@@ -609,15 +609,34 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< AttributeInfo[] > GetAttributesAsync( string sku )
+		public async Task< AttributeInfo[] > GetAttributesAsync( string sku, Mark mark = null )
 		{
-			var attributeList = await AP.QueryAsync.Get( async () =>
-				await this._client.GetInventoryItemAttributeListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false ) ).ConfigureAwait( false );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			if (!this.IsRequestSuccessfulAttribute(attributeList))
-				return default(AttributeInfo[]);
+			try
+			{
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var attributeList = await AP.QueryAsync.Get( async () =>
+				{
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					var getInventoryItemAttributeListResponse = await this._client.GetInventoryItemAttributeListAsync( this._credentials, this.AccountId, sku ).ConfigureAwait( false );
+					ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getInventoryItemAttributeListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					return getInventoryItemAttributeListResponse;
+				}
+					).ConfigureAwait( false );
 
-			return attributeList.GetInventoryItemAttributeListResult.ResultData;
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : attributeList.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				var attributeInfos = !this.IsRequestSuccessfulAttribute( attributeList ) ? default( AttributeInfo[] ) : attributeList.GetInventoryItemAttributeListResult.ResultData;
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : attributeInfos.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				return attributeInfos;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		/// <summary>
