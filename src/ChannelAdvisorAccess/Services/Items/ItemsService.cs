@@ -456,33 +456,61 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items matching filter.
 		/// </summary>
 		/// <param name="filter">The filter.</param>
+		/// <param name="mark"></param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter )
+		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark = null )
 		{
-			filter.Criteria.PageSize = 100;
-			filter.Criteria.PageNumber = 0;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			var items = new List< InventoryItemResponse >();
-			while( true )
+			try
 			{
-				filter.Criteria.PageNumber += 1;
-				var itemResponse = await AP.QueryAsync.Get( async () => await this._client.GetFilteredInventoryItemListAsync
-					( this._credentials,
-						this.AccountId, filter.Criteria, filter.DetailLevel,
-						filter.SortField, filter.SortDirection ).ConfigureAwait( false ) ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
 
-				if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
-					continue;
+				filter.Criteria.PageSize = 100;
+				filter.Criteria.PageNumber = 0;
 
-				var pageItems = itemResponse.GetFilteredInventoryItemListResult.ResultData;
-				if( pageItems == null )
-					return items;
+				var items = new List< InventoryItemResponse >();
+				while( true )
+				{
+					filter.Criteria.PageNumber += 1;
+					var itemResponse = await AP.QueryAsync.Get( async () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						var getFilteredInventoryItemListResponse = await this._client.GetFilteredInventoryItemListAsync
+							( this._credentials,
+								this.AccountId, filter.Criteria, filter.DetailLevel,
+								filter.SortField, filter.SortDirection ).ConfigureAwait( false );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : getFilteredInventoryItemListResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return getFilteredInventoryItemListResponse;
+					}
+						).ConfigureAwait( false );
 
-				items.AddRange( pageItems );
+					if( !this.IsRequestSuccessful( itemResponse.GetFilteredInventoryItemListResult ) )
+						continue;
 
-				if( pageItems.Length == 0 || pageItems.Length < filter.Criteria.PageSize )
-					return items;
+					var pageItems = itemResponse.GetFilteredInventoryItemListResult.ResultData;
+					if( pageItems == null )
+					{
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : items.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return items;
+					}
+
+					items.AddRange( pageItems );
+
+					if( pageItems.Length == 0 || pageItems.Length < filter.Criteria.PageSize )
+					{
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : items.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return items;
+					}
+				}
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
 			}
 		}
 

@@ -53,9 +53,10 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// Gets the items matching filter.
 		/// </summary>
 		/// <param name="filter">The filter.</param>
+		/// <param name="mark"></param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter );
+		Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark = null );
 
 		/// <summary>
 		/// Gets the items matching filter.
