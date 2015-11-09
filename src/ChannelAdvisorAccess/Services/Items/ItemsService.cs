@@ -396,48 +396,59 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
 		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark = null )
 		{
-			ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			filter.Criteria.PageSize = 100;
-			filter.Criteria.PageNumber = 0;
-
-			var filteredItems = new List< InventoryItemResponse >();
-			while( true )
+			try
 			{
-				filter.Criteria.PageNumber += 1;
-				var itemResponse = AP.Query.Get( () =>
-				{
-					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
-					var apiResultOfArrayOfInventoryItemResponse = this._client.GetFilteredInventoryItemList
-						(
-							this._credentials,
-							this.AccountId, filter.Criteria, filter.DetailLevel,
-							filter.SortField, filter.SortDirection );
-					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfInventoryItemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
-					return apiResultOfArrayOfInventoryItemResponse;
-				} );
+				ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+				filter.Criteria.PageSize = 100;
+				filter.Criteria.PageNumber = 0;
 
-				if( !this.IsRequestSuccessful( itemResponse ) )
+				var filteredItems = new List< InventoryItemResponse >();
+				while( true )
 				{
-					filteredItems.Add( null );
-					continue;
+					filter.Criteria.PageNumber += 1;
+					var itemResponse = AP.Query.Get( () =>
+					{
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						var apiResultOfArrayOfInventoryItemResponse = this._client.GetFilteredInventoryItemList
+							(
+								this._credentials,
+								this.AccountId, filter.Criteria, filter.DetailLevel,
+								filter.SortField, filter.SortDirection );
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfArrayOfInventoryItemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : filter.ToJson() ) );
+						return apiResultOfArrayOfInventoryItemResponse;
+					} );
+
+					if( !this.IsRequestSuccessful( itemResponse ) )
+					{
+						filteredItems.Add( null );
+						continue;
+					}
+
+					var items = itemResponse.ResultData;
+
+					if( items == null )
+					{
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : filteredItems.ToJson(), methodParameters : filter.ToJson() ) );
+						return filteredItems;
+					}
+
+					filteredItems.AddRange( items );
+
+					if( items.Length == 0 || items.Length < filter.Criteria.PageSize )
+					{
+						ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : filteredItems.ToJson(), methodParameters : filter.ToJson() ) );
+						return filteredItems;
+					}
 				}
-
-				var items = itemResponse.ResultData;
-
-				if( items == null )
-				{
-					ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : filteredItems.ToJson(), methodParameters : filter.ToJson() ) );
-					return filteredItems;
-				}
-
-				filteredItems.AddRange( items );
-
-				if( items.Length == 0 || items.Length < filter.Criteria.PageSize )
-				{
-					ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : filteredItems.ToJson(), methodParameters : filter.ToJson() ) );
-					return filteredItems;
-				}
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
 			}
 		}
 
