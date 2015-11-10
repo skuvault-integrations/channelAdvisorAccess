@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 
 namespace ChannelAdvisorAccess.Misc
 {
-	internal static class ExtensionsInternal
+	public static class ExtensionsInternal
 	{
 		public static string ToJson( this object source )
 		{
