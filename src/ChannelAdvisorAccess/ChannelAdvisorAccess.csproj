@@ -221,6 +221,7 @@
     <Compile Include="Services\Listing\IListingService.cs" />
     <Compile Include="Services\Listing\ListingService.cs" />
     <Compile Include="ChannelAdvisorAccount.cs" />
+    <Compile Include="Services\LogDetailsEnum.cs" />
     <Compile Include="Services\Orders\OrdersService.cs" />
     <Compile Include="Services\Orders\IOrdersService.cs" />
     <Compile Include="Services\Shipping\MarkOrderShippedException.cs" />

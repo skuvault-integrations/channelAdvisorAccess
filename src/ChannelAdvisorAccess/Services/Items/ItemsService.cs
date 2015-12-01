@@ -50,6 +50,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		}
 		public string Name{ get; private set; }
 		public string AccountId{ get; private set; }
+		public LogDetailsEnum LogDetailsEnum{ get; set; }
 		public TimeSpan SlidingCacheExpiration{ get; set; }
 
 		/// <summary>
@@ -60,10 +61,11 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="accountId">The account id.</param>
 		/// <param name="cache">The cache.</param>
 		/// <remarks>If <paramref name="cache"/> is <c>null</c> no caching takes place.</remarks>
-		public ItemsService( APICredentials credentials, string name, string accountId, ObjectCache cache = null )
+		public ItemsService( APICredentials credentials, string name, string accountId, ObjectCache cache = null, LogDetailsEnum logDetailsEnum = LogDetailsEnum.Undefined )
 		{
 			this._credentials = credentials;
 			this.AccountId = accountId;
+			this.LogDetailsEnum = logDetailsEnum;
 			this._client = new InventoryServiceSoapClient();
 
 			this.Name = name;
