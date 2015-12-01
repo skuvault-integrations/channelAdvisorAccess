@@ -19,7 +19,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				AP.Submit.Do( () =>
 				{
-					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+					ChannelAdvisorLogger.LogTraceRetryStarted(this.CreateMethodCallInfo(mark: mark, additionalInfo: this.AdditionalLogInfoString, methodParameters: this.LogDetailsEnum.HasFlag(LogDetailsEnum.LogParametersAndResultForRetry) ? null : sku));
 					var resultOfBoolean = this._client.DeleteInventoryItem( this._credentials, this.AccountId, sku );
 					CheckCaSuccess( resultOfBoolean );
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : sku ) );
