@@ -27,10 +27,20 @@ namespace ChannelAdvisorAccess.Misc
 
 		public static void LogTraceStarted( string info )
 		{
-			Log().Trace( "[channelAdvisor] Start call:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] Trace Start call:{0}, ver:{1}.", info, _versionInfo );
 		}
 
 		public static void LogTraceEnd( string info )
+		{
+			Log().Trace( "[channelAdvisor] Trace End call:{0}, ver:{1}.", info, _versionInfo );
+		}
+
+		public static void LogStarted( string info )
+		{
+			Log().Trace( "[channelAdvisor] Start call:{0}, ver:{1}.", info, _versionInfo );
+		}
+
+		public static void LogEnd( string info )
 		{
 			Log().Trace( "[channelAdvisor] End call:{0}, ver:{1}.", info, _versionInfo );
 		}
