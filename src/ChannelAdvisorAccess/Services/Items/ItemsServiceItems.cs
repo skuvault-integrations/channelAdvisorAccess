@@ -29,7 +29,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					return result;
 				} );
 
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : skuExist.ToJson(), methodParameters : sku.ToJson() ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : skuExist.ToJson(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : sku.ToJson() ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( skuExist, skuExist.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : resultWithSuccessCheck.ToJson(), methodParameters : sku.ToJson() ) );
 				return resultWithSuccessCheck;
@@ -58,7 +58,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					return result;
 				}
 					);
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : skuExist.ToJson(), methodParameters : sku.ToJson() ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : skuExist.ToJson(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : sku.ToJson() ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( skuExist, skuExist.DoesSkuExistResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodResult : resultWithSuccessCheck.ToJson(), methodParameters : sku.ToJson() ) );
 				return resultWithSuccessCheck;
@@ -266,7 +266,7 @@ namespace ChannelAdvisorAccess.Services.Items
 						return getInventoryItemListResponse;
 					} ).ConfigureAwait( false );
 
-					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson(), methodResult : itemsResult.ToJson() ) );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : skus.ToJson(), methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : itemsResult.ToJson() ) );
 
 					return this.GetResultWithSuccessCheck( itemsResult, itemsResult.GetInventoryItemListResult.ResultData );
 				} ).ConfigureAwait( false );
@@ -490,7 +490,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					return apiResultOfArrayOfAttributeInfo;
 				}
 					);
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : attributeList.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : attributeList.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : sku ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( attributeList, attributeList.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return resultWithSuccessCheck;
@@ -520,7 +520,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				}
 					).ConfigureAwait( false );
 
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : attributeList.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : attributeList.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : sku ) );
 				var attributeInfos = !this.IsRequestSuccessfulAttribute( attributeList ) ? default( AttributeInfo[] ) : attributeList.GetInventoryItemAttributeListResult.ResultData;
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : attributeInfos.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return attributeInfos;
@@ -557,7 +557,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					return apiResultOfQuantityInfoResponse;
 				}
 					);
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : sku ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 
@@ -589,7 +589,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				}
 					).ConfigureAwait( false );
 
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : sku ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemQuantityInfoResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 
@@ -619,7 +619,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 					return apiResultOfArrayOfClassificationConfigurationInformation;
 				} );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 
@@ -648,7 +648,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : getClassificationConfigurationInformationResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 					return getClassificationConfigurationInformationResponse;
 				} ).ConfigureAwait( false );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.GetClassificationConfigurationInformationResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 
@@ -678,7 +678,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : apiResultOfStoreInfo.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : sku ) );
 					return apiResultOfStoreInfo;
 				} );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return resultWithSuccessCheck;
@@ -706,7 +706,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : getInventoryItemStoreInfoResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : sku ) );
 					return getInventoryItemStoreInfoResponse;
 				} ).ConfigureAwait( false );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : sku ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemStoreInfoResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return resultWithSuccessCheck;
@@ -734,7 +734,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : apiResultOfArrayOfImageInfoResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : sku ) );
 					return apiResultOfArrayOfImageInfoResponse;
 				} );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return resultWithSuccessCheck;
@@ -763,7 +763,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					return getInventoryItemImageListResponse;
 				} ).ConfigureAwait( false );
 
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var imageInfoResponses = !this.IsRequestSuccessfulImage( requestResult ) ? default( ImageInfoResponse[] ) : requestResult.GetInventoryItemImageListResult.ResultData;
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : imageInfoResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return imageInfoResponses;
@@ -791,7 +791,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : apiResultOfArrayOfDistributionCenterInfoResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : sku ) );
 					return apiResultOfArrayOfDistributionCenterInfoResponse;
 				} );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var distributionCenterInfoResponses = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenterInfoResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return distributionCenterInfoResponses;
@@ -820,7 +820,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					return getInventoryItemShippingInfoResponse;
 				} ).ConfigureAwait( false );
 
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var distributionCenterInfoResponses = this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemShippingInfoResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenterInfoResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return distributionCenterInfoResponses;
@@ -849,7 +849,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 					return apiResultOfVariationInfo;
 				} );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return resultWithSuccessCheck;
@@ -877,7 +877,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : getInventoryItemVariationInfoResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : sku ) );
 					return getInventoryItemVariationInfoResponse;
 				} ).ConfigureAwait( false );
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 				var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.GetInventoryItemVariationInfoResult.ResultData );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 				return resultWithSuccessCheck;
@@ -972,7 +972,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					} );
 
 					var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
-					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters : s.ToJson(), methodResult : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : s.ToJson(), methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 					return resultWithSuccessCheck;
 				} );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : inventoryQuantityResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson() ) );
@@ -1004,7 +1004,7 @@ namespace ChannelAdvisorAccess.Services.Items
 						return getInventoryQuantityListResponse;
 					} ).ConfigureAwait( false );
 					var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult.GetInventoryQuantityListResult, requestResult.GetInventoryQuantityListResult.ResultData );
-					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, notes : "ProcessByPage", methodParameters : s.ToJson(), methodResult : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, notes : "ProcessByPage", methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : s.ToJson(), methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : requestResult.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 					return resultWithSuccessCheck;
 				} ).ConfigureAwait( false );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : inventoryQuantityResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : skus.ToJson() ) );

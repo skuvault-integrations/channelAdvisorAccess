@@ -81,7 +81,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 							return apiResultOfArrayOfString;
 						} );
-					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 
 					if( !this.IsRequestSuccessful( itemResponse ) )
 					{
@@ -139,7 +139,7 @@ namespace ChannelAdvisorAccess.Services.Items
 						return getFilteredSkuListResponse;
 					} ).ConfigureAwait( false );
 
-					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 
 					if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
 						continue;
@@ -196,7 +196,7 @@ namespace ChannelAdvisorAccess.Services.Items
 						return getFilteredSkuListResponse;
 					} ).ConfigureAwait( false );
 
-					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : itemResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : parameters.ToJson() ) );
 
 					if( !this.IsRequestSuccessful( itemResponse.GetFilteredSkuListResult ) )
 						continue;
