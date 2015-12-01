@@ -216,6 +216,12 @@
     <Compile Include="Services\IChannelAdvisorServicesFactory.cs" />
     <Compile Include="CurrencyConversion\ICurrencyConverter.cs" />
     <Compile Include="Services\Items\IItemsService.cs" />
+    <Compile Include="Services\Items\ItemsServiceGetConfigInfo.cs" />
+    <Compile Include="Services\Items\ItemsServicePing.cs" />
+    <Compile Include="Services\Items\ItemsServiceDeleteItems.cs" />
+    <Compile Include="Services\Items\ItemsServiceUpdateItems.cs" />
+    <Compile Include="Services\Items\ItemsServiceSkus.cs" />
+    <Compile Include="Services\Items\ItemsServiceItems.cs" />
     <Compile Include="Services\Items\ItemsService.cs" />
     <Compile Include="Services\Items\ItemsFilter.cs" />
     <Compile Include="Services\Listing\IListingService.cs" />
