@@ -2,17 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
-using ChannelAdvisorAccess.Extensions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
-using CuttingEdge.Conditions;
 using Netco.Extensions;
-using Netco.Logging;
-using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -558,7 +552,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 					var apiResultOfQuantityInfoResponse = this._client.GetInventoryItemQuantityInfo( this._credentials, this.AccountId, sku );
-					ChannelAdvisorLogger.LogTraceRetryEnd(this.CreateMethodCallInfo(mark: mark, methodResult: apiResultOfQuantityInfoResponse.ToJson(), additionalInfo: this.AdditionalLogInfoString, methodParameters: sku));
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : apiResultOfQuantityInfoResponse.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : sku ) );
 
 					return apiResultOfQuantityInfoResponse;
 				}
@@ -1024,4 +1018,4 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 		#endregion}
-}
+	}

@@ -1,18 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Caching;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
-using ChannelAdvisorAccess.Extensions;
-using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
-using CuttingEdge.Conditions;
-using Netco.Extensions;
-using Netco.Logging;
-using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Items
 {

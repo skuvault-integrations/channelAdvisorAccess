@@ -11,7 +11,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <summary>
 		/// Gets the account name.
 		/// </summary>
-		string Name { get; }
+		string Name{ get; }
 
 		/// <summary>
 		/// Gets the account id.
@@ -90,7 +90,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task< StoreInfo > GetStoreInfoAsync( string sku, Mark mark = null );
 		ImageInfoResponse[] GetImageList( string sku, Mark mark = null );
 		Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark = null );
-		
+
 		DistributionCenterInfoResponse[] GetShippingInfo( string sku, Mark mark = null );
 		Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, Mark mark = null );
 		VariationInfo GetVariationInfo( string sku, Mark mark = null );

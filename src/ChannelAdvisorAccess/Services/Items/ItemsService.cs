@@ -1,16 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
-using ChannelAdvisorAccess.Extensions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
-using CuttingEdge.Conditions;
-using Netco.Extensions;
 using Netco.Logging;
 using Newtonsoft.Json;
 
@@ -48,6 +42,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				return res;
 			}
 		}
+
 		public string Name{ get; private set; }
 		public string AccountId{ get; private set; }
 		public LogDetailsEnum LogDetailsEnum{ get; set; }
@@ -74,7 +69,6 @@ namespace ChannelAdvisorAccess.Services.Items
 			this._allItemsCacheKey = string.Format( "caAllItems_ID_{0}", this.AccountId );
 		}
 
-		
 		#region Check for Success
 		/// <summary>
 		/// Gets the result with success check.
@@ -86,47 +80,47 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// with API call, otherwise returns result.</returns>
 		private T GetResultWithSuccessCheck< T >( object apiResult, T resultData )
 		{
-			if (!this.IsRequestSuccessful(apiResult))
+			if( !this.IsRequestSuccessful( apiResult ) )
 				return default( T );
 
 			return resultData;
 		}
-		
-		private bool IsRequestSuccessful(object obj)
+
+		private bool IsRequestSuccessful( object obj )
 		{
 			var type = obj.GetType();
 
-			var statusProp = type.GetProperty("Status");
-			var status = (ResultStatus)statusProp.GetValue(obj, null);
+			var statusProp = type.GetProperty( "Status" );
+			var status = ( ResultStatus )statusProp.GetValue( obj, null );
 
-			var messageCodeProp = type.GetProperty("MessageCode");
-			var messageCode = (int)messageCodeProp.GetValue(obj, null);
+			var messageCodeProp = type.GetProperty( "MessageCode" );
+			var messageCode = ( int )messageCodeProp.GetValue( obj, null );
 
-			var message = (string)type.GetProperty("Message").GetValue(obj, null);
+			var message = ( string )type.GetProperty( "Message" ).GetValue( obj, null );
 
-			return IsRequestSuccessfulCommon(status, message, messageCode);
+			return this.IsRequestSuccessfulCommon( status, message, messageCode );
 		}
 
-		private bool IsRequestSuccessfulImage(object obj)
+		private bool IsRequestSuccessfulImage( object obj )
 		{
-			GetInventoryItemImageListResponse apiResult = (GetInventoryItemImageListResponse)obj;
+			GetInventoryItemImageListResponse apiResult = ( GetInventoryItemImageListResponse )obj;
 
 			var status = apiResult.GetInventoryItemImageListResult.Status;
 			var message = apiResult.GetInventoryItemImageListResult.Message;
 			var messageCode = apiResult.GetInventoryItemImageListResult.MessageCode;
 
-			return IsRequestSuccessfulCommon(status, message, messageCode);
+			return this.IsRequestSuccessfulCommon( status, message, messageCode );
 		}
 
-		private bool IsRequestSuccessfulAttribute(object obj)
+		private bool IsRequestSuccessfulAttribute( object obj )
 		{
-			GetInventoryItemAttributeListResponse apiResult = (GetInventoryItemAttributeListResponse)obj;
+			GetInventoryItemAttributeListResponse apiResult = ( GetInventoryItemAttributeListResponse )obj;
 
 			var status = apiResult.GetInventoryItemAttributeListResult.Status;
 			var message = apiResult.GetInventoryItemAttributeListResult.Message;
 			var messageCode = apiResult.GetInventoryItemAttributeListResult.MessageCode;
 
-			return IsRequestSuccessfulCommon(status, message, messageCode);
+			return this.IsRequestSuccessfulCommon( status, message, messageCode );
 		}
 
 		/// <summary>
@@ -136,16 +130,16 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <returns>
 		/// 	<c>true</c> if request was successful; otherwise, <c>false</c>.
 		/// </returns>
-		private bool IsRequestSuccessfulCommon(ResultStatus status, string message, int messageCode)
+		private bool IsRequestSuccessfulCommon( ResultStatus status, string message, int messageCode )
 		{
 			var isRequestSuccessful = status == ResultStatus.Success && messageCode == 0;
 
-			if (!isRequestSuccessful)
+			if( !isRequestSuccessful )
 			{
-				if (message.Contains("The specified SKU was not found") || message.Contains("All DoesSkuExist requests failed for the SKU list specified!"))
-					this.Log().Trace("CA Api Request for '{0}' failed with message: {1}", AccountId, message);
+				if( message.Contains( "The specified SKU was not found" ) || message.Contains( "All DoesSkuExist requests failed for the SKU list specified!" ) )
+					this.Log().Trace( "CA Api Request for '{0}' failed with message: {1}", this.AccountId, message );
 				else
-					this.Log().Error("CA Api Request for '{0}' failed with message: {1}", AccountId, message);
+					this.Log().Error( "CA Api Request for '{0}' failed with message: {1}", this.AccountId, message );
 			}
 
 			return isRequestSuccessful;

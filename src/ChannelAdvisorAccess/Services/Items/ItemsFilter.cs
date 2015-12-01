@@ -9,51 +9,30 @@ namespace ChannelAdvisorAccess.Services.Items
 	{
 		public ItemsFilter()
 		{
-			_criteria = new InventoryItemCriteria();
-			_detailLevel = new InventoryItemDetailLevel();
+			this.Criteria = new InventoryItemCriteria();
+			this.DetailLevel = new InventoryItemDetailLevel();
 		}
 
-		public ItemsFilter( InventoryItemCriteria criteria, InventoryItemDetailLevel detailLevel ) 
+		public ItemsFilter( InventoryItemCriteria criteria, InventoryItemDetailLevel detailLevel )
 		{
-			this._criteria = criteria;
-			this._detailLevel = detailLevel;
+			this.Criteria = criteria;
+			this.DetailLevel = detailLevel;
 		}
 
 		public ItemsFilter( InventoryItemCriteria criteria, InventoryItemDetailLevel detailLevel, string sortField, string sortDirection )
 		{
-			this._criteria = criteria;
-			this._detailLevel = detailLevel;
-			this._sortField = sortField;
-			this._sortDirection = sortDirection;
+			this.Criteria = criteria;
+			this.DetailLevel = detailLevel;
+			this.SortField = sortField;
+			this.SortDirection = sortDirection;
 		}
 
-		private InventoryItemCriteria _criteria;
-		private InventoryItemDetailLevel _detailLevel;
-		private string _sortField;
-		private string _sortDirection;
+		public InventoryItemCriteria Criteria{ get; set; }
 
-		public InventoryItemCriteria Criteria
-		{
-			get { return this._criteria; }
-			set { this._criteria = value; }
-		}
+		public InventoryItemDetailLevel DetailLevel{ get; set; }
 
-		public InventoryItemDetailLevel DetailLevel
-		{
-			get { return this._detailLevel; }
-			set { this._detailLevel = value; }
-		}
+		public string SortField{ get; set; }
 
-		public string SortField
-		{
-			get { return this._sortField; }
-			set { this._sortField = value; }
-		}
-
-		public string SortDirection
-		{
-			get { return this._sortDirection; }
-			set { this._sortDirection = value; }
-		}
+		public string SortDirection{ get; set; }
 	}
 }
