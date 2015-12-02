@@ -3,6 +3,6 @@
 	public static class PredefinedValues
 	{
 		public static string NotAvailable = "N/A";
-		public static string EmptyJsonObject = "{}";
+		public static string EmptyJsonObject = "{{}}";
 	}
 }
