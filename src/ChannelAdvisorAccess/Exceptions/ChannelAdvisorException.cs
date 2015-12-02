@@ -47,7 +47,9 @@ namespace ChannelAdvisorAccess.Exceptions
 		///<filterpriority>2</filterpriority>
 		public override string ToString()
 		{
-			return string.Format( "ErrorCode={0}, ErrorMessage={1}\n" + base.ToString(), this.MessageCode, this.ErrorMessage );
+			var code = this.MessageCode;
+			var errorMessage = this.ErrorMessage ?? string.Empty;
+			return string.Format( "ErrorCode={0}, ErrorMessage={1}\n" + base.ToString(), code, errorMessage );
 		}
 	}
 }
