@@ -17,6 +17,14 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private readonly OrderServiceSoapClient _client;
 		public string AccountId{ get; private set; }
 
+		private Func< string > _additionalLogInfo;
+
+		public Func< string > AdditionalLogInfo
+		{
+			get { return this._additionalLogInfo ?? ( () => string.Empty ); }
+			set { this._additionalLogInfo = value; }
+		}
+
 		public string Name{ get; private set; }
 
 		public OrdersService( APICredentials credentials, string accountName, string accountId ): this( credentials, accountId )

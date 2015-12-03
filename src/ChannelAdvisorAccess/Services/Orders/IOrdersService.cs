@@ -11,6 +11,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// Gets the account name.
 		/// </summary>
 		string Name { get; }
+		Func< string > AdditionalLogInfo{ get; set; }
 
 		/// <summary>
 		/// Gets the account id.
