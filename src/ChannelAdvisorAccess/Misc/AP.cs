@@ -3,6 +3,7 @@ using System.Net;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Netco.ActionPolicyServices;
+using Netco.Extensions;
 using Netco.Logging;
 using Netco.Utils;
 
@@ -15,44 +16,68 @@ namespace ChannelAdvisorAccess.Misc
 			get { return _query; }
 		}
 
-		private static readonly ActionPolicy _query = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+		private static readonly ActionPolicy _query = CreateQuery();
+
+		public static ActionPolicy CreateQuery( Func< string > additionalLogInfo = null )
 		{
-			typeof( AP ).Log().Trace( ex, "Retrying CA API get call for the {0} time", i );
-			SystemUtil.Sleep( GetDelay( ex, i ) );
-		} );
+			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+			{
+				var message = "Retrying CA API get call for the {0} time".FormatWith( i ) + ( additionalLogInfo ?? ( () => string.Empty ) )();
+				typeof( AP ).Log().Trace( ex, message );
+				SystemUtil.Sleep( GetDelay( ex, i ) );
+			} );
+		}
 
 		public static ActionPolicyAsync QueryAsync
 		{
 			get { return _queryAsync; }
 		}
 
-		private static readonly ActionPolicyAsync _queryAsync = ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+		private static readonly ActionPolicyAsync _queryAsync = CreateQueryAsync();
+
+		public static ActionPolicyAsync CreateQueryAsync( Func< string > additionalLogInfo = null )
 		{
-			typeof( AP ).Log().Trace( ex, "Retrying CA API get call for the {0} time", i );
-			await Task.Delay( GetDelay( ex, i ) );
-		} );
+			return ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+			{
+				var message = "Retrying CA API get call for the {0} time".FormatWith( i ) + ( additionalLogInfo ?? ( () => string.Empty ) )();
+				typeof( AP ).Log().Trace( ex, message );
+				await Task.Delay( GetDelay( ex, i ) );
+			} );
+		}
 
 		public static ActionPolicy Submit
 		{
 			get { return _sumbit; }
 		}
 
-		private static readonly ActionPolicy _sumbit = ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+		private static readonly ActionPolicy _sumbit = CreateSubmit();
+
+		public static ActionPolicy CreateSubmit( Func< string > additionalLogInfo = null )
 		{
-			typeof( AP ).Log().Trace( ex, "Retrying CA API submit call for the {0} time", i );
-			SystemUtil.Sleep( GetDelay( ex, i ) );
-		} );
+			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+			{
+				var message = "Retrying CA API get call for the {0} time".FormatWith( i ) + ( additionalLogInfo ?? ( () => string.Empty ) )();
+				typeof( AP ).Log().Trace( ex, message );
+				SystemUtil.Sleep( GetDelay( ex, i ) );
+			} );
+		}
 
 		public static ActionPolicyAsync SubmitAsync
 		{
 			get { return _sumbitAsync; }
 		}
 
-		private static readonly ActionPolicyAsync _sumbitAsync = ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+		private static readonly ActionPolicyAsync _sumbitAsync = CreateSubmitAsync();
+
+		public static ActionPolicyAsync CreateSubmitAsync( Func< string > additionalLogInfo = null )
 		{
-			typeof( AP ).Log().Trace( ex, "Retrying CA API submit call for the {0} time", i );
-			await Task.Delay( GetDelay( ex, i ) );
-		} );
+			return ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+			{
+				var message = "Retrying CA API get call for the {0} time".FormatWith( i ) + ( additionalLogInfo ?? ( () => string.Empty ) )();
+				typeof( AP ).Log().Trace( ex, message );
+				await Task.Delay( GetDelay( ex, i ) );
+			} );
+		}
 
 		private static TimeSpan GetDelay( Exception ex, int retryNumber )
 		{
