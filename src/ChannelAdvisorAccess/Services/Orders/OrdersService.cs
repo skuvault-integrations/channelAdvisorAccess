@@ -42,26 +42,26 @@ namespace ChannelAdvisorAccess.Services.Orders
 		#region Ping
 		public void Ping()
 		{
-			AP.Query.Do( () =>
+			AP.CreateQuery( this.AdditionalLogInfo ).Do( () =>
 			{
 				var result = this._client.Ping( this._credentials );
-				CheckCaSuccess( result );
+				this.CheckCaSuccess( result );
 			} );
 		}
 
 		public async Task PingAsync()
 		{
-			await AP.QueryAsync.Do( async () =>
+			await AP.CreateQueryAsync( this.AdditionalLogInfo ).Do( async () =>
 			{
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
-				CheckCaSuccess( result.PingResult );
+				this.CheckCaSuccess( result.PingResult );
 			} ).ConfigureAwait( false );
 		}
 		#endregion
 
 		#region API methods
 		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate )
-			where T: OrderResponseItem
+			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
 			{
@@ -73,7 +73,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
-			where T: OrderResponseItem
+			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
 			{
@@ -92,7 +92,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
 		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate )
-			where T: OrderResponseItem
+			where T : OrderResponseItem
 		{
 			return this.GetOrders< T >( startDate, endDate ).ToList();
 		}
@@ -112,7 +112,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
 		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
-			where T: OrderResponseItem
+			where T : OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 				orderCriteria.DetailLevel = "High";
@@ -138,7 +138,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria )
 		{
-			return AP.Query.Get( () =>
+			return AP.CreateQuery( this.AdditionalLogInfo ).Get( () =>
 			{
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
 				CheckCaSuccess( results );
@@ -153,7 +153,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria )
-			where T: OrderResponseItem
+			where T : OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 				orderCriteria.DetailLevel = "High";
@@ -180,7 +180,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria )
 		{
-			return await AP.QueryAsync.Get( async () =>
+			return await AP.CreateQueryAsync( this.AdditionalLogInfo ).Get( async () =>
 			{
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );
@@ -195,7 +195,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <returns>New order CA id.</returns>
 		public int SubmitOrder( OrderSubmit orderSubmit )
 		{
-			return AP.Submit.Get( () =>
+			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
 			{
 				var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
 				this.CheckCaSuccess( apiResults );
@@ -205,7 +205,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit )
 		{
-			return await AP.SubmitAsync.Get( async () =>
+			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
 			{
 				var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit ).ConfigureAwait( false );
 				this.CheckCaSuccess( apiResults.SubmitOrderResult );
@@ -216,7 +216,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
 		{
-			return AP.Submit.Get( () =>
+			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
 			{
 				var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
 				this.CheckCaSuccess( results );
@@ -226,7 +226,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates )
 		{
-			return await AP.SubmitAsync.Get( async () =>
+			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
 			{
 				var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates ).ConfigureAwait( false );
 				this.CheckCaSuccess( results.UpdateOrderListResult );

@@ -8,6 +8,7 @@ using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.ShippingService;
 using Netco.Extensions;
 using Netco.Logging;
+using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {
@@ -15,6 +16,9 @@ namespace ChannelAdvisorAccess.Services.Shipping
 	{
 		private readonly APICredentials _credentials;
 		private readonly ShippingServiceSoapClient _client;
+
+		[ JsonIgnore ]
+		public Func< string > AdditionalLogInfo{ get; set; }
 
 		public ShippingService( APICredentials credentials, string accountId )
 		{
@@ -34,19 +38,19 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		#region Ping
 		public void Ping()
 		{
-			AP.Query.Do( () =>
+			AP.CreateQuery( this.AdditionalLogInfo ).Do( () =>
 			{
 				var result = this._client.Ping( this._credentials );
-				CheckCaSuccess( result );
+				this.CheckCaSuccess( result );
 			} );
 		}
 
 		public async Task PingAsync()
 		{
-			await AP.QueryAsync.Do( async () =>
+			await AP.CreateQueryAsync( this.AdditionalLogInfo ).Do( async () =>
 			{
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
-				CheckCaSuccess( result.PingResult );
+				this.CheckCaSuccess( result.PingResult );
 			} ).ConfigureAwait( false );
 		}
 		#endregion
@@ -56,10 +60,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				AP.Submit.Do( () =>
+				AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreateShipmentByOrderId( orderId, carrierCode, classCode, trackingNumber, dateShipped ) );
-					CheckCaSuccess( result );
+					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
@@ -72,10 +76,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				await AP.SubmitAsync.Do( async () =>
+				await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreateShipmentByOrderId( orderId, carrierCode, classCode, trackingNumber, dateShipped ) ).ConfigureAwait( false );
-					CheckCaSuccess( result.SubmitOrderShipmentListResult );
+					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
@@ -107,10 +111,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				AP.Submit.Do( () =>
+				AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreateShipmentByClientId( clientOrderId, carrierCode, classCode, trackingNumber, dateShipped ) );
-					CheckCaSuccess( result );
+					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
@@ -123,10 +127,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				await AP.SubmitAsync.Do( async () =>
+				await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreateShipmentByClientId( clientOrderId, carrierCode, classCode, trackingNumber, dateShipped ) ).ConfigureAwait( false );
-					CheckCaSuccess( result.SubmitOrderShipmentListResult );
+					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
@@ -158,10 +162,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				AP.Submit.Do( () =>
+				AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreatePartialShipmentByOrderId( orderId, partialShipmentContents ) );
-					CheckCaSuccess( result );
+					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
@@ -174,10 +178,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				await AP.SubmitAsync.Do( async () =>
+				await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreatePartialShipmentByOrderId( orderId, partialShipmentContents ) ).ConfigureAwait( false );
-					CheckCaSuccess( result.SubmitOrderShipmentListResult );
+					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
@@ -203,10 +207,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				AP.Submit.Do( () =>
+				AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreatePartialShipmentByClientId( clientOrderId, partialShipmentContents ) );
-					CheckCaSuccess( result );
+					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
@@ -219,10 +223,10 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			try
 			{
-				await AP.SubmitAsync.Do( async () =>
+				await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreatePartialShipmentByClientId( clientOrderId, partialShipmentContents ) ).ConfigureAwait( false );
-					CheckCaSuccess( result.SubmitOrderShipmentListResult );
+					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
@@ -247,7 +251,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 
 		public void SubmitOrderShipmentList( IEnumerable< OrderShipment > orderShipments )
 		{
-			orderShipments.DoWithPages( 50, p => AP.Submit.Do( () =>
+			orderShipments.DoWithPages( 50, p => AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 			{
 				var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, p.ToArray() );
 				this.CheckCaSuccess( result );
@@ -256,7 +260,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 
 		public async Task SubmitOrderShipmentListAsync( IEnumerable< OrderShipment > orderShipments )
 		{
-			await orderShipments.DoWithPagesAsync( 50, async p => await AP.SubmitAsync.Do( async () =>
+			await orderShipments.DoWithPagesAsync( 50, async p => await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 			{
 				var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, p.ToArray() ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
@@ -285,20 +289,20 @@ namespace ChannelAdvisorAccess.Services.Shipping
 
 		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList, string[] clientOrderIdentifierList )
 		{
-			return AP.Submit.Get( () =>
+			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
 			{
 				var result = this._client.GetOrderShipmentHistoryList( this._credentials, this.AccountId, orderIdList, clientOrderIdentifierList );
-				CheckCaSuccess( result );
+				this.CheckCaSuccess( result );
 				return result.ResultData;
 			} );
 		}
 
 		public async Task< OrderShipmentHistoryResponse[] > GetOrderShipmentHistoryListAsync( int[] orderIdList, string[] clientOrderIdentifierList )
 		{
-			return await AP.Submit.Get( async () =>
+			return await AP.CreateSubmit( this.AdditionalLogInfo ).Get( async () =>
 			{
 				var result = await this._client.GetOrderShipmentHistoryListAsync( this._credentials, this.AccountId, orderIdList, clientOrderIdentifierList ).ConfigureAwait( false );
-				CheckCaSuccess( result.GetOrderShipmentHistoryListResult );
+				this.CheckCaSuccess( result.GetOrderShipmentHistoryListResult );
 				return result.GetOrderShipmentHistoryListResult.ResultData;
 			} ).ConfigureAwait( false );
 		}
@@ -306,14 +310,14 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		public ShippingCarrier[] GetShippingCarrierList()
 		{
 			var result = this._client.GetShippingCarrierList( this._credentials, this.AccountId );
-			CheckCaSuccess( result );
+			this.CheckCaSuccess( result );
 			return result.ResultData;
 		}
 
 		public async Task< ShippingCarrier[] > GetShippingCarrierListAsync()
 		{
 			var result = await this._client.GetShippingCarrierListAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
-			CheckCaSuccess( result.GetShippingCarrierListResult );
+			this.CheckCaSuccess( result.GetShippingCarrierListResult );
 			return result.GetShippingCarrierListResult.ResultData;
 		}
 

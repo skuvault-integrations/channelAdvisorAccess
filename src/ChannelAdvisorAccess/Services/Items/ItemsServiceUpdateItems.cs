@@ -24,7 +24,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				AP.Submit.Do( () =>
+				AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
 					if( !isCreateNew && !this.DoesSkuExist( item.Sku, mark ) )
@@ -55,7 +55,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				await AP.SubmitAsync.Do( async () =>
+				await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
 					if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku, mark ) ) )
@@ -92,7 +92,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					items = items.Where( x => existSkus.Contains( x.Sku ) );
 				}
 
-				items.DoWithPages( 100, i => AP.Submit.Do( () =>
+				items.DoWithPages( 100, i => AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : i.ToJson() ) );
 					var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, i.ToArray() );
@@ -126,9 +126,9 @@ namespace ChannelAdvisorAccess.Services.Items
 					items = items.Where( x => existSkus.Contains( x.Sku ) );
 				}
 
-				await items.DoWithPagesAsync( 100, async i => await AP.SubmitAsync.Do( async () =>
+				await items.DoWithPagesAsync( 100, async i => await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
-					await AP.SubmitAsync.Do( async () =>
+					await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 					{
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : i.ToJson() ) );
 						var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, i.ToArray() ).ConfigureAwait( false );
@@ -155,7 +155,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : itemQuantityAndPrice.ToJson() ) );
 
-				AP.Submit.Do( () =>
+				AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : itemQuantityAndPrice.ToJson() ) );
 					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPrice( this._credentials, this.AccountId, itemQuantityAndPrice );
@@ -181,7 +181,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : itemQuantityAndPrice.ToJson() ) );
 
-				await AP.SubmitAsync.Do( async () =>
+				await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : itemQuantityAndPrice.ToJson() ) );
 					var resultOfBoolean = await this._client.UpdateInventoryItemQuantityAndPriceAsync( this._credentials, this.AccountId, itemQuantityAndPrice ).ConfigureAwait( false );
@@ -206,7 +206,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : itemQuantityAndPrices.ToJson() ) );
-				itemQuantityAndPrices.DoWithPages( 5000, itemsPage => AP.Submit.Do( () =>
+				itemQuantityAndPrices.DoWithPages( 5000, itemsPage => AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : itemsPage.ToJson() ) );
 					var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemsPage.ToArray() );
@@ -232,7 +232,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : itemQuantityAndPrices.ToJson() ) );
 
-				await itemQuantityAndPrices.DoWithPagesAsync( 500, async i => await AP.SubmitAsync.Do( async () =>
+				await itemQuantityAndPrices.DoWithPagesAsync( 500, async i => await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : i.ToJson() ) );
 					var result = await this._client.UpdateInventoryItemQuantityAndPriceListAsync( this._credentials, this.AccountId, i.ToArray() ).ConfigureAwait( false );
@@ -262,7 +262,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				skus.DoWithPages( 500, s => AP.Submit.Do( () =>
+				skus.DoWithPages( 500, s => AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );
 					var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, s.ToArray(), reason );
@@ -292,7 +292,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				await skus.DoWithPagesAsync( 500, async s => await AP.SubmitAsync.Do( async () =>
+				await skus.DoWithPagesAsync( 500, async s => await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );
 					var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, s.ToArray(), reason ).ConfigureAwait( false );
@@ -321,7 +321,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				skus.DoWithPages( 500, s => AP.Submit.Do( () =>
+				skus.DoWithPages( 500, s => AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );
 					var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, s.ToArray(), reason );
@@ -351,7 +351,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				await skus.DoWithPagesAsync( 500, async s => await AP.SubmitAsync.Do( async () =>
+				await skus.DoWithPagesAsync( 500, async s => await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );
 					var resultOfBoolean = await this._client.AssignLabelListToInventoryItemListAsync( this._credentials, this.AccountId, labels, createLabelIfNotExist, s.ToArray(), reason ).ConfigureAwait( false );

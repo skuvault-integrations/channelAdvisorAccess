@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ChannelAdvisorAccess.AdminService;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
+using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Admin
 {
@@ -9,6 +11,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 	{
 		private readonly APICredentials _credentials;
 		private readonly AdminServiceSoapClient _client;
+
+		[ JsonIgnore ]
+		public Func< string > AdditionalLogInfo{ get; set; }
 
 		public AdminService( APICredentials credentials )
 		{
@@ -19,19 +24,19 @@ namespace ChannelAdvisorAccess.Services.Admin
 		#region Ping
 		public void Ping()
 		{
-			AP.Query.Do( () =>
+			AP.CreateQuery( this.AdditionalLogInfo ).Do( () =>
 			{
 				var result = this._client.Ping( this._credentials );
-				CheckCaSuccess( result );
+				this.CheckCaSuccess( result );
 			} );
 		}
 
 		public async Task PingAsync()
 		{
-			await AP.QueryAsync.Do( async () =>
+			await AP.CreateQueryAsync( this.AdditionalLogInfo ).Do( async () =>
 			{
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
-				CheckCaSuccess( result.PingResult );
+				this.CheckCaSuccess( result.PingResult );
 			} ).ConfigureAwait( false );
 		}
 		#endregion
@@ -48,7 +53,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public AuthorizationResponse[] GetAuthorizationList( string localId )
 		{
-			return AP.Submit.Get( () =>
+			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
 			{
 				var result = this._client.GetAuthorizationList( this._credentials, localId );
 				this.CheckCaSuccess( result );
@@ -58,7 +63,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId )
 		{
-			return await AP.SubmitAsync.Get( async () =>
+			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
 			{
 				var result = await this._client.GetAuthorizationListAsync( this._credentials, localId ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.GetAuthorizationListResult );
@@ -68,7 +73,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public bool RequestAccess( int localId )
 		{
-			return AP.Submit.Get( () =>
+			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
 			{
 				var result = this._client.RequestAccess( this._credentials, localId );
 				this.CheckCaSuccess( result );
@@ -78,7 +83,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public async Task< bool > RequestAccessAsync( int localId )
 		{
-			return await AP.SubmitAsync.Get( async () =>
+			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
 			{
 				var result = await this._client.RequestAccessAsync( this._credentials, localId ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.RequestAccessResult );

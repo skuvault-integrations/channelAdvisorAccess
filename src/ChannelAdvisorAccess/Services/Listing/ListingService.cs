@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.ListingService;
 using ChannelAdvisorAccess.Misc;
 using Netco.Extensions;
+using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Listing
 {
@@ -14,6 +16,9 @@ namespace ChannelAdvisorAccess.Services.Listing
 		private readonly ListingServiceSoapClient _client;
 		public string Name{ get; private set; }
 		public string AccountId{ get; private set; }
+
+		[ JsonIgnore ]
+		public Func< string > AdditionalLogInfo{ get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListingService"/> class.
@@ -32,19 +37,19 @@ namespace ChannelAdvisorAccess.Services.Listing
 		#region Ping
 		public void Ping()
 		{
-			AP.Query.Do( () =>
+			AP.CreateQuery( this.AdditionalLogInfo ).Do( () =>
 			{
 				var result = this._client.Ping( this._credentials );
-				CheckCaSuccess( result );
+				this.CheckCaSuccess( result );
 			} );
 		}
 
 		public async Task PingAsync()
 		{
-			await AP.QueryAsync.Do( async () =>
+			await AP.CreateQueryAsync( this.AdditionalLogInfo ).Do( async () =>
 			{
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
-				CheckCaSuccess( result.PingResult );
+				this.CheckCaSuccess( result.PingResult );
 			} ).ConfigureAwait( false );
 		}
 		#endregion
@@ -54,7 +59,7 @@ namespace ChannelAdvisorAccess.Services.Listing
 			if( itemSkus == null || itemSkus.Count == 0 )
 				return;
 
-			itemSkus.DoWithPages( 100, s => AP.Submit.Do( () =>
+			itemSkus.DoWithPages( 100, s => AP.CreateSubmit( this.AdditionalLogInfo ).Do( () =>
 			{
 				var result = this._client.WithdrawListings( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason );
 				this.CheckCaSuccess( result );
@@ -66,7 +71,7 @@ namespace ChannelAdvisorAccess.Services.Listing
 			if( itemSkus == null || itemSkus.Count == 0 )
 				return;
 
-			await itemSkus.DoWithPagesAsync( 100, async s => await AP.SubmitAsync.Do( async () =>
+			await itemSkus.DoWithPagesAsync( 100, async s => await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Do( async () =>
 			{
 				var result = await this._client.WithdrawListingsAsync( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.WithdrawListingsResult );

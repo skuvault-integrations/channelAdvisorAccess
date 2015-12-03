@@ -18,7 +18,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 
-				var classificationConfigurationInformations = AP.Query.Get( () =>
+				var classificationConfigurationInformations = AP.CreateQuery(this.AdditionalLogInfo).Get(() =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 					var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
@@ -46,7 +46,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 
-				var classificationConfigurationInformations = await AP.QueryAsync.Get( async () =>
+				var classificationConfigurationInformations = await AP.CreateQueryAsync(this.AdditionalLogInfo).Get(async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 					var result = await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
@@ -74,7 +74,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 
-				var distributionCenterResponses = AP.Query.Get( () =>
+				var distributionCenterResponses = AP.CreateQuery(this.AdditionalLogInfo).Get(() =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 					var result = this._client.GetDistributionCenterList( this._credentials, this.AccountId );
@@ -102,7 +102,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 
-				var distributionCenterResponses = await AP.QueryAsync.Get( async () =>
+				var distributionCenterResponses = await AP.CreateQueryAsync(this.AdditionalLogInfo).Get(async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 					var result = await this._client.GetDistributionCenterListAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
