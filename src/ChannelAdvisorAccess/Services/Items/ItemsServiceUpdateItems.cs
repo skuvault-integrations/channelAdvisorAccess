@@ -25,7 +25,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : parameters.ToJson() ) );
 
-				AP.CreateSubmit( this.CreateMethodCallInfo(this.AdditionalLogInfo) ).Do( () =>
+				AP.CreateSubmit( this.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
 					if( !isCreateNew && !this.DoesSkuExist( item.Sku, mark ) )
