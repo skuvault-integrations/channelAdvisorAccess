@@ -24,7 +24,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 		#region Ping
 		public void Ping()
 		{
-			AP.CreateQuery( this.AdditionalLogInfo ).Do( () =>
+			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 			{
 				var result = this._client.Ping( this._credentials );
 				this.CheckCaSuccess( result );
@@ -33,7 +33,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public async Task PingAsync()
 		{
-			await AP.CreateQueryAsync( this.AdditionalLogInfo ).Do( async () =>
+			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 			{
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.PingResult );
@@ -53,7 +53,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public AuthorizationResponse[] GetAuthorizationList( string localId )
 		{
-			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
+			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
 				var result = this._client.GetAuthorizationList( this._credentials, localId );
 				this.CheckCaSuccess( result );
@@ -63,7 +63,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId )
 		{
-			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
+			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
 				var result = await this._client.GetAuthorizationListAsync( this._credentials, localId ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.GetAuthorizationListResult );
@@ -73,7 +73,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public bool RequestAccess( int localId )
 		{
-			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
+			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
 				var result = this._client.RequestAccess( this._credentials, localId );
 				this.CheckCaSuccess( result );
@@ -83,7 +83,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 		public async Task< bool > RequestAccessAsync( int localId )
 		{
-			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
+			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
 				var result = await this._client.RequestAccessAsync( this._credentials, localId ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.RequestAccessResult );

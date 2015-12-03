@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
+using Netco.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -28,6 +30,12 @@ namespace ChannelAdvisorAccess.Misc
 			{
 				return PredefinedValues.EmptyJsonObject;
 			}
+		}
+
+		public static Func< string > CreateMethodCallInfo( Func< string > additionalLogInfo, [ CallerMemberName ] string callerMemberName = "" )
+		{
+			var message = "MethodInfo: {0}, ".FormatWith( callerMemberName );
+			return () => message + additionalLogInfo();
 		}
 	}
 }

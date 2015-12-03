@@ -42,7 +42,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		#region Ping
 		public void Ping()
 		{
-			AP.CreateQuery( this.AdditionalLogInfo ).Do( () =>
+			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 			{
 				var result = this._client.Ping( this._credentials );
 				this.CheckCaSuccess( result );
@@ -51,7 +51,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public async Task PingAsync()
 		{
-			await AP.CreateQueryAsync( this.AdditionalLogInfo ).Do( async () =>
+			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 			{
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.PingResult );
@@ -138,7 +138,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria )
 		{
-			return AP.CreateQuery( this.AdditionalLogInfo ).Get( () =>
+			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
 				CheckCaSuccess( results );
@@ -180,7 +180,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria )
 		{
-			return await AP.CreateQueryAsync( this.AdditionalLogInfo ).Get( async () =>
+			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );
@@ -195,7 +195,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <returns>New order CA id.</returns>
 		public int SubmitOrder( OrderSubmit orderSubmit )
 		{
-			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
+			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
 				var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
 				this.CheckCaSuccess( apiResults );
@@ -205,7 +205,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit )
 		{
-			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
+			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
 				var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit ).ConfigureAwait( false );
 				this.CheckCaSuccess( apiResults.SubmitOrderResult );
@@ -216,7 +216,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
 		{
-			return AP.CreateSubmit( this.AdditionalLogInfo ).Get( () =>
+			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
 				var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
 				this.CheckCaSuccess( results );
@@ -226,7 +226,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates )
 		{
-			return await AP.CreateSubmitAsync( this.AdditionalLogInfo ).Get( async () =>
+			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
 				var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates ).ConfigureAwait( false );
 				this.CheckCaSuccess( results.UpdateOrderListResult );

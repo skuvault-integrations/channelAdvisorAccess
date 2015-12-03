@@ -69,7 +69,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				while( true )
 				{
 					filter.Criteria.PageNumber += 1;
-					var itemResponse = AP.CreateQuery( this.AdditionalLogInfo ).Get(
+					var itemResponse = AP.CreateQuery(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Get(
 						() =>
 						{
 							ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : filter.ToJson() ) );
@@ -129,7 +129,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				while( true )
 				{
 					filter.Criteria.PageNumber += 1;
-					var itemResponse = await AP.CreateQueryAsync( this.AdditionalLogInfo ).Get( async () =>
+					var itemResponse = await AP.CreateQueryAsync(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Get(async () =>
 					{
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : filter.ToJson() ) );
 						var getFilteredSkuListResponse = await this._client.GetFilteredSkuListAsync
@@ -187,7 +187,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					filter.Criteria.PageNumber += 1;
 
-					var itemResponse = await AP.CreateQueryAsync( this.AdditionalLogInfo ).Get( async () =>
+					var itemResponse = await AP.CreateQueryAsync(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Get(async () =>
 					{
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
 						var getFilteredSkuListResponse = await this._client.GetFilteredSkuListAsync( this._credentials, this.AccountId, filter.Criteria, filter.SortField, filter.SortDirection )

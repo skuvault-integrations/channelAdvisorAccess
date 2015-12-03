@@ -16,7 +16,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
-				AP.CreateQuery( this.AdditionalLogInfo ).Do( () =>
+				AP.CreateQuery(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Do(() =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 					var result = this._client.Ping( this._credentials );
@@ -41,7 +41,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
-				await AP.CreateQueryAsync( this.AdditionalLogInfo ).Do( async () =>
+				await AP.CreateQueryAsync(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Do(async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 					var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
