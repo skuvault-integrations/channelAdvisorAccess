@@ -49,7 +49,7 @@ namespace ChannelAdvisorAccess.Exceptions
 		{
 			var code = this.MessageCode;
 			var errorMessage = this.ErrorMessage ?? string.Empty;
-			return string.Format( "ErrorCode={0}, ErrorMessage={1}\n" + base.ToString(), code, errorMessage );
+			return string.Format( "ErrorCode={0}, ErrorMessage={1}", code, errorMessage ) + "\n" + base.ToString();
 		}
 	}
 }
