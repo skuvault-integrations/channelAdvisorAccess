@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.AdminService;
 using ChannelAdvisorAccess.Exceptions;
@@ -15,6 +16,52 @@ namespace ChannelAdvisorAccess.Services.Admin
 		[ JsonIgnore ]
 		public Func< string > AdditionalLogInfo{ get; set; }
 
+		private string AdditionalLogInfoString
+		{
+			get
+			{
+				if( this.AdditionalLogInfo == null )
+					return null;
+
+				string res;
+				try
+				{
+					res = this.AdditionalLogInfo();
+				}
+				catch
+				{
+					return null;
+				}
+
+				return res;
+			}
+		}
+
+		private string CreateMethodCallInfo( string methodParameters = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "" )
+		{
+			try
+			{
+				mark = mark ?? Mark.Blank();
+				var connectionInfo = this.ToJson();
+				var str = string.Format(
+					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters:{2} {4}{5}{6}{7}}}",
+					memberName,
+					connectionInfo,
+					string.IsNullOrWhiteSpace( methodParameters ) ? PredefinedValues.EmptyJsonObject : methodParameters,
+					mark,
+					string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
+					string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
+					string.IsNullOrWhiteSpace( notes ) ? string.Empty : ",Notes: " + notes,
+					string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
+					);
+				return str;
+			}
+			catch( Exception exception )
+			{
+				return PredefinedValues.EmptyJsonObject;
+			}
+		}
+
 		public AdminService( APICredentials credentials )
 		{
 			this._credentials = credentials;
@@ -22,73 +69,205 @@ namespace ChannelAdvisorAccess.Services.Admin
 		}
 
 		#region Ping
-		public void Ping()
+		public void Ping( Mark mark = null )
 		{
-			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var result = this._client.Ping( this._credentials );
-				this.CheckCaSuccess( result );
-			} );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+				{
+					var result = this._client.Ping( this._credentials );
+					this.CheckCaSuccess( result );
+				} );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task PingAsync()
+		public async Task PingAsync( Mark mark = null )
 		{
-			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+			try
 			{
-				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
-				this.CheckCaSuccess( result.PingResult );
-			} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+				{
+					var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+					this.CheckCaSuccess( result.PingResult );
+				} ).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 		#endregion
 
-		public AuthorizationResponse[] GetAuthorizationList()
+		public AuthorizationResponse[] GetAuthorizationList( Mark mark = null )
 		{
-			return this.GetAuthorizationList( string.Empty );
-		}
-
-		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync()
-		{
-			return await this.GetAuthorizationListAsync( string.Empty ).ConfigureAwait( false );
-		}
-
-		public AuthorizationResponse[] GetAuthorizationList( string localId )
-		{
-			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+			try
 			{
-				var result = this._client.GetAuthorizationList( this._credentials, localId );
-				this.CheckCaSuccess( result );
-				return result.ResultData;
-			} );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				var authorizationResponses = this.GetAuthorizationList( string.Empty );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : authorizationResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+
+				return authorizationResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId )
+		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( Mark mark = null )
 		{
-			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+			try
 			{
-				var result = await this._client.GetAuthorizationListAsync( this._credentials, localId ).ConfigureAwait( false );
-				this.CheckCaSuccess( result.GetAuthorizationListResult );
-				return result.GetAuthorizationListResult.ResultData;
-			} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
+
+				var authorizationResponses = await this.GetAuthorizationListAsync( string.Empty ).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : authorizationResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
+
+				return authorizationResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public bool RequestAccess( int localId )
+		public AuthorizationResponse[] GetAuthorizationList( string localId, Mark mark = null )
 		{
-			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+			try
 			{
-				var result = this._client.RequestAccess( this._credentials, localId );
-				this.CheckCaSuccess( result );
-				return result.ResultData;
-			} );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : localId ) );
+
+				var authorizationResponses = AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+				{
+					var result = this._client.GetAuthorizationList( this._credentials, localId );
+					this.CheckCaSuccess( result );
+					return result.ResultData;
+				} );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : authorizationResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : localId ) );
+
+				return authorizationResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task< bool > RequestAccessAsync( int localId )
+		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId, Mark mark = null )
 		{
-			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+			try
 			{
-				var result = await this._client.RequestAccessAsync( this._credentials, localId ).ConfigureAwait( false );
-				this.CheckCaSuccess( result.RequestAccessResult );
-				return result.RequestAccessResult.ResultData;
-			} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : localId ) );
+
+				var authorizationResponses = await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+				{
+					var result = await this._client.GetAuthorizationListAsync( this._credentials, localId ).ConfigureAwait( false );
+					this.CheckCaSuccess( result.GetAuthorizationListResult );
+					return result.GetAuthorizationListResult.ResultData;
+				} ).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : authorizationResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : localId ) );
+
+				return authorizationResponses;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
+		}
+
+		public bool RequestAccess( int localId, Mark mark = null )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+			try
+			{
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : localId.ToString() ) );
+
+				var requestAccess = AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+				{
+					var result = this._client.RequestAccess( this._credentials, localId );
+					this.CheckCaSuccess( result );
+					return result.ResultData;
+				} );
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : requestAccess.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : localId.ToString() ) );
+
+				return requestAccess;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
+		}
+
+		public async Task< bool > RequestAccessAsync( int localId, Mark mark = null )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+			try
+			{
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : localId.ToString() ) );
+
+				var requestAsyncResult = await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+				{
+					var result = await this._client.RequestAccessAsync( this._credentials, localId ).ConfigureAwait( false );
+					this.CheckCaSuccess( result.RequestAccessResult );
+					return result.RequestAccessResult.ResultData;
+				} ).ConfigureAwait( false );
+				;
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : requestAsyncResult.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : localId.ToString() ) );
+
+				return requestAsyncResult;
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		private void CheckCaSuccess( APIResultOfString results )
