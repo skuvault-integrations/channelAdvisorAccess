@@ -21,7 +21,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			get
 			{
 				if( this.AdditionalLogInfo == null )
-					return null;
+					return string.Empty;
 
 				string res;
 				try
@@ -30,7 +30,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 				}
 				catch
 				{
-					return null;
+					return string.Empty;
 				}
 
 				return res;
@@ -127,7 +127,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 
-				var authorizationResponses = this.GetAuthorizationList( string.Empty );
+				var authorizationResponses = this.GetAuthorizationList( string.Empty, mark );
 
 				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : authorizationResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 
@@ -149,7 +149,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ) );
 
-				var authorizationResponses = await this.GetAuthorizationListAsync( string.Empty ).ConfigureAwait( false );
+				var authorizationResponses = await this.GetAuthorizationListAsync( string.Empty, mark ).ConfigureAwait( false );
 
 				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, methodResult : authorizationResponses.ToJson(), additionalInfo : this.AdditionalLogInfoString ) );
 

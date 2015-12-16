@@ -27,7 +27,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			get
 			{
 				if( this.AdditionalLogInfo == null )
-					return null;
+					return string.Empty;
 
 				string res;
 				try
@@ -36,7 +36,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				}
 				catch
 				{
-					return null;
+					return string.Empty;
 				}
 
 				return res;
