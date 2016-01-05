@@ -142,7 +142,29 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
 				CheckCaSuccess( results );
-				return results.ResultData;
+				var resultData = results.ResultData ?? new OrderResponseItem[ 0 ];
+				if( results.MessageCode == 1 )
+				{
+					var newResult = new List< OrderResponseItem >();
+					var prevPageSize = orderCriteria.PageSize;
+					var prevPageNumber = orderCriteria.PageNumberFilter;
+					var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
+					for( var i = 1; i <= prevPageSize; i++ )
+					{
+						orderCriteria.PageSize = 1;
+						orderCriteria.PageNumberFilter = pageNumberBy1 + i;
+						var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+						if( answer.Status == ResultStatus.Success )
+							newResult.AddRange( answer.ResultData );
+					}
+
+					orderCriteria.PageSize = prevPageSize;
+					orderCriteria.PageNumberFilter = prevPageNumber;
+
+					resultData = newResult.ToArray();
+				}
+
+				return resultData;
 			} );
 		}
 
@@ -163,7 +185,6 @@ namespace ChannelAdvisorAccess.Services.Orders
 			orderCriteria.PageNumberFilter = 1;
 
 			var orders = new List< T >();
-
 			while( true )
 			{
 				var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria ).ConfigureAwait( false );
@@ -184,7 +205,29 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );
-				return results.GetOrderListResult.ResultData;
+				var resultData = results.GetOrderListResult.ResultData ?? new OrderResponseItem[ 0 ];
+				if( results.GetOrderListResult.MessageCode == 1 )
+				{
+					var newResult = new List< OrderResponseItem >();
+					var prevPageSize = orderCriteria.PageSize;
+					var prevPageNumber = orderCriteria.PageNumberFilter;
+					var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
+					for( var i = 1; i <= prevPageSize; i++ )
+					{
+						orderCriteria.PageSize = 1;
+						orderCriteria.PageNumberFilter = pageNumberBy1 + i;
+						var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
+						if( answer.GetOrderListResult.Status == ResultStatus.Success )
+							newResult.AddRange( answer.GetOrderListResult.ResultData );
+					}
+
+					orderCriteria.PageSize = prevPageSize;
+					orderCriteria.PageNumberFilter = prevPageNumber;
+
+					resultData = newResult.ToArray();
+				}
+
+				return resultData;
 			} ).ConfigureAwait( false );
 		}
 
@@ -237,7 +280,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private static void CheckCaSuccess( APIResultOfArrayOfOrderResponseItem orderList )
 		{
 			if( orderList.Status != ResultStatus.Success )
-				throw new ChannelAdvisorException( orderList.MessageCode, orderList.Message );
+			{
+				if( orderList.MessageCode != 1 )
+					throw new ChannelAdvisorException( orderList.MessageCode, orderList.Message );
+			}
 		}
 
 		private void CheckCaSuccess( APIResultOfInt32 results )
