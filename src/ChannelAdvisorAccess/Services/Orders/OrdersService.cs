@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
+using Netco.Extensions;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {
@@ -143,29 +146,36 @@ namespace ChannelAdvisorAccess.Services.Orders
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
 				CheckCaSuccess( results );
 				var resultData = results.ResultData ?? new OrderResponseItem[ 0 ];
+
+				// If you get message code = 1 (Unexpected)
 				if( results.MessageCode == 1 )
-				{
-					var newResult = new List< OrderResponseItem >();
-					var prevPageSize = orderCriteria.PageSize;
-					var prevPageNumber = orderCriteria.PageNumberFilter;
-					var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
-					for( var i = 1; i <= prevPageSize; i++ )
-					{
-						orderCriteria.PageSize = 1;
-						orderCriteria.PageNumberFilter = pageNumberBy1 + i;
-						var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
-						if( answer.Status == ResultStatus.Success )
-							newResult.AddRange( answer.ResultData );
-					}
-
-					orderCriteria.PageSize = prevPageSize;
-					orderCriteria.PageNumberFilter = prevPageNumber;
-
-					resultData = newResult.ToArray();
-				}
+					resultData = this.HandleErrorUnexpected( orderCriteria );
 
 				return resultData;
 			} );
+		}
+
+		private OrderResponseItem[] HandleErrorUnexpected( OrderCriteria orderCriteria, [ CallerMemberName ] string callerMemberName = "" )
+		{
+			var result = new List< OrderResponseItem >();
+			var prevPageSize = orderCriteria.PageSize;
+			var prevPageNumber = orderCriteria.PageNumberFilter;
+			var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
+			for( var i = 1; i <= prevPageSize; i++ )
+			{
+				orderCriteria.PageSize = 1;
+				orderCriteria.PageNumberFilter = pageNumberBy1 + i;
+				var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+				if( answer.Status == ResultStatus.Success )
+					result.AddRange( answer.ResultData );
+				else
+					this.LogUnexpectedError( orderCriteria, answer, pageNumberBy1, callerMemberName );
+			}
+
+			orderCriteria.PageSize = prevPageSize;
+			orderCriteria.PageNumberFilter = prevPageNumber;
+
+			return result.ToArray();
 		}
 
 		/// <summary>
@@ -206,29 +216,36 @@ namespace ChannelAdvisorAccess.Services.Orders
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );
 				var resultData = results.GetOrderListResult.ResultData ?? new OrderResponseItem[ 0 ];
+				
+				// If you get message code = 1 (Unexpected)
 				if( results.GetOrderListResult.MessageCode == 1 )
-				{
-					var newResult = new List< OrderResponseItem >();
-					var prevPageSize = orderCriteria.PageSize;
-					var prevPageNumber = orderCriteria.PageNumberFilter;
-					var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
-					for( var i = 1; i <= prevPageSize; i++ )
-					{
-						orderCriteria.PageSize = 1;
-						orderCriteria.PageNumberFilter = pageNumberBy1 + i;
-						var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
-						if( answer.GetOrderListResult.Status == ResultStatus.Success )
-							newResult.AddRange( answer.GetOrderListResult.ResultData );
-					}
-
-					orderCriteria.PageSize = prevPageSize;
-					orderCriteria.PageNumberFilter = prevPageNumber;
-
-					resultData = newResult.ToArray();
-				}
-
+					resultData = await this.HandleErrorUnexpectedAsync( orderCriteria );
+				
 				return resultData;
 			} ).ConfigureAwait( false );
+		}
+
+		private async Task< OrderResponseItem[] > HandleErrorUnexpectedAsync( OrderCriteria orderCriteria, [ CallerMemberName ] string callerMemberName = "" )
+		{
+			var result = new List< OrderResponseItem >();
+			var prevPageSize = orderCriteria.PageSize;
+			var prevPageNumber = orderCriteria.PageNumberFilter;
+			var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
+			for( var i = 1; i <= prevPageSize; i++ )
+			{
+				orderCriteria.PageSize = 1;
+				orderCriteria.PageNumberFilter = pageNumberBy1 + i;
+				var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
+				if (answer.GetOrderListResult.Status == ResultStatus.Success)
+					result.AddRange(answer.GetOrderListResult.ResultData);
+				else
+					this.LogUnexpectedError( orderCriteria, answer.GetOrderListResult, pageNumberBy1, callerMemberName );
+			}
+
+			orderCriteria.PageSize = prevPageSize;
+			orderCriteria.PageNumberFilter = prevPageNumber;
+
+			return result.ToArray();
 		}
 
 		/// <summary>
@@ -302,6 +319,15 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			if( result.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
+		}
+
+		private void LogUnexpectedError( OrderCriteria orderCriteria, APIResultOfArrayOfOrderResponseItem orderList, int? pageNumberBy1, string callerMemberName )
+		{
+			var additionalLogInfo = ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, callerMemberName )();
+			var criteria = string.Format( "StatusUpdateFilterBeginTimeGMTField: {0}. StatusUpdateFilterEndTimeGMTField: {1}. Number in sequence for pageSize equal 1 : {2}", orderCriteria.StatusUpdateFilterBeginTimeGMT.GetValueOrDefault(), orderCriteria.StatusUpdateFilterEndTimeGMT.GetValueOrDefault(), pageNumberBy1 );
+			var message = "Unexpected Error. Additional info: {0} {1}".FormatWith( additionalLogInfo, criteria );
+			var exception = new ChannelAdvisorException( orderList.MessageCode, message );
+			ChannelAdvisorLogger.LogTraceException( exception );
 		}
 	}
 }
