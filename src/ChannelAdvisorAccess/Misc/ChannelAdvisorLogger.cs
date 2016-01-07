@@ -22,47 +22,47 @@ namespace ChannelAdvisorAccess.Misc
 
 		public static void LogTraceException( Exception exception )
 		{
-			Log().Trace( exception, "[channelAdvisor] An exception occured. ver:{0}", _versionInfo );
+			Log().Trace( exception, "[channelAdvisor] An exception occured. [ver:{0}]", _versionInfo );
 		}
 
 		public static void LogTraceStarted( string info )
 		{
-			Log().Trace( "[channelAdvisor] Trace Start call:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] Trace Start call:{0}, [ver:{1}]", info, _versionInfo );
 		}
 
 		public static void LogTraceEnd( string info )
 		{
-			Log().Trace( "[channelAdvisor] Trace End call:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] Trace End call:{0}, [ver:{1}]", info, _versionInfo );
 		}
 
 		public static void LogStarted( string info )
 		{
-			Log().Trace( "[channelAdvisor] Start call:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] Start call:{0}, [ver:{1}]", info, _versionInfo );
 		}
 
 		public static void LogEnd( string info )
 		{
-			Log().Trace( "[channelAdvisor] End call:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] End call:{0}, [ver:{1}]", info, _versionInfo );
 		}
 
 		public static void LogTrace( Exception ex, string info )
 		{
-			Log().Trace( ex, "[channelAdvisor] Trace info:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( ex, "[channelAdvisor] Trace info:{0}, [ver:{1}]", info, _versionInfo );
 		}
 
 		public static void LogTrace( string info )
 		{
-			Log().Trace( "[channelAdvisor] Trace info:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] Trace info:{0}, [ver:{1}]", info, _versionInfo );
 		}
 
 		public static void LogTraceRetryStarted( string info )
 		{
-			Log().Trace( "[channelAdvisor] TraceRetryStarted info:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] TraceRetryStarted info:{0}, [ver:{1}]", info, _versionInfo );
 		}
 
 		public static void LogTraceRetryEnd( string info )
 		{
-			Log().Trace( "[channelAdvisor] TraceRetryEnd info:{0}, ver:{1}.", info, _versionInfo );
+			Log().Trace( "[channelAdvisor] TraceRetryEnd info:{0}, [ver:{1}]", info, _versionInfo );
 		}
 	}
 }
