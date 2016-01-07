@@ -21,14 +21,6 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private readonly OrderServiceSoapClient _client;
 		public string AccountId{ get; private set; }
 
-		private Func< string > _additionalLogInfo;
-
-		public Func< string > AdditionalLogInfo
-		{
-			get { return this._additionalLogInfo ?? ( () => string.Empty ); }
-			set { this._additionalLogInfo = value; }
-		}
-
 		public string Name{ get; private set; }
 
 		public OrdersService( APICredentials credentials, string accountName, string accountId ): this( credentials, accountId )
@@ -194,7 +186,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 			try
 			{
-				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : orderCriteria.ToJson() ) );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 
 				if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 					orderCriteria.DetailLevel = "High";
@@ -215,12 +207,12 @@ namespace ChannelAdvisorAccess.Services.Orders
 					orderCriteria.PageNumberFilter += 1;
 				}
 
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : orderCriteria.ToJson() ) );
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 				return orders;
 			}
 			catch( Exception exception )
 			{
-				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : orderCriteria.ToJson() ), exception );
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
 			}

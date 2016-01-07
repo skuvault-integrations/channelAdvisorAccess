@@ -32,28 +32,13 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
+		private Func< string > _additionalLogInfo;
+
 		[ JsonIgnore ]
-		public Func< string > AdditionalLogInfo{ get; set; }
-
-		protected string AdditionalLogInfoString
+		public Func< string > AdditionalLogInfo
 		{
-			get
-			{
-				if( this.AdditionalLogInfo == null )
-					return string.Empty;
-
-				string res;
-				try
-				{
-					res = this.AdditionalLogInfo();
-				}
-				catch
-				{
-					return string.Empty;
-				}
-
-				return res;
-			}
+			get { return this._additionalLogInfo ?? ( () => string.Empty ); }
+			set { this._additionalLogInfo = value; }
 		}
 	}
 }
