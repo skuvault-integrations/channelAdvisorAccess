@@ -45,6 +45,11 @@ namespace ChannelAdvisorAccess.Misc
 			Log().Trace( "[channelAdvisor] End call:{0}, ver:{1}.", info, _versionInfo );
 		}
 
+		public static void LogTrace( Exception ex, string info )
+		{
+			Log().Trace( ex, "[channelAdvisor] Trace info:{0}, ver:{1}.", info, _versionInfo );
+		}
+
 		public static void LogTrace( string info )
 		{
 			Log().Trace( "[channelAdvisor] Trace info:{0}, ver:{1}.", info, _versionInfo );
