@@ -11,13 +11,14 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <summary>
 		/// Gets the account name.
 		/// </summary>
-		string Name { get; }
+		string Name{ get; }
+
 		Func< string > AdditionalLogInfo{ get; set; }
 
 		/// <summary>
 		/// Gets the account id.
 		/// </summary>
-		string AccountId { get; }
+		string AccountId{ get; }
 
 		void Ping();
 
@@ -31,7 +32,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <returns>Iterator to go over orders 1 order at a time.</returns>
 		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
 		IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate )
-			where T: OrderResponseItem;
+			where T : OrderResponseItem;
 
 		/// <summary>
 		/// Gets the orders.
@@ -41,7 +42,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <returns>Iterator to go over orders 1 order at a time.</returns>
 		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
 		Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
-			where T: OrderResponseItem;
+			where T : OrderResponseItem;
 
 		/// <summary>
 		/// Gets the orders and returns them in a list.

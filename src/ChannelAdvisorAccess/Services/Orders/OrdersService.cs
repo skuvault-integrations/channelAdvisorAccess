@@ -8,14 +8,13 @@ using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services.Items;
 using Netco.Extensions;
-using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {
 	/// <summary>
 	/// Facade to work with CA orders.
 	/// </summary>
-	public class OrdersService :  ServiceBaseAbstr, IOrdersService
+	public class OrdersService: ServiceBaseAbstr, IOrdersService
 	{
 		private readonly APICredentials _credentials;
 		private readonly OrderServiceSoapClient _client;
@@ -245,8 +244,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 				orderCriteria.PageSize = 1;
 				orderCriteria.PageNumberFilter = pageNumberBy1 + i;
 				var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
-				if (answer.GetOrderListResult.Status == ResultStatus.Success)
-					result.AddRange(answer.GetOrderListResult.ResultData);
+				if( answer.GetOrderListResult.Status == ResultStatus.Success )
+					result.AddRange( answer.GetOrderListResult.ResultData );
 				else
 					this.LogUnexpectedError( orderCriteria, answer.GetOrderListResult, pageNumberBy1, callerMemberName );
 			}

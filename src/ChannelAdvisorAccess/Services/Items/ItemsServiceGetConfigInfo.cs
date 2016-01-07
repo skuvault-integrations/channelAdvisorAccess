@@ -46,7 +46,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-				var classificationConfigurationInformations = await AP.CreateQueryAsync(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Get(async () =>
+				var classificationConfigurationInformations = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					var result = await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
@@ -74,7 +74,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-				var distributionCenterResponses = AP.CreateQuery(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Get(() =>
+				var distributionCenterResponses = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					var result = this._client.GetDistributionCenterList( this._credentials, this.AccountId );
@@ -102,7 +102,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-				var distributionCenterResponses = await AP.CreateQueryAsync(ExtensionsInternal.CreateMethodCallInfo(this.AdditionalLogInfo)).Get(async () =>
+				var distributionCenterResponses = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					var result = await this._client.GetDistributionCenterListAsync( this._credentials, this.AccountId ).ConfigureAwait( false );

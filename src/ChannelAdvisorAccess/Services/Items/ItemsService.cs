@@ -1,16 +1,13 @@
 using System;
 using System.Runtime.Caching;
-using System.Runtime.CompilerServices;
 using System.Text;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
-using ChannelAdvisorAccess.Misc;
 using Netco.Logging;
-using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
-	public partial class ItemsService : ServiceBaseAbstr, IItemsService
+	public partial class ItemsService: ServiceBaseAbstr, IItemsService
 	{
 		private readonly APICredentials _credentials;
 		private readonly InventoryServiceSoapClient _client;
