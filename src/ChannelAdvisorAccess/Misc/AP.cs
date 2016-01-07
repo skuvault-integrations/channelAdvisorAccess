@@ -21,9 +21,10 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
 			{
-				var message = "Retrying CA API get call for the {0} time, Additional info:{1}, ExceptionSummary {2}".FormatWith( i, ( additionalLogInfo ?? ( () => string.Empty ) )(), CollestMessages( ex ) );
+				var delay = GetDelay( ex, i );
+				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				SystemUtil.Sleep( GetDelay( ex, i ) );
+				SystemUtil.Sleep( delay );
 			} );
 		}
 
@@ -38,9 +39,10 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			return ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
 			{
-				var message = "Retrying CA API get call for the {0} time, Additional info: {1}, ExceptionSummary {2}".FormatWith( i, ( additionalLogInfo ?? ( () => string.Empty ) )(), CollestMessages( ex ) );
+				var delay = GetDelay( ex, i );
+				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				await Task.Delay( GetDelay( ex, i ) );
+				await Task.Delay( delay );
 			} );
 		}
 
@@ -55,9 +57,10 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
 			{
-				var message = "Retrying CA API get call for the {0} time, Additional info:{1}, ExceptionSummary {2}".FormatWith( i, ( additionalLogInfo ?? ( () => string.Empty ) )(), CollestMessages( ex ) );
+				var delay = GetDelay( ex, i );
+				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				SystemUtil.Sleep( GetDelay( ex, i ) );
+				SystemUtil.Sleep( delay );
 			} );
 		}
 
@@ -72,9 +75,10 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			return ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
 			{
-				var message = "Retrying CA API get call for the {0} time, Additional info:{1}, ExceptionSummary {2}".FormatWith( i, ( additionalLogInfo ?? ( () => string.Empty ) )(), CollestMessages( ex ) );
+				var delay = GetDelay( ex, i );
+				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				await Task.Delay( GetDelay( ex, i ) );
+				await Task.Delay( delay );
 			} );
 		}
 
@@ -135,6 +139,11 @@ namespace ChannelAdvisorAccess.Misc
 			{
 				return string.Empty;
 			}
+		}
+
+		private static string CreateRetryMessage( Func< string > additionalLogInfo, int i, TimeSpan delay, Exception ex )
+		{
+			return "Retrying CA API get call for the {0} time, delay:{1}, Additional info: {2}, ExceptionSummary {3}".FormatWith( i, delay, ( additionalLogInfo ?? ( () => string.Empty ) )(), CollestMessages( ex ) );
 		}
 	}
 }
