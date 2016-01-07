@@ -95,6 +95,14 @@ namespace ChannelAdvisorAccess.Misc
 					return delayPwe.Value;
 			}
 
+			if( ex != null && ex.InnerException != null )
+			{
+				var pwe = ex.InnerException as WebException;
+				var delayPwe = GetDelayForWebException( pwe );
+				if( delayPwe != null )
+					return delayPwe.Value;
+			}
+
 			return TimeSpan.FromSeconds( 0.5 + retryNumber );
 		}
 
