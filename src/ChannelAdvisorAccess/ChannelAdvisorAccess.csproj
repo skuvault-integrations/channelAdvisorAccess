@@ -224,6 +224,7 @@
     <Compile Include="Services\Items\ItemsServiceItems.cs" />
     <Compile Include="Services\Items\ItemsService.cs" />
     <Compile Include="Services\Items\ItemsFilter.cs" />
+    <Compile Include="Services\Items\ServiceBaseAbstr.cs" />
     <Compile Include="Services\Listing\IListingService.cs" />
     <Compile Include="Services\Listing\ListingService.cs" />
     <Compile Include="ChannelAdvisorAccount.cs" />

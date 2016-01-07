@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
+using ChannelAdvisorAccess.Services.Items;
 using Netco.Extensions;
 using Netco.Logging;
 
@@ -14,7 +15,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 	/// <summary>
 	/// Facade to work with CA orders.
 	/// </summary>
-	public class OrdersService: IOrdersService
+	public class OrdersService :  ServiceBaseAbstr, IOrdersService
 	{
 		private readonly APICredentials _credentials;
 		private readonly OrderServiceSoapClient _client;
@@ -183,44 +184,60 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="orderCriteria">The order criteria.</param>
+		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark = null )
 			where T : OrderResponseItem
 		{
-			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
-				orderCriteria.DetailLevel = "High";
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			int pageSize;
-			orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
-			orderCriteria.PageNumberFilter = 1;
-
-			var orders = new List< T >();
-			while( true )
+			try
 			{
-				var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : orderCriteria.ToJson() ) );
 
-				if( ordersFromPage == null || ordersFromPage.Length == 0 )
-					break;
+				if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
+					orderCriteria.DetailLevel = "High";
 
-				orders.AddRange( ordersFromPage.OfType< T >() );
-				orderCriteria.PageNumberFilter += 1;
+				int pageSize;
+				orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
+				orderCriteria.PageNumberFilter = 1;
+
+				var orders = new List< T >();
+				while( true )
+				{
+					var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria, mark ).ConfigureAwait( false );
+
+					if( ordersFromPage == null || ordersFromPage.Length == 0 )
+						break;
+
+					orders.AddRange( ordersFromPage.OfType< T >() );
+					orderCriteria.PageNumberFilter += 1;
+				}
+
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfoString, methodParameters : orderCriteria.ToJson() ) );
+				return orders;
 			}
-
-			return orders;
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString, methodParameters : orderCriteria.ToJson() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria )
+		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria, Mark mark = null )
 		{
-			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ) ).Get( async () =>
 			{
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );
 				var resultData = results.GetOrderListResult.ResultData ?? new OrderResponseItem[ 0 ];
-				
+
 				// If you get message code = 1 (Unexpected)
 				if( results.GetOrderListResult.MessageCode == 1 )
 					resultData = await this.HandleErrorUnexpectedAsync( orderCriteria );
-				
+
 				return resultData;
 			} ).ConfigureAwait( false );
 		}

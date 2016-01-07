@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
 
 namespace ChannelAdvisorAccess.Services.Orders
@@ -66,8 +67,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="orderCriteria">The order criteria.</param>
+		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria )
+		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark = null )
 			where T : OrderResponseItem;
 
 		/// <summary>Updates the order list.</summary>

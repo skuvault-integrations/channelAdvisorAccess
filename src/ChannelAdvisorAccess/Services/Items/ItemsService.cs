@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
-	public partial class ItemsService: IItemsService
+	public partial class ItemsService : ServiceBaseAbstr, IItemsService
 	{
 		private readonly APICredentials _credentials;
 		private readonly InventoryServiceSoapClient _client;
@@ -18,30 +18,6 @@ namespace ChannelAdvisorAccess.Services.Items
 		private readonly ObjectCache _cache;
 		private readonly string _allItemsCacheKey;
 		private readonly object _inventoryCacheLock = new Object();
-
-		[ JsonIgnore ]
-		public Func< string > AdditionalLogInfo{ get; set; }
-
-		private string AdditionalLogInfoString
-		{
-			get
-			{
-				if( this.AdditionalLogInfo == null )
-					return string.Empty;
-
-				string res;
-				try
-				{
-					res = this.AdditionalLogInfo();
-				}
-				catch
-				{
-					return string.Empty;
-				}
-
-				return res;
-			}
-		}
 
 		public string Name{ get; private set; }
 		public string AccountId{ get; private set; }

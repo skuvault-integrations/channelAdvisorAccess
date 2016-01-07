@@ -32,7 +32,7 @@ namespace ChannelAdvisorAccess.Misc
 			}
 		}
 
-		public static Func< string > CreateMethodCallInfo( Func< string > additionalLogInfo, [ CallerMemberName ] string callerMemberName = "" )
+		public static Func< string > CreateMethodCallInfo( Func< string > additionalLogInfo, [ CallerMemberName ] string callerMemberName = "", Mark mark = null )
 		{
 			var message = "MethodInfo: {0}, ".FormatWith( callerMemberName );
 			return additionalLogInfo == null ? ( () => message ) : ( Func< string > )( () => message + additionalLogInfo() );
