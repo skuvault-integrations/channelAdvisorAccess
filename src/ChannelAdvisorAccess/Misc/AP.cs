@@ -10,13 +10,32 @@ namespace ChannelAdvisorAccess.Misc
 {
 	public static class AP
 	{
+		private static readonly ActionPolicy _query = CreateQuery();
+		private static readonly ActionPolicyAsync _queryAsync = CreateQueryAsync();
+		private static readonly ActionPolicy _sumbit = CreateSubmit();
+		private static readonly ActionPolicyAsync _sumbitAsync = CreateSubmitAsync();
+
 		public static ActionPolicy Query
 		{
 			get { return _query; }
 		}
 
-		private static readonly ActionPolicy _query = CreateQuery();
+		public static ActionPolicyAsync QueryAsync
+		{
+			get { return _queryAsync; }
+		}
 
+		public static ActionPolicy Submit
+		{
+			get { return _sumbit; }
+		}
+
+		public static ActionPolicyAsync SubmitAsync
+		{
+			get { return _sumbitAsync; }
+		}
+
+		#region ActionPolicyCreator
 		public static ActionPolicy CreateQuery( Func< string > additionalLogInfo = null )
 		{
 			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
@@ -27,13 +46,6 @@ namespace ChannelAdvisorAccess.Misc
 				SystemUtil.Sleep( delay );
 			} );
 		}
-
-		public static ActionPolicyAsync QueryAsync
-		{
-			get { return _queryAsync; }
-		}
-
-		private static readonly ActionPolicyAsync _queryAsync = CreateQueryAsync();
 
 		public static ActionPolicyAsync CreateQueryAsync( Func< string > additionalLogInfo = null )
 		{
@@ -46,13 +58,6 @@ namespace ChannelAdvisorAccess.Misc
 			} );
 		}
 
-		public static ActionPolicy Submit
-		{
-			get { return _sumbit; }
-		}
-
-		private static readonly ActionPolicy _sumbit = CreateSubmit();
-
 		public static ActionPolicy CreateSubmit( Func< string > additionalLogInfo = null )
 		{
 			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
@@ -64,13 +69,6 @@ namespace ChannelAdvisorAccess.Misc
 			} );
 		}
 
-		public static ActionPolicyAsync SubmitAsync
-		{
-			get { return _sumbitAsync; }
-		}
-
-		private static readonly ActionPolicyAsync _sumbitAsync = CreateSubmitAsync();
-
 		public static ActionPolicyAsync CreateSubmitAsync( Func< string > additionalLogInfo = null )
 		{
 			return ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
@@ -81,7 +79,9 @@ namespace ChannelAdvisorAccess.Misc
 				await Task.Delay( delay );
 			} );
 		}
+		#endregion
 
+		#region Misc
 		private static TimeSpan GetDelay( Exception ex, int retryNumber )
 		{
 			var webException = ex as WebException;
@@ -126,7 +126,7 @@ namespace ChannelAdvisorAccess.Misc
 			return null;
 		}
 
-		public static string CollestMessages( Exception exc )
+		private static string CollestMessages( Exception exc )
 		{
 			try
 			{
@@ -145,5 +145,6 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			return "Retrying CA API get call for the {0} time, delay:{1}, Additional info: {2}, ExceptionSummary {3}".FormatWith( i, delay, ( additionalLogInfo ?? ( () => string.Empty ) )(), CollestMessages( ex ) );
 		}
+		#endregion
 	}
 }
