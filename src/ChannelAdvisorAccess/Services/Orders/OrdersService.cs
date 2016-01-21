@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
@@ -18,20 +19,24 @@ namespace ChannelAdvisorAccess.Services.Orders
 	{
 		private readonly APICredentials _credentials;
 		private readonly OrderServiceSoapClient _client;
+
+		private readonly CacheManager _cache;
+
 		public string AccountId{ get; private set; }
 
 		public string Name{ get; private set; }
 
-		public OrdersService( APICredentials credentials, string accountName, string accountId ): this( credentials, accountId )
+		public OrdersService( APICredentials credentials, string accountName, string accountId, ObjectCache cache = null ): this( credentials, accountId, cache )
 		{
 			this.Name = accountName;
 		}
 
-		public OrdersService( APICredentials credentials, string accountId )
+		public OrdersService( APICredentials credentials, string accountId, ObjectCache cache = null )
 		{
 			this._credentials = credentials;
 			this.AccountId = accountId;
 			this._client = new OrderServiceSoapClient();
+			this._cache = cache != null ? new CacheManager( cache ) : null;
 		}
 
 		#region Ping
@@ -133,8 +138,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria )
 		{
-			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cache ).Get( () =>
 			{
+				if( HandleError429.HasError429ForAccountId( this.AccountId, this._cache ) )
+					HandleError429.DoDelay();
+
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
 				CheckCaSuccess( results );
 				var resultData = results.ResultData ?? new OrderResponseItem[ 0 ];
@@ -219,8 +227,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria, Mark mark = null )
 		{
-			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ) ).Get( async () =>
+			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ), this.AccountId, this._cache ).Get( async () =>
 			{
+				if( HandleError429.HasError429ForAccountId( this.AccountId, this._cache ) )
+					HandleError429.DoDelay();
+
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );
 				var resultData = results.GetOrderListResult.ResultData ?? new OrderResponseItem[ 0 ];

@@ -40,7 +40,7 @@ namespace ChannelAdvisorAccess.Services
 		public IOrdersService CreateOrdersService( string accountName, string accountId )
 		{
 			var ordersCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
-			return new OrdersService( ordersCredentials, accountName, accountId );
+			return new OrdersService( ordersCredentials, accountName, accountId, _cache );
 		}
 
 		public IItemsService CreateItemsService( string accountName, string accountId )

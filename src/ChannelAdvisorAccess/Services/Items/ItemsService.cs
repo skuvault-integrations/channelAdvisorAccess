@@ -3,6 +3,7 @@ using System.Runtime.Caching;
 using System.Text;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
+using ChannelAdvisorAccess.Misc;
 using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Items
@@ -13,6 +14,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		private readonly InventoryServiceSoapClient _client;
 
 		private readonly ObjectCache _cache;
+		private readonly CacheManager _cacheManager;
 		private readonly string _allItemsCacheKey;
 		private readonly object _inventoryCacheLock = new Object();
 
@@ -38,6 +40,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 			this.Name = name;
 			this._cache = cache;
+			this._cacheManager = cache != null ? new CacheManager( cache ) : null;
 			this.SlidingCacheExpiration = ObjectCache.NoSlidingExpiration;
 			this._allItemsCacheKey = string.Format( "caAllItems_ID_{0}", this.AccountId );
 		}
