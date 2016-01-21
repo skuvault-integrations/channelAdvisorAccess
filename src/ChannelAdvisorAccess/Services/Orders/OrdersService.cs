@@ -141,7 +141,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cache ).Get( () =>
 			{
 				if( HandleError429.HasError429ForAccountId( this.AccountId, this._cache ) )
-					HandleError429.DoDelay();
+					HandleError429.DoDelayAsync().Wait();
 
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
 				CheckCaSuccess( results );
@@ -230,7 +230,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ), this.AccountId, this._cache ).Get( async () =>
 			{
 				if( HandleError429.HasError429ForAccountId( this.AccountId, this._cache ) )
-					HandleError429.DoDelay();
+					await HandleError429.DoDelayAsync().ConfigureAwait( false );
 
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );

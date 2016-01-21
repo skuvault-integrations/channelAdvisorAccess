@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using Netco.Utils;
 
 namespace ChannelAdvisorAccess.Misc
@@ -22,12 +23,12 @@ namespace ChannelAdvisorAccess.Misc
 			return true;
 		}
 
-		public static void DoDelay()
+		public static async Task DoDelayAsync()
 		{
 			var minutesLeftInTheHour = 62 - DateTime.UtcNow.Minute; // wait until current our ends + 2 extra minutes for buffer
 			ChannelAdvisorLogger.LogTrace( string.Format( "Wait by reason of error 429 {0} minute(s)", minutesLeftInTheHour ) );
 
-			SystemUtil.Sleep( TimeSpan.FromMinutes( minutesLeftInTheHour ) );
+			await Task.Delay( TimeSpan.FromMinutes( minutesLeftInTheHour ) );
 		}
 	}
 }
