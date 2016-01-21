@@ -40,7 +40,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 			this.Name = name;
 			this._cache = cache;
-			this._cacheManager = cache != null ? new CacheManager( cache ) : null;
+			this._cacheManager = cache != null ? new CacheManager( cache ) : new CacheManager( MemoryCache.Default );
 			this.SlidingCacheExpiration = ObjectCache.NoSlidingExpiration;
 			this._allItemsCacheKey = string.Format( "caAllItems_ID_{0}", this.AccountId );
 		}

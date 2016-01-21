@@ -36,7 +36,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._credentials = credentials;
 			this.AccountId = accountId;
 			this._client = new OrderServiceSoapClient();
-			this._cache = cache != null ? new CacheManager( cache ) : null;
+			this._cache = cache != null ? new CacheManager( cache ) : new CacheManager( MemoryCache.Default );
 		}
 
 		#region Ping
