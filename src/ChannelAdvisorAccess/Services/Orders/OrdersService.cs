@@ -21,6 +21,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private readonly OrderServiceSoapClient _client;
 
 		private readonly CacheManager _cache;
+		private const int MaxUnexpectedAttempt = 5;
 
 		public string AccountId{ get; private set; }
 
@@ -165,11 +166,20 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				orderCriteria.PageSize = 1;
 				orderCriteria.PageNumberFilter = pageNumberBy1 + i;
-				var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
-				if( answer.Status == ResultStatus.Success )
-					result.AddRange( answer.ResultData );
-				else
-					this.LogUnexpectedError( orderCriteria, answer, pageNumberBy1, callerMemberName );
+				var numberAttempt = 0;
+				while( numberAttempt < MaxUnexpectedAttempt )
+				{
+					var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+					if( answer.Status == ResultStatus.Success )
+					{
+						result.AddRange( answer.ResultData );
+						break;
+					}
+					
+					numberAttempt++;
+					this.LogUnexpectedError( orderCriteria, answer, pageNumberBy1 + i, callerMemberName, numberAttempt );
+					this.DoDelayUnexpectedAsync( new TimeSpan( 0, 2, 0 ), numberAttempt ).Wait();
+				}
 			}
 
 			orderCriteria.PageSize = prevPageSize;
@@ -254,11 +264,20 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				orderCriteria.PageSize = 1;
 				orderCriteria.PageNumberFilter = pageNumberBy1 + i;
-				var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria );
-				if( answer.GetOrderListResult.Status == ResultStatus.Success )
-					result.AddRange( answer.GetOrderListResult.ResultData );
-				else
-					this.LogUnexpectedError( orderCriteria, answer.GetOrderListResult, pageNumberBy1, callerMemberName );
+				var numberAttempt = 0;
+				while( numberAttempt < MaxUnexpectedAttempt )
+				{
+					var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
+					if( answer.GetOrderListResult.Status == ResultStatus.Success )
+					{
+						result.AddRange( answer.GetOrderListResult.ResultData );
+						break;
+					}
+
+					numberAttempt++;
+					this.LogUnexpectedError( orderCriteria, answer.GetOrderListResult, orderCriteria.PageNumberFilter, callerMemberName, numberAttempt );
+					await this.DoDelayUnexpectedAsync( new TimeSpan( 0, 2, 0 ), numberAttempt ).ConfigureAwait( false );
+				}
 			}
 
 			orderCriteria.PageSize = prevPageSize;
@@ -340,13 +359,19 @@ namespace ChannelAdvisorAccess.Services.Orders
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
 
-		private void LogUnexpectedError( OrderCriteria orderCriteria, APIResultOfArrayOfOrderResponseItem orderList, int? pageNumberBy1, string callerMemberName )
+		private void LogUnexpectedError( OrderCriteria orderCriteria, APIResultOfArrayOfOrderResponseItem orderList, int? pageNumberBy1, string callerMemberName, int attempt )
 		{
 			var additionalLogInfo = ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, callerMemberName )();
 			var criteria = string.Format( "StatusUpdateFilterBeginTimeGMTField: {0}. StatusUpdateFilterEndTimeGMTField: {1}. Number in sequence for pageSize equal 1 : {2}", orderCriteria.StatusUpdateFilterBeginTimeGMT.GetValueOrDefault(), orderCriteria.StatusUpdateFilterEndTimeGMT.GetValueOrDefault(), pageNumberBy1 );
-			var message = "Unexpected Error. Additional info: {0} {1}".FormatWith( additionalLogInfo, criteria );
+			var message = "Unexpected Error. Attempt: {0}. Additional info: {1} {2}".FormatWith( attempt, additionalLogInfo, criteria );
 			var exception = new ChannelAdvisorException( orderList.MessageCode, message );
 			ChannelAdvisorLogger.LogTraceException( exception );
+		}
+
+		public async Task DoDelayUnexpectedAsync( TimeSpan time, int attempt )
+		{
+			ChannelAdvisorLogger.LogTrace( string.Format( @"Wait by reason of error 1 (Unexpected) {0} minute(s). Attempt: {1}", time.Minutes, attempt ) );
+			await Task.Delay( time ).ConfigureAwait( false );
 		}
 	}
 }
