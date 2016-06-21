@@ -56,7 +56,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 					);
 				return str;
 			}
-			catch( Exception exception )
+			catch( Exception )
 			{
 				return PredefinedValues.EmptyJsonObject;
 			}

@@ -26,7 +26,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					);
 				return str;
 			}
-			catch( Exception exception )
+			catch( Exception )
 			{
 				return PredefinedValues.EmptyJsonObject;
 			}
