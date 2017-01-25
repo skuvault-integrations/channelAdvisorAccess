@@ -92,6 +92,9 @@ task NuGet Package, Version, {
 				<dependency id="Newtonsoft.Json" version="7.0.1" />
 			</group>
 		</dependencies>
+        <frameworkAssemblies>
+          <frameworkAssembly assemblyName="System.Runtime.Caching" targetFramework="net45" />
+        </frameworkAssemblies>
 	</metadata>
 </package>
 "@
