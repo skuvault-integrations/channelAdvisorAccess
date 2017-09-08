@@ -960,6 +960,22 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
+		private IEnumerable< List< string > > ToChunks( IEnumerable< string > items, int chunkSize )
+		{
+			var chunk = new List< string >( chunkSize );
+			foreach( var item in items )
+			{
+				chunk.Add( item );
+				if( chunk.Count == chunkSize )
+				{
+					yield return chunk;
+					chunk = new List< string >( chunkSize );
+				}
+			}
+			if( chunk.Any() )
+				yield return chunk;
+		}
+
 		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null, int delayInMs = 5000 )
 		{
 			if( mark.IsBlank() )
@@ -968,11 +984,17 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
-				var inventoryQuantityResponses = skus.ProcessWithPages( 100, s =>
+
+				var skusParts = this.ToChunks( skus, 100 );
+				var inventoryQuantityResponses = new List< InventoryQuantityResponse >();
+
+				foreach( var s in skusParts )
 				{
-					SystemUtil.Sleep( TimeSpan.FromMilliseconds( delayInMs ) );
-					var requestResult = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+					var requestResult = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Get( () =>
 					{
+						if( HandleError429.HasError429ForAccountId( this.AccountId, this._cacheManager ) )
+							HandleError429.DoDelayAsync().Wait();
+
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : skus.ToJson() ) );
 						var apiResultOfArrayOfInventoryQuantityResponse = this._client.GetInventoryQuantityList( this._credentials, this.AccountId, s.ToArray() );
 						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : apiResultOfArrayOfInventoryQuantityResponse.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : skus.ToJson() ) );
@@ -981,8 +1003,9 @@ namespace ChannelAdvisorAccess.Services.Items
 
 					var resultWithSuccessCheck = this.GetResultWithSuccessCheck( requestResult, requestResult.ResultData );
 					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : s.ToJson(), methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndReturnsForTrace ) ? null : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
-					return resultWithSuccessCheck;
-				} );
+					inventoryQuantityResponses.AddRange( resultWithSuccessCheck );
+				}
+
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : inventoryQuantityResponses.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 				return inventoryQuantityResponses;
 			}
@@ -1004,7 +1027,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 				var inventoryQuantityResponses = await skus.ProcessWithPagesAsync< string, InventoryQuantityResponse >( 100, async s =>
 				{
-					var requestResult = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+					var requestResult = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Get( async () =>
 					{
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : skus.ToJson() ) );
 						var getInventoryQuantityListResponse = await this._client.GetInventoryQuantityListAsync( this._credentials, this.AccountId, s.ToArray() );
