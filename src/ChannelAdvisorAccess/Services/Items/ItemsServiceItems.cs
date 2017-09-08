@@ -7,6 +7,7 @@ using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
 using Netco.Extensions;
+using Netco.Utils;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -959,7 +960,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null )
+		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null, int delayInMs = 5000 )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -969,6 +970,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 				var inventoryQuantityResponses = skus.ProcessWithPages( 100, s =>
 				{
+					SystemUtil.Sleep( TimeSpan.FromMilliseconds( delayInMs ) );
 					var requestResult = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 					{
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : skus.ToJson() ) );

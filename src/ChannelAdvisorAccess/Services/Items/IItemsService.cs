@@ -108,7 +108,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		int GetAvailableQuantity( string sku, Mark mark = null );
 
 		Task< int > GetAvailableQuantityAsync( string sku, Mark mark = null );
-		IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null );
+		IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null, int delatInMs = 5000 );
 		Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, Mark mark = null );
 		IEnumerable< string > GetAllSkus( Mark mark = null );
 		Task< IEnumerable< string > > GetAllSkusAsync( Mark mark = null );
