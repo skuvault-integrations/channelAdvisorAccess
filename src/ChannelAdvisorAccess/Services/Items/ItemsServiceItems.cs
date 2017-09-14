@@ -960,16 +960,16 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		private IEnumerable< List< string > > ToChunks( IEnumerable< string > items, int chunkSize )
+		private IEnumerable< List< T > > ToChunks< T >( IEnumerable< T > items, int chunkSize )
 		{
-			var chunk = new List< string >( chunkSize );
+			var chunk = new List< T >( chunkSize );
 			foreach( var item in items )
 			{
 				chunk.Add( item );
 				if( chunk.Count == chunkSize )
 				{
 					yield return chunk;
-					chunk = new List< string >( chunkSize );
+					chunk = new List< T >( chunkSize );
 				}
 			}
 			if( chunk.Any() )
