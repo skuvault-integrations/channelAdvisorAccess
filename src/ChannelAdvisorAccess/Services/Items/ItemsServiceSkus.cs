@@ -129,8 +129,11 @@ namespace ChannelAdvisorAccess.Services.Items
 				while( true )
 				{
 					filter.Criteria.PageNumber += 1;
-					var itemResponse = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+					var itemResponse = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Get( async () =>
 					{
+						if( HandleError429.HasError429ForAccountId( this.AccountId, this._cacheManager ) )
+							await HandleError429.DoDelayAsync().ConfigureAwait( false );
+
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : filter.ToJson() ) );
 						var getFilteredSkuListResponse = await this._client.GetFilteredSkuListAsync
 							( this._credentials, this.AccountId, filter.Criteria,

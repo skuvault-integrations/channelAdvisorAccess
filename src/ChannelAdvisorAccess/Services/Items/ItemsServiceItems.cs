@@ -80,17 +80,26 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
-				var doesSkuExistResponses = skus.ProcessWithPages( 500, skusPage =>
-					AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+
+				var skusParts = this.ToChunks( skus, 500 );
+				var responses = new List< DoesSkuExistResponse >();
+				foreach( var skusPage in skusParts )
+				{
+					var doesSkuExistResponses = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Get( () => 
 					{
+						if( HandleError429.HasError429ForAccountId( this.AccountId, this._cacheManager ) )
+							HandleError429.DoDelayAsync().Wait();
+
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : skus.ToJson() ) );
 						var skusResult = this._client.DoesSkuExistList( this._credentials, this.AccountId, skusPage.ToArray() );
 						var resultWithSuccessCheck = this.GetResultWithSuccessCheck( skusResult, skusResult.ResultData );
 						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : skus.ToJson() ) );
 						return resultWithSuccessCheck;
-					} ) );
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodResult : doesSkuExistResponses.ToJson(), methodParameters : skus.ToJson() ) );
-				return doesSkuExistResponses;
+					} );
+					responses.AddRange( doesSkuExistResponses.ToList() );
+				}
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodResult : responses.ToJson(), methodParameters : skus.ToJson() ) );
+				return responses;
 			}
 			catch( Exception exception )
 			{
