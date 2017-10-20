@@ -346,12 +346,6 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Assert
 		}
 
-		//IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null, int delatInMs = 5000 );
-		//Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, Mark mark = null );
-
-		//VariationInfo GetVariationInfo( string sku, Mark mark = null );
-		//Task< VariationInfo > GetVariationInfoAsync( string sku, Mark mark = null );
-
 		//IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark = null );
 		//Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark = null );
 		//Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null );
