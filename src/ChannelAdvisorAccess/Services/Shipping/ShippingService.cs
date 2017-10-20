@@ -264,7 +264,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, p.ToArray() ).ConfigureAwait( false );
 				this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
-			} ) ).ConfigureAwait( false );
+			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 		}
 
 		public OrderShipmentHistoryResponse[] GetOrderShipmentHistoryList( int[] orderIdList )

@@ -20,7 +20,6 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private readonly APICredentials _credentials;
 		private readonly OrderServiceSoapClient _client;
 
-		private readonly CacheManager _cache;
 		private const int MaxUnexpectedAttempt = 5;
 
 		public string AccountId{ get; private set; }
@@ -37,7 +36,6 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._credentials = credentials;
 			this.AccountId = accountId;
 			this._client = new OrderServiceSoapClient();
-			this._cache = cache != null ? new CacheManager( cache ) : new CacheManager( MemoryCache.Default );
 		}
 
 		#region Ping
@@ -139,11 +137,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria )
 		{
-			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cache ).Get( () =>
+			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
-				if( HandleError429.HasError429ForAccountId( this.AccountId, this._cache ) )
-					HandleError429.DoDelayAsync().Wait();
-
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
 				CheckCaSuccess( results );
 				var resultData = results.ResultData ?? new OrderResponseItem[ 0 ];
@@ -237,18 +232,15 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		private async Task< OrderResponseItem[] > GetOrdersPageAsync( OrderCriteria orderCriteria, Mark mark = null )
 		{
-			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ), this.AccountId, this._cache ).Get( async () =>
+			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ) ).Get( async () =>
 			{
-				if( HandleError429.HasError429ForAccountId( this.AccountId, this._cache ) )
-					await HandleError429.DoDelayAsync().ConfigureAwait( false );
-
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
 				CheckCaSuccess( results.GetOrderListResult );
 				var resultData = results.GetOrderListResult.ResultData ?? new OrderResponseItem[ 0 ];
 
 				// If you get message code = 1 (Unexpected)
 				if( results.GetOrderListResult.MessageCode == 1 )
-					resultData = await this.HandleErrorUnexpectedAsync( orderCriteria );
+					resultData = await this.HandleErrorUnexpectedAsync( orderCriteria ).ConfigureAwait( false );
 
 				return resultData;
 			} ).ConfigureAwait( false );

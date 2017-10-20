@@ -58,7 +58,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
-					if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku, mark ) ) )
+					if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku, mark ).ConfigureAwait( false ) ) )
 						return;
 
 					var resultOfBoolean = await this._client.SynchInventoryItemAsync( this._credentials, this.AccountId, item ).ConfigureAwait( false );
@@ -95,11 +95,8 @@ namespace ChannelAdvisorAccess.Services.Items
 				var itemsByPages = this.ToChunks( items, 100 );
 				foreach( var i in itemsByPages )
 				{
-					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Do( () =>
+					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 					{
-						if( HandleError429.HasError429ForAccountId( this.AccountId, this._cacheManager ) )
-							HandleError429.DoDelayAsync().Wait();
-
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : i.ToJson() ) );
 						var resultOfBoolean = this._client.SynchInventoryItemList( this._credentials, this.AccountId, i.ToArray() );
 						CheckCaSuccess( resultOfBoolean );
@@ -142,7 +139,7 @@ namespace ChannelAdvisorAccess.Services.Items
 						CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
 						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : i.ToJson() ) );
 					} ).ConfigureAwait( false );
-				} ) ).ConfigureAwait( false );
+				} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : "void", additionalInfo : this.AdditionalLogInfo(), methodParameters : parameters.ToJson() ) );
 			}
 			catch( Exception exception )
@@ -217,11 +214,8 @@ namespace ChannelAdvisorAccess.Services.Items
 				var itemQuantityAndPricesByPages = this.ToChunks( itemQuantityAndPrices, 500 );
 				foreach( var itemsPage in itemQuantityAndPricesByPages )
 				{
-					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Do( () =>
+					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 					{
-						if( HandleError429.HasError429ForAccountId( this.AccountId, this._cacheManager ) )
-							HandleError429.DoDelayAsync().Wait();
-
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : itemsPage.ToJson() ) );
 						var resultOfBoolean = this._client.UpdateInventoryItemQuantityAndPriceList( this._credentials, this.AccountId, itemsPage.ToArray() );
 						CheckCaSuccess( resultOfBoolean );
@@ -281,11 +275,8 @@ namespace ChannelAdvisorAccess.Services.Items
 				var skusByPages = this.ToChunks( skus, 500 );
 				foreach( var s in skusByPages )
 				{
-					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Do( () =>
+					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 					{
-						if( HandleError429.HasError429ForAccountId( this.AccountId, this._cacheManager ) )
-							HandleError429.DoDelayAsync().Wait();
-
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );
 						var resultOfBoolean = this._client.RemoveLabelListFromInventoryItemList( this._credentials, this.AccountId, labels, s.ToArray(), reason );
 						CheckCaSuccess( resultOfBoolean );
@@ -348,11 +339,8 @@ namespace ChannelAdvisorAccess.Services.Items
 				var skusByPages = this.ToChunks( skus, 500 );
 				foreach( var s in skusByPages )
 				{
-					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ), this.AccountId, this._cacheManager ).Do( () =>
+					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 					{
-						if( HandleError429.HasError429ForAccountId( this.AccountId, this._cacheManager ) )
-							HandleError429.DoDelayAsync().Wait();
-
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );
 						var resultOfBoolean = this._client.AssignLabelListToInventoryItemList( this._credentials, this.AccountId, labels, createLabelIfNotExist, s.ToArray(), reason );
 						CheckCaSuccess( resultOfBoolean );

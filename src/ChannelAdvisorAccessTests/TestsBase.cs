@@ -15,7 +15,7 @@ namespace ChannelAdvisorAccessTests
 	public class TestsBase
 	{
 		protected const string TestDistributionCenterCode = "Louisville";
-		protected const string TestSku = "testSku";
+		protected const string TestSku = "testSku1";
 
 		[ SetUp ]
 		public void Init()

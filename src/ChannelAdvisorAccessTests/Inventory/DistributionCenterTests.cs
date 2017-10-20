@@ -11,10 +11,10 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var dcList = ItemsService.GetDistributionCenterList();
+			var dcList = this.ItemsService.GetDistributionCenterList();
 
 			//------------ Assert
-			dcList.Should().HaveCount( 1 );
+			dcList.Length.Should().BeGreaterThan( 0 );
 			dcList[ 0 ].DistributionCenterCode.Should().Be( TestDistributionCenterCode );
 		}
 	}

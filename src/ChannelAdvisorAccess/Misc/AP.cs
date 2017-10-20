@@ -12,6 +12,9 @@ namespace ChannelAdvisorAccess.Misc
 {
 	public static class AP
 	{
+		private const int RetryCount = 10;
+		private const int Wait429After = 5;
+
 		private static readonly ActionPolicy _query = CreateQuery();
 		private static readonly ActionPolicyAsync _queryAsync = CreateQueryAsync();
 		private static readonly ActionPolicy _sumbit = CreateSubmit();
@@ -38,55 +41,51 @@ namespace ChannelAdvisorAccess.Misc
 		}
 
 		#region ActionPolicyCreator
-		public static ActionPolicy CreateQuery( Func< string > additionalLogInfo = null, string accountId = "", CacheManager cache = null )
+		public static ActionPolicy CreateQuery( Func< string > additionalLogInfo = null )
 		{
-			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+			return ActionPolicy.Handle< Exception >().Retry( RetryCount, ( ex, i ) =>
 			{
 				var delay = GetDelay( ex, i );
 				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				if( IsError429( ex ) && !string.IsNullOrWhiteSpace( accountId ) && cache != null )
-					cache.AddOrUpdate( new Data429Error( accountId, DateTime.Now, DateTime.Now.Add( delay ) ), accountId );
+
 				SystemUtil.Sleep( delay );
 			} );
 		}
 
-		public static ActionPolicyAsync CreateQueryAsync( Func< string > additionalLogInfo = null, string accountId = "", CacheManager cache = null )
+		public static ActionPolicyAsync CreateQueryAsync( Func< string > additionalLogInfo = null )
 		{
-			return ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+			return ActionPolicyAsync.Handle< Exception >().RetryAsync( RetryCount, async ( ex, i ) =>
 			{
 				var delay = GetDelay( ex, i );
 				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				if( IsError429( ex ) && !string.IsNullOrWhiteSpace( accountId ) && cache != null )
-					cache.AddOrUpdate( new Data429Error( accountId, DateTime.Now, DateTime.Now.Add( delay ) ), accountId );
-				await Task.Delay( delay );
+
+				await Task.Delay( delay ).ConfigureAwait( false );
 			} );
 		}
 
-		public static ActionPolicy CreateSubmit( Func< string > additionalLogInfo = null, string accountId = "", CacheManager cache = null )
+		public static ActionPolicy CreateSubmit( Func< string > additionalLogInfo = null )
 		{
-			return ActionPolicy.Handle< Exception >().Retry( 10, ( ex, i ) =>
+			return ActionPolicy.Handle< Exception >().Retry( RetryCount, ( ex, i ) =>
 			{
 				var delay = GetDelay( ex, i );
 				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				if( IsError429( ex ) && !string.IsNullOrWhiteSpace( accountId ) && cache != null )
-					cache.AddOrUpdate( new Data429Error( accountId, DateTime.Now, DateTime.Now.Add( delay ) ), accountId );
+
 				SystemUtil.Sleep( delay );
 			} );
 		}
 
-		public static ActionPolicyAsync CreateSubmitAsync( Func< string > additionalLogInfo = null, string accountId = "", CacheManager cache = null )
+		public static ActionPolicyAsync CreateSubmitAsync( Func< string > additionalLogInfo = null )
 		{
-			return ActionPolicyAsync.Handle< Exception >().RetryAsync( 10, async ( ex, i ) =>
+			return ActionPolicyAsync.Handle< Exception >().RetryAsync( RetryCount, async ( ex, i ) =>
 			{
 				var delay = GetDelay( ex, i );
 				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
 				ChannelAdvisorLogger.LogTrace( ex, message );
-				if( IsError429( ex ) && !string.IsNullOrWhiteSpace( accountId ) && cache != null )
-					cache.AddOrUpdate( new Data429Error( accountId, DateTime.Now, DateTime.Now.Add( delay ) ), accountId );
-				await Task.Delay( delay );
+
+				await Task.Delay( delay ).ConfigureAwait( false );
 			} );
 		}
 		#endregion
@@ -121,46 +120,16 @@ namespace ChannelAdvisorAccess.Misc
 
 		private static TimeSpan GetDelay( Exception ex, int retryNumber )
 		{
-			var webException = ex as WebException;
-			var delay = GetDelayForWebException( webException );
-			if( delay != null )
-				return delay.Value;
-
-			var protoclException = ex as ProtocolException;
-			if( protoclException != null )
-			{
-				var pwe = protoclException.InnerException as WebException;
-				var delayPwe = GetDelayForWebException( pwe );
-				if( delayPwe != null )
-					return delayPwe.Value;
-			}
-
-			if( ex != null && ex.InnerException != null )
-			{
-				var pwe = ex.InnerException as WebException;
-				var delayPwe = GetDelayForWebException( pwe );
-				if( delayPwe != null )
-					return delayPwe.Value;
-			}
+			if( ( retryNumber > Wait429After ) && IsError429( ex ) )
+				return GetDelayFor429Exception();
 
 			return TimeSpan.FromSeconds( 0.5 + retryNumber );
 		}
 
-		private static TimeSpan? GetDelayForWebException( WebException webException )
+		private static TimeSpan GetDelayFor429Exception()
 		{
-			if( webException != null )
-			{
-				var response = webException.Response as HttpWebResponse;
-				if( response != null )
-				{
-					if( ( int )response.StatusCode == 429 )
-					{
-						var minutesLeftInTheHour = 62 - DateTime.UtcNow.Minute; // wait until current our ends + 2 extra minutes for buffer
-						return TimeSpan.FromMinutes( minutesLeftInTheHour );
-					}
-				}
-			}
-			return null;
+			var minutesLeftInTheHour = 62 - DateTime.UtcNow.Minute; // wait until current our ends + 2 extra minutes for buffer
+			return TimeSpan.FromMinutes( minutesLeftInTheHour );
 		}
 
 		private static HttpStatusCode? GetHttpStatusCode( WebException webException )
