@@ -92,7 +92,9 @@ namespace ChannelAdvisorAccess.Services.Items
 						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : resultWithSuccessCheck.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : skus.ToJson() ) );
 						return resultWithSuccessCheck;
 					} );
-					responses.AddRange( doesSkuExistResponses.ToList() );
+
+					if( doesSkuExistResponses != null )
+						responses.AddRange( doesSkuExistResponses.ToList() );
 				}
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodResult : responses.ToJson(), methodParameters : skus.ToJson() ) );
 				return responses;

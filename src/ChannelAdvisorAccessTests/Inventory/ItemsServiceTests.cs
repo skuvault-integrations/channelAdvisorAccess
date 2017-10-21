@@ -111,6 +111,31 @@ namespace ChannelAdvisorAccessTests.Inventory
 		}
 
 		[ Test ]
+		public void DoSkusExist_When_Empty()
+		{
+			//------------ Arrange
+
+			//------------ Act
+			var result = this.ItemsService.DoSkusExist( new string[] { } );
+
+			//------------ Assert
+			result.Should().HaveCount( 0 );
+		}
+
+		[ Test ]
+		public void DoSkusExist_When_Not_Exists()
+		{
+			//------------ Arrange
+			var incorrectSku = TestSku + Guid.NewGuid();
+
+			//------------ Act
+			var result = this.ItemsService.DoSkusExist( new[] { incorrectSku } );
+
+			//------------ Assert
+			result.Should().HaveCount( 0 );
+		}
+
+		[ Test ]
 		public void DoSkusExistAsync()
 		{
 			//------------ Arrange
@@ -121,6 +146,31 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
+		}
+
+		[ Test ]
+		public void DoSkusExistAsync_When_Empty()
+		{
+			//------------ Arrange
+
+			//------------ Act
+			var result = this.ItemsService.DoSkusExistAsync( new string[] { } ).GetAwaiter().GetResult();;
+
+			//------------ Assert
+			result.Should().HaveCount( 0 );
+		}
+
+		[ Test ]
+		public void DoSkusExistAsync_When_Not_Exists()
+		{
+			//------------ Arrange
+			var incorrectSku = TestSku + Guid.NewGuid();
+
+			//------------ Act
+			var result = this.ItemsService.DoSkusExistAsync( new[] { incorrectSku } ).GetAwaiter().GetResult();;
+
+			//------------ Assert
+			result.Should().HaveCount( 0 );
 		}
 
 		[ Test ]
