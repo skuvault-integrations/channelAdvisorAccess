@@ -19,6 +19,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 	{
 		private readonly APICredentials _credentials;
 		private readonly OrderServiceSoapClient _client;
+		private readonly FulfillmentService.APICredentials _fulfillmentServiceCredentials;
+		private readonly FulfillmentService.FulfillmentServiceSoapClient _fulfillmentServiceClient;
 
 		private const int MaxUnexpectedAttempt = 5;
 
@@ -36,6 +38,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._credentials = credentials;
 			this.AccountId = accountId;
 			this._client = new OrderServiceSoapClient();
+			this._fulfillmentServiceCredentials = new FulfillmentService.APICredentials { DeveloperKey = this._credentials.DeveloperKey, Password = this._credentials.Password };
+			this._fulfillmentServiceClient = new FulfillmentService.FulfillmentServiceSoapClient();
 		}
 
 		#region Ping
@@ -132,6 +136,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 				orders.AddRange( ordersFromPage.OfType< T >() );
 				orderCriteria.PageNumberFilter += 1;
 			}
+
+			this.CheckFulfillmentStatus( orders );
+
 			return orders;
 		}
 
@@ -219,6 +226,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 					orderCriteria.PageNumberFilter += 1;
 				}
 
+				await this.CheckFulfillmentStatusAsync( orders, mark );
+
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 				return orders;
 			}
@@ -304,6 +313,108 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 		#endregion
 
+		#region CheckFulfillmentStatus
+		private void CheckFulfillmentStatus< T >( List< T > orders, Mark mark = null ) where T : OrderResponseItem
+		{
+			var refundedOrderIds = GetRefundedOrderIds( orders );
+
+			if( refundedOrderIds.Count == 0 )
+				return;
+
+			int pageSize;
+			if( !this._pageSizes.TryGetValue( "High", out pageSize ) )
+				pageSize = 50;
+
+			var cancelledOrderIds = new List< int >();
+			var ordersParts = ItemsService.ToChunks( refundedOrderIds, pageSize );
+
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : refundedOrderIds.ToJson() ) );
+			foreach( var part in ordersParts )
+			{
+				var ordersFulfillment = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+				{
+					var results = this._fulfillmentServiceClient.GetOrderFulfillmentDetailList( this._fulfillmentServiceCredentials, this.AccountId, part.ToArray(), null );
+					CheckCaSuccess( results );
+					var resultData = results.ResultData ?? new FulfillmentService.OrderFulfillmentResponse[ 0 ];
+
+					return resultData;
+				} );
+
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : ordersFulfillment.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : part.ToJson() ) );
+
+				var cancelledOrderIdsPart = ordersFulfillment.Where( o => o.FulfillmentList.All( fulfillment => fulfillment.FulfillmentStatus == "Canceled" ) ).Select( o => o.OrderID );
+				cancelledOrderIds.AddRange( cancelledOrderIdsPart );
+			}
+			ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : cancelledOrderIds.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : refundedOrderIds.ToJson() ) );
+
+			CancelOrders( orders, cancelledOrderIds );
+		}
+
+		private async Task CheckFulfillmentStatusAsync< T >( List< T > orders, Mark mark = null ) where T : OrderResponseItem
+		{
+			var refundedOrderIds = GetRefundedOrderIds( orders );
+
+			if( refundedOrderIds.Count == 0 )
+				return;
+
+			int pageSize;
+			if( !this._pageSizes.TryGetValue( "High", out pageSize ) )
+				pageSize = 50;
+
+			var ordersParts = ItemsService.ToChunks( refundedOrderIds, pageSize );
+
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : refundedOrderIds.ToJson() ) );
+			var cancelledOrderIds = ( await ordersParts.ProcessInBatchAsync( 3, async part =>
+			{
+				var ordersFulfillment = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+				{
+					var results = await this._fulfillmentServiceClient.GetOrderFulfillmentDetailListAsync( this._fulfillmentServiceCredentials, this.AccountId, part.ToArray(), null ).ConfigureAwait( false );
+					CheckCaSuccess( results.GetOrderFulfillmentDetailListResult );
+					var resultData = results.GetOrderFulfillmentDetailListResult.ResultData ?? new FulfillmentService.OrderFulfillmentResponse[ 0 ];
+
+					return resultData;
+				} ).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodResult : ordersFulfillment.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : part.ToJson() ) );
+
+				return ordersFulfillment.Where( o => o.FulfillmentList.All( fulfillment => fulfillment.FulfillmentStatus == "Canceled" ) ).Select( o => o.OrderID );
+			} ).ConfigureAwait( false ) ).SelectMany( x => x ).ToArray();
+
+			ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : cancelledOrderIds.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : refundedOrderIds.ToJson() ) );
+
+			CancelOrders( orders, cancelledOrderIds );
+		}
+
+		private static void CancelOrders< T >( IEnumerable< T > orders, IEnumerable< int > cancelledOrderIds ) where T : OrderResponseItem
+		{
+			if( !cancelledOrderIds.Any() )
+				return;
+
+			foreach( var order in orders )
+			{
+				if( cancelledOrderIds.Contains( order.OrderID ) )
+				{
+					order.OrderState = "Cancelled ";
+				}
+			}
+		}
+
+		private static List< int > GetRefundedOrderIds< T >( IEnumerable< T > orders ) where T : OrderResponseItem
+		{
+			var refundedOrders = new List< int >();
+			foreach( var order in orders )
+			{
+				var typedOrder = order as OrderResponseDetailLow;
+				if( typedOrder == null )
+					continue;
+				var refundStatus = typedOrder.OrderStatus.OrderRefundStatus;
+				if( refundStatus == "OrderLevel" || refundStatus == "LineItemLevel" || refundStatus == "OrderAndLineItemLevel" )
+					refundedOrders.Add( order.OrderID );
+			}
+			return refundedOrders;
+		}
+		#endregion
+
 		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
 		{
 			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
@@ -331,6 +442,12 @@ namespace ChannelAdvisorAccess.Services.Orders
 				if( orderList.MessageCode != 1 )
 					throw new ChannelAdvisorException( orderList.MessageCode, orderList.Message );
 			}
+		}
+
+		private static void CheckCaSuccess( FulfillmentService.APIResultOfArrayOfOrderFulfillmentResponse response )
+		{
+			if( response.Status != FulfillmentService.ResultStatus.Success )
+				throw new ChannelAdvisorException( response.MessageCode, response.Message );
 		}
 
 		private void CheckCaSuccess( APIResultOfInt32 results )

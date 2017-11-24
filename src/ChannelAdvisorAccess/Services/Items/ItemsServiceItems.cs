@@ -80,7 +80,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 
-				var skusParts = this.ToChunks( skus, 500 );
+				var skusParts = ToChunks( skus, 500 );
 				var responses = new List< DoesSkuExistResponse >();
 				foreach( var skusPage in skusParts )
 				{
@@ -116,7 +116,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 
-				var skusParts = this.ToChunks( skus, 500 );
+				var skusParts = ToChunks( skus, 500 );
 				var doesSkuExistResponses = ( await skusParts.ProcessInBatchAsync( 3, async skusPage =>
 				{
 					var doesSkuExistResponsesByPage = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
@@ -964,7 +964,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		private IEnumerable< List< T > > ToChunks< T >( IEnumerable< T > items, int chunkSize )
+		internal static IEnumerable< List< T > > ToChunks< T >( IEnumerable< T > items, int chunkSize )
 		{
 			var chunk = new List< T >( chunkSize );
 			foreach( var item in items )
@@ -989,7 +989,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 
-				var skusParts = this.ToChunks( skus, 100 );
+				var skusParts = ToChunks( skus, 100 );
 				var inventoryQuantityResponses = new List< InventoryQuantityResponse >();
 
 				foreach( var s in skusParts )
@@ -1027,7 +1027,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 
-				var skusParts = this.ToChunks( skus, 100 );
+				var skusParts = ToChunks( skus, 100 );
 				var inventoryQuantityResponses = ( await skusParts.ProcessInBatchAsync( 3, async s =>
 				{
 					var requestResult = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>

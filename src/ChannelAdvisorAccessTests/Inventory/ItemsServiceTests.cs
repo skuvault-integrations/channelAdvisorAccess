@@ -136,6 +136,22 @@ namespace ChannelAdvisorAccessTests.Inventory
 		}
 
 		[ Test ]
+		public void DoSkusExist_When_Many_Pages()
+		{
+			//------------ Arrange
+			var skuList = new List<string>();
+			for( int i = 0; i < 2050; i++ )
+				skuList.Add( Guid.NewGuid().ToString() );
+			skuList.Add( TestSku );
+
+			//------------ Act
+			var result = this.ItemsService.DoSkusExist( skuList );
+
+			//------------ Assert
+			result.Where( r => r.Result ).ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true } } );
+		}
+
+		[ Test ]
 		public void DoSkusExistAsync()
 		{
 			//------------ Arrange

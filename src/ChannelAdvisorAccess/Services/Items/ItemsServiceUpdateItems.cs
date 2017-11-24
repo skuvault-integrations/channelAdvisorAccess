@@ -92,7 +92,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					items = items.Where( x => existSkus.Contains( x.Sku ) );
 				}
 
-				var itemsByPages = this.ToChunks( items, 100 );
+				var itemsByPages = ToChunks( items, 100 );
 				foreach( var i in itemsByPages )
 				{
 					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
@@ -211,7 +211,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : itemQuantityAndPrices.ToJson() ) );
 
-				var itemQuantityAndPricesByPages = this.ToChunks( itemQuantityAndPrices, 500 );
+				var itemQuantityAndPricesByPages = ToChunks( itemQuantityAndPrices, 500 );
 				foreach( var itemsPage in itemQuantityAndPricesByPages )
 				{
 					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
@@ -242,7 +242,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : itemQuantityAndPrices.ToJson() ) );
 
-				var itemQuantityAndPricesByPages = this.ToChunks( itemQuantityAndPrices, 800 );
+				var itemQuantityAndPricesByPages = ToChunks( itemQuantityAndPrices, 800 );
 				await itemQuantityAndPricesByPages.DoInBatchAsync( 3, async itemsPage =>
 				{
 					await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
@@ -275,7 +275,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : parameters.ToJson() ) );
 
-				var skusByPages = this.ToChunks( skus, 500 );
+				var skusByPages = ToChunks( skus, 500 );
 				foreach( var s in skusByPages )
 				{
 					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
@@ -339,7 +339,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : parameters.ToJson() ) );
 
-				var skusByPages = this.ToChunks( skus, 500 );
+				var skusByPages = ToChunks( skus, 500 );
 				foreach( var s in skusByPages )
 				{
 					AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
