@@ -394,7 +394,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				if( cancelledOrderIds.Contains( order.OrderID ) )
 				{
-					order.OrderState = "Cancelled ";
+					order.OrderState = "Cancelled";
 				}
 			}
 		}
