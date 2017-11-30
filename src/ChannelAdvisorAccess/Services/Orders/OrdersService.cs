@@ -402,7 +402,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		private static List< int > GetRefundedOrderIds< T >( IEnumerable< T > orders ) where T : OrderResponseItem
 		{
 			var refundedOrders = new List< int >();
-			foreach( var order in orders )
+			foreach( var order in orders.Where( o => o.OrderState != "Cancelled" ) )
 			{
 				var typedOrder = order as OrderResponseDetailLow;
 				if( typedOrder == null )
