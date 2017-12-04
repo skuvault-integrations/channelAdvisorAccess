@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using Netco.Logging;
 
@@ -8,6 +10,8 @@ namespace ChannelAdvisorAccess.Misc
 	internal class ChannelAdvisorLogger
 	{
 		private static readonly string _versionInfo;
+		private const string CaMark = "channelAdvisor";
+		private const int MaxLogLineSize = 0xA00000; //10mb
 
 		static ChannelAdvisorLogger()
 		{
@@ -22,47 +26,69 @@ namespace ChannelAdvisorAccess.Misc
 
 		public static void LogTraceException( Exception exception )
 		{
-			Log().Trace( exception, "[channelAdvisor] An exception occured. [ver:{0}]", _versionInfo );
+			Log().Trace( exception, "{channel} An exception occured. [ver:{version}]", CaMark, _versionInfo );
 		}
 
 		public static void LogTraceStarted( string info )
 		{
-			Log().Trace( "[channelAdvisor] Trace Start call:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "Trace Start call", info );
 		}
 
 		public static void LogTraceEnd( string info )
 		{
-			Log().Trace( "[channelAdvisor] Trace End call:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "Trace End call", info );
 		}
 
 		public static void LogStarted( string info )
 		{
-			Log().Trace( "[channelAdvisor] Start call:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "Start call", info );
 		}
 
 		public static void LogEnd( string info )
 		{
-			Log().Trace( "[channelAdvisor] End call:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "End call", info );
 		}
 
 		public static void LogTrace( Exception ex, string info )
 		{
-			Log().Trace( ex, "[channelAdvisor] Trace info:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "Trace info", info );
 		}
 
 		public static void LogTrace( string info )
 		{
-			Log().Trace( "[channelAdvisor] Trace info:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "Trace info", info );
 		}
 
 		public static void LogTraceRetryStarted( string info )
 		{
-			Log().Trace( "[channelAdvisor] TraceRetryStarted info:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "TraceRetryStarted info", info );
 		}
 
 		public static void LogTraceRetryEnd( string info )
 		{
-			Log().Trace( "[channelAdvisor] TraceRetryEnd info:{0}, [ver:{1}]", info, _versionInfo );
+			TraceLog( "TraceRetryEnd info", info );
+		}
+
+		private static void TraceLog( string type, string info )
+		{
+			if( info.Length < MaxLogLineSize )
+			{
+				Log().Trace( "[{channel}] {type}:{info}, [ver:{version}]", CaMark, type, info, _versionInfo );
+				return;
+			}
+
+			var pageNumber = 1;
+			var pageId = Guid.NewGuid();
+			foreach( var page in SplitString( info, MaxLogLineSize ) )
+			{
+				Log().Trace( "[{channel}] page:{page} pageId:{pageId} {type}:{info}, [ver:{version}]", CaMark, pageNumber++, pageId, type, page, _versionInfo );
+			}
+		}
+
+		private static IEnumerable< string > SplitString( string str, int chunkSize )
+		{
+			return Enumerable.Range( 0, str.Length / chunkSize )
+				.Select( i => str.Substring( i * chunkSize, chunkSize ) );
 		}
 	}
 }
