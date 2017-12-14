@@ -336,7 +336,7 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				if( !shipmentResponse.Success )
 				{
-					this.Log().Error( "Error encountered while marking order shipped: {0}", shipmentResponse.Message );
+					ChannelAdvisorLogger.LogTrace( string.Format( "Error encountered while marking order shipped: {0}", shipmentResponse.Message ) );
 					if( exceptionToThrow == null )
 						exceptionToThrow = new ChannelAdvisorException( shipmentResponse.Message );
 				}

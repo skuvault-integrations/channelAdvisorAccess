@@ -50,17 +50,18 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <typeparam name="T">Type of the result.</typeparam>
 		/// <param name="apiResult">The API result.</param>
 		/// <param name="resultData">The result data.</param>
+		/// <param name="logError"></param>
 		/// <returns>Returns result default value (typically <c>null</c>) if there was a problem
 		/// with API call, otherwise returns result.</returns>
-		private T GetResultWithSuccessCheck< T >( object apiResult, T resultData )
+		private T GetResultWithSuccessCheck< T >( object apiResult, T resultData, bool logError = true )
 		{
-			if( !this.IsRequestSuccessful( apiResult ) )
+			if( !this.IsRequestSuccessful( apiResult, logError ) )
 				return default( T );
 
 			return resultData;
 		}
 
-		private bool IsRequestSuccessful( object obj )
+		private bool IsRequestSuccessful( object obj, bool logError = true )
 		{
 			var type = obj.GetType();
 
@@ -72,7 +73,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 			var message = ( string )type.GetProperty( "Message" ).GetValue( obj, null );
 
-			return this.IsRequestSuccessfulCommon( status, message, messageCode );
+			return this.IsRequestSuccessfulCommon( status, message, messageCode, logError );
 		}
 
 		private bool IsRequestSuccessfulImage( object obj )
@@ -100,20 +101,20 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <summary>
 		/// Determines whether request was successful or not.
 		/// </summary>
-		/// <param name="apiResult">The API result.</param>
+		/// <param name="status">Result status</param>
+		/// <param name="message">Result message</param>
+		/// <param name="messageCode">Result message code</param>
+		/// <param name="logError">Need to log error message</param>
 		/// <returns>
 		/// 	<c>true</c> if request was successful; otherwise, <c>false</c>.
 		/// </returns>
-		private bool IsRequestSuccessfulCommon( ResultStatus status, string message, int messageCode )
+		private bool IsRequestSuccessfulCommon( ResultStatus status, string message, int messageCode, bool logError = true )
 		{
 			var isRequestSuccessful = status == ResultStatus.Success && messageCode == 0;
 
-			if( !isRequestSuccessful )
+			if( !isRequestSuccessful && logError )
 			{
-				if( message.Contains( "The specified SKU was not found" ) || message.Contains( "All DoesSkuExist requests failed for the SKU list specified!" ) )
-					this.Log().Trace( "CA Api Request for '{0}' failed with message: {1}", this.AccountId, message );
-				else
-					this.Log().Error( "CA Api Request for '{0}' failed with message: {1}", this.AccountId, message );
+				ChannelAdvisorLogger.LogTrace( string.Format( "CA Api Request for '{0}' failed with message: {1}", this.AccountId, message ) );
 			}
 
 			return isRequestSuccessful;

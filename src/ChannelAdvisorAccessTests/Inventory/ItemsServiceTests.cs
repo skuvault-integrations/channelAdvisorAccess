@@ -111,6 +111,20 @@ namespace ChannelAdvisorAccessTests.Inventory
 		}
 
 		[ Test ]
+		public void DoSkusExist_ManyPagesWithIncorrectSkus()
+		{
+			//------------ Arrange
+			var incorrectSkuList = new List< string >();
+			for( var i = 0; i < 1500; i++ )
+				incorrectSkuList.Add( Guid.NewGuid().ToString() );
+			//------------ Act
+			var result = this.ItemsService.DoSkusExist( incorrectSkuList );
+
+			//------------ Assert
+			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() );
+		}
+
+		[ Test ]
 		public void DoSkusExist_When_Empty()
 		{
 			//------------ Arrange
