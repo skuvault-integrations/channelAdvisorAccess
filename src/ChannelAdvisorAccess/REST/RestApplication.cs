@@ -6,19 +6,15 @@ using System.Threading.Tasks;
 
 namespace ChannelAdvisorAccess.Misc
 {
-	public class RestAPICredentials
+	public class RestApplication
 	{
-		public string AccessToken { get; set; }
-		public string RefreshToken { get; private set; }
 		public string ApplicationID { get; private set; }
 		public string SharedSecret { get; private set; }
 
-		public RestAPICredentials( string applicationID, string sharedSecret, string accessToken, string refreshToken )
+		public RestApplication( string applicationID, string sharedSecret )
 		{
 			ApplicationID = applicationID;
 			SharedSecret = sharedSecret;
-			AccessToken = accessToken;
-			RefreshToken = refreshToken;
 		}
 	}
 }

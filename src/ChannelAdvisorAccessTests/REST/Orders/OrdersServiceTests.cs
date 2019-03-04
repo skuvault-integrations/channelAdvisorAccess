@@ -35,7 +35,7 @@ namespace ChannelAdvisorAccessTests.REST
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Should().HaveCount(24);
+			result.Count().Should().BeGreaterThan( 20 );
 		}
 
 		[ Test ]
@@ -49,7 +49,7 @@ namespace ChannelAdvisorAccessTests.REST
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Should().HaveCount(18);
+			result.Count().Should().BeGreaterThan( 10 );
 		}
 
 		[ Test ]
@@ -64,7 +64,7 @@ namespace ChannelAdvisorAccessTests.REST
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Should().HaveCount(7);
+			result.Count().Should().BeGreaterThan( 4 );
 		}
 
 		[ Test ]

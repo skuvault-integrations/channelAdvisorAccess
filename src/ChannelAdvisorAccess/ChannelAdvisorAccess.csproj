@@ -193,7 +193,7 @@
     <Compile Include="REST\Models\DistributionCenter.cs" />
     <Compile Include="REST\Models\Product.cs" />
     <Compile Include="REST\Models\UpdateQuantityRequest.cs" />
-    <Compile Include="REST\RestAPICredentials.cs" />
+    <Compile Include="REST\RestApplication.cs" />
     <Compile Include="REST\Models\CustomField.cs" />
     <Compile Include="REST\Models\FlagType.cs" />
     <Compile Include="REST\Models\Fulfillment.cs" />
@@ -260,7 +260,6 @@
     <Compile Include="Services\Orders\OrdersService.cs" />
     <Compile Include="Services\Orders\IOrdersService.cs" />
     <Compile Include="REST\Services\Orders\OrdersService.cs" />
-    <Compile Include="REST\Services\ChannelAdvisorServicesFactory.cs" />
     <Compile Include="Services\Shipping\MarkOrderShippedException.cs" />
     <Compile Include="Services\Shipping\ShippingService.cs" />
     <Compile Include="Services\Shipping\IShippingService.cs" />
@@ -273,7 +272,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="ChannelAdvisorAccessKey.snk" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\AdminService\AdminService.wsdl" />
     <None Include="Service References\AdminService\ChannelAdvisorAccess.AdminService.APIResultOfArrayOfAuthorizationResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>

@@ -15,7 +15,7 @@ using System.Web;
 using ChannelAdvisorAccess.Exceptions;
 using System.Runtime.Caching;
 
-namespace ChannelAdvisorAccess.REST.Services.Orders
+namespace ChannelAdvisorAccess.REST.Services
 {
 	/// <summary>
 	/// Facade to work with ChannelAdvisor REST API
@@ -26,11 +26,28 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 
 		public string Name { get; private set; }
 
-		public OrdersService( string baseApiUrl, RestAPICredentials credentials ) 
-			: base( baseApiUrl, credentials ) { }
+		/// <summary>
+		///	REST authorization flow
+		/// </summary>
+		/// <param name="baseApiUrl"></param>
+		/// <param name="accountName"></param>
+		/// <param name="credentials"></param>
+		public OrdersService( RestApplication application, string accountName, string accessToken, string refreshToken ) 
+			: base( accountName, application, accessToken, refreshToken ) { }
 
-		public OrdersService( APICredentials credentials, string accountId, string baseApiUrl, ObjectCache cache = null ) 
-			: base( credentials, accountId, baseApiUrl, cache ) { }
+		/// <summary>
+		///	SOAP compatible authorization flow
+		/// </summary>
+		/// <param name="baseApiUrl">CA base API url</param>
+		/// <param name="applicationID">applicationID recevied via developer console</param>
+		/// <param name="sharedSecret">shared secret</param>
+		/// <param name="scope">for example inventory, orders (multiply values should be delimited by space)</param>
+		/// <param name="accountId">CA user account id (GUID)</param>
+		/// <param name="accountName">CA user account friendly name</param>
+		/// <param name="credentials">developer key and password</param>
+		/// <param name="cache"></param>
+		public OrdersService( RestApplication application, string accountId, string accountName, string developerKey, string developerPassword, ObjectCache cache = null ) 
+			: base( application, accountName, accountId, developerKey, developerPassword, cache ) { }
 
 		/// <summary>
 		///	Gets orders by created date range

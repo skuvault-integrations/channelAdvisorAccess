@@ -12,25 +12,45 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChannelAdvisorAccess.REST.Services.Items
+namespace ChannelAdvisorAccess.REST.Services
 {
 	public class ItemsService : RestServiceBaseAbstr, IItemsService
 	{
-		public string Name { get; private set; }
-
-		protected readonly string distributionCentersUrl;
-		protected readonly string productsUrl;
+		protected readonly string distributionCentersUrl = "v1/DistributionCenters";
+		protected readonly string productsUrl = "v1/Products";
 
 		/// <summary>
 		///	Channel advisor page size for products end point
 		/// </summary>
 		private const int pageSize = 100;
 
-		public ItemsService( string apiUrl, RestAPICredentials credentials ) : base( apiUrl, credentials ) 
-		{
-			distributionCentersUrl = "v1/DistributionCenters";
-			productsUrl = "v1/Products";
-		}
+		/// <summary>
+		///	User-friendly channel advisor account name
+		/// </summary>
+		public string Name => this.AccountName;
+
+		/// <summary>
+		///	REST authorization
+		/// </summary>
+		/// <param name="apiUrl"></param>
+		/// <param name="accountName"></param>
+		/// <param name="application"></param>
+		/// <param name="accessToken"></param>
+		/// <param name="refreshToken"></param>
+		public ItemsService( RestApplication application, string accountName, string accessToken, string refreshToken ) 
+			: base( accountName, application, accessToken, refreshToken ) 
+		{ }
+
+		/// <summary>
+		///	SOAP compatible authorization flow for REST service
+		/// </summary>
+		/// <param name="apiUrl"></param>
+		/// <param name="soapCredentials"></param>
+		/// <param name="accountName"></param>
+		/// <param name="accountID"></param>
+		public ItemsService( RestApplication application, string accountName, string accountID, string developerKey, string developerPassword ) 
+			: base( application, accountName, accountID, developerKey, developerPassword, null )
+		{ }
 
 		/// <summary>
 		///	Checks asynchronously if sku exists 

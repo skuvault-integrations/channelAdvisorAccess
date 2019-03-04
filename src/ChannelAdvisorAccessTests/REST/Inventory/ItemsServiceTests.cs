@@ -295,7 +295,7 @@ namespace ChannelAdvisorAccessTests.REST
 			var result = ItemsService.GetAttributes( TestSku );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Length.Should().Be( 3 );
+			result.Length.Should().BeGreaterThan( 3 );
 
 			result.Select( attr => attr.Name ).Intersect( new string[] { "Color", "DefaultPackingTypes", "Restaraunts" }).Count().Should().Be( 3 );
 		}
@@ -333,7 +333,10 @@ namespace ChannelAdvisorAccessTests.REST
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 10 );
-			result.Any( item => !item.Classification.Equals(classificationName)).Should().BeFalse();
+			result.Where( item => item.Classification != null )
+				.Any( item => !item.Classification.Equals(classificationName))
+				.Should()
+				.BeFalse();
 		}
 
 		[ Test ]
