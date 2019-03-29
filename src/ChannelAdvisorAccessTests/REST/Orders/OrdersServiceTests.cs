@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChannelAdvisorAccessTests.REST
+namespace ChannelAdvisorAccessTests.REST.Orders
 {
 	public class OrdersServiceTests : RestAPITestBase
 	{
@@ -64,11 +64,11 @@ namespace ChannelAdvisorAccessTests.REST
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Count().Should().BeGreaterThan( 4 );
+			result.Count().Should().BeGreaterOrEqualTo( 4 );
 		}
 
 		[ Test ]
-		public async Task GetOrdersByID()
+		public async Task GetOrdersById()
 		{
 			var criteria = new OrderCriteria
 			{

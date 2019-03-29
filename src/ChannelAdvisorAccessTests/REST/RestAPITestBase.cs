@@ -13,12 +13,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ChannelAdvisorAccessTests.REST
 {
+	public class RestServiceCredentials
+	{
+		public string ApplicationId { get; set; }
+		public string SharedSecret { get; set; }
+		public string DeveloperKey{ get; set; }
+		public string DeveloperPassword{ get; set; }
+		public string AccountId{ get; set; }
+		public string AccountName { get; set; }
+		public string AccessToken { get; set; }
+		public string RefreshToken { get; set;}
+		public bool useSoapCredentials { get; set; }
+	}
+
 	public class RestAPITestBase
 	{
 		protected const string applicationID = "f7g356m232wudcskihy3auo292aug7dx";
@@ -38,20 +52,42 @@ namespace ChannelAdvisorAccessTests.REST
 		[ SetUp ]
 		public void Init()
 		{
-			var factory = new ChannelAdvisorServicesFactory( developerKey, developerPassword, applicationID, sharedSecret );
+			var credentials = LoadCredentials();
+			var factory = new ChannelAdvisorServicesFactory( credentials.DeveloperKey, credentials.DeveloperPassword, credentials.ApplicationId, credentials.SharedSecret );
 
-			if ( useSOAPCredentials )
+			if ( credentials.useSoapCredentials )
 			{
-				this.OrdersService = factory.CreateOrdersService( accountName, accountId, true, true, accessToken, refreshToken );
-				this.ItemsService = factory.CreateItemsService( accountName, accountId, true, true, accessToken, refreshToken );
+				this.OrdersService = factory.CreateOrdersRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId );
+				this.ItemsService = factory.CreateItemsRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId );
 			}
 			else
 			{
-				this.OrdersService = factory.CreateOrdersService( accountName, accountId, true, false, accessToken, refreshToken );
-				this.ItemsService = factory.CreateItemsService( accountName, accountId );
+				this.OrdersService = factory.CreateOrdersRestService( credentials.AccountName, credentials.AccessToken, credentials.RefreshToken );
+				this.ItemsService = factory.CreateItemsRestService( credentials.AccountName, credentials.AccessToken, credentials.RefreshToken );
 			}
-				
+
 			NetcoLogger.LoggerFactory = new NLogLoggerFactory();
+		}
+
+		private RestServiceCredentials LoadCredentials()
+		{
+			var path = new Uri( Path.GetDirectoryName( Assembly.GetExecutingAssembly().CodeBase ) ).LocalPath;
+
+			using( var reader = new StreamReader( path + @"\..\..\rest-credentials.csv" ) )
+			{
+				return new RestServiceCredentials
+				{
+					ApplicationId = reader.ReadLine(),
+					SharedSecret = reader.ReadLine(),
+					DeveloperKey = reader.ReadLine(),
+					DeveloperPassword = reader.ReadLine(),
+					AccountId = reader.ReadLine(),
+					AccountName = reader.ReadLine(),
+					AccessToken = reader.ReadLine(),
+					RefreshToken = reader.ReadLine(),
+					useSoapCredentials = bool.Parse( reader.ReadLine() )
+				};
+			}
 		}
 
 		public IShippingService ShippingService{ get; private set; }

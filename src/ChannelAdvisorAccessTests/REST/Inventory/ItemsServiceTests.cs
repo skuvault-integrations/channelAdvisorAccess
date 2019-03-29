@@ -9,7 +9,7 @@ using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.Services.Items;
 
-namespace ChannelAdvisorAccessTests.REST
+namespace ChannelAdvisorAccessTests.REST.Inventory
 {
 	public class ItemsServiceTests : RestAPITestBase
 	{
@@ -22,7 +22,7 @@ namespace ChannelAdvisorAccessTests.REST
 		[ Test ]
 		public void UpdateSkuQuantity()
 		{
-			ClearSkuQuantityForEachDC( TestSku );
+			this.ClearSkuQuantityForEachDc( TestSku );
 
 			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( TestSku, 10 ) );
 
@@ -51,11 +51,11 @@ namespace ChannelAdvisorAccessTests.REST
 
 			quantities.Should().NotBeNullOrEmpty();
 			quantities.Should().HaveCount( 2 );
-			quantities.Where( item => item.SKU.Equals( TestSku )).First().Quantity.Should().Be( 100 );
-			quantities.Where( item => item.SKU.Equals( TestSku2 )).First().Quantity.Should().Be( 110 );
+			quantities.First( item => item.SKU.Equals( TestSku ) ).Quantity.Should().Be( 100 );
+			quantities.First( item => item.SKU.Equals( TestSku2 ) ).Quantity.Should().Be( 110 );
 		}
 
-		private void ClearSkuQuantityForEachDC( string sku )
+		private void ClearSkuQuantityForEachDc( string sku )
 		{
 			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList().Select( dc => dc.DistributionCenterCode ).ToArray();
 
@@ -76,7 +76,7 @@ namespace ChannelAdvisorAccessTests.REST
 		[ Test ]
 		public void UpdateSkuLocation()
 		{
-			InventoryItemSubmit submitItem = new InventoryItemSubmit()
+			var submitItem = new InventoryItemSubmit()
 			{
 				 Sku = TestSku,
 				 WarehouseLocation = TestSkuLocation
@@ -84,7 +84,7 @@ namespace ChannelAdvisorAccessTests.REST
 
 			this.ItemsService.SynchItemAsync( submitItem ).GetAwaiter().GetResult();
 
-			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }).GetAwaiter().GetResult().Where( item => item.Sku.ToLower().Equals( TestSku.ToLower() )).FirstOrDefault();
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku } ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
 			result.WarehouseLocation.Should().Equals( TestSkuLocation );
@@ -101,7 +101,7 @@ namespace ChannelAdvisorAccessTests.REST
 
 			this.ItemsService.SynchItemAsync( submitItem ).GetAwaiter().GetResult();
 
-			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }).GetAwaiter().GetResult().Where( item => item.Sku.ToLower().Equals( TestSku.ToLower() )).FirstOrDefault();
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku } ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
 			result.UPC.Should().Equals( TestSkuUPC );
@@ -123,7 +123,7 @@ namespace ChannelAdvisorAccessTests.REST
 
 			this.ItemsService.SynchItemAsync( submitItem ).GetAwaiter().GetResult();
 
-			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }).GetAwaiter().GetResult().Where( item => item.Sku.ToLower().Equals( TestSku.ToLower() )).FirstOrDefault();
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku } ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
 			result.PriceInfo.RetailPrice.Should().Be( 11.0m );
@@ -292,10 +292,10 @@ namespace ChannelAdvisorAccessTests.REST
 		[ Test ]
 		public void GetSkuAttributes()
 		{
-			var result = ItemsService.GetAttributes( TestSku );
+			var result = this.ItemsService.GetAttributes( TestSku );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Length.Should().BeGreaterThan( 3 );
+			result.Length.Should().BeGreaterOrEqualTo( 3 );
 
 			result.Select( attr => attr.Name ).Intersect( new string[] { "Color", "DefaultPackingTypes", "Restaraunts" }).Count().Should().Be( 3 );
 		}

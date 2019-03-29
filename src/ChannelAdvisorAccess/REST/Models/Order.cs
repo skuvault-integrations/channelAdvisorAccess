@@ -428,7 +428,7 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// <summary>
 		/// Fulfillment is complete
 		/// </summary>
-		Cancelled = 8,
+		Canceled = 8,
 		/// <summary>
 		/// Fulfillment is complete
 		/// </summary>

@@ -1,97 +1,139 @@
 ﻿using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Exceptions;
-using ChannelAdvisorAccess.Misc;
-using ChannelAdvisorAccess.REST.Misc;
 using ChannelAdvisorAccess.Services.Items;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Caching;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Threading;
+using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.REST.Exceptions;
+using ChannelAdvisorAccess.REST.Models.Configuration;
+using ChannelAdvisorAccess.REST.Models.Infrastructure;
+using ChannelAdvisorAccess.REST.Shared;
+using CuttingEdge.Conditions;
 
 namespace ChannelAdvisorAccess.REST.Services
 {
 	public abstract class RestServiceBaseAbstr : ServiceBaseAbstr
 	{
-		public const string baseApiUrl = "https://api.channeladvisor.com";
-
-		private readonly RestApplication _application;
-		private readonly string _developerKey;
-		private readonly string _developerPassword;
+		private readonly RestCredentials _credentials;
+		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
+		private readonly int _requestTimeout = 30 * 1000;
 		private string _accessToken;
-		private string _refreshToken;
+		private readonly string _refreshToken;
+		private CancellationTokenSource _cancellationTokenSource;
 
-		protected HttpClient client { get; private set; }
+		protected string AccountName { get; private set; }
+		protected HttpClient HttpClient { get; private set; }
+		protected readonly ActionPolicy ActionPolicy = new ActionPolicy( 3 );
 
 		public string AccountId { get; private set; }
-		public string AccountName { get; private set; }
+		/// <summary>
+		///	Tenant account name to have backward compatibility with existing interface
+		/// </summary>
+		public string Name => this.AccountName;
 
 		/// <summary>
-		///	Standard authorization flow for REST service
+		///	Rest service for work with orders
 		/// </summary>
-		/// <param name="apiUrl"></param>
-		/// <param name="credentials"></param>
-		public RestServiceBaseAbstr( string accountName, RestApplication application, string accessToken, string refreshToken )
+		/// <param name="credentials">Rest application credentials</param>
+		/// <param name="accountName">Tenant account name</param>
+		/// <param name="accessToken">Tenant access token</param>
+		/// <param name="refreshToken">Tenant refresh token</param>
+		protected RestServiceBaseAbstr( RestCredentials credentials, string accountName, string accessToken, string refreshToken )
 		{
-			_application = application;
-			_accessToken = accessToken;
-			_refreshToken = refreshToken;
+			Condition.Requires( credentials ).IsNotNull();
+			Condition.Requires( accountName ).IsNotNullOrEmpty();
+			Condition.Requires( accessToken ).IsNotNullOrEmpty();
+			Condition.Requires( refreshToken ).IsNotNullOrEmpty();
 
-			AccountName = accountName;
+			this._credentials = credentials;
+			this.AccountName = accountName;
+			this._accessToken = accessToken;
+			this._refreshToken = refreshToken;
 
-			SetupHttpClient();
+			this.SetupHttpClient();
+			this.SetupCancellationTokenSource();
 		}
 
 		/// <summary>
-		///  SOAP compatible authorization flow for REST service
+		///	Rest service with SOAP compatible authentication. Should used only for tenants that already have been granted access to previous SOAP service
 		/// </summary>
-		/// <param name="credentials"></param>
-		/// <param name="name"></param>
-		/// <param name="accountID"></param>
-		/// <param name="apiUrl"></param>
-		/// <param name="cache"></param>
-		public RestServiceBaseAbstr( RestApplication application, string accountName, string accountID, string developerKey, string developerPassword, ObjectCache cache )
+		/// <param name="credentials">Rest credentials</param>
+		/// <param name="soapCredentials">Soap credentials</param>
+		/// <param name="accountName">Tenant account name (used for logging)</param>
+		/// <param name="accountId">Tenant account id</param>
+		/// <param name="cache">Cache</param>
+		protected RestServiceBaseAbstr( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, ObjectCache cache )
 		{
-			AccountId = accountID;
-			AccountName = accountName;
+			Condition.Requires( credentials ).IsNotNull();
+			Condition.Requires( soapCredentials ).IsNotNull();
 
-			_application = application;
-			_developerKey = developerKey;
-			_developerPassword = developerPassword;
+			this._credentials = credentials;
+			this._soapCredentials = soapCredentials;
 
-			SetupHttpClient();
+			this.AccountId = accountId;
+			this.AccountName = accountName;
+
+			this.SetupHttpClient();
+			this.SetupCancellationTokenSource();
 		}
 
 		/// <summary>
-		///	
+		///	Init http client used for calling ChannelAdvisor backend
 		/// </summary>
-		/// <param name="apiUrl"></param>
 		protected void SetupHttpClient()
 		{
-			client = new HttpClient();
-			client.BaseAddress = new Uri( baseApiUrl );
-			client.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json") );
-			SetDefaultAuthorizationHeader( client );
+			this.HttpClient = new HttpClient { BaseAddress = new Uri( ChannelAdvisorEndPoint.BaseApiUrl ) };
+			this.HttpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json") );
+			this.SetDefaultAuthorizationHeader();
+		}
+
+		/// <summary>
+		///	Setup cancellation token source where token has predefined operation timeout
+		/// </summary>
+		protected void SetupCancellationTokenSource()
+		{
+			this._cancellationTokenSource = new CancellationTokenSource();
+			this._cancellationTokenSource.CancelAfter( this._requestTimeout );
+		}
+
+		/// <summary>
+		///  Setup HTTP client for REST authorization flow
+		/// </summary>
+		private void SetDefaultAuthorizationHeader()
+		{
+			this.HttpClient.DefaultRequestHeaders.Remove("Authorization");
+			this.HttpClient.DefaultRequestHeaders.Add( "Authorization", $"Bearer { this._accessToken }");
+		}
+
+		/// <summary>
+		///  Setup HTTP client for SOAP compatible authorization flow
+		/// </summary>
+		private void SetBasicAuthorizationHeader()
+		{
+			this.HttpClient.DefaultRequestHeaders.Remove( "Authorization" );
+			var authHeader = $"Basic { Convert.ToBase64String( Encoding.UTF8.GetBytes( this._credentials.ApplicationId + ":" + this._credentials.SharedSecret ) ) }";
+			this.HttpClient.DefaultRequestHeaders.Add( "Authorization", authHeader );
 		}
 
 		/// <summary>
 		///	Gets refresh token via developer console credentials
 		/// </summary>
 		/// <returns></returns>
-		protected async Task RefreshAccessToken()
+		private Task RefreshAccessToken()
 		{
-			if ( IsSOAPCredentialsFlowUsed() )
-				await RefreshAccessTokenBySOAPCredentials().ConfigureAwait( false );
+			if ( string.IsNullOrEmpty( this._accessToken ) )
+				return this.RefreshAccessTokenBySoapCredentials();
 			else
-				await RefreshAccessTokenByRestCredentials().ConfigureAwait( false );
+				return this.RefreshAccessTokenByRestCredentials();
 		}
 
 		/// <summary>
@@ -99,63 +141,31 @@ namespace ChannelAdvisorAccess.REST.Services
 		///	This is way how to obtain refresh token using existing credentials without involving partner
 		/// </summary>
 		/// <returns></returns>
-		protected async Task RefreshAccessTokenBySOAPCredentials()
+		private async Task RefreshAccessTokenBySoapCredentials()
 		{
-			SetBasicAuthorizationHeader( client );
-			var requestData = new Dictionary< string, string >();
-			requestData.Add( "client_id", _application.ApplicationID );
-			requestData.Add( "grant_type", "soap" );
-			requestData.Add( "scope", string.Join( " ", _scope ) );
-			requestData.Add( "developer_key", _developerKey );
-			requestData.Add( "password", _developerPassword );
-			requestData.Add( "account_id", AccountId );
+			this.SetBasicAuthorizationHeader();
+
+			var requestData = new Dictionary< string, string >
+			{
+				{ "client_id", this._credentials.ApplicationId },
+				{ "grant_type", "soap" },
+				{ "scope", string.Join( " ", this._scope ) },
+				{ "developer_key", this._soapCredentials.DeveloperKey },
+				{ "password", this._soapCredentials.Password },
+				{ "account_id", this.AccountId }
+			};
 
 			var content = new FormUrlEncodedContent( requestData );
 
 			try
 			{
-				HttpResponseMessage response = await client.PostAsync("oauth2/token", content).ConfigureAwait( false );
-				var result = response.Content.ReadAsAsync< OAuthResponse >().Result;
-
-				if (!string.IsNullOrEmpty(result.Error))
-					throw new ChannelAdvisorException(result.Error);
-
-				_accessToken = result.AccessToken;
-			}
-			catch(Exception ex)
-			{
-				var channelAdvisorException = new ChannelAdvisorException(ex.Message, ex);
-				throw channelAdvisorException;
-			}
-			finally
-			{
-				SetDefaultAuthorizationHeader(client);
-			}
-
-		}
-
-		/// <summary>
-		///	Gets refresh token by REST credentials
-		/// </summary>
-		/// <returns></returns>
-		protected async Task RefreshAccessTokenByRestCredentials()
-		{
-			SetBasicAuthorizationHeader( client );
-
-			var requestData = new Dictionary< string, string >();
-			requestData.Add( "grant_type", "refresh_token" );
-			requestData.Add( "refresh_token", _refreshToken );
-			var content = new FormUrlEncodedContent( requestData );
-
-			try
-			{
-				HttpResponseMessage response = await client.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
-				var result = response.Content.ReadAsAsync< OAuthResponse >().Result;
+				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
+				var result = await response.Content.ReadAsAsync< OAuthResponse >();
 
 				if ( !string.IsNullOrEmpty( result.Error ) )
 					throw new ChannelAdvisorException( result.Error );
 
-				_accessToken = result.AccessToken;
+				this._accessToken = result.AccessToken;
 			}
 			catch( Exception ex )
 			{
@@ -164,7 +174,39 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 			finally
 			{
-				SetDefaultAuthorizationHeader(client);
+				this.SetDefaultAuthorizationHeader();
+			}
+		}
+
+		/// <summary>
+		///	Gets refresh token by REST credentials
+		/// </summary>
+		/// <returns></returns>
+		private async Task RefreshAccessTokenByRestCredentials()
+		{
+			this.SetBasicAuthorizationHeader();
+
+			var requestData = new Dictionary< string, string > { { "grant_type", "refresh_token" }, { "refresh_token", this._refreshToken } };
+			var content = new FormUrlEncodedContent( requestData );
+
+			try
+			{
+				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
+				var result = await response.Content.ReadAsAsync< OAuthResponse >();
+
+				if ( !string.IsNullOrEmpty( result.Error ) )
+					throw new ChannelAdvisorException( result.Error );
+
+				this._accessToken = result.AccessToken;
+			}
+			catch( Exception ex )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( ex.Message, ex );
+				throw channelAdvisorException;
+			}
+			finally
+			{
+				this.SetDefaultAuthorizationHeader();
 			}
 		}
 
@@ -172,20 +214,41 @@ namespace ChannelAdvisorAccess.REST.Services
 		///	Gets response from REST Endpoint and tries to refresh token if necessary
 		/// </summary>
 		/// <param name="apiUrl"></param>
+		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task< HttpResponseMessage > GetResponseAsync( string apiUrl )
+		protected async Task< IEnumerable< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null )
 		{
-			var response = await client.GetAsync( apiUrl ).ConfigureAwait( false );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			if ( response.StatusCode == HttpStatusCode.Unauthorized )
+			var entities = new List< T >();
+			var nextLink = apiUrl;
+
+			while ( !string.IsNullOrEmpty( nextLink ) )
 			{
-				// we should refresh access token and try again
-				await RefreshAccessToken().ConfigureAwait( false );
+				var response = await this.ActionPolicy.ExecuteAsync( 
+				async () =>
+				{
+					var httpResponse = await this.HttpClient.GetAsync( nextLink, this._cancellationTokenSource.Token ).ConfigureAwait( false );
+					var message = await httpResponse.Content.ReadAsAsync< ODataResponse< T > >();
 
-				response = await client.GetAsync( apiUrl ).ConfigureAwait( false );
+					await this.ThrowIfError( httpResponse, message.Context );
+
+					return message;
+				}, 
+				( timeSpan, retryAttempt ) => { 
+					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: nextLink );
+					
+					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
+				}, 
+				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: nextLink ),
+				ChannelAdvisorLogger.LogTraceException );
+
+				entities.AddRange( response.Value );
+				nextLink = response.NextLink;
 			}
 
-			return response;
+			return entities;
 		}
 
 		/// <summary>
@@ -193,20 +256,29 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="apiUrl"></param>
 		/// <param name="data"></param>
+		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task< HttpStatusCode > PostAsync< T >( string apiUrl, T data )
+		protected Task PostAsync< T >( string apiUrl, T data, Mark mark = null )
 		{
-			var response = await client.PostAsJsonAsync( apiUrl + "?access_token=" + _accessToken, data ).ConfigureAwait( false );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			if ( response.StatusCode == HttpStatusCode.Unauthorized )
-			{
-				// we should refresh access token and try again
-				await RefreshAccessToken().ConfigureAwait( false );
+			return this.ActionPolicy.ExecuteAsync( 
+				async () =>
+				{
+					var httpResponse = await this.HttpClient.PostAsJsonAsync( apiUrl + "?access_token=" + this._accessToken, data, this._cancellationTokenSource.Token ).ConfigureAwait( false );
 
-				response = await client.PostAsJsonAsync( apiUrl + "?access_token=" + _accessToken, data );
-			}
+					await this.ThrowIfError( httpResponse, null );
 
-			return response.StatusCode;
+					return httpResponse.StatusCode;
+				}, 
+				( timeSpan, retryAttempt ) => { 
+					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
+					
+					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
+				}, 
+				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl ),
+				ChannelAdvisorLogger.LogTraceException );
 		}
 
 		/// <summary>
@@ -215,43 +287,52 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <typeparam name="T"></typeparam>
 		/// <param name="apiUrl"></param>
 		/// <param name="data"></param>
+		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data )
+		protected Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data, Mark mark = null )
 		{
-			var response = await client.PutAsJsonAsync( apiUrl + "?access_token=" + _accessToken, data ).ConfigureAwait( false );
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			return this.ActionPolicy.ExecuteAsync( 
+				async () =>
+				{
+					var httpResponse = await this.HttpClient.PutAsJsonAsync( apiUrl + "?access_token=" + this._accessToken, data, this._cancellationTokenSource.Token );
+
+					await this.ThrowIfError( httpResponse, null );
+
+					return httpResponse.StatusCode;
+				}, 
+				( timeSpan, retryAttempt ) => { 
+					var retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
+					
+					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
+				}, 
+				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl ),
+				ChannelAdvisorLogger.LogTraceException );
+		}
+
+		/// <summary>
+		///	Validate server response
+		/// </summary>
+		/// <param name="response"></param>
+		/// <param name="message">response message from server</param>
+		private async Task ThrowIfError( HttpResponseMessage response, string message )
+		{
+			if ( response.IsSuccessStatusCode )
+				return;
 
 			if ( response.StatusCode == HttpStatusCode.Unauthorized )
 			{
-				// we should refresh access token and try again
-				await RefreshAccessToken().ConfigureAwait( false );
-
-				response = await client.PutAsJsonAsync( apiUrl + "?access_token=" + _accessToken, data );
+				// we have to refresh our access token
+				await this.RefreshAccessToken().ConfigureAwait( false );
+				
+				throw new ChannelAdvisorUnauthorizedException( message );
 			}
-
-			return response.StatusCode;
+			
+			throw new ChannelAdvisorException( (int)response.StatusCode, message );
 		}
 
-		/// <summary>
-		///  Setup HTTP client for REST authorization flow
-		/// </summary>
-		/// <param name="client"></param>
-		private void SetDefaultAuthorizationHeader( HttpClient client )
-		{
-			client.DefaultRequestHeaders.Remove("Authorization");
-			client.DefaultRequestHeaders.Add( "Authorization", $"Bearer { _accessToken }");
-		}
-
-		/// <summary>
-		///  Setup HTTP client for SOAP compatible authorization flow
-		/// </summary>
-		/// <param name="client"></param>
-		private void SetBasicAuthorizationHeader( HttpClient client )
-		{
-			client.DefaultRequestHeaders.Remove( "Authorization" );
-			string authHeader = $"Basic { Convert.ToBase64String( Encoding.UTF8.GetBytes( _application.ApplicationID + ":" + _application.SharedSecret ) ) }";
-			client.DefaultRequestHeaders.Add( "Authorization", authHeader );
-		}
-	
 		/// <summary>
 		///	Convert date in format suitable for REST end point
 		/// </summary>
@@ -260,11 +341,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected string ConvertDate( DateTime date )
 		{
 			return date.ToString( "yyyy-MM-ddThh:mm:ssZ", CultureInfo.InvariantCulture );
-		}
-	
-		private bool IsSOAPCredentialsFlowUsed()
-		{
-			return !string.IsNullOrEmpty( _developerKey );
 		}
 	}
 }

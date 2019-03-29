@@ -7,7 +7,7 @@ using ChannelAdvisorAccess.Services.Listing;
 using ChannelAdvisorAccess.Services.Orders;
 using ChannelAdvisorAccess.Services.Shipping;
 using System.Net;
-using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.REST.Shared;
 
 namespace ChannelAdvisorAccess.Services
 {
@@ -15,7 +15,8 @@ namespace ChannelAdvisorAccess.Services
 	{
 		private readonly string _developerKey;
 		private readonly string _developerPassword;
-		private readonly RestApplication _application;
+		private readonly string _applicationId;
+		private readonly string _sharedSecret;
 		private readonly ObjectCache _cache;
 		private readonly TimeSpan _slidingCacheExpiration;
 
@@ -25,8 +26,8 @@ namespace ChannelAdvisorAccess.Services
 
 		public ChannelAdvisorServicesFactory( string developerKey, string developerPassword, string applicationId, string sharedSecret, ObjectCache cache, TimeSpan slidingCacheExpiration )
 		{
-			if ( applicationId != null )
-				this._application = new RestApplication( applicationId, sharedSecret );
+			this._applicationId = applicationId;
+			this._sharedSecret = sharedSecret;
 
 			this._developerPassword = developerPassword;
 			this._developerKey = developerKey;
@@ -45,29 +46,43 @@ namespace ChannelAdvisorAccess.Services
 		///	Returns orders service for concrete tenant
 		/// </summary>
 		/// <param name="accountName">User friendly account name</param>
-		/// <param name="accountId">Tenant account Id (GUID) </param>
-		/// <param name="useRestVersion">Using CA Rest API version</param>
-		/// <param name="useCompatibleAuth">Using CA Rest API version with SOAP credentials</param>
-		/// <param name="accessToken">Access token</param>
-		/// <param name="refreshToken">Refresh token</param>
+		/// <param name="accountId">Tenant account Id  </param>
 		/// <returns></returns>
-		public IOrdersService CreateOrdersService( string accountName, string accountId, bool useRestVersion = false, bool useCompatibleAuth = true, string accessToken = null, string refreshToken = null )
+		public IOrdersService CreateOrdersService( string accountName, string accountId )
+		{
+			SetSecurityProtocol();
+			var ordersCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
+			return new OrdersService( ordersCredentials, accountName, accountId, this._cache );
+		}
+
+		/// <summary>
+		///	Returns Rest service with soap compatible authorization flow for existing tenants
+		/// </summary>
+		/// <param name="accountName">Tenant account name</param>
+		/// <param name="accountId">Tenant account id</param>
+		/// <returns></returns>
+		public IOrdersService CreateOrdersRestServiceWithSoapCompatibleAuth( string accountName, string accountId )
+		{
+			SetSecurityProtocol();
+			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
+			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
+			
+			return new REST.Services.Orders.OrdersService( credentials, soapCredentials, accountId, accountName, this._cache );
+		}
+
+		/// <summary>
+		///	Returns Rest service with standard authorization flow for working with orders
+		/// </summary>
+		/// <param name="accountName">Tenant account name</param>
+		/// <param name="accessToken">Tenant access token</param>
+		/// <param name="refreshToken">Tenant refresh token</param>
+		/// <returns></returns>
+		public IOrdersService CreateOrdersRestService( string accountName, string accessToken, string refreshToken )
 		{
 			SetSecurityProtocol();
 
-			if ( !useRestVersion )
-			{
-				var ordersCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
-				return new OrdersService( ordersCredentials, accountName, accountId, _cache );
-			}
-			else
-			{
-				if ( useCompatibleAuth )
-					return new REST.Services.OrdersService( _application, accountId, accountName, _developerKey, _developerPassword );
-				else
-					return new REST.Services.OrdersService( _application, accountName, accessToken, refreshToken );
-			}
-
+			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
+			return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken );
 		}
 
 		/// <summary>
@@ -75,28 +90,40 @@ namespace ChannelAdvisorAccess.Services
 		/// </summary>
 		/// <param name="accountName">User friendly account name</param>
 		/// <param name="accountId">Tenant account id (GUID)</param>
-		/// <param name="useRestVersion">Use CA REST API version</param>
-		/// <param name="useCompatibleAuth">Use CA REST API version with SOAP credentials</param>
-		/// <param name="accessToken">Access token</param>
-		/// <param name="refreshToken">Refresh token</param>
 		/// <returns></returns>
-		public IItemsService CreateItemsService( string accountName, string accountId, bool useRestVersion = false, bool useCompatibleAuth = true, string accessToken = null, string refreshToken = null )
+		public IItemsService CreateItemsService( string accountName, string accountId )
 		{
 			SetSecurityProtocol();
 
-			if ( !useRestVersion )
-			{
-				var inventoryCredentials = new InventoryService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
-				return new ItemsService( inventoryCredentials, accountName, accountId, _cache ){ SlidingCacheExpiration = _slidingCacheExpiration };
-			}
-			else
-			{
-				if ( useCompatibleAuth )
-					return new REST.Services.ItemsService( _application, accountName, accountId, _developerKey, _developerPassword );
-				else
-					return new REST.Services.ItemsService( _application, accountName, accessToken, refreshToken );
-			}
+			var inventoryCredentials = new InventoryService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
+			return new ItemsService( inventoryCredentials, accountName, accountId, this._cache ){ SlidingCacheExpiration = this._slidingCacheExpiration };
+		}
 
+		/// <summary>
+		///	Returns items Rest service with SOAP compatible authorization flow
+		/// </summary>
+		/// <param name="accountName"></param>
+		/// <param name="accountId"></param>
+		/// <returns></returns>
+		public IItemsService CreateItemsRestServiceWithSoapCompatibleAuth( string accountName, string accountId )
+		{
+			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
+			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
+
+			return new REST.Services.Items.ItemsService( credentials, soapCredentials, accountId, accountName, this._cache );
+		}
+
+		/// <summary>
+		///	Returns items Rest service with standard authorization flow
+		/// </summary>
+		/// <param name="accountName"></param>
+		/// <param name="accessToken"></param>
+		/// <param name="refreshToken"></param>
+		/// <returns></returns>
+		public IItemsService CreateItemsRestService( string accountName, string accessToken, string refreshToken )
+		{
+			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
+			return new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken );
 		}
 
 		public IShippingService CreateShippingService( string accountName, string accountId )

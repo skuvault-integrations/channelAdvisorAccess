@@ -35,27 +35,27 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// <summary>
 		/// The amount returned from item tax costs
 		/// </summary>
-		public decimal TaxAdjustment { get; set; }
+		public decimal? TaxAdjustment { get; set; }
 		/// <summary>
 		/// The amount returned from shipping costs
 		/// </summary>
-		public decimal ShippingAdjustment { get; set; }
+		public decimal? ShippingAdjustment { get; set; }
 		/// <summary>
 		/// The amount returned from shipping tax costs
 		/// </summary>
-		public decimal ShippingTaxAdjustment { get; set; }
+		public decimal? ShippingTaxAdjustment { get; set; }
 		/// <summary>
 		/// The amount returned from gift wrap costs
 		/// </summary>
-		public decimal GiftWrapAdjustment { get; set; }
+		public decimal? GiftWrapAdjustment { get; set; }
 		/// <summary>
 		/// The amount returned from gift wrap tax costs
 		/// </summary>
-		public decimal GiftWrapTaxAdjustment { get; set; }
+		public decimal? GiftWrapTaxAdjustment { get; set; }
 		/// <summary>
 		/// The amount returned from recycling and waste fees
 		/// </summary>
-		public decimal RecyclingFeeAdjustment { get; set; }
+		public decimal? RecyclingFeeAdjustment { get; set; }
 		/// <summary>
 		/// Indicates which kind of adjustment was requested
 		/// </summary>
@@ -87,15 +87,15 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// <summary>
 		/// The progress of the restock operation
 		/// </summary>
-		public AdjustmentRequestStatus RestockStatus { get; set; }
+		public AdjustmentRequestStatus? RestockStatus { get; set; }
 		/// <summary>
 		/// Fee charged to return items
 		/// </summary>
-		public decimal ReturnShippingFee { get; set; }
+		public decimal? ReturnShippingFee { get; set; }
 		/// <summary>
 		/// Fee charged to restock items
 		/// </summary>
-		public decimal RestockingFee { get; set; }
+		public decimal? RestockingFee { get; set; }
 		/// <summary>
 		/// Tracking number or tracking URL of the return shipment
 		/// </summary>
@@ -147,7 +147,7 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// <summary>
 		/// The amount returned from item tax costs
 		/// </summary>
-		public decimal TaxAdjustment { get; set; }
+		public decimal? TaxAdjustment { get; set; }
 		/// <summary>
 		/// The amount returned from shipping costs
 		/// </summary>

@@ -6,24 +6,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChannelAdvisorAccessTests.REST
+namespace ChannelAdvisorAccessTests.REST.Inventory
 {
 	public class DistributionCenterTests : RestAPITestBase
 	{
 		protected const string TestDistributionCenterCode = "Louisville";
 
 		[ Test ]
-		public async void GetDistributionCenterList()
+		public void GetDistributionCenterList()
 		{
-			var result = await this.ItemsService.GetDistributionCenterListAsync(null);
+			var result = this.ItemsService.GetDistributionCenterListAsync( null ).GetAwaiter().GetResult();
 
 			result.Should().HaveCount(4);
 		}
 
 		[ Test ]
-		public async void CheckTestDistributionCenterExistence()
+		public void CheckTestDistributionCenterExistence()
 		{
-			var result = await this.ItemsService.GetDistributionCenterListAsync(null);
+			var result = this.ItemsService.GetDistributionCenterListAsync(null).GetAwaiter().GetResult();
 
 			result.Select(dc => dc.DistributionCenterCode).Should().Contain(TestDistributionCenterCode);
 		}

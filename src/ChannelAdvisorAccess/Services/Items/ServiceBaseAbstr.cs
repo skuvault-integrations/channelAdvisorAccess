@@ -14,7 +14,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				mark = mark ?? Mark.Blank();
 				var connectionInfo = this.ToJson();
 				var str = string.Format(
-					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters:{2} {4}{5}{6}{7}}}",
+					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters: '{2}' {4}{5}{6}{7}}}",
 					memberName,
 					connectionInfo,
 					string.IsNullOrWhiteSpace( methodParameters ) ? PredefinedValues.EmptyJsonObject : methodParameters,

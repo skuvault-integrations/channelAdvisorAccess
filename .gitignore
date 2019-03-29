@@ -27,6 +27,7 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.ReSharper
 *.docstates
+.vs
 
 #Ignore common build files
 build

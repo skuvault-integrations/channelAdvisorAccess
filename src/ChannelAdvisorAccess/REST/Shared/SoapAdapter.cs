@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChannelAdvisorAccess.REST.Misc
+namespace ChannelAdvisorAccess.REST.Shared
 {
 	public static class SoapAdapter
 	{

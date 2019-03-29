@@ -1,53 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services.Orders;
-using ChannelAdvisorAccess.REST.Models;
-using ChannelAdvisorAccess.REST.Misc;
-using System.Net;
-using System.Globalization;
-using System.Web;
-using ChannelAdvisorAccess.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Caching;
+using System.Threading.Tasks;
+using ChannelAdvisorAccess.REST.Models.Configuration;
+using ChannelAdvisorAccess.REST.Shared;
 
-namespace ChannelAdvisorAccess.REST.Services
+namespace ChannelAdvisorAccess.REST.Services.Orders
 {
 	/// <summary>
 	/// Facade to work with ChannelAdvisor REST API
 	/// </summary>
 	public class OrdersService : RestServiceBaseAbstr, IOrdersService
 	{
-		private const string _apiUrl = "v1/orders";
-
-		public string Name { get; private set; }
+		/// <summary>
+		///	Rest service with standard authorization flow
+		/// </summary>
+		/// <param name="credentials">Rest application credentials</param>
+		/// <param name="accountName">Tenant account name</param>
+		/// <param name="accessToken">Tenant access token</param>
+		/// <param name="refreshToken">Tenant refresh token</param>
+		public OrdersService( RestCredentials credentials, string accountName, string accessToken, string refreshToken ) 
+			: base( credentials, accountName, accessToken, refreshToken ) { }
 
 		/// <summary>
-		///	REST authorization flow
+		///	Rest service with soap compatible authorization flow
 		/// </summary>
-		/// <param name="baseApiUrl"></param>
-		/// <param name="accountName"></param>
-		/// <param name="credentials"></param>
-		public OrdersService( RestApplication application, string accountName, string accessToken, string refreshToken ) 
-			: base( accountName, application, accessToken, refreshToken ) { }
-
-		/// <summary>
-		///	SOAP compatible authorization flow
-		/// </summary>
-		/// <param name="baseApiUrl">CA base API url</param>
-		/// <param name="applicationID">applicationID recevied via developer console</param>
-		/// <param name="sharedSecret">shared secret</param>
-		/// <param name="scope">for example inventory, orders (multiply values should be delimited by space)</param>
-		/// <param name="accountId">CA user account id (GUID)</param>
-		/// <param name="accountName">CA user account friendly name</param>
-		/// <param name="credentials">developer key and password</param>
+		/// <param name="credentials">Rest application credentials</param>
+		/// <param name="soapCredentials">Soap application credentials</param>
+		/// <param name="accountId">Tenant account id</param>
+		/// <param name="accountName">Tenant account name</param>
 		/// <param name="cache"></param>
-		public OrdersService( RestApplication application, string accountId, string accountName, string developerKey, string developerPassword, ObjectCache cache = null ) 
-			: base( application, accountName, accountId, developerKey, developerPassword, cache ) { }
+		public OrdersService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, ObjectCache cache = null ) 
+			: base( credentials, soapCredentials, accountId, accountName, cache ) { }
 
 		/// <summary>
 		///	Gets orders by created date range
@@ -58,13 +47,13 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <returns></returns>
 		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate ) where T : OrderResponseItem
 		{
-			OrderCriteria criteria = new OrderCriteria()
+			var criteria = new OrderCriteria()
 			{
 				StatusUpdateFilterBeginTimeGMT = startDate,
 				StatusUpdateFilterEndTimeGMT = endDate,
 			};
 
-			return this.GetOrders< T >(criteria);
+			return this.GetOrders< T >( criteria );
 		}
 
 		/// <summary>
@@ -75,7 +64,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <returns></returns>
 		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria ) where T : OrderResponseItem
 		{
-			return GetOrdersAsync< T >(orderCriteria).Result;
+			return this.GetOrdersAsync< T >( orderCriteria ).GetAwaiter().GetResult();
 		}
 
 		/// <summary>
@@ -97,7 +86,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate ) where T : OrderResponseItem
+		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate ) where T : OrderResponseItem
 		{
 			OrderCriteria criteria = new OrderCriteria()
 			{
@@ -105,7 +94,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				StatusUpdateFilterEndTimeGMT = endDate,
 			};
 
-			return await GetOrdersAsync< T >( criteria ).ConfigureAwait( false );
+			return this.GetOrdersAsync< T >( criteria );
 		}
 
 		/// <summary>
@@ -115,11 +104,11 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="orderCriteria"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync<T>( OrderCriteria orderCriteria, Mark mark = null ) where T : OrderResponseItem
+		public Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark = null ) where T : OrderResponseItem
 		{
-			string filterParam = GetRequestFilterString(orderCriteria);
+			var filterParam = this.GetRequestFilterString( orderCriteria );
 
-			return await GetOrdersAsync< T >( filterParam, mark ).ConfigureAwait( false );
+			return this.GetOrdersAsync< T >( filterParam, mark );
 		}
 
 		/// <summary>
@@ -127,6 +116,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="filter"></param>
+		/// <param name="mark"></param>
 		/// <returns></returns>
 		public async Task< IEnumerable< T > > GetOrdersAsync < T >( string filter, Mark mark )
 		{
@@ -135,46 +125,22 @@ namespace ChannelAdvisorAccess.REST.Services
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
-			string url = _apiUrl;
+			var url = ChannelAdvisorEndPoint.OrdersUrl + "?$expand=Items($expand=Promotions),Fulfillments,Adjustments,CustomFields";
 
-			List< string > requestParams = new List< string >();
-			requestParams.Add( "$expand=Items($expand=Promotions),Fulfillments,Adjustments,CustomFields" );
-
-			if (!string.IsNullOrEmpty(filter))
-				requestParams.Add( "$filter=" + filter );
+			if ( !string.IsNullOrEmpty( filter )) 
+				url += "&$filter=" + filter;
 
 			try
 			{
-				string nextLink = url;
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
 
-				while ( nextLink != null )
-				{
-					if ( requestParams.Count > 0 )
-						url = _apiUrl + "?" + string.Join("&", requestParams.ToArray());
+				var ordersFromRequest = await this.GetResponseAsync< Models.Order >( url, mark );
 
-					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
+				orders.AddRange( ordersFromRequest.Select( order => order.ToOrderResponseDetailComplete() ).OfType< T >() );
 
-					var ordersFromRequest = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
-					{
-						var response = await GetResponseAsync( url ).ConfigureAwait( false );
-
-						return await response.Content.ReadAsAsync< ODataResponse< Models.Order > >();
-					}).ConfigureAwait( false );
-
-					nextLink = ordersFromRequest.NextLink;
-					orders.AddRange( ordersFromRequest.Value.Select( order => order.ToOrderResponseDetailComplete() ).OfType< T >() );
-
-					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: orders.ToJson(), additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
-
-					if ( !string.IsNullOrEmpty( nextLink ) )
-					{
-						requestParams.Clear();
-						requestParams.Add(nextLink.Split('?')[1]);
-					}
-				}
-				
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: orders.ToJson(), additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
 			}
-			catch(Exception exception)
+			catch( Exception exception )
 			{
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
@@ -182,6 +148,48 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 
 			return orders;
+		}
+
+		/// <summary>
+		///	Gets filtering parameter for REST GET request
+		/// </summary>
+		/// <param name="criteria"></param>
+		/// <returns></returns>
+		private string GetRequestFilterString( OrderCriteria criteria )
+		{
+			List< string > clauses = new List< string >();
+			
+			if ( criteria.OrderCreationFilterBeginTimeGMT.HasValue )
+				clauses.Add( $"CreatedDateUtc ge { base.ConvertDate( criteria.OrderCreationFilterBeginTimeGMT.Value ) } and " );
+
+			if ( criteria.OrderCreationFilterEndTimeGMT.HasValue )
+				clauses.Add( $"CreatedDateUtc le { base.ConvertDate( criteria.OrderCreationFilterEndTimeGMT.Value ) } and " );
+
+			if (criteria.StatusUpdateFilterBeginTimeGMT.HasValue)
+				clauses.Add( $"Fulfillments/any (f: f/UpdatedDateUtc ge { base.ConvertDate( criteria.StatusUpdateFilterBeginTimeGMT.Value ) }) and " );
+
+			if (criteria.StatusUpdateFilterEndTimeGMT.HasValue)
+				clauses.Add( $"Fulfillments/any (f: f/UpdatedDateUtc le { base.ConvertDate( criteria.StatusUpdateFilterEndTimeGMT.Value ) }) and " );
+
+			if ( criteria.OrderIDList != null && criteria.OrderIDList.Length > 0)
+			{
+				clauses.Add( "(" );
+
+				for (int i = 0; i < criteria.OrderIDList.Length; i++ )
+				{
+					clauses.Add( $"SiteOrderID eq '{ criteria.OrderIDList[i] }'" );
+
+					if (i != criteria.OrderIDList.Length - 1)
+						clauses.Add( " or " );
+				}
+
+				clauses.Add( ")" );
+			}
+
+			if ( clauses.Count > 0 )
+				clauses[ clauses.Count - 1] = clauses.Last().Replace( " and ", string.Empty );
+
+			return string.Join( " ", clauses );
 		}
 
 		public void Ping()
@@ -212,48 +220,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		public Task<IEnumerable<OrderUpdateResponse>> UpdateOrderListAsync(OrderUpdateSubmit[] orderUpdates)
 		{
 			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		///	Gets filtering parameter for REST GET request
-		/// </summary>
-		/// <param name="criteria"></param>
-		/// <returns></returns>
-		private string GetRequestFilterString( OrderCriteria criteria )
-		{
-			List< string > clauses = new List< string >();
-			
-			if ( criteria.OrderCreationFilterBeginTimeGMT.HasValue )
-				clauses.Add( $"CreatedDateUtc ge { ConvertDate( criteria.OrderCreationFilterBeginTimeGMT.Value ) } and " );
-
-			if ( criteria.OrderCreationFilterEndTimeGMT.HasValue )
-				clauses.Add( $"CreatedDateUtc le { ConvertDate( criteria.OrderCreationFilterEndTimeGMT.Value ) } and " );
-
-			if (criteria.StatusUpdateFilterBeginTimeGMT.HasValue)
-				clauses.Add( $"Fulfillments/any (f: f/UpdatedDateUtc ge { ConvertDate( criteria.StatusUpdateFilterBeginTimeGMT.Value ) }) and " );
-
-			if (criteria.StatusUpdateFilterEndTimeGMT.HasValue)
-				clauses.Add( $"Fulfillments/any (f: f/UpdatedDateUtc le { ConvertDate( criteria.StatusUpdateFilterEndTimeGMT.Value ) }) and " );
-
-			if ( criteria.OrderIDList != null && criteria.OrderIDList.Length > 0)
-			{
-				clauses.Add( "(" );
-
-				for (int i = 0; i < criteria.OrderIDList.Length; i++ )
-				{
-					clauses.Add( $"SiteOrderID eq '{ criteria.OrderIDList[i] }'" );
-
-					if (i != criteria.OrderIDList.Length - 1)
-						clauses.Add( " or " );
-				}
-
-				clauses.Add( ")" );
-			}
-
-			if ( clauses.Count > 0 )
-				clauses[ clauses.Count - 1] = clauses.Last().Replace( " and ", string.Empty );
-
-			return string.Join( " ", clauses );
 		}
 	}
 }
