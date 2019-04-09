@@ -62,8 +62,8 @@ namespace ChannelAdvisorAccessTests.REST
 			}
 			else
 			{
-				this.OrdersService = factory.CreateOrdersRestService( credentials.AccountName, credentials.AccessToken, credentials.RefreshToken );
-				this.ItemsService = factory.CreateItemsRestService( credentials.AccountName, credentials.AccessToken, credentials.RefreshToken );
+				this.OrdersService = factory.CreateOrdersRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
+				this.ItemsService = factory.CreateItemsRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
 			}
 
 			NetcoLogger.LoggerFactory = new NLogLoggerFactory();

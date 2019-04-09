@@ -43,7 +43,7 @@ namespace ChannelAdvisorAccess.Services
 		}
 
 		/// <summary>
-		///	Returns orders service for concrete tenant
+		///	Returns Soap orders service for concrete tenant
 		/// </summary>
 		/// <param name="accountName">User friendly account name</param>
 		/// <param name="accountId">Tenant account Id  </param>
@@ -74,19 +74,25 @@ namespace ChannelAdvisorAccess.Services
 		///	Returns Rest service with standard authorization flow for working with orders
 		/// </summary>
 		/// <param name="accountName">Tenant account name</param>
+		/// <param name="accountId">Tenant account id</param>
 		/// <param name="accessToken">Tenant access token</param>
 		/// <param name="refreshToken">Tenant refresh token</param>
+		/// <param name="soapCompatibleAuth">Soap compatible authorization flow</param>
 		/// <returns></returns>
-		public IOrdersService CreateOrdersRestService( string accountName, string accessToken, string refreshToken )
+		public IOrdersService CreateOrdersRestService( string accountName, string accountId, string accessToken, string refreshToken, bool soapCompatibleAuth = false )
 		{
 			SetSecurityProtocol();
 
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
-			return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken );
+
+			if ( soapCompatibleAuth )
+				return this.CreateOrdersRestServiceWithSoapCompatibleAuth( accountName, accountId );
+			else
+				return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken );
 		}
 
 		/// <summary>
-		///	Returns items service for concrete tenant
+		///	Returns Soap items service for concrete tenant
 		/// </summary>
 		/// <param name="accountName">User friendly account name</param>
 		/// <param name="accountId">Tenant account id (GUID)</param>
@@ -100,7 +106,7 @@ namespace ChannelAdvisorAccess.Services
 		}
 
 		/// <summary>
-		///	Returns items Rest service with SOAP compatible authorization flow
+		///	Returns Rest items service with SOAP compatible authorization flow
 		/// </summary>
 		/// <param name="accountName"></param>
 		/// <param name="accountId"></param>
@@ -117,13 +123,19 @@ namespace ChannelAdvisorAccess.Services
 		///	Returns items Rest service with standard authorization flow
 		/// </summary>
 		/// <param name="accountName"></param>
+		/// <param name="accountId"></param>
 		/// <param name="accessToken"></param>
 		/// <param name="refreshToken"></param>
+		/// <param name="soapCompatibleAuth"></param>
 		/// <returns></returns>
-		public IItemsService CreateItemsRestService( string accountName, string accessToken, string refreshToken )
+		public IItemsService CreateItemsRestService( string accountName, string accountId, string accessToken, string refreshToken, bool soapCompatibleAuth = false )
 		{
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
-			return new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken );
+
+			if ( soapCompatibleAuth )
+				return this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId );
+			else
+				return new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken );
 		}
 
 		public IShippingService CreateShippingService( string accountName, string accountId )
