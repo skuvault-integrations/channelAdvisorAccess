@@ -1,3 +1,4 @@
+using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services.Admin;
 using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.Services.Listing;
@@ -9,12 +10,8 @@ namespace ChannelAdvisorAccess.Services
 	public interface IChannelAdvisorServicesFactory
 	{
 		IAdminService CreateAdminService();
-		IOrdersService CreateOrdersService( string accountName, string accountId );
-		IOrdersService CreateOrdersRestServiceWithSoapCompatibleAuth( string accountName, string accountId );
-		IOrdersService CreateOrdersRestService( string accountName, string accountId, string accessToken, string refreshToken, bool soapCompatibleAuth );
-		IItemsService CreateItemsService( string accountName, string accountId );
-		IItemsService CreateItemsRestServiceWithSoapCompatibleAuth( string accountName, string accountId );
-		IItemsService CreateItemsRestService( string accountName, string accountId, string accessToken, string refreshToken, bool soapCompatibleAuth );
+		IOrdersService CreateOrdersService( ChannelAdvisorConfig config );
+		IItemsService CreateItemsService( ChannelAdvisorConfig config );
 		IShippingService CreateShippingService( string accountName, string accountId );
 		IListingService CreateListingService( string accountName, string accountId );
 	}

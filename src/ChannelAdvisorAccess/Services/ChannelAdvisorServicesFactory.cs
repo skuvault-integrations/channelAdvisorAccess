@@ -8,6 +8,7 @@ using ChannelAdvisorAccess.Services.Orders;
 using ChannelAdvisorAccess.Services.Shipping;
 using System.Net;
 using ChannelAdvisorAccess.REST.Shared;
+using ChannelAdvisorAccess.Misc;
 
 namespace ChannelAdvisorAccess.Services
 {
@@ -40,6 +41,19 @@ namespace ChannelAdvisorAccess.Services
 			SetSecurityProtocol();
 			var adminCredentials = new AdminService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			return new Admin.AdminService( adminCredentials );
+		}
+
+		/// <summary>
+		///	Returns orders service
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public IOrdersService CreateOrdersService( ChannelAdvisorConfig config )
+		{
+			if ( config.ApiVersion == ChannelAdvisorApiVersion.Soap )
+				return CreateOrdersService( config.AccountName, config.AccountId );
+			else
+				return CreateOrdersRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, config.SoapCompatibilityAuth );
 		}
 
 		/// <summary>
@@ -89,6 +103,19 @@ namespace ChannelAdvisorAccess.Services
 				return this.CreateOrdersRestServiceWithSoapCompatibleAuth( accountName, accountId );
 			else
 				return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken );
+		}
+
+		/// <summary>
+		///	Returns Items service
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
+		public IItemsService CreateItemsService( ChannelAdvisorConfig config )
+		{
+			if ( config.ApiVersion == ChannelAdvisorApiVersion.Soap )
+				return CreateItemsService( config.AccountName, config.AccountId );
+			else
+				return CreateItemsRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, config.SoapCompatibilityAuth );
 		}
 
 		/// <summary>
