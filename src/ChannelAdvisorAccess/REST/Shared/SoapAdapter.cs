@@ -15,7 +15,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// </summary>
 		/// <param name="order"></param>
 		/// <returns></returns>
-		public static OrderResponseDetailComplete ToOrderResponseDetailComplete(this Models.Order order)
+		public static OrderResponseDetailComplete ToOrderResponseDetailComplete( this Models.Order order )
 		{
 			var response = new OrderResponseDetailComplete()
 			{
@@ -95,9 +95,9 @@ namespace ChannelAdvisorAccess.REST.Shared
 				EmailOptIn = order.BuyerEmailOptIn
 			};
 
-			List<OrderLineItemItem> shoppingCartItems = new List<OrderLineItemItem>();
+			List< OrderLineItemItem > shoppingCartItems = new List< OrderLineItemItem >();
 
-			foreach(var item in order.Items)
+			foreach( var item in order.Items )
 			{
 				var orderLineItem = new OrderLineItemItem()
 				{
@@ -117,49 +117,51 @@ namespace ChannelAdvisorAccess.REST.Shared
 					 Quantity = item.Quantity,
 				};
 				
-				List<OrderLineItemItemPromo> promotions = new List<OrderLineItemItemPromo>();
+				List< OrderLineItemItemPromo > promotions = new List< OrderLineItemItemPromo >();
 
-				foreach(var promotion in item.Promotions)
-					promotions.Add(new OrderLineItemItemPromo()
+				foreach( var promotion in item.Promotions )
+				{
+					promotions.Add( new OrderLineItemItemPromo()
 					{
 						PromoCode = promotion.Code,
 						UnitPrice = promotion.Amount,
 						ShippingPrice = promotion.ShippingAmount
-					});
+					} );
+				}
 
 				orderLineItem.ItemPromoList = promotions.ToArray();
 
-				shoppingCartItems.Add(orderLineItem);
+				shoppingCartItems.Add( orderLineItem );
 			}
 
 			// adjustments now in the separate structure
-			foreach(var adjustment in order.Adjustments)
+			foreach( var adjustment in order.Adjustments )
 			{
 				response.OrderStatus.OrderRefundStatus = adjustment.RequestStatus.ToString();
 			}
 
 			// set order last update timestamp
-			foreach(var fullfillment in order.Fulfillments)
+			foreach( var fullfillment in order.Fulfillments )
 			{
 				if (response.LastUpdateDate == null || response.LastUpdateDate < fullfillment.UpdatedDateUtc)
 					response.LastUpdateDate = fullfillment.UpdatedDateUtc;
 			}
 
 			// check order state based on all fulfillments status
-			if (order.Fulfillments.All(fulfillment => fulfillment.DeliveryStatus == Models.FulfillmentDeliveryStatus.Canceled))
+			if ( order.Fulfillments.All( fulfillment => fulfillment.DeliveryStatus == Models.FulfillmentDeliveryStatus.Canceled ) )
 				response.OrderState = "Cancelled";
 				
 			response.ShoppingCart.LineItemSKUList = shoppingCartItems.ToArray();
 
-			List<CustomValue> customValues = new List<CustomValue>();
+			List< CustomValue > customValues = new List< CustomValue >();
 
-			foreach(var field in order.CustomFields)
+			foreach( var field in order.CustomFields )
 			{
-				customValues.Add(new CustomValue()
+				customValues.Add( new CustomValue()
 				{
 					ID = field.FieldID,
 					Value = field.Value
-				});
+				} );
 			}
 
 			response.CustomValueList = customValues.ToArray();
@@ -172,7 +174,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// </summary>
 		/// <param name="distributionCenter"></param>
 		/// <returns></returns>
-		public static DistributionCenterResponse ToDistributionCenterResponse(this Models.DistributionCenter distributionCenter)
+		public static DistributionCenterResponse ToDistributionCenterResponse( this Models.DistributionCenter distributionCenter )
 		{
 			var response = new DistributionCenterResponse()
 			{
@@ -201,7 +203,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// </summary>
 		/// <param name="product"></param>
 		/// <returns></returns>
-		public static QuantityInfoResponse ToQuantityInfoResponse(this Models.Product product)
+		public static QuantityInfoResponse ToQuantityInfoResponse( this Models.Product product )
 		{
 			QuantityInfoResponse response = new QuantityInfoResponse()
 			{
@@ -226,7 +228,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// </summary>
 		/// <param name="product"></param>
 		/// <returns></returns>
-		public static InventoryItemResponse ToInventoryItemResponse(this Models.Product product)
+		public static InventoryItemResponse ToInventoryItemResponse( this Models.Product product )
 		{
 			InventoryItemResponse response = new InventoryItemResponse()
 			{

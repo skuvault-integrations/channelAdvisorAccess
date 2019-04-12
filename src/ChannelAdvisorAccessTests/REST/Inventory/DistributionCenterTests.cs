@@ -17,15 +17,15 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			var result = this.ItemsService.GetDistributionCenterListAsync( null ).GetAwaiter().GetResult();
 
-			result.Should().HaveCount(4);
+			result.Should().HaveCount( 4 );
 		}
 
 		[ Test ]
 		public void CheckTestDistributionCenterExistence()
 		{
-			var result = this.ItemsService.GetDistributionCenterListAsync(null).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetDistributionCenterListAsync( null ).GetAwaiter().GetResult();
 
-			result.Select(dc => dc.DistributionCenterCode).Should().Contain(TestDistributionCenterCode);
+			result.Select( dc => dc.DistributionCenterCode ).Should().Contain( TestDistributionCenterCode );
 		}
 	}
 }

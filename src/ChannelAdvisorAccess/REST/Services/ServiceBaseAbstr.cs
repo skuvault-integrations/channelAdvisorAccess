@@ -110,8 +110,8 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		private void SetDefaultAuthorizationHeader()
 		{
-			this.HttpClient.DefaultRequestHeaders.Remove("Authorization");
-			this.HttpClient.DefaultRequestHeaders.Add( "Authorization", $"Bearer { this._accessToken }");
+			this.HttpClient.DefaultRequestHeaders.Remove( "Authorization" );
+			this.HttpClient.DefaultRequestHeaders.Add( "Authorization", $"Bearer { this._accessToken }" );
 		}
 
 		/// <summary>

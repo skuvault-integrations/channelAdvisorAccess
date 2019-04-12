@@ -59,8 +59,10 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList().Select( dc => dc.DistributionCenterCode ).ToArray();
 
-			foreach(string distributionCenterCode in distributionCentersCodes)
+			foreach( string distributionCenterCode in distributionCentersCodes )
+			{
 				this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( sku, 0, distributionCenterCode ) );
+			}
 		}
 
 		private static InventoryItemQuantityAndPrice CreateItemQuantityAndPrice( string sku, int quantity )
@@ -334,7 +336,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 10 );
 			result.Where( item => item.Classification != null )
-				.Any( item => !item.Classification.Equals(classificationName))
+				.Any( item => !item.Classification.Equals( classificationName ) )
 				.Should()
 				.BeFalse();
 		}
