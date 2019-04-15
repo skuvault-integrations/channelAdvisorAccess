@@ -38,7 +38,9 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Tenant account name to have backward compatibility with existing interface
 		/// </summary>
-		public string Name => this.AccountName;
+		public string Name {
+			get { return this.AccountName; }
+		}
 
 		/// <summary>
 		///	Rest service for work with orders
@@ -111,7 +113,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private void SetDefaultAuthorizationHeader()
 		{
 			this.HttpClient.DefaultRequestHeaders.Remove( "Authorization" );
-			this.HttpClient.DefaultRequestHeaders.Add( "Authorization", $"Bearer { this._accessToken }" );
+			this.HttpClient.DefaultRequestHeaders.Add( "Authorization", String.Format( "Bearer {0}", this._accessToken ) );
 		}
 
 		/// <summary>
@@ -120,7 +122,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private void SetBasicAuthorizationHeader()
 		{
 			this.HttpClient.DefaultRequestHeaders.Remove( "Authorization" );
-			var authHeader = $"Basic { Convert.ToBase64String( Encoding.UTF8.GetBytes( this._credentials.ApplicationId + ":" + this._credentials.SharedSecret ) ) }";
+			var authHeader = String.Format( "Basic {0}",  Convert.ToBase64String( Encoding.UTF8.GetBytes( this._credentials.ApplicationId + ":" + this._credentials.SharedSecret ) ) );
 			this.HttpClient.DefaultRequestHeaders.Add( "Authorization", authHeader );
 		}
 

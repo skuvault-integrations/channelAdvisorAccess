@@ -176,7 +176,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				var product = products.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
 
 				if ( product == null )
-					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, MessageCode = 113, Message = $"The specified SKU { sku } does not exist" });
+					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, MessageCode = 113, Message = String.Format( "The specified SKU {0} does not exist", sku ) });
 				else
 					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, Quantity = product.Quantity.Available });
 			}
@@ -375,7 +375,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 					{
 						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-						var url = $"{ ChannelAdvisorEndPoint.ProductsUrl }({ product.ID })/UpdateQuantity";
+						var url = String.Format( "{0}({1})/UpdateQuantity", ChannelAdvisorEndPoint.ProductsUrl, product.ID );
 						await base.PostAsync( url, new { Value = request }, mark ).ConfigureAwait( false );
 						
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenters.ToJson(), additionalInfo : this.AdditionalLogInfo()) );
@@ -596,7 +596,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			var productImages = new List< ImageInfoResponse >();
 			var product = await this.GetProductBySku( sku, mark, includeImages: true ).ConfigureAwait( false );
 
-			if ( product?.Images != null )
+			if ( product != null && product.Images != null )
 			{
 				foreach( var image in product.Images )
 					productImages.Add ( new ImageInfoResponse()
@@ -735,7 +735,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-				var url = $"{ ChannelAdvisorEndPoint.ProductsUrl }({ product.ID })";
+				var url = String.Format( "{0}({1})", ChannelAdvisorEndPoint.ProductsUrl, product.ID );
 				await base.PutAsync( url, request ).ConfigureAwait( false );
 						
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : string.Empty, additionalInfo : this.AdditionalLogInfo()) );
@@ -783,7 +783,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		private async Task< Product > GetProductBySku( string sku, Mark mark, bool includeDcQuantities = false, bool includeAttributes = false, bool includeImages = false )
 		{
-			var filter = $"$filter=sku eq '{ sku }'";
+			var filter = String.Format( "$filter=sku eq '{0}'", sku );
 
 			var products = await this.GetProducts( filter, mark, 1, includeDcQuantities, includeAttributes, includeImages ).ConfigureAwait( false );
 
@@ -831,7 +831,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 			// paging
 			if ( startPage > 1)
-				requestParams.Add( $"$skip={ ( startPage - 1 ) * pageSize }");
+				requestParams.Add( String.Format( "$skip={0}", ( startPage - 1 ) * pageSize ) );
 
 			try
 			{
@@ -906,10 +906,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				var criteria = filter.Criteria;
 
 				if ( !string.IsNullOrEmpty( criteria.ClassificationName ) )
-					filterClauses.Add( $"Classification eq '{ criteria.ClassificationName }'" );
+					filterClauses.Add( String.Format( "Classification eq '{0}'", criteria.ClassificationName ) );
 
 				if ( !string.IsNullOrEmpty( criteria.LabelName ))
-					filterClauses.Add( $"Labels/Any (l: l/Name eq '{ criteria.LabelName }')" );
+					filterClauses.Add( String.Format( "Labels/Any (l: l/Name eq '{0}')", criteria.LabelName ) );
 
 				if ( !string.IsNullOrEmpty( criteria.DateRangeField ))
 				{
@@ -923,10 +923,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 					if ( filterFieldName != null )
 					{
 						if ( criteria.DateRangeStartGMT.HasValue )
-							filterClauses.Add( $"{ filterFieldName } ge { this.ConvertDate( criteria.DateRangeStartGMT.Value ) } " );
+							filterClauses.Add( String.Format( "{0} ge {1} ", filterFieldName, this.ConvertDate( criteria.DateRangeStartGMT.Value ) ) );
 
 						if ( criteria.DateRangeEndGMT.HasValue )
-							filterClauses.Add( $"{ filterFieldName } le { this.ConvertDate( criteria.DateRangeEndGMT.Value ) }" );
+							filterClauses.Add( String.Format( "{0} le {1}", filterFieldName, this.ConvertDate( criteria.DateRangeEndGMT.Value ) ) );
 					}
 				}
 			}

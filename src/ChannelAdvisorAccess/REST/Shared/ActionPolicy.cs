@@ -38,7 +38,8 @@ namespace ChannelAdvisorAccess.REST.Shared
 					retryAttempt => TimeSpan.FromSeconds( Math.Pow( 2, retryAttempt ) ),
 					( entityRaw, timeSpan, retryCount, context ) =>
 					{
-						onRetryAttempt?.Invoke( timeSpan, retryCount );
+						if ( onRetryAttempt != null )
+							onRetryAttempt.Invoke( timeSpan, retryCount );
 					})
 				.ExecuteAsync( async () =>
 				{

@@ -160,16 +160,16 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			List< string > clauses = new List< string >();
 			
 			if ( criteria.OrderCreationFilterBeginTimeGMT.HasValue )
-				clauses.Add( $"CreatedDateUtc ge { base.ConvertDate( criteria.OrderCreationFilterBeginTimeGMT.Value ) } and " );
+				clauses.Add( String.Format( "CreatedDateUtc ge {0} and ", base.ConvertDate( criteria.OrderCreationFilterBeginTimeGMT.Value ) ) );
 
 			if ( criteria.OrderCreationFilterEndTimeGMT.HasValue )
-				clauses.Add( $"CreatedDateUtc le { base.ConvertDate( criteria.OrderCreationFilterEndTimeGMT.Value ) } and " );
+				clauses.Add( String.Format( "CreatedDateUtc le {0} and ", base.ConvertDate( criteria.OrderCreationFilterEndTimeGMT.Value ) ) );
 
 			if (criteria.StatusUpdateFilterBeginTimeGMT.HasValue)
-				clauses.Add( $"Fulfillments/any (f: f/UpdatedDateUtc ge { base.ConvertDate( criteria.StatusUpdateFilterBeginTimeGMT.Value ) }) and " );
+				clauses.Add( String.Format( "Fulfillments/any (f: f/UpdatedDateUtc ge {0}) and ", base.ConvertDate( criteria.StatusUpdateFilterBeginTimeGMT.Value ) ) );
 
 			if (criteria.StatusUpdateFilterEndTimeGMT.HasValue)
-				clauses.Add( $"Fulfillments/any (f: f/UpdatedDateUtc le { base.ConvertDate( criteria.StatusUpdateFilterEndTimeGMT.Value ) }) and " );
+				clauses.Add( String.Format( "Fulfillments/any (f: f/UpdatedDateUtc le {0}) and ", base.ConvertDate( criteria.StatusUpdateFilterEndTimeGMT.Value ) ) );
 
 			if ( criteria.OrderIDList != null && criteria.OrderIDList.Length > 0)
 			{
@@ -177,7 +177,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 
 				for (int i = 0; i < criteria.OrderIDList.Length; i++ )
 				{
-					clauses.Add( $"SiteOrderID eq '{ criteria.OrderIDList[i] }'" );
+					clauses.Add( String.Format( "SiteOrderID eq '{0}'", criteria.OrderIDList[i] ) );
 
 					if (i != criteria.OrderIDList.Length - 1)
 						clauses.Add( " or " );
