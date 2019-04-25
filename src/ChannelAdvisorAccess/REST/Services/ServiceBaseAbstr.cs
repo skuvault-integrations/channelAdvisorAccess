@@ -17,6 +17,7 @@ using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
 using CuttingEdge.Conditions;
+using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.REST.Services
 {
@@ -162,7 +163,8 @@ namespace ChannelAdvisorAccess.REST.Services
 			try
 			{
 				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
-				var result = await response.Content.ReadAsAsync< OAuthResponse >();
+				var responseStr = await response.Content.ReadAsStringAsync();
+				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
 				if ( !string.IsNullOrEmpty( result.Error ) )
 					throw new ChannelAdvisorException( result.Error );
@@ -194,7 +196,8 @@ namespace ChannelAdvisorAccess.REST.Services
 			try
 			{
 				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
-				var result = await response.Content.ReadAsAsync< OAuthResponse >();
+				var responseStr = await response.Content.ReadAsStringAsync();
+				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
 				if ( !string.IsNullOrEmpty( result.Error ) )
 					throw new ChannelAdvisorException( result.Error );
@@ -232,7 +235,8 @@ namespace ChannelAdvisorAccess.REST.Services
 				async () =>
 				{
 					var httpResponse = await this.HttpClient.GetAsync( nextLink, this._cancellationTokenSource.Token ).ConfigureAwait( false );
-					var message = await httpResponse.Content.ReadAsAsync< ODataResponse< T > >();
+					var responseStr = await httpResponse.Content.ReadAsStringAsync();
+					var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
 
 					await this.ThrowIfError( httpResponse, message.Context );
 
@@ -268,7 +272,8 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.ActionPolicy.ExecuteAsync( 
 				async () =>
 				{
-					var httpResponse = await this.HttpClient.PostAsJsonAsync( apiUrl + "?access_token=" + this._accessToken, data, this._cancellationTokenSource.Token ).ConfigureAwait( false );
+					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
+					var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this._cancellationTokenSource.Token ).ConfigureAwait( false );
 
 					await this.ThrowIfError( httpResponse, null );
 
@@ -299,7 +304,8 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.ActionPolicy.ExecuteAsync( 
 				async () =>
 				{
-					var httpResponse = await this.HttpClient.PutAsJsonAsync( apiUrl + "?access_token=" + this._accessToken, data, this._cancellationTokenSource.Token );
+					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
+					var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, this._cancellationTokenSource.Token );
 
 					await this.ThrowIfError( httpResponse, null );
 
