@@ -99,7 +99,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 			foreach( var item in order.Items )
 			{
-				var orderLineItem = new OrderLineItemItem()
+				var orderLineItem = new OrderLineItemItemResponse()
 				{
 					 LineItemID = item.ID,
 					 SalesSourceID = item.SiteOrderItemID,
