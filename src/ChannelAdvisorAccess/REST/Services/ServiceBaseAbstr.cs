@@ -29,7 +29,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly int _requestTimeout = 30 * 1000;
 		private string _accessToken;
 		private readonly string _refreshToken;
-		private CancellationTokenSource _cancellationTokenSource;
 
 		protected string AccountName { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
@@ -63,7 +62,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			this._refreshToken = refreshToken;
 
 			this.SetupHttpClient();
-			this.SetupCancellationTokenSource();
 		}
 
 		/// <summary>
@@ -86,7 +84,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			this.AccountName = accountName;
 
 			this.SetupHttpClient();
-			this.SetupCancellationTokenSource();
 		}
 
 		/// <summary>
@@ -102,10 +99,12 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Setup cancellation token source where token has predefined operation timeout
 		/// </summary>
-		protected void SetupCancellationTokenSource()
+		protected CancellationToken GetCancellationToken()
 		{
-			this._cancellationTokenSource = new CancellationTokenSource();
-			this._cancellationTokenSource.CancelAfter( this._requestTimeout );
+			var cancellationTokenSource = new CancellationTokenSource();
+			cancellationTokenSource.CancelAfter( this._requestTimeout );
+
+			return cancellationTokenSource.Token;
 		}
 
 		/// <summary>
@@ -234,7 +233,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				var response = await this.ActionPolicy.ExecuteAsync( 
 				async () =>
 				{
-					var httpResponse = await this.HttpClient.GetAsync( nextLink, this._cancellationTokenSource.Token ).ConfigureAwait( false );
+					var httpResponse = await this.HttpClient.GetAsync( nextLink, this.GetCancellationToken() ).ConfigureAwait( false );
 					var responseStr = await httpResponse.Content.ReadAsStringAsync();
 					var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
 
@@ -273,7 +272,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				async () =>
 				{
 					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
-					var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this._cancellationTokenSource.Token ).ConfigureAwait( false );
+					var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() ).ConfigureAwait( false );
 
 					await this.ThrowIfError( httpResponse, null );
 
@@ -305,7 +304,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				async () =>
 				{
 					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
-					var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, this._cancellationTokenSource.Token );
+					var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() );
 
 					await this.ThrowIfError( httpResponse, null );
 

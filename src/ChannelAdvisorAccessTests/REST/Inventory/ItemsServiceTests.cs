@@ -178,7 +178,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			{
 				 Criteria = new InventoryItemCriteria(){
 					DateRangeField = TimeStampFields.LastUpdateDate,
-					DateRangeStartGMT = DateTime.Now.AddMonths ( -1 ),
+					DateRangeStartGMT = DateTime.Now.AddDays ( -1 ),
 					DateRangeEndGMT = DateTime.Now
 				 }
 			};
