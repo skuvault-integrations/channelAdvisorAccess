@@ -237,7 +237,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					var responseStr = await httpResponse.Content.ReadAsStringAsync();
 					var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
 
-					await this.ThrowIfError( httpResponse, message.Context );
+					await this.ThrowIfError( httpResponse, responseStr );
 
 					return message;
 				}, 

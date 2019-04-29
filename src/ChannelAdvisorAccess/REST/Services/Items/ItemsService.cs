@@ -783,7 +783,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		private async Task< Product > GetProductBySku( string sku, Mark mark, bool includeDcQuantities = false, bool includeAttributes = false, bool includeImages = false )
 		{
-			var filter = String.Format( "$filter=sku eq '{0}'", sku );
+			var filter = String.Format( "$filter=sku eq '{0}'", Uri.EscapeDataString( sku ) );
 
 			var products = await this.GetProducts( filter, mark, 1, includeDcQuantities, includeAttributes, includeImages ).ConfigureAwait( false );
 

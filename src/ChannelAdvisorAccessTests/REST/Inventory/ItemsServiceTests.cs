@@ -178,7 +178,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			{
 				 Criteria = new InventoryItemCriteria(){
 					DateRangeField = TimeStampFields.LastUpdateDate,
-					DateRangeStartGMT = DateTime.Now.AddDays ( -1 ),
+					DateRangeStartGMT = DateTime.Now.AddDays ( -10 ),
 					DateRangeEndGMT = DateTime.Now
 				 }
 			};
@@ -238,6 +238,15 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var result = this.ItemsService.DoSkusExist( new[] { TestSku, incorrectSku } );
 
 			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
+		}
+
+		[ Test ]
+		public void DoSkusWithSpecialName()
+		{
+			var testSku = "ROYAL-252-#-02";
+			var result = this.ItemsService.DoSkusExist( new[] { testSku } );
+
+			result.First().Result.Should().BeFalse();
 		}
 
 		[ Test ]
