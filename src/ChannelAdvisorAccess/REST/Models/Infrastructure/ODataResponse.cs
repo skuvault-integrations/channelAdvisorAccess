@@ -14,5 +14,7 @@ namespace ChannelAdvisorAccess.REST.Models.Infrastructure
 		public T[] Value { get; set; }
 		[ JsonProperty( PropertyName = "@odata.nextLink" ) ]
 		public string NextLink { get; set; }
+		[ JsonProperty( PropertyName = "@odata.count" ) ]
+		public int? Count { get; set; }
 	}
 }

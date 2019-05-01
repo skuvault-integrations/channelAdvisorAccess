@@ -18,6 +18,10 @@ using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
 using CuttingEdge.Conditions;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Collections;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace ChannelAdvisorAccess.REST.Services
 {
@@ -26,7 +30,9 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly RestCredentials _credentials;
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
-		private readonly int _requestTimeout = 30 * 1000;
+		private readonly int _requestTimeout = 60 * 1000;
+		private readonly int _maxConcurrentRequests = 5;
+		private readonly int _minPageSize = 20;
 		private string _accessToken;
 		private readonly string _refreshToken;
 
@@ -226,34 +232,77 @@ namespace ChannelAdvisorAccess.REST.Services
 				mark = Mark.CreateNew();
 
 			var entities = new List< T >();
-			var nextLink = apiUrl;
+			
+			var response = await this.GetResponseAsyncByPage< T >( apiUrl, 1, true, null, mark ).ConfigureAwait( false );
+			entities.AddRange( response.Value );
 
-			while ( !string.IsNullOrEmpty( nextLink ) )
+			// check if we have extra pages
+			if ( response.NextLink != null && response.Count != null )
 			{
-				var response = await this.ActionPolicy.ExecuteAsync( 
+				var totalRecords = response.Count.Value;
+				var pageSize = this.GetPageSizeFromUrl( response.NextLink );
+				var startPage = 2;
+				var pages = (int)Math.Ceiling( totalRecords * 1.0 / pageSize ) + 1; 
+				var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
+				
+				Parallel.For( startPage, pages, options, () => new List< T >(), ( page, pls, tempResult ) =>
+				{
+					var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, page, false, pageSize, mark ).GetAwaiter().GetResult();
+					tempResult.AddRange( pagedResponse.Value );
+
+					return tempResult;
+				}, 
+				tempResult => {
+					lock ( entities )
+						entities.AddRange( tempResult );
+				});
+			}
+
+			return entities;
+		}
+
+		/// <summary>
+		///	Gets response page from REST Endpoint
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="apiUrl"></param>
+		/// <param name="requestDataSetSize"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		protected async Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, bool requestDataSetSize = false, int? pageSize = null, Mark mark = null )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			string url = apiUrl;
+
+			if ( requestDataSetSize )
+				url += apiUrl.Contains("?") ? "&" : "?" + "$count=true";
+
+			if ( pageSize != null && page != 1 )
+				url += "&$skip=" + ( page - 1 ) * pageSize;
+
+			var response = await this.ActionPolicy.ExecuteAsync( 
 				async () =>
 				{
-					var httpResponse = await this.HttpClient.GetAsync( nextLink, this.GetCancellationToken() ).ConfigureAwait( false );
+					var httpResponse = await this.HttpClient.GetAsync( url, this.GetCancellationToken() ).ConfigureAwait( false );
 					var responseStr = await httpResponse.Content.ReadAsStringAsync();
-					var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
 
 					await this.ThrowIfError( httpResponse, responseStr );
+					
+					var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
 
 					return message;
 				}, 
 				( timeSpan, retryAttempt ) => { 
-					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: nextLink );
+					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
 					
 					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
 				}, 
-				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: nextLink ),
+				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url ),
 				ChannelAdvisorLogger.LogTraceException );
 
-				entities.AddRange( response.Value );
-				nextLink = response.NextLink;
-			}
-
-			return entities;
+			return response;
 		}
 
 		/// <summary>
@@ -348,6 +397,28 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected string ConvertDate( DateTime date )
 		{
 			return date.ToString( "yyyy-MM-ddThh:mm:ssZ", CultureInfo.InvariantCulture );
+		}
+
+		/// <summary>
+		///	Returns recommended page size by ChannelAdvisor platform for current request
+		/// </summary>
+		/// <param name="nextLinkUrl"></param>
+		/// <returns></returns>
+		private int GetPageSizeFromUrl( string nextLinkUrl )
+		{
+			int pageSize = _minPageSize;
+
+			var query = new Uri( nextLinkUrl ).Query;
+
+			if ( !string.IsNullOrEmpty( query ) )
+			{
+				string skipParamValue = query.Split('&').Where( pair => pair.IndexOf("skip") > 0 ).FirstOrDefault();
+
+				if ( skipParamValue != null )
+					int.TryParse( skipParamValue.Split('=')[1], out pageSize );
+			}
+
+			return pageSize;
 		}
 	}
 }

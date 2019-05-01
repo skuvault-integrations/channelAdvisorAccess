@@ -35,7 +35,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Count().Should().BeGreaterThan( 20 );
+			result.Count().Should().BeGreaterOrEqualTo( 20 );
 		}
 
 		[ Test ]
