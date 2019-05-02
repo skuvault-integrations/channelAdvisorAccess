@@ -226,15 +226,17 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="apiUrl"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task< IEnumerable< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null )
+		protected async Task< IEnumerable< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
 			var entities = new List< T >();
 			
-			var response = await this.GetResponseAsyncByPage< T >( apiUrl, 1, true, null, mark ).ConfigureAwait( false );
-			entities.AddRange( response.Value );
+			var response = await this.GetResponseAsyncByPage< T >( apiUrl, 1, collections, null, mark ).ConfigureAwait( false );
+
+			if ( response.Value != null )
+				entities.AddRange( response.Value );
 
 			// check if we have extra pages
 			if ( response.NextLink != null && response.Count != null )
@@ -277,7 +279,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			string url = apiUrl;
 
 			if ( requestDataSetSize )
-				url += apiUrl.Contains("?") ? "&" : "?" + "$count=true";
+				url += ( apiUrl.Contains("?") ? "&" : "?" ) + "$count=true";
 
 			if ( pageSize != null && page != 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;

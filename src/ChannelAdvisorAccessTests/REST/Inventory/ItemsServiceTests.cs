@@ -315,7 +315,8 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void GetVariationInfo()
 		{
-			var result = this.ItemsService.GetVariationInfo( TestSku );
+			var variationSku = "ALTERNATE 1";
+			var result = this.ItemsService.GetVariationInfo( variationSku );
 
 			result.Should().NotBeNull();
 		}

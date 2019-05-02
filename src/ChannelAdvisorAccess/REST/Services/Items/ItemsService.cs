@@ -875,7 +875,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-				var productResponse = await base.GetResponseAsync< Product >( url ).ConfigureAwait( false );
+				var productResponse = await base.GetResponseAsync< Product >( url, mark, false ).ConfigureAwait( false );
 				product = productResponse.FirstOrDefault();
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
