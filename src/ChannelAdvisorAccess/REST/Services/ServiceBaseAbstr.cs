@@ -384,6 +384,8 @@ namespace ChannelAdvisorAccess.REST.Services
 				
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
+			else if ( response.StatusCode == HttpStatusCode.ServiceUnavailable )
+				throw new ChannelAdvisorNetworkException( message );
 			
 			throw new ChannelAdvisorException( (int)response.StatusCode, message );
 		}

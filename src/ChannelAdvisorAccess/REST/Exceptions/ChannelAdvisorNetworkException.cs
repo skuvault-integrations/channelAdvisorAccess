@@ -9,10 +9,12 @@ namespace ChannelAdvisorAccess.REST.Exceptions
 	public class ChannelAdvisorNetworkException : Exception
 	{
 		public ChannelAdvisorNetworkException( string message, Exception exception ) : base ( message, exception ) { }
+
+		public ChannelAdvisorNetworkException( string message ) : this( message, null ) { }
 	}
 
 	public class ChannelAdvisorUnauthorizedException : ChannelAdvisorNetworkException
 	{
-		public ChannelAdvisorUnauthorizedException( string message ) : base ( message, null ) { }
+		public ChannelAdvisorUnauthorizedException( string message ) : base ( message ) { }
 	}
 }
