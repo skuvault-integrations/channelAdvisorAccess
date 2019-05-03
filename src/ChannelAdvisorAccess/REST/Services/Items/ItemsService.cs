@@ -837,11 +837,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				var url = ChannelAdvisorEndPoint.ProductsUrl + "?" + string.Join( "&", requestParams.ToArray() );
 
-				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 
-				products = ( await base.GetResponseAsync< Product >( url, mark ).ConfigureAwait( false )).ToArray();
+				products = ( await base.GetResponseAsync< Product >( url, mark ).ConfigureAwait( false ) ).ToArray();
 					
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
+					methodParameters: url,
 					methodResult : products.ToJson() , 
 					additionalInfo : this.AdditionalLogInfo() ) );
 				

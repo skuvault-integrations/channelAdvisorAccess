@@ -31,7 +31,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// <param name="extraLogInfo"></param>
 		/// <param name="onException"></param>
 		/// <returns></returns>
-		public Task< TResult > ExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle, Action< TimeSpan, int > onRetryAttempt, Func< string > extraLogInfo, Action< Exception > onException )
+		public Task< TResult > ExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle, Action< TimeSpan, int > onRetryAttempt )
 		{
 			return Policy.Handle< ChannelAdvisorNetworkException >()
 				.WaitAndRetryAsync( this._retryAttempts,
@@ -49,21 +49,19 @@ namespace ChannelAdvisorAccess.REST.Shared
 					}
 					catch ( Exception exception )
 					{
-						var exceptionDetails = string.Empty;
-						Exception caException = null;
-
-						if ( extraLogInfo != null )
-							exceptionDetails = extraLogInfo();
+						Exception caException = exception;
 
 						if ( exception is HttpRequestException
 								|| exception is ChannelAdvisorUnauthorizedException )
-							caException = new ChannelAdvisorNetworkException( exceptionDetails, exception );
+							caException = new ChannelAdvisorNetworkException( null, exception );
 						else
-							caException = new ChannelAdvisorException( exceptionDetails, exception );
+						{
+							if ( !( exception is ChannelAdvisorException ) )
+								caException = new ChannelAdvisorException( null, exception );
+						}
 
 						throw caException;
 					}
-					
 				});
 		}
 	}

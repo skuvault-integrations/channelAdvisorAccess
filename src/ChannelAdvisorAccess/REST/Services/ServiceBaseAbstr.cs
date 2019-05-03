@@ -290,7 +290,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					var httpResponse = await this.HttpClient.GetAsync( url, this.GetCancellationToken() ).ConfigureAwait( false );
 					var responseStr = await httpResponse.Content.ReadAsStringAsync();
 
-					await this.ThrowIfError( httpResponse, responseStr );
+					await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
 					
 					var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
 
@@ -300,9 +300,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
 					
 					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
-				}, 
-				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url ),
-				ChannelAdvisorLogger.LogTraceException );
+				} );
 
 			return response;
 		}
@@ -325,7 +323,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
 					var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() ).ConfigureAwait( false );
 
-					await this.ThrowIfError( httpResponse, null );
+					await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
 
 					return httpResponse.StatusCode;
 				}, 
@@ -333,9 +331,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
 					
 					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
-				}, 
-				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl ),
-				ChannelAdvisorLogger.LogTraceException );
+				} );
 		}
 
 		/// <summary>
@@ -357,7 +353,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
 					var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() );
 
-					await this.ThrowIfError( httpResponse, null );
+					await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
 
 					return httpResponse.StatusCode;
 				}, 
@@ -365,9 +361,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					var retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
 					
 					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
-				}, 
-				() => this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl ),
-				ChannelAdvisorLogger.LogTraceException );
+				} );
 		}
 
 		/// <summary>
@@ -379,6 +373,9 @@ namespace ChannelAdvisorAccess.REST.Services
 		{
 			if ( response.IsSuccessStatusCode )
 				return;
+
+			if ( message == null )
+				message = await response.Content.ReadAsStringAsync();
 
 			if ( response.StatusCode == HttpStatusCode.Unauthorized )
 			{

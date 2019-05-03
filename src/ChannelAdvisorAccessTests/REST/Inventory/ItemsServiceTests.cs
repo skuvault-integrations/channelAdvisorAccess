@@ -250,6 +250,16 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
+		public void DoSkusForKit()
+		{
+			var kitSku = "kit2019-03-16T00:08:10.002";
+
+			var result = this.ItemsService.DoSkusExist( new[] { kitSku } );
+
+			result.First().Result.Should().BeFalse();
+		}
+
+		[ Test ]
 		public void GetAvailableQuantities()
 		{
 			var incorrectSku = TestSku + Guid.NewGuid();
