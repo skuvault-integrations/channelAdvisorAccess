@@ -212,6 +212,7 @@
     <Compile Include="REST\Models\Promotion.cs" />
     <Compile Include="REST\Services\Items\ItemsService.cs" />
     <Compile Include="REST\Services\ServiceBaseAbstr.cs" />
+    <Compile Include="REST\Shared\Throttler.cs" />
     <Compile Include="Service References\AdminService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

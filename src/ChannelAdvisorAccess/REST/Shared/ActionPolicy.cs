@@ -28,8 +28,6 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="funcToThrottle"></param>
 		/// <param name="onRetryAttempt">Retry attempts</param>
-		/// <param name="extraLogInfo"></param>
-		/// <param name="onException"></param>
 		/// <returns></returns>
 		public Task< TResult > ExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle, Action< TimeSpan, int > onRetryAttempt )
 		{

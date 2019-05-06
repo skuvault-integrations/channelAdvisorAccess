@@ -39,6 +39,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected string AccountName { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
 		protected readonly ActionPolicy ActionPolicy = new ActionPolicy( 3 );
+		protected readonly Throttler Throttler = new Throttler( 5, 1, 10 );
 
 		public string AccountId { get; private set; }
 		/// <summary>
@@ -225,6 +226,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="apiUrl"></param>
 		/// <param name="mark"></param>
+		/// <param name="collections">Endpoint returns array of objects</param>
 		/// <returns></returns>
 		protected async Task< IEnumerable< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true )
 		{
@@ -269,9 +271,11 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <typeparam name="T"></typeparam>
 		/// <param name="apiUrl"></param>
 		/// <param name="requestDataSetSize"></param>
+		/// <param name="page"></param>
+		/// <param name="pageSize"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, bool requestDataSetSize = false, int? pageSize = null, Mark mark = null )
+		protected Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, bool requestDataSetSize = false, int? pageSize = null, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -284,25 +288,24 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( pageSize != null && page != 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;
 
-			var response = await this.ActionPolicy.ExecuteAsync( 
-				async () =>
-				{
-					var httpResponse = await this.HttpClient.GetAsync( url, this.GetCancellationToken() ).ConfigureAwait( false );
-					var responseStr = await httpResponse.Content.ReadAsStringAsync();
+			return this.Throttler.ExecuteAsync( () => {
+				return this.ActionPolicy.ExecuteAsync( async () =>
+					{
+						var httpResponse = await this.HttpClient.GetAsync( url, this.GetCancellationToken() ).ConfigureAwait( false );
+						var responseStr = await httpResponse.Content.ReadAsStringAsync();
 
-					await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
+						await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
 					
-					var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
+						var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
 
-					return message;
-				}, 
-				( timeSpan, retryAttempt ) => { 
-					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
+						return message;
+					}, 
+					( timeSpan, retryAttempt ) => { 
+						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
 					
-					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
-				} );
-
-			return response;
+						ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
+					} );
+			});
 		}
 
 		/// <summary>
@@ -317,21 +320,22 @@ namespace ChannelAdvisorAccess.REST.Services
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
-			return this.ActionPolicy.ExecuteAsync( 
-				async () =>
-				{
-					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
-					var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() ).ConfigureAwait( false );
+			return this.Throttler.ExecuteAsync( () => {
+				return this.ActionPolicy.ExecuteAsync( async () =>
+					{
+						var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
+						var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() ).ConfigureAwait( false );
 
-					await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
+						await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
 
-					return httpResponse.StatusCode;
-				}, 
-				( timeSpan, retryAttempt ) => { 
-					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
+						return httpResponse.StatusCode;
+					}, 
+					( timeSpan, retryAttempt ) => { 
+						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
 					
-					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
-				} );
+						ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
+					} );
+			});
 		}
 
 		/// <summary>
@@ -347,8 +351,8 @@ namespace ChannelAdvisorAccess.REST.Services
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
-			return this.ActionPolicy.ExecuteAsync( 
-				async () =>
+			return this.Throttler.ExecuteAsync( () => {
+				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
 					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
 					var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() );
@@ -362,6 +366,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					
 					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
 				} );
+			});
 		}
 
 		/// <summary>
