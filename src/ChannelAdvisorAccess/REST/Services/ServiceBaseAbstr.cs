@@ -206,7 +206,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
 				if ( !string.IsNullOrEmpty( result.Error ) )
-					throw new ChannelAdvisorException( result.Error );
+					throw new ChannelAdvisorUnauthorizedException( result.Error );
 
 				this._accessToken = result.AccessToken;
 			}
