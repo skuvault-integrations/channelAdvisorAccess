@@ -93,6 +93,35 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
+		[ Ignore ]
+		public void UpdateSkuLocationBulk()
+		{
+			// let's generate 1k skus
+			List< InventoryItemSubmit > inventoryItems = new List< InventoryItemSubmit >();
+			var i = 1;
+			var maxSkus = 1000;
+
+			while ( i <= maxSkus )
+			{
+				inventoryItems.Add( new InventoryItemSubmit()
+				{
+					 Sku = "testSku" + i.ToString(),
+					 WarehouseLocation = "A" + i.ToString()
+				});
+
+				i += 1;
+			}
+
+			var parallelOptions = new ParallelOptions();
+			parallelOptions.MaxDegreeOfParallelism = 50;
+
+			Parallel.For( 0, inventoryItems.Count, parallelOptions, ( index ) =>
+			{
+				this.ItemsService.SynchItemAsync( inventoryItems[ index ] ).GetAwaiter().GetResult();
+			});
+		}
+
+		[ Test ]
 		public void UpdateSkuUPC()
 		{
 			InventoryItemSubmit submitItem = new InventoryItemSubmit()

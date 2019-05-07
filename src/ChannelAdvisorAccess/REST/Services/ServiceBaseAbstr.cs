@@ -34,7 +34,9 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly int _maxConcurrentRequests = 5;
 		private readonly int _minPageSize = 20;
 		private string _accessToken;
+		private DateTime _accessTokenExpiredUtc;
 		private readonly string _refreshToken;
+		private static AutoResetEvent _waitHandle = new AutoResetEvent( true );
 
 		protected string AccountName { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
@@ -152,6 +154,12 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <returns></returns>
 		private async Task RefreshAccessTokenBySoapCredentials()
 		{
+			_waitHandle.WaitOne();
+
+			// access token is not expired yet
+			if ( this._accessTokenExpiredUtc >= DateTime.UtcNow )
+				return;
+
 			this.SetBasicAuthorizationHeader();
 
 			var requestData = new Dictionary< string, string >
@@ -173,9 +181,10 @@ namespace ChannelAdvisorAccess.REST.Services
 				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
 				if ( !string.IsNullOrEmpty( result.Error ) )
-					throw new ChannelAdvisorException( result.Error );
+					throw new ChannelAdvisorUnauthorizedException( result.Error );
 
 				this._accessToken = result.AccessToken;
+				this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
 			}
 			catch( Exception ex )
 			{
@@ -184,6 +193,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 			finally
 			{
+				_waitHandle.Set();
 				this.SetDefaultAuthorizationHeader();
 			}
 		}
@@ -194,6 +204,12 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <returns></returns>
 		private async Task RefreshAccessTokenByRestCredentials()
 		{
+			_waitHandle.WaitOne();
+
+			// access token is not expired yet
+			if ( this._accessTokenExpiredUtc >= DateTime.UtcNow )
+				return;
+
 			this.SetBasicAuthorizationHeader();
 
 			var requestData = new Dictionary< string, string > { { "grant_type", "refresh_token" }, { "refresh_token", this._refreshToken } };
@@ -209,6 +225,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					throw new ChannelAdvisorUnauthorizedException( result.Error );
 
 				this._accessToken = result.AccessToken;
+				this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
 			}
 			catch( Exception ex )
 			{
@@ -217,6 +234,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 			finally
 			{
+				_waitHandle.Set();
 				this.SetDefaultAuthorizationHeader();
 			}
 		}
@@ -386,7 +404,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			{
 				// we have to refresh our access token
 				await this.RefreshAccessToken().ConfigureAwait( false );
-				
+
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
 			else if ( response.StatusCode == HttpStatusCode.ServiceUnavailable )
@@ -418,10 +436,10 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			if ( !string.IsNullOrEmpty( query ) )
 			{
-				string skipParamValue = query.Split('&').Where( pair => pair.IndexOf("skip") > 0 ).FirstOrDefault();
+				string skipParamValue = query.Split( '&' ).Where( pair => pair.IndexOf( "skip" ) > 0 ).FirstOrDefault();
 
 				if ( skipParamValue != null )
-					int.TryParse( skipParamValue.Split('=')[1], out pageSize );
+					int.TryParse( skipParamValue.Split( '=' )[ 1 ], out pageSize );
 			}
 
 			return pageSize;
