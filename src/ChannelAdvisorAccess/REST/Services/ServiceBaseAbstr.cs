@@ -31,7 +31,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
 		private readonly int _requestTimeout = 60 * 1000;
-		private readonly int _maxConcurrentRequests = 5;
+		private readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
 		private string _accessToken;
 		private DateTime _accessTokenExpiredUtc;
@@ -81,7 +81,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="accountName">Tenant account name (used for logging)</param>
 		/// <param name="accountId">Tenant account id</param>
 		/// <param name="cache">Cache</param>
-		protected RestServiceBaseAbstr( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, ObjectCache cache )
+		protected RestServiceBaseAbstr( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName )
 		{
 			Condition.Requires( credentials ).IsNotNull();
 			Condition.Requires( soapCredentials ).IsNotNull();
@@ -306,6 +306,23 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( pageSize != null && page != 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;
 
+			return GetEntityAsync< ODataResponse< T > >( url, mark );
+		}
+
+		/// <summary>
+		///	Get entity from REST endpoint
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="apiUrl"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		protected Task< T > GetEntityAsync< T >( string apiUrl, Mark mark = null )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			string url = apiUrl;
+
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
@@ -314,7 +331,53 @@ namespace ChannelAdvisorAccess.REST.Services
 
 						await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
 					
-						var message = JsonConvert.DeserializeObject< ODataResponse< T > >( responseStr );
+						var message = JsonConvert.DeserializeObject< T >( responseStr );
+
+						return message;
+					}, 
+					( timeSpan, retryAttempt ) => { 
+						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
+					
+						ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed, trying repeat call {0} time, waited {1} seconds. Details: {2}", retryAttempt, timeSpan.Seconds, retryDetails ) );
+					} );
+			});
+		}
+
+		/// <summary>
+		///	Returns binary data from specified url
+		/// </summary>
+		/// <param name="url"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		protected Task< byte[] > DownloadFile( string url, Mark mark = null )
+		{
+			return this.HttpClient.GetByteArrayAsync( url );
+		}
+
+		/// <summary>
+		///	Post data to REST endpoint and handle response
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="apiUrl"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, Mark mark = null )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			string url = apiUrl;
+
+			return this.Throttler.ExecuteAsync( () => {
+				return this.ActionPolicy.ExecuteAsync( async () =>
+					{
+						var content = new StringContent( body, Encoding.UTF8, "text/plain" );
+						var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() ).ConfigureAwait( false );
+						var responseStr = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+
+						await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
+
+						var message = JsonConvert.DeserializeObject< T >( responseStr );
 
 						return message;
 					}, 

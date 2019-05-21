@@ -14,6 +14,11 @@ using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
 using CuttingEdge.Conditions;
 using APICredentials = ChannelAdvisorAccess.OrderService.APICredentials;
+using ChannelAdvisorAccess.REST.Exceptions;
+using ICSharpCode.SharpZipLib.Zip;
+using System.IO;
+using System.Text;
+using CsvHelper;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
 {
@@ -23,6 +28,16 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		///	Channel advisor page size for products end point
 		/// </summary>
 		private const int pageSize = 100;
+		private const int avgRequestHandlingTimeInSec = 5;
+		private bool prevProductExportFailed = false;
+		/// <summary>
+		///	Products cache (not thread safe)
+		/// </summary>
+		private Dictionary< string, Product > _productsCache = new Dictionary< string, Product >();
+		/// <summary>
+		///  Distribution centers cache (not thread safe)
+		/// </summary>
+		private Dictionary< string, DistributionCenter > _distributionCentersCache = new Dictionary< string, DistributionCenter >();
 
 		/// <summary>
 		///	Rest items service with standard authorization flow
@@ -42,8 +57,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="accountId">Tenant account id</param>
 		/// <param name="accountName">Tenant account name</param>
 		/// <param name="cache"></param>
-		public ItemsService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, ObjectCache cache = null ) 
-			: base( credentials, soapCredentials, accountId, accountName, cache ) { }
+		public ItemsService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName ) 
+			: base( credentials, soapCredentials, accountId, accountName ) { }
 
 		/// <summary>
 		///	Checks asynchronously if sku exists 
@@ -68,7 +83,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		}
 
 		/// <summary>
-		///	Checks if skus exist
+		///	Checks if list of skus exists
 		/// </summary>
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
@@ -79,7 +94,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		}
 
 		/// <summary>
-		///	Checks asynchronously if skus exist
+		///	Checks asynchronously if list of skus exists
 		/// </summary>
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
@@ -88,16 +103,53 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			var response = new List< DoesSkuExistResponse >();
 
-			var products = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
-
-			foreach( var sku in skus )
+			int totalProductsNumber = await this.GetProductsTotalNumber( mark );
+			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSize );
+			
+			// it's more efficiently pull all skus by page or do product export
+			if ( skus.Count() > totalPageRequestsNumber )
 			{
-				var product = products.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
+				Product[] products = null;
 
-				if (product != null)
-					response.Add( new DoesSkuExistResponse() { Result = true, Sku = sku });
+				// it's more efficiently do product export (took more than 5 minutes to pull data)
+				if ( !prevProductExportFailed && totalPageRequestsNumber * avgRequestHandlingTimeInSec >= 5 * 60 )
+				{
+					try
+					{
+						products = await this.ImportProducts( mark ).ConfigureAwait( false );
+					}
+					catch( ChannelAdvisorProductExportFailedException )
+					{
+						// try another ways to pull products from CA side
+						prevProductExportFailed = true;
+						return await DoSkusExistAsync( skus, mark );
+					}
+				}
+				// paginated requests
 				else
-					response.Add( new DoesSkuExistResponse() { Result = false, Sku = sku });
+					products = await this.GetProducts( String.Empty, mark ).ConfigureAwait( false );
+
+				foreach( var sku in skus )
+				{
+					if ( products.FirstOrDefault( pr => pr.Sku != null && pr.Sku.ToLower().Equals( sku.ToLower() ) ) != null )
+						response.Add( new DoesSkuExistResponse() { Result = true, Sku = sku } );
+					else
+						response.Add( new DoesSkuExistResponse() { Result = false, Sku = sku } );
+				}
+			}
+			else
+			{
+				var items = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
+
+				foreach( var sku in skus )
+				{
+					var item = items.FirstOrDefault( pr => pr.Sku != null && pr.Sku.ToLower().Equals( sku.ToLower() ) );
+
+					if ( item != null )
+						response.Add( new DoesSkuExistResponse() { Result = true, Sku = sku } );
+					else
+						response.Add( new DoesSkuExistResponse() { Result = false, Sku = sku } );
+				}
 			}
 
 			return response;
@@ -230,7 +282,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( Mark mark = null )
 		{
-			var distributionCenters = new List<DistributionCenterResponse>();
+			var distributionCenters = new List< DistributionCenterResponse >();
 
 			var response = await this.GetDistributionCentersAsync( mark ).ConfigureAwait( false );
 
@@ -259,6 +311,13 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 				distributionCenters.AddRange( distributionCentersFromRequest.Where( dc => !dc.IsDeleted ) );
 
+				// add to cache
+				foreach( var dc in distributionCenters )
+				{
+					if ( !_distributionCentersCache.TryGetValue( dc.Code, out DistributionCenter distributionCenterCached ) )
+						_distributionCentersCache.Add( dc.Code, dc );
+				}
+
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenters.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 			}
 			catch(Exception exception)
@@ -269,6 +328,22 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			}
 
 			return distributionCenters.ToArray();
+		}
+
+		/// <summary>
+		///	Return distribution center info by code
+		/// </summary>
+		/// <param name="code"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		public async Task< DistributionCenter > GetDistributionCenterAsync( string code, Mark mark )
+		{
+			if ( _distributionCentersCache.TryGetValue( code, out DistributionCenter distributionCenterCached ) )
+				return distributionCenterCached;
+
+			var distributionCenters = await GetDistributionCentersAsync( mark );
+
+			return distributionCenters.FirstOrDefault( dc => dc.Code.ToLower().Equals( code.ToLower() ) );
 		}
 
 		/// <summary>
@@ -360,8 +435,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 			if ( product != null )
 			{
-				var distributionCenters = await this.GetDistributionCentersAsync( mark ).ConfigureAwait( false );
-				var distributionCenter = distributionCenters.FirstOrDefault( dc => dc.Code.ToLower().Equals( itemQuantityAndPrice.DistributionCenterCode.ToLower() ) );
+				var distributionCenter = await this.GetDistributionCenterAsync( itemQuantityAndPrice.DistributionCenterCode, mark );
 
 				if (distributionCenter != null)
 				{
@@ -373,12 +447,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 					try
 					{
-						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-
 						var url = String.Format( "{0}({1})/UpdateQuantity", ChannelAdvisorEndPoint.ProductsUrl, product.ID );
+						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo() ) );
 						await base.PostAsync( url, new { Value = request }, mark ).ConfigureAwait( false );
 						
-						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenters.ToJson(), additionalInfo : this.AdditionalLogInfo()) );
+						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: request.ToJson(), additionalInfo : this.AdditionalLogInfo()) );
+						
+						// invalidate cache
+						_productsCache.Remove( itemQuantityAndPrice.Sku );
 					}
 					catch( Exception exception )
 					{
@@ -443,7 +519,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, Mark mark = null )
 		{
 			var response = new List< DistributionCenterInfoResponse >();
-			var product = await this.GetProductBySku( sku, mark, true );
+			var product = await this.GetProductBySku( sku, mark );
 
 			if ( product != null )
 			{
@@ -513,7 +589,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			var attributes = new List< AttributeInfo >();
 
-			var product = await this.GetProductBySku( sku, mark, includeAttributes: true ).ConfigureAwait( false );
+			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
@@ -594,7 +670,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark = null )
 		{
 			var productImages = new List< ImageInfoResponse >();
-			var product = await this.GetProductBySku( sku, mark, includeImages: true ).ConfigureAwait( false );
+			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
 
 			if ( product != null && product.Images != null )
 			{
@@ -737,6 +813,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 				var url = String.Format( "{0}({1})", ChannelAdvisorEndPoint.ProductsUrl, product.ID );
 				await base.PutAsync( url, request ).ConfigureAwait( false );
+
+				_productsCache.Remove( item.Sku );
 						
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : string.Empty, additionalInfo : this.AdditionalLogInfo()) );
 			}
@@ -781,13 +859,17 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="includeAttributes"></param>
 		/// <param name="includeImages"></param>
 		/// <returns></returns>
-		private async Task< Product > GetProductBySku( string sku, Mark mark, bool includeDcQuantities = false, bool includeAttributes = false, bool includeImages = false )
+		private async Task< Product > GetProductBySku( string sku, Mark mark )
 		{
+			if ( _productsCache.TryGetValue( sku, out Product cachedProduct ) )
+				return cachedProduct;
+
 			var filter = String.Format( "$filter=sku eq '{0}'", Uri.EscapeDataString( sku ) );
 
-			var products = await this.GetProducts( filter, mark, 1, includeDcQuantities, includeAttributes, includeImages ).ConfigureAwait( false );
+			var products = await this.GetProducts( filter, mark, 1 ).ConfigureAwait( false );
+			var product = products.FirstOrDefault();
 
-			return products.FirstOrDefault();
+			return product;
 		}
 
 		/// <summary>
@@ -800,7 +882,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="includeAttributes"></param>
 		/// <param name="includeImages"></param>
 		/// <returns></returns>
-		private async Task< Product[] > GetProducts( string filter, Mark mark, int startPage = 1, bool includeDcQuantities = false, bool includeAttributes = false, bool includeImages = false )
+		private async Task< Product[] > GetProducts( string filter, Mark mark, int startPage = 1 )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -813,21 +895,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				requestParams.Add( filter );
 
 			// include extra data in server response
-			if ( includeDcQuantities
-				|| includeAttributes
-				|| includeImages )
-			{
-				var expandParam = "$expand=";
-
-				if ( includeDcQuantities )
-					expandParam += "DCQuantities,";
-				else if ( includeAttributes )
-					expandParam += "Attributes,";
-				else if ( includeImages )
-					expandParam += "Images";
-
-				requestParams.Add( expandParam );
-			}
+			var expandParam = "$expand=DCQuantities,Attributes,Images";
+			requestParams.Add( expandParam );
 
 			// paging
 			if ( startPage > 1)
@@ -840,10 +909,174 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 
 				products = ( await base.GetResponseAsync< Product >( url, mark ).ConfigureAwait( false ) ).ToArray();
+
+				// add to cache
+				foreach( var product in products )
+				{
+					if ( !string.IsNullOrEmpty( product.Sku ) )
+					{
+						if ( !_productsCache.TryGetValue( product.Sku, out Product cachedProduct ) )
+							_productsCache.Add( product.Sku, product );
+					}
+				}
 					
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
 					methodParameters: url,
-					methodResult : products.ToJson() , 
+					methodResult : products.ToJson(), 
+					additionalInfo : this.AdditionalLogInfo() ) );
+				
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
+
+			return products.ToArray();
+		}
+
+		/// <summary>
+		///	Import products from ChannelAdvisor
+		/// </summary>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private async Task< Product[] > ImportProducts( Mark mark )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			List<Product> products = new List<Product>();
+
+			string csvHeader = "id, sku";
+			string responseFileUrl = null;
+
+			try
+			{
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: ChannelAdvisorEndPoint.ProductExportUrl ) );
+				var response = await this.PostAsyncAndGetResult< ProductExportResponse >( ChannelAdvisorEndPoint.ProductExportUrl, csvHeader, mark ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: ChannelAdvisorEndPoint.ProductExportUrl, methodResult : response.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
+
+				ThrowIfProductExportFailed ( response.Status );
+				responseFileUrl = response.ResponseFileUrl;
+				string url = ChannelAdvisorEndPoint.ProductExportUrl + "?token=" + response.Token;
+
+				// waiting for export result
+				while ( responseFileUrl == null )
+				{
+					// wait 15 seconds and ask job status
+					await Task.Delay( 15 * 1000 );
+
+					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
+
+					var exportStatusResponse = await this.GetEntityAsync< ProductExportResponse >( url, mark ).ConfigureAwait( false );
+
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
+						methodParameters: url,
+						methodResult : exportStatusResponse.ToJson(), 
+						additionalInfo : this.AdditionalLogInfo() ) );
+
+					ThrowIfProductExportFailed ( exportStatusResponse.Status );
+
+					if ( exportStatusResponse.ResponseFileUrl != null )
+					{
+						responseFileUrl = exportStatusResponse.ResponseFileUrl;
+
+						// handle result
+						var fileData = await this.DownloadFile( responseFileUrl ).ConfigureAwait( false );
+
+						products.AddRange( ReadZippedCsv( fileData ) );
+					}
+				}
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
+
+			return products.ToArray();
+		}
+
+		/// <summary>
+		///	Read zipped csv
+		/// </summary>
+		/// <param name="fileData"></param>
+		/// <returns></returns>
+		private Product[] ReadZippedCsv( byte[] fileData )
+		{
+			using( var memoryStream = new MemoryStream( fileData ) )
+			{
+				using( var zipFile = new ZipFile( memoryStream ) )
+				{
+					foreach ( ZipEntry zipEntry in zipFile ) {
+						if ( !zipEntry.IsFile ) {
+							continue;
+						}
+
+						var zipStream = zipFile.GetInputStream( zipEntry );
+
+						using( var streamReader = new StreamReader( zipStream, Encoding.UTF8 ) )
+						{
+							using( var csvReader = new CsvReader( streamReader ))
+							{
+								csvReader.Configuration.HasHeaderRecord = true;
+								csvReader.Configuration.Delimiter = "\t";
+
+								return csvReader.GetRecords< ProductExportRow >().Select( row => new Product() { ID = row.ID, Sku = row.Sku } ).ToArray();
+							}
+						}
+					}
+				}
+			}
+
+			return new Product[] { };
+		}
+
+		/// <summary>
+		///	Check product export job status
+		/// </summary>
+		/// <param name="status"></param>
+		private void ThrowIfProductExportFailed( ImportStatus status )
+		{
+			if ( status == ImportStatus.Complete
+				|| status == ImportStatus.InProgress
+				|| status == ImportStatus.InProgressPartitioning
+				|| status == ImportStatus.InProgressProcessing
+				|| status == ImportStatus.InProgressQueuedforProcessing
+				|| status == ImportStatus.InProgressValidation
+				|| status == ImportStatus.Pending
+				|| status == ImportStatus.PendingPartitioning )
+				return;
+
+			throw new ChannelAdvisorProductExportFailedException( status.ToString() );
+		}
+
+		/// <summary>
+		///	Returns total products number
+		/// </summary>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private async Task< int > GetProductsTotalNumber( Mark mark )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			int total = 0;
+
+			try
+			{
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: ChannelAdvisorEndPoint.ProductsUrl ) );
+
+				var productPageInfo = ( await base.GetResponseAsyncByPage< Product >( ChannelAdvisorEndPoint.ProductsUrl, 1, true ).ConfigureAwait( false ) );
+				
+				if ( productPageInfo.Count != null )
+					total = productPageInfo.Count.Value;
+					
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
+					methodParameters: ChannelAdvisorEndPoint.ProductsUrl,
+					methodResult : productPageInfo.ToJson() , 
 					additionalInfo : this.AdditionalLogInfo() ) );
 				
 			}
@@ -854,7 +1087,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				throw channelAdvisorException;
 			}
 
-			return products.ToArray();
+			return total;
 		}
 	
 		/// <summary>

@@ -45,7 +45,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 			_timer = new Timer( RestoreQuota, null, Timeout.Infinite, _quotaRestoreTimeInSeconds * 1000 );
 		}
 		
-		public async Task< TResult > ExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle )
+		public Task< TResult > ExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle )
 		{
 			lock ( _lock )
 			{
@@ -56,28 +56,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 				}
 			}
 
-			var retryCount = 0;
-
-			while( true )
-			{
-				try
-				{
-					return await this.TryExecuteAsync( funcToThrottle );
-				}
-				catch( Exception )
-				{
-					if (retryCount >= this._maxRetryCount)
-						throw;
-
-					#if DEBUG
-						Trace.WriteLine($"[{ DateTime.Now }] Got API requests exceeded error. Waiting... " );
-					#endif
-				}
-
-				this._remainingQuota = 0;
-				await Task.Delay( _quotaRestoreTimeInSeconds * 1000 ).ConfigureAwait( false );
-				retryCount++;
-			}
+			return this.TryExecuteAsync( funcToThrottle );
 		}
 
 		private async Task< TResult > TryExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle )

@@ -12,5 +12,6 @@ namespace ChannelAdvisorAccess.REST.Models.Configuration
 		public static readonly string OrdersUrl = "v1/orders";
 		public static readonly string ProductsUrl = "v1/Products";
 		public static readonly string DistributionCentersUrl = "v1/DistributionCenters";
+		public static readonly string ProductExportUrl = "v1/ProductExport";
 	}
 }

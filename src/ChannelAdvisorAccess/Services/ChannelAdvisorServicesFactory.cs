@@ -81,7 +81,7 @@ namespace ChannelAdvisorAccess.Services
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			
-			return new REST.Services.Orders.OrdersService( credentials, soapCredentials, accountId, accountName, this._cache );
+			return new REST.Services.Orders.OrdersService( credentials, soapCredentials, accountId, accountName );
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace ChannelAdvisorAccess.Services
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 
-			return new REST.Services.Items.ItemsService( credentials, soapCredentials, accountId, accountName, this._cache );
+			return new REST.Services.Items.ItemsService( credentials, soapCredentials, accountId, accountName );
 		}
 
 		/// <summary>

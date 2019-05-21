@@ -270,6 +270,19 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
+		public void DoSkusExistWhenTenantCatalogIsLarge()
+		{
+			List< string > skus = new List< string >();
+
+			for ( int i = 0; i < 10000; i++ )
+				skus.Add( "testSku" + i.ToString() );
+
+			var result = this.ItemsService.DoSkusExist( skus );
+
+			result.Count().Should().Be( skus.Count() );
+		}
+
+		[ Test ]
 		public void DoSkusWithSpecialName()
 		{
 			var testSku = "ROYAL-252-#-02";

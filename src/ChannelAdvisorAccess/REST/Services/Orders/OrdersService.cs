@@ -35,8 +35,8 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="accountId">Tenant account id</param>
 		/// <param name="accountName">Tenant account name</param>
 		/// <param name="cache"></param>
-		public OrdersService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, ObjectCache cache = null ) 
-			: base( credentials, soapCredentials, accountId, accountName, cache ) { }
+		public OrdersService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName ) 
+			: base( credentials, soapCredentials, accountId, accountName ) { }
 
 		/// <summary>
 		///	Gets orders by created date range
