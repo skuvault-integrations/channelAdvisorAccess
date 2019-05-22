@@ -80,7 +80,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="soapCredentials">Soap credentials</param>
 		/// <param name="accountName">Tenant account name (used for logging)</param>
 		/// <param name="accountId">Tenant account id</param>
-		/// <param name="cache">Cache</param>
 		protected RestServiceBaseAbstr( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName )
 		{
 			Condition.Requires( credentials ).IsNotNull();
@@ -359,6 +358,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="apiUrl"></param>
+		/// <param name="body"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
 		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, Mark mark = null )

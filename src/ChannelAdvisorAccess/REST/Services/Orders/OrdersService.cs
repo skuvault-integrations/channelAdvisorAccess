@@ -34,7 +34,6 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="soapCredentials">Soap application credentials</param>
 		/// <param name="accountId">Tenant account id</param>
 		/// <param name="accountName">Tenant account name</param>
-		/// <param name="cache"></param>
 		public OrdersService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName ) 
 			: base( credentials, soapCredentials, accountId, accountName ) { }
 

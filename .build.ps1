@@ -91,6 +91,8 @@ task NuGet Package, Version, {
 				<dependency id="CuttingEdge.Conditions" version="1.2.0.0" />
 				<dependency id="Newtonsoft.Json" version="7.0.1" />
 				<dependency id="Polly-Signed" version="5.9.0" />
+				<dependency id="SharpZipLib" version="1.1.0" />
+				<dependency id="CsvHelper" version="2.16.3" />
 			</group>
 		</dependencies>
         <frameworkAssemblies>

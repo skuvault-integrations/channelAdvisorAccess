@@ -55,6 +55,27 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			quantities.First( item => item.SKU.Equals( TestSku2 ) ).Quantity.Should().Be( 110 );
 		}
 
+		[ Test ]
+		public void UpdateSkusQuantityInLargeCatalog()
+		{
+			List< InventoryItemQuantityAndPrice > request = new List<InventoryItemQuantityAndPrice>();
+			string baseSku = "testSku";
+			int skusNumber = 100;
+
+			for (int i = 1; i <= skusNumber; i++ )
+			{
+				var itemRequest = CreateItemQuantityAndPrice( baseSku + i.ToString(), i );
+				request.Add( itemRequest );
+			}
+
+			this.ItemsService.UpdateQuantityAndPricesAsync( request ).GetAwaiter().GetResult();
+
+			var quantities = this.ItemsService.GetAvailableQuantitiesAsync( request.Select( i => i.Sku ) ).GetAwaiter().GetResult();
+
+			quantities.Should().NotBeNullOrEmpty();
+			quantities.Should().HaveCount( skusNumber );
+		}
+
 		private void ClearSkuQuantityForEachDc( string sku )
 		{
 			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList().Select( dc => dc.DistributionCenterCode ).ToArray();
