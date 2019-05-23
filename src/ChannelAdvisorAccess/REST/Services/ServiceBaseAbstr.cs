@@ -30,7 +30,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly RestCredentials _credentials;
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
-		private readonly int _requestTimeout = 60 * 1000;
+		private readonly int _requestTimeout = 180 * 1000;
 		private readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
 		private string _accessToken;
@@ -470,7 +470,8 @@ namespace ChannelAdvisorAccess.REST.Services
 
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
-			else if ( response.StatusCode == HttpStatusCode.ServiceUnavailable )
+			else if ( response.StatusCode == HttpStatusCode.ServiceUnavailable
+					|| response.StatusCode == HttpStatusCode.InternalServerError )
 				throw new ChannelAdvisorNetworkException( message );
 			
 			throw new ChannelAdvisorException( (int)response.StatusCode, message );
