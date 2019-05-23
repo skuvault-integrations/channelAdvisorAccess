@@ -19,6 +19,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.IO;
 using System.Text;
 using CsvHelper;
+using System.Collections.Concurrent;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
 {
@@ -28,19 +29,19 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		///	Channel advisor page size for products end point
 		/// </summary>
 		private const int pageSize = 100;
-		private const int avgRequestHandlingTimeInSec = 15;
+		private const int avgRequestHandlingTimeInSec = 5;
 		private const int estimateProductsExportProcessingTimeInSec = 120;
 		private const int productExportUsingTimeInSec = 60 * 10;
 		private bool prevProductExportFailed = false;
 		/// <summary>
-		///	Products cache (not thread safe)
+		///	Products cache
 		/// </summary>
-		private Dictionary< string, Product > _productsCache = new Dictionary< string, Product >();
-		private Dictionary< string, int > _productsIdCache = new Dictionary< string, int >();
+		private ConcurrentDictionary< string, Product > _productsCache = new ConcurrentDictionary< string, Product >();
+		private ConcurrentDictionary< string, int > _productsIdCache = new ConcurrentDictionary< string, int >();
 		/// <summary>
-		///  Distribution centers cache (not thread safe)
+		///  Distribution centers cache
 		/// </summary>
-		private Dictionary< string, DistributionCenter > _distributionCentersCache = new Dictionary< string, DistributionCenter >();
+		private ConcurrentDictionary< string, DistributionCenter > _distributionCentersCache = new ConcurrentDictionary< string, DistributionCenter >();
 
 		/// <summary>
 		///	Rest items service with standard authorization flow
@@ -105,14 +106,17 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			var response = new List< DoesSkuExistResponse >();
 
+			if ( skus.Count() == 0 )
+				return response;
+
 			var catalog = new List< string >();
 			int totalProductsNumber = await this.GetProductsTotalNumber( mark );
 			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSize );
-			int estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec;
-			int estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec;
+			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
+			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			
 			// check skus existance directly by sku or pulling the whole catalog by page took more than 10 minutes, we use product export feature in this case
-			if ( Math.Max( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerSkuTotalProcessingTimeInSec ) >= productExportUsingTimeInSec )
+			if ( Math.Min( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerPageTotalProcessingTimeInSec ) >= productExportUsingTimeInSec )
 			{
 				try
 				{
@@ -131,17 +135,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			}
 			else
 			{
-				// if tenant catalog is not large we can pull it locally
-				if ( estimateRequestPerPageTotalProcessingTimeInSec < estimateRequestPerSkuTotalProcessingTimeInSec )
-				{
-					var products = await this.GetProducts( String.Empty, mark ).ConfigureAwait( false );
-					catalog.AddRange( products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) ).Select( pr => pr.Sku.ToLower() ) );
-				}
-				else
-				{
-					var items = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
-					catalog.AddRange( items.Where( item => !string.IsNullOrWhiteSpace( item.Sku ) ).Select( item => item.Sku.ToLower() ) );
-				}
+				var items = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
+				catalog.AddRange( items.Where( item => !string.IsNullOrWhiteSpace( item.Sku ) ).Select( item => item.Sku.ToLower() ) );
 			}
 
 			foreach( var sku in skus )
@@ -311,11 +306,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 				// add to cache
 				foreach( var dc in distributionCenters )
-				{
-					DistributionCenter distributionCenterCached;
-					if ( !_distributionCentersCache.TryGetValue( dc.Code, out distributionCenterCached ) )
-						_distributionCentersCache.Add( dc.Code, dc );
-				}
+					_distributionCentersCache.TryAdd( dc.Code, dc );
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenters.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 			}
@@ -396,15 +387,39 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			var items = new List< InventoryItemResponse >();
 
-			foreach( var sku in skus )
-			{
-				if ( !string.IsNullOrEmpty( sku ) )
-				{
-					var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
+			if ( skus.Count() == 0 )
+				return items;
 
-					if ( product != null )
-						items.Add( product.ToInventoryItemResponse() );
-				}
+			int totalProductsNumber = await this.GetProductsTotalNumber( mark );
+			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSize );
+			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
+			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests ;
+
+			if ( estimateRequestPerSkuTotalProcessingTimeInSec > estimateRequestPerPageTotalProcessingTimeInSec )
+			{
+				// pull catalog from CA side page by page
+				var products = await this.GetProducts( String.Empty, mark ).ConfigureAwait( false );
+
+				return products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) && skus.Contains( pr.Sku.ToLower() ) ).Select( pr => pr.ToInventoryItemResponse() );
+			}
+			else
+			{
+				var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
+				Parallel.For( 0, skus.Count(), options, skuIndex =>
+				{
+					string sku = skus.ElementAt( skuIndex );
+
+					if ( !string.IsNullOrEmpty( sku ) )
+					{
+						var product = this.GetProductBySku( sku, mark ).GetAwaiter().GetResult();
+
+						if ( product != null )
+						{
+							lock ( items )
+								items.Add( product.ToInventoryItemResponse() );
+						}
+					}
+				});
 			}
 
 			return items;
@@ -454,7 +469,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: request.ToJson(), additionalInfo : this.AdditionalLogInfo()) );
 						
 						// invalidate cache
-						_productsCache.Remove( itemQuantityAndPrice.Sku );
+						Product removedCachedProduct;
+						_productsCache.TryRemove( itemQuantityAndPrice.Sku, out removedCachedProduct );
 					}
 					catch( Exception exception )
 					{
@@ -486,8 +502,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			await RefreshProductsIdCacheIfRequired( itemQuantityAndPrices.Count(), mark ).ConfigureAwait( false );
 
-			foreach( var item in itemQuantityAndPrices )
-				await this.UpdateQuantityAndPriceAsync( item, mark ).ConfigureAwait( false );
+			var options = new ParallelOptions() {  MaxDegreeOfParallelism = base._maxConcurrentRequests };
+			Parallel.For( 0, itemQuantityAndPrices.Count(), options, itemIndex =>
+			{
+				var item = itemQuantityAndPrices.ElementAt( itemIndex );
+				this.UpdateQuantityAndPriceAsync( item, mark ).GetAwaiter().GetResult();
+			} );
 		}
 
 		/// <summary>
@@ -816,7 +836,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				var url = String.Format( "{0}({1})", ChannelAdvisorEndPoint.ProductsUrl, productId.Value );
 				await base.PutAsync( url, request ).ConfigureAwait( false );
 
-				_productsCache.Remove( item.Sku );
+				Product removedCachedProduct;
+				_productsCache.TryRemove( item.Sku, out removedCachedProduct );
 						
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : string.Empty, additionalInfo : this.AdditionalLogInfo()) );
 			}
@@ -913,11 +934,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				foreach( var product in products )
 				{
 					if ( !string.IsNullOrEmpty( product.Sku ) )
-					{
-						Product cachedProduct;
-						if ( !_productsCache.TryGetValue( product.Sku, out cachedProduct ) )
-							_productsCache.Add( product.Sku, product );
-					}
+						_productsCache.TryAdd( product.Sku, product );
 				}
 					
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
@@ -1158,7 +1175,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		private async Task RefreshProductsIdCacheIfRequired( int skusNumber, Mark mark )
 		{
-			int estimateRequestProcessingTimeInSec = skusNumber * avgRequestHandlingTimeInSec;
+			double estimateRequestProcessingTimeInSec = skusNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 
 			if ( estimateRequestProcessingTimeInSec > estimateProductsExportProcessingTimeInSec && _productsIdCache.Count() == 0 )
 				await ImportProducts( mark ).ConfigureAwait( false );
@@ -1177,10 +1194,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				if ( string.IsNullOrEmpty( product.Sku ) )
 					continue;
 
-				int cachedProductId;
-
-				if ( !_productsIdCache.TryGetValue( product.Sku, out cachedProductId ) )
-					_productsIdCache.Add( product.Sku, product.ID );
+				_productsIdCache.TryAdd( product.Sku, product.ID );
 			}
 		}
 

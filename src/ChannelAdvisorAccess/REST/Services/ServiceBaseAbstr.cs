@@ -31,7 +31,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
 		private readonly int _requestTimeout = 180 * 1000;
-		private readonly int _maxConcurrentRequests = 4;
+		protected readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
 		private string _accessToken;
 		private DateTime _accessTokenExpiredUtc;
