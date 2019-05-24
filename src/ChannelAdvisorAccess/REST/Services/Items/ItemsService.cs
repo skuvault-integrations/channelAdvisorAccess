@@ -110,7 +110,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				return response;
 
 			var catalog = new List< string >();
-			int totalProductsNumber = await this.GetProductsTotalNumber( mark );
+			int totalProductsNumber = await this.GetCatalogSize( mark );
 			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSize );
 			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
@@ -390,7 +390,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			if ( skus.Count() == 0 )
 				return items;
 
-			int totalProductsNumber = await this.GetProductsTotalNumber( mark );
+			int totalProductsNumber = await this.GetCatalogSize( mark );
 			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSize );
 			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests ;
@@ -399,7 +399,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				// pull catalog from CA side page by page
 				var products = await this.GetProducts( String.Empty, mark ).ConfigureAwait( false );
-
+				skus = skus.Select( sku => sku.ToLower() );
 				return products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) && skus.Contains( pr.Sku.ToLower() ) ).Select( pr => pr.ToInventoryItemResponse() );
 			}
 			else
@@ -1077,7 +1077,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private async Task< int > GetProductsTotalNumber( Mark mark )
+		public async Task< int > GetCatalogSize( Mark mark )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -1088,14 +1088,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: ChannelAdvisorEndPoint.ProductsUrl ) );
 
-				var productPageInfo = ( await base.GetResponseAsyncByPage< Product >( ChannelAdvisorEndPoint.ProductsUrl, 1, true ).ConfigureAwait( false ) );
+				total = ( await base.GetEntityAsync< int >( ChannelAdvisorEndPoint.ProductsUrl + "/$count" ).ConfigureAwait( false ) );
 				
-				if ( productPageInfo.Count != null )
-					total = productPageInfo.Count.Value;
-					
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
 					methodParameters: ChannelAdvisorEndPoint.ProductsUrl,
-					methodResult : productPageInfo.ToJson() , 
+					methodResult : total.ToJson() , 
 					additionalInfo : this.AdditionalLogInfo() ) );
 				
 			}

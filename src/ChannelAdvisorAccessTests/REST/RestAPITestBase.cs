@@ -54,6 +54,10 @@ namespace ChannelAdvisorAccessTests.REST
 				this.ItemsService = factory.CreateItemsRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
 			}
 
+			var lightweightCaAccountCredentials = LoadLightWeightCaAccountCredentials();
+			var lightWeightCaAccountFactory = new ChannelAdvisorServicesFactory( lightweightCaAccountCredentials.DeveloperKey, lightweightCaAccountCredentials.DeveloperPassword, lightweightCaAccountCredentials.ApplicationId, lightweightCaAccountCredentials.SharedSecret );
+			this.LightWeightItemsService = lightWeightCaAccountFactory.CreateItemsRestService( lightweightCaAccountCredentials.AccountName, null, lightweightCaAccountCredentials.AccessToken, lightweightCaAccountCredentials.RefreshToken );
+
 			NetcoLogger.LoggerFactory = new NLogLoggerFactory();
 		}
 
@@ -78,6 +82,27 @@ namespace ChannelAdvisorAccessTests.REST
 			}
 		}
 
+		private RestServiceCredentials LoadLightWeightCaAccountCredentials()
+		{
+			var path = new Uri( Path.GetDirectoryName( Assembly.GetExecutingAssembly().CodeBase ) ).LocalPath;
+
+			using( var reader = new StreamReader( path + @"\..\..\rest-netherlands-credentials.csv" ) )
+			{
+				return new RestServiceCredentials
+				{
+					ApplicationId = reader.ReadLine(),
+					SharedSecret = reader.ReadLine(),
+					DeveloperKey = reader.ReadLine(),
+					DeveloperPassword = reader.ReadLine(),
+					AccountId = reader.ReadLine(),
+					AccountName = reader.ReadLine(),
+					AccessToken = reader.ReadLine(),
+					RefreshToken = reader.ReadLine(),
+					useSoapCredentials = bool.Parse( reader.ReadLine() )
+				};
+			}
+		}
+
 		public IShippingService ShippingService{ get; private set; }
 
 		public IOrdersService OrdersService{ get; private set; }
@@ -85,6 +110,8 @@ namespace ChannelAdvisorAccessTests.REST
 		public IListingService ListingService{ get; private set; }
 
 		public IItemsService ItemsService{ get; private set; }
+
+		public IItemsService LightWeightItemsService { get; private set; }
 
 		public IAdminService AdminService{ get; private set; }
 	}
