@@ -11,6 +11,7 @@ using System;
 
 namespace ChannelAdvisorAccessTests.REST.Inventory
 {
+	[ TestFixture ]
 	public class SyncTests : RestAPITestBase
 	{
 		private int averageRequestProcessingTimeInSec = 5;
@@ -18,16 +19,16 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		private int averageProductPageProcessingTimeInSec = 15;
 
 		/// <summary>
-		///	Given: large SkuVault sku catalog, large ChannelAdvisor catalog and small number of sku to update (over 100)
-		///	When: do full inventory sync
-		///	Then: total execution time will not exceed ( averageProductExportProcessingTimeInSec + ( caSkusNumber * 2 + 1 ) * avgRequestProcessingTimeInSec ) / threadsNumber
+		///	Given large SkuVault sku catalog, large ChannelAdvisor catalog and small number of sku to update (over 100)
+		///	When do full inventory sync
+		///	Then total execution time is not to exceed ( averageProductExportProcessingTimeInSec + ( caSkusNumber * 2 + 1 ) * avgRequestProcessingTimeInSec ) / threadsNumber
 		/// </summary>
 		[ Test ]
 		public void DoFullInventorySyncWhenSkuVaultCatalogIsLargeAndCaCatalogIsLargeAndSmallNumberOfSkuToUpdate()
 		{
 			int threadsNumber = 4;
 			int svCatalogSize = 10000;
-			int caCatalogSize = ((ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService).GetCatalogSize( null ).GetAwaiter().GetResult();
+			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService ).GetCatalogSize( null ).GetAwaiter().GetResult();
 			List< string > svSkus = new List< string >();
 
 			for ( int i = 0; i < svCatalogSize; i++ )
@@ -60,16 +61,16 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		/// <summary>
-		///	Given: small SkuVault sku catalog, large ChannelAdvisor catalog and small number of sku to update (over 100)
-		///	When: do full inventory sync
-		///	Then: total execution time will not exceed ( caSkusNumber * 2 + 1 ) * avgRequestProcessingTimeInSec 
+		///	Given small SkuVault sku catalog, large ChannelAdvisor catalog and small number of sku to update (over 100)
+		///	When do full inventory sync
+		///	Then total execution time is not to exceed ( caSkusNumber * 2 + 1 ) * avgRequestProcessingTimeInSec 
 		/// </summary>
 		[ Test ]
 		public void DoFullInventorySyncWhenSkuVaultCatalogIsSmallAndCaCatalogIsLargeAndSmallNumberOfSkuToUpdate()
 		{
 			int threadsNumber = 4;
 			int svCatalogSize = 200;
-			int caCatalogSize = ((ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService).GetCatalogSize( null ).GetAwaiter().GetResult();
+			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService ).GetCatalogSize( null ).GetAwaiter().GetResult();
 			List< string > svSkus = new List< string >();
 
 			for ( int i = 0; i < svCatalogSize; i++ )
@@ -102,16 +103,16 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		/// <summary>
-		///	Given: large SkuVault sku catalog, small ChannelAdvisor catalog and small number of sku to update (over 100)
-		///	When: do full inventory sync
-		///	Then: total execution time will not exceed ( totalSkusPages * averageProductPageProcessingTimeInSec + caSkusNumber + 1 ) * avgRequestProcessingTimeInSec 
+		///	Given large SkuVault sku catalog, small ChannelAdvisor catalog and small number of sku to update (over 100)
+		///	When do full inventory sync
+		///	Then total execution time is not to exceed ( totalSkusPages * averageProductPageProcessingTimeInSec + caSkusNumber + 1 ) * avgRequestProcessingTimeInSec 
 		/// </summary>
 		[ Test ]
 		public void DoFullInventorySyncWhenSkuVaultCatalogIsLargeAndCaCatalogIsSmall()
 		{
 			int threadsNumber = 4;
 			int svCatalogSize = 10000;
-			int caCatalogSize = ((ChannelAdvisorAccess.REST.Services.Items.ItemsService)base.LightWeightItemsService).GetCatalogSize( null ).GetAwaiter().GetResult();
+			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService )base.LightWeightItemsService).GetCatalogSize( null ).GetAwaiter().GetResult();
 			List< string > svSkus = new List< string >();
 
 			for ( int i = 0; i < svCatalogSize; i++ )
