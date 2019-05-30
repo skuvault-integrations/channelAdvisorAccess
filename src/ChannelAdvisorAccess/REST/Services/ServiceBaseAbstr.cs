@@ -245,41 +245,60 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="mark"></param>
 		/// <param name="collections">Endpoint returns array of objects</param>
 		/// <returns></returns>
-		protected async Task< IEnumerable< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true )
+		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true, int? pageNumber = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
 			var entities = new List< T >();
+			var startPage = 1;
+
+			if ( pageNumber != null )
+				startPage = pageNumber.Value;
 			
-			var response = await this.GetResponseAsyncByPage< T >( apiUrl, 1, collections, null, mark ).ConfigureAwait( false );
+			var response = await this.GetResponseAsyncByPage< T >( apiUrl, startPage, collections, null, mark ).ConfigureAwait( false );
 
 			if ( response.Value != null )
 				entities.AddRange( response.Value );
 
-			// check if we have extra pages
+			var allPagedQueried = response.NextLink == null;
+
+			// check if we have extra pages 
 			if ( response.NextLink != null && response.Count != null )
 			{
 				var totalRecords = response.Count.Value;
 				var pageSize = this.GetPageSizeFromUrl( response.NextLink );
-				var startPage = 2;
-				var pages = (int)Math.Ceiling( totalRecords * 1.0 / pageSize ) + 1; 
-				var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
+				var totalPages = (int)Math.Ceiling( totalRecords * 1.0 / pageSize ) + 1; 
 				
-				Parallel.For( startPage, pages, options, () => new List< T >(), ( page, pls, tempResult ) =>
+				// if specific page was not requested
+				if ( !pageNumber.HasValue )
 				{
-					var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, page, false, pageSize, mark ).GetAwaiter().GetResult();
-					tempResult.AddRange( pagedResponse.Value );
+					var nextPage = 2;
+					var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
+					Parallel.For( nextPage, totalPages, options, () => new List< T >(), ( currentPage, pls, tempResult ) =>
+					{
+						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, false, pageSize, mark ).GetAwaiter().GetResult();
+						tempResult.AddRange( pagedResponse.Value );
 
-					return tempResult;
-				}, 
-				tempResult => {
-					lock ( entities )
-						entities.AddRange( tempResult );
-				});
+						return tempResult;
+					}, 
+					tempResult => {
+						lock ( entities )
+							entities.AddRange( tempResult );
+					});
+				}
+				else
+				{
+					// if we request non existing page CA always returns first page
+					if ( pageNumber.Value > totalPages )
+					{
+						allPagedQueried = true;
+						entities.Clear();
+					}
+				}
 			}
 
-			return entities;
+			return new PagedApiResponse< T >( entities, startPage, allPagedQueried );
 		}
 
 		/// <summary>

@@ -133,9 +133,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
 
-				var ordersFromRequest = await this.GetResponseAsync< Models.Order >( url, mark );
+				var result = await this.GetResponseAsync< Models.Order >( url, mark );
 
-				orders.AddRange( ordersFromRequest.Select( order => order.ToOrderResponseDetailComplete() ).OfType< T >() );
+				orders.AddRange( result.Response.Select( order => order.ToOrderResponseDetailComplete() ).OfType< T >() );
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: orders.ToJson(), additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
 			}

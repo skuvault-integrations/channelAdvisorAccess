@@ -228,7 +228,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			{
 				 Criteria = new InventoryItemCriteria(){
 					DateRangeField = TimeStampFields.LastUpdateDate,
-					DateRangeStartGMT = DateTime.Now.AddDays ( -10 ),
+					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
 					DateRangeEndGMT = DateTime.Now
 				 }
 			};
@@ -236,6 +236,46 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var skus = this.ItemsService.GetFilteredSkusAsync( filter ).GetAwaiter().GetResult();
 
 			skus.Should().NotBeNullOrEmpty();
+		}
+
+		[ Test ]
+		public void GetFilteredItemsPageByUpdateDate()
+		{
+			int page = 5;
+			int pageSize = 100;
+			var filter = new ItemsFilter
+			{
+				 Criteria = new InventoryItemCriteria(){
+					DateRangeField = TimeStampFields.LastUpdateDate,
+					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
+					DateRangeEndGMT = DateTime.Now
+				 }
+			};
+
+			var result = this.ItemsService.GetFilteredItemsAsync( filter, page, pageSize, null ).GetAwaiter().GetResult();
+
+			result.Response.Should().NotBeNullOrEmpty();
+			result.AllPagesQueried.Should().BeFalse();
+		}
+
+		[ Test ]
+		public void GetFilteredItemsByUpdateDateAndNotExistingPage()
+		{
+			int page = 10000;
+			int pageSize = 100;
+			var filter = new ItemsFilter
+			{
+				 Criteria = new InventoryItemCriteria(){
+					DateRangeField = TimeStampFields.LastUpdateDate,
+					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
+					DateRangeEndGMT = DateTime.Now
+				 }
+			};
+
+			var result = this.ItemsService.GetFilteredItemsAsync( filter, page, pageSize, null ).GetAwaiter().GetResult();
+
+			result.Response.Should().BeEmpty();
+			result.AllPagesQueried.Should().BeTrue();
 		}
 
 		[ Test ]
