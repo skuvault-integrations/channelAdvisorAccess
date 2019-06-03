@@ -12,7 +12,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 {
 	public class OrdersServiceTests : RestAPITestBase
 	{
-		protected const int TestOrderId = 177739;
+		protected const int TestOrderId = 180457;
 		protected const int TestOrderId2 = 178499;
 
 		[ Test ]
@@ -43,7 +43,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				OrderCreationFilterEndTimeGMT = new DateTime(2019, 2, 20)
+				OrderCreationFilterEndTimeGMT = new DateTime(2019, 4, 01)
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
@@ -53,18 +53,33 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		public async Task GetOrdersGreaterEqualThanDateByStatusUpdate()
+		public async Task GetOrdersGreaterEqualThanDateByOrderStatusUpdate()
 		{
 			var criteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = new DateTime(2018, 11, 01),
-				StatusUpdateFilterEndTimeGMT = new DateTime(2019, 01, 01)
+				StatusUpdateFilterBeginTimeGMT = new DateTime(2019, 01, 01),
+				StatusUpdateFilterEndTimeGMT = new DateTime(2019, 05, 01)
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 2 );
+		}
+
+		[ Test ]
+		public async Task GetOrdersGreaterEqualThanDateByPaymentStatusUpdate()
+		{
+			var criteria = new OrderCriteria
+			{
+				StatusUpdateFilterBeginTimeGMT = new DateTime(2019, 06, 03, 12, 0, 0),
+				StatusUpdateFilterEndTimeGMT = new DateTime(2019, 06, 03, 13, 0, 0)
+			};
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
+
+			result.Should().NotBeNullOrEmpty();
+			result.Count().Should().BeGreaterOrEqualTo( 1 );
 		}
 
 		[ Test ]
@@ -79,6 +94,27 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			result.Should().NotBeNullOrEmpty();
 			result.Should().HaveCount(2);
+		}
+
+		[ Test ]
+		public async Task GetManyOrdersById()
+		{
+			var orders = new List< int >();
+
+			for ( int i = 1; i <= 20; i++ )
+				orders.Add( i );
+
+			orders.AddRange( new int[] { TestOrderId2 } );
+
+			var criteria = new OrderCriteria
+			{
+				OrderIDList = orders.ToArray()
+			};
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
+
+			result.Should().NotBeNullOrEmpty();
+			result.Should().HaveCount(1);
 		}
 	}
 }

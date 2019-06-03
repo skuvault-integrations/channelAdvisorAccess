@@ -244,6 +244,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="apiUrl"></param>
 		/// <param name="mark"></param>
 		/// <param name="collections">Endpoint returns array of objects</param>
+		/// <param name="pageNumber">Page</param>
 		/// <returns></returns>
 		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true, int? pageNumber = null )
 		{
@@ -503,7 +504,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <returns></returns>
 		protected string ConvertDate( DateTime date )
 		{
-			return date.ToString( "yyyy-MM-ddThh:mm:ssZ", CultureInfo.InvariantCulture );
+			return date.ToString( "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture );
 		}
 
 		/// <summary>

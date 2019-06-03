@@ -103,11 +103,24 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="orderCriteria"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark = null ) where T : OrderResponseItem
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark = null ) where T : OrderResponseItem
 		{
-			var filterParam = this.GetRequestFilterString( orderCriteria );
+			if ( orderCriteria.OrderIDList != null && orderCriteria.OrderIDList.Length > 0 )
+			{
+				var result = new List< T >();
 
-			return this.GetOrdersAsync< T >( filterParam, mark );
+				foreach( int orderId in orderCriteria.OrderIDList )
+				{
+					var searchOrderFilter = this.GetRequestFilterString( orderCriteria, orderId );
+					var orders = await this.GetOrdersAsync< T >( searchOrderFilter, mark ).ConfigureAwait( false );
+					result.AddRange( orders );
+				}
+			
+				return result;
+			}
+
+			var filter = this.GetRequestFilterString( orderCriteria );
+			return await this.GetOrdersAsync< T >( filter, mark ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -153,8 +166,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		///	Gets filtering parameter for REST GET request
 		/// </summary>
 		/// <param name="criteria"></param>
+		/// <param name="orderId">Order id</param>
 		/// <returns></returns>
-		private string GetRequestFilterString( OrderCriteria criteria )
+		private string GetRequestFilterString( OrderCriteria criteria, int? orderId = null )
 		{
 			List< string > clauses = new List< string >();
 			
@@ -164,29 +178,15 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			if ( criteria.OrderCreationFilterEndTimeGMT.HasValue )
 				clauses.Add( String.Format( "CreatedDateUtc le {0} and ", base.ConvertDate( criteria.OrderCreationFilterEndTimeGMT.Value ) ) );
 
-			if (criteria.StatusUpdateFilterBeginTimeGMT.HasValue)
-				clauses.Add( String.Format( "Fulfillments/any (f: f/UpdatedDateUtc ge {0}) and ", base.ConvertDate( criteria.StatusUpdateFilterBeginTimeGMT.Value ) ) );
+			if ( criteria.StatusUpdateFilterBeginTimeGMT.HasValue
+				&& criteria.StatusUpdateFilterEndTimeGMT.HasValue )
+				clauses.Add( String.Format( "(CheckoutDateUtc ge {0} and CheckoutDateUtc le {1}) or (PaymentDateUtc ge {0} and PaymentDateUtc le {1}) or (ShippingDateUtc ge {0} and ShippingDateUtc le {1}) and ", base.ConvertDate( criteria.StatusUpdateFilterBeginTimeGMT.Value ), base.ConvertDate( criteria.StatusUpdateFilterEndTimeGMT.Value ) ) );
 
-			if (criteria.StatusUpdateFilterEndTimeGMT.HasValue)
-				clauses.Add( String.Format( "Fulfillments/any (f: f/UpdatedDateUtc le {0}) and ", base.ConvertDate( criteria.StatusUpdateFilterEndTimeGMT.Value ) ) );
-
-			if ( criteria.OrderIDList != null && criteria.OrderIDList.Length > 0)
-			{
-				clauses.Add( "(" );
-
-				for (int i = 0; i < criteria.OrderIDList.Length; i++ )
-				{
-					clauses.Add( String.Format( "SiteOrderID eq '{0}'", criteria.OrderIDList[i] ) );
-
-					if (i != criteria.OrderIDList.Length - 1)
-						clauses.Add( " or " );
-				}
-
-				clauses.Add( ")" );
-			}
+			if ( orderId != null )
+				clauses.Add( String.Format( "SiteOrderID eq '{0}' and ", orderId.Value.ToString() ) );
 
 			if ( clauses.Count > 0 )
-				clauses[ clauses.Count - 1] = clauses.Last().Replace( " and ", string.Empty );
+				clauses[ clauses.Count - 1] = clauses.Last().Substring( 0, clauses.Last().LastIndexOf( "and" ) );
 
 			return string.Join( " ", clauses );
 		}
