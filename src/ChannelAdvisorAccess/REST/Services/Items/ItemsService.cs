@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using CsvHelper;
 using System.Collections.Concurrent;
+using System.Net;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
 {
@@ -116,7 +117,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			
 			// check skus existance directly by sku or pulling the whole catalog by page took more than 10 minutes, we use product export feature in this case
-			if ( Math.Min( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerPageTotalProcessingTimeInSec ) >= productExportUsingTimeInSec )
+			if ( Math.Min( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerPageTotalProcessingTimeInSec ) >= productExportUsingTimeInSec && !prevProductExportFailed )
 			{
 				try
 				{
@@ -1001,6 +1002,13 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			}
 			catch( Exception exception )
 			{
+				var channelAdvisorEx = exception as ChannelAdvisorException;
+
+				// if product export service currently could not proceed request it returns 400 error or 429 ( too many requests )
+				if ( channelAdvisorEx != null 
+						&& ( channelAdvisorEx.MessageCode == (int)HttpStatusCode.BadRequest || channelAdvisorEx.MessageCode == 429 ) )
+					throw new ChannelAdvisorProductExportFailedException( channelAdvisorEx.Message, channelAdvisorEx );
+
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;

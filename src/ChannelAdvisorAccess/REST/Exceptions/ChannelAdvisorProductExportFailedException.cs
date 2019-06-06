@@ -8,6 +8,7 @@ namespace ChannelAdvisorAccess.REST.Exceptions
 {
 	public class ChannelAdvisorProductExportFailedException : Exception
 	{
-		public ChannelAdvisorProductExportFailedException( string message ) : base ( message ) { }
+		public ChannelAdvisorProductExportFailedException( string message ) : this( message, null ) { }
+		public ChannelAdvisorProductExportFailedException( string message, Exception ex ) : base ( message, ex ) { }
 	}
 }
