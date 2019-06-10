@@ -727,7 +727,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark = null )
 		{
-			var pagedResult = await this.GetFilteredItemsAsync( filter, 1, pageSize, mark ).ConfigureAwait( false );
+			var pagedResult = await this.GetFilteredItemsAsync( filter, 0, pageSize, mark ).ConfigureAwait( false );
 
 			return pagedResult.Response;
 		}
@@ -736,16 +736,16 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		///	Gets filtered items asynchronously with extra page information
 		/// </summary>
 		/// <param name="filter"></param>
-		/// <param name="startPage"></param>
+		/// <param name="pageNumber"></param>
 		/// <param name="pageLimit"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null )
+		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int pageNumber, int pageLimit = pageSize, Mark mark = null )
 		{
 			var inventoryItems = new List< InventoryItemResponse >();
 			var filterParam = this.GetFilter( filter );
 
-			var result = await this.GetProducts( filterParam, mark, startPage: startPage ).ConfigureAwait( false );
+			var result = await this.GetProducts( filterParam, mark, pageNumber: pageNumber ).ConfigureAwait( false );
 
 			foreach( var product in result.Response )
 				inventoryItems.Add( product.ToInventoryItemResponse() );
@@ -772,7 +772,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark = null )
 		{
-			var pagedResponse = await this.GetFilteredSkusAsync( filter, 1, pageSize, mark ).ConfigureAwait( false );
+			var pagedResponse = await this.GetFilteredSkusAsync( filter, 0, pageSize, mark ).ConfigureAwait( false );
 
 			return pagedResponse.Response;
 		}
@@ -787,15 +787,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null )
 		{
-			var pagedItems = await this.GetFilteredItemsAsync( filter, startPage, pageLimit, mark ).ConfigureAwait( false );
-			var items = pagedItems.Response;
+			var result = await this.GetFilteredItemsAsync( filter, startPage, pageLimit, mark ).ConfigureAwait( false );
 
-			var finalPage = 0;
-
-			if ( items.Any() )
-				finalPage = (int)Math.Ceiling( items.Count() / pageSize * 1.0 );
-
-			return new PagedApiResponse< string >( items.Select( item => item.Sku ).ToArray(), finalPage, true );
+			return new PagedApiResponse< string >( result.Response.Select( item => item.Sku ).ToArray(), result.FinalPageNumber, result.AllPagesQueried );
 		}
 		
 		/// <summary>
@@ -886,7 +880,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			var filter = String.Format( "$filter=sku eq '{0}'", Uri.EscapeDataString( sku ) );
 
 			var result = await this.GetProducts( filter, mark ).ConfigureAwait( false );
-			var product = result.Response.FirstOrDefault();
+			// CA search case insensitive
+			var product = result.Response.FirstOrDefault( pr => pr.Sku != null && pr.Sku.Equals( sku, StringComparison.InvariantCulture ) );
 
 			return product;
 		}
@@ -896,9 +891,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="filter"></param>
 		/// <param name="mark"></param>
-		/// <param name="startPage"></param>
+		/// <param name="pageNumber"></param>
+		/// <param name="pageSize"></param>
 		/// <returns></returns>
-		private async Task< PagedApiResponse< Product > > GetProducts( string filter, Mark mark, int startPage = 0 )
+		private async Task< PagedApiResponse< Product > > GetProducts( string filter, Mark mark, int pageNumber = 0, int pageSize = 100 )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -920,7 +916,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 
-				result = await base.GetResponseAsync< Product >( url, mark, pageNumber: startPage ).ConfigureAwait( false );
+				result = await base.GetResponseAsync< Product >( url, mark, pageNumber: pageNumber, pageSize: pageSize ).ConfigureAwait( false );
 
 				// add to cache
 				foreach( var product in result.Response )

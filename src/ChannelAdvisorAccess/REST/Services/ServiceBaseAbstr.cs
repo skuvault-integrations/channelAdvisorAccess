@@ -244,9 +244,10 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="apiUrl"></param>
 		/// <param name="mark"></param>
 		/// <param name="collections">Endpoint returns array of objects</param>
-		/// <param name="pageNumber">Page</param>
+		/// <param name="pageNumber">Page ( 0 - all pages )</param>
+		/// <param name="pageSize">Page size</param>
 		/// <returns></returns>
-		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true, int? pageNumber = null )
+		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true, int pageNumber = 0, int? pageSize = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -254,10 +255,10 @@ namespace ChannelAdvisorAccess.REST.Services
 			var entities = new List< T >();
 			var startPage = 1;
 
-			if ( pageNumber != null )
-				startPage = pageNumber.Value;
+			if ( pageNumber > 0 )
+				startPage = pageNumber;
 			
-			var response = await this.GetResponseAsyncByPage< T >( apiUrl, startPage, collections, null, mark ).ConfigureAwait( false );
+			var response = await this.GetResponseAsyncByPage< T >( apiUrl, startPage, collections, pageSize, mark ).ConfigureAwait( false );
 
 			if ( response.Value != null )
 				entities.AddRange( response.Value );
@@ -268,17 +269,17 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( response.NextLink != null && response.Count != null )
 			{
 				var totalRecords = response.Count.Value;
-				var pageSize = this.GetPageSizeFromUrl( response.NextLink );
-				var totalPages = (int)Math.Ceiling( totalRecords * 1.0 / pageSize ) + 1; 
+				var serviceRecommendedPageSize = this.GetPageSizeFromUrl( response.NextLink );
+				var totalPages = (int)Math.Ceiling( totalRecords * 1.0 / serviceRecommendedPageSize ) + 1; 
 				
 				// if specific page was not requested
-				if ( !pageNumber.HasValue )
+				if ( pageNumber <= 0 )
 				{
 					var nextPage = 2;
 					var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
 					Parallel.For( nextPage, totalPages, options, () => new List< T >(), ( currentPage, pls, tempResult ) =>
 					{
-						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, false, pageSize, mark ).GetAwaiter().GetResult();
+						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, false, serviceRecommendedPageSize, mark ).GetAwaiter().GetResult();
 						tempResult.AddRange( pagedResponse.Value );
 
 						return tempResult;
@@ -287,11 +288,13 @@ namespace ChannelAdvisorAccess.REST.Services
 						lock ( entities )
 							entities.AddRange( tempResult );
 					});
+
+					allPagedQueried = totalRecords == entities.Count;
 				}
 				else
 				{
 					// if we request non existing page CA always returns first page
-					if ( pageNumber.Value > totalPages )
+					if ( pageNumber > totalPages )
 					{
 						allPagedQueried = true;
 						entities.Clear();
@@ -322,7 +325,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( requestDataSetSize )
 				url += ( apiUrl.Contains("?") ? "&" : "?" ) + "$count=true";
 
-			if ( pageSize != null && page != 1 )
+			if ( pageSize != null && page > 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;
 
 			return GetEntityAsync< ODataResponse< T > >( url, mark );

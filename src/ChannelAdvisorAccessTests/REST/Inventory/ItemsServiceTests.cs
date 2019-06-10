@@ -239,6 +239,26 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
+		public void GetFilteredSkusPageByUpdateDate()
+		{
+			var page = 5;
+			var filter = new ItemsFilter
+			{
+				 Criteria = new InventoryItemCriteria(){
+					DateRangeField = TimeStampFields.LastUpdateDate,
+					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
+					DateRangeEndGMT = DateTime.Now
+				 }
+			};
+
+			var result = this.ItemsService.GetFilteredSkusAsync( filter, page, 100 ).GetAwaiter().GetResult();
+
+			result.AllPagesQueried.Should().BeFalse();
+			result.FinalPageNumber.Should().Be( page );
+			result.Response.Should().NotBeEmpty();
+		}
+
+		[ Test ]
 		public void GetFilteredItemsPageByUpdateDate()
 		{
 			int page = 5;
