@@ -124,7 +124,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 					var products = await this.ImportProducts( mark ).ConfigureAwait( false );
 					catalog.AddRange( products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) ).Select( pr => pr.Sku.ToLower() ) );
 				}
-				catch( ChannelAdvisorProductExportFailedException )
+				catch( ChannelAdvisorProductExportUnavailableException )
 				{
 					// try another ways to pull products from CA side
 					prevProductExportFailed = true;
@@ -1003,11 +1003,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			catch( Exception exception )
 			{
 				var channelAdvisorEx = exception as ChannelAdvisorException;
+				var tooManyRequestsErrorCode = 429;
 
-				// if product export service currently could not proceed request it returns 400 error or 429 ( too many requests )
 				if ( channelAdvisorEx != null 
-						&& ( channelAdvisorEx.MessageCode == (int)HttpStatusCode.BadRequest || channelAdvisorEx.MessageCode == 429 ) )
-					throw new ChannelAdvisorProductExportFailedException( channelAdvisorEx.Message, channelAdvisorEx );
+						&& ( channelAdvisorEx.MessageCode == (int)HttpStatusCode.BadRequest || channelAdvisorEx.MessageCode == tooManyRequestsErrorCode ) )
+					throw new ChannelAdvisorProductExportUnavailableException( channelAdvisorEx.Message, channelAdvisorEx );
 
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
@@ -1068,7 +1068,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				|| status == ImportStatus.PendingPartitioning )
 				return;
 
-			throw new ChannelAdvisorProductExportFailedException( status.ToString() );
+			throw new ChannelAdvisorProductExportUnavailableException( status.ToString() );
 		}
 
 		/// <summary>

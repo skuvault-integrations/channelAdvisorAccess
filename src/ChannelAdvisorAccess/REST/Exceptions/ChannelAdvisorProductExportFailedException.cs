@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ChannelAdvisorAccess.REST.Exceptions
 {
-	public class ChannelAdvisorProductExportFailedException : Exception
+	public class ChannelAdvisorProductExportUnavailableException : Exception
 	{
-		public ChannelAdvisorProductExportFailedException( string message ) : this( message, null ) { }
-		public ChannelAdvisorProductExportFailedException( string message, Exception ex ) : base ( message, ex ) { }
+		public ChannelAdvisorProductExportUnavailableException( string message ) : this( message, null ) { }
+		public ChannelAdvisorProductExportUnavailableException( string message, Exception ex ) : base ( message, ex ) { }
 	}
 }
