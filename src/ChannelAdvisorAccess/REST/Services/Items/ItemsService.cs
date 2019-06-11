@@ -6,7 +6,6 @@ using ChannelAdvisorAccess.Services.Items;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Caching;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.REST.Models.Configuration;
@@ -29,7 +28,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <summary>
 		///	Channel advisor page size for products end point
 		/// </summary>
-		private const int pageSize = 100;
+		private const int pageSizeDefault = 100;
 		private const int avgRequestHandlingTimeInSec = 5;
 		private const int estimateProductsExportProcessingTimeInSec = 120;
 		private const int productExportUsingTimeInSec = 60 * 10;
@@ -112,7 +111,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 			var catalog = new List< string >();
 			int totalProductsNumber = await this.GetCatalogSize( mark );
-			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSize );
+			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSizeDefault );
 			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			
@@ -392,7 +391,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				return items;
 
 			int totalProductsNumber = await this.GetCatalogSize( mark );
-			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSize );
+			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSizeDefault );
 			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests ;
 
@@ -727,7 +726,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark = null )
 		{
-			var pagedResult = await this.GetFilteredItemsAsync( filter, 0, pageSize, mark ).ConfigureAwait( false );
+			var pagedResult = await this.GetFilteredItemsAsync( filter, 0, pageSizeDefault, mark ).ConfigureAwait( false );
 
 			return pagedResult.Response;
 		}
@@ -740,12 +739,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="pageLimit"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int pageNumber, int pageLimit = pageSize, Mark mark = null )
+		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int pageNumber, int pageLimit = pageSizeDefault, Mark mark = null )
 		{
 			var inventoryItems = new List< InventoryItemResponse >();
 			var filterParam = this.GetFilter( filter );
 
-			var result = await this.GetProducts( filterParam, mark, pageNumber: pageNumber ).ConfigureAwait( false );
+			var result = await this.GetProducts( filterParam, mark, pageNumber: pageNumber, pageSize: pageLimit ).ConfigureAwait( false );
 
 			foreach( var product in result.Response )
 				inventoryItems.Add( product.ToInventoryItemResponse() );
@@ -772,7 +771,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark = null )
 		{
-			var pagedResponse = await this.GetFilteredSkusAsync( filter, 0, pageSize, mark ).ConfigureAwait( false );
+			var pagedResponse = await this.GetFilteredSkusAsync( filter, 0, pageSizeDefault, mark ).ConfigureAwait( false );
 
 			return pagedResponse.Response;
 		}
@@ -894,7 +893,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="pageNumber"></param>
 		/// <param name="pageSize"></param>
 		/// <returns></returns>
-		private async Task< PagedApiResponse< Product > > GetProducts( string filter, Mark mark, int pageNumber = 0, int pageSize = 100 )
+		private async Task< PagedApiResponse< Product > > GetProducts( string filter, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
