@@ -30,7 +30,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly RestCredentials _credentials;
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
-		private readonly int _requestTimeout = 180 * 1000;
+		private readonly int _requestTimeout = 5 * 60 * 1000;
 		protected readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
 		private string _accessToken;
@@ -102,17 +102,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			this.HttpClient = new HttpClient { BaseAddress = new Uri( ChannelAdvisorEndPoint.BaseApiUrl ) };
 			this.HttpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json") );
 			this.SetDefaultAuthorizationHeader();
-		}
-
-		/// <summary>
-		///	Setup cancellation token source where token has predefined operation timeout
-		/// </summary>
-		protected CancellationToken GetCancellationToken()
-		{
-			var cancellationTokenSource = new CancellationTokenSource();
-			cancellationTokenSource.CancelAfter( this._requestTimeout );
-
-			return cancellationTokenSource.Token;
 		}
 
 		/// <summary>
@@ -348,14 +337,17 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						var httpResponse = await this.HttpClient.GetAsync( url, this.GetCancellationToken() ).ConfigureAwait( false );
-						var responseStr = await httpResponse.Content.ReadAsStringAsync();
+						using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) ) 
+						{
+							var httpResponse = await this.HttpClient.GetAsync( url, cancellationTokenSource.Token ).ConfigureAwait( false );
+							var responseStr = await httpResponse.Content.ReadAsStringAsync();
 
-						await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
 					
-						var message = JsonConvert.DeserializeObject< T >( responseStr );
+							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
-						return message;
+							return message;
+						}
 					}, 
 					( timeSpan, retryAttempt ) => { 
 						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
@@ -394,15 +386,18 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						var content = new StringContent( body, Encoding.UTF8, "text/plain" );
-						var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() ).ConfigureAwait( false );
-						var responseStr = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+						using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+						{
+							var content = new StringContent( body, Encoding.UTF8, "text/plain" );
+							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token ).ConfigureAwait( false );
+							var responseStr = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
-						await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
 
-						var message = JsonConvert.DeserializeObject< T >( responseStr );
+							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
-						return message;
+							return message;
+						}
 					}, 
 					( timeSpan, retryAttempt ) => { 
 						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
@@ -427,12 +422,15 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
-						var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() ).ConfigureAwait( false );
+						using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+						{
+							var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
+							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token ).ConfigureAwait( false );
 
-						await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
 
-						return httpResponse.StatusCode;
+							return httpResponse.StatusCode;
+						}
 					}, 
 					( timeSpan, retryAttempt ) => { 
 						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
@@ -458,12 +456,15 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
-					var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
-					var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, this.GetCancellationToken() );
+					using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+					{
+						var content = new StringContent( JsonConvert.SerializeObject( data ), Encoding.UTF8, "application/json" );
+						var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token );
 
-					await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
+						await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
 
-					return httpResponse.StatusCode;
+						return httpResponse.StatusCode;
+					}
 				}, 
 				( timeSpan, retryAttempt ) => { 
 					var retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
