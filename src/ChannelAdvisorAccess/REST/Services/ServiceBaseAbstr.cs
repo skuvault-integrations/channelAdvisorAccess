@@ -100,6 +100,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected void SetupHttpClient()
 		{
 			this.HttpClient = new HttpClient { BaseAddress = new Uri( ChannelAdvisorEndPoint.BaseApiUrl ) };
+			this.HttpClient.Timeout = TimeSpan.FromMilliseconds( this._requestTimeout );
 			this.HttpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json") );
 			this.SetDefaultAuthorizationHeader();
 		}
@@ -265,7 +266,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				if ( pageNumber <= 0 )
 				{
 					var nextPage = 2;
-					var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
+					var options = new ParallelOptions() {  MaxDegreeOfParallelism = 1 };
 					Parallel.For( nextPage, totalPages, options, () => new List< T >(), ( currentPage, pls, tempResult ) =>
 					{
 						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, false, serviceRecommendedPageSize, mark ).GetAwaiter().GetResult();

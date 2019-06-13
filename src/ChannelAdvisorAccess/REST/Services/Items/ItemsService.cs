@@ -32,7 +32,6 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		private const int avgRequestHandlingTimeInSec = 5;
 		private const int estimateProductsExportProcessingTimeInSec = 120;
 		private const int productExportUsingTimeInSec = 60 * 10;
-		private bool prevProductExportFailed = false;
 		/// <summary>
 		///	Products cache
 		/// </summary>
@@ -114,10 +113,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSizeDefault );
 			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
+			bool isProductExportFeatureUsed = false;
+			bool isProductExportFeatureAvailable = true;
 			
 			// check skus existance directly by sku or pulling the whole catalog by page took more than 10 minutes, we use product export feature in this case
-			if ( Math.Min( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerPageTotalProcessingTimeInSec ) >= productExportUsingTimeInSec && !prevProductExportFailed )
+			if ( Math.Min( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerPageTotalProcessingTimeInSec ) >= productExportUsingTimeInSec )
 			{
+				isProductExportFeatureUsed = true;
+
 				try
 				{
 					var products = await this.ImportProducts( mark ).ConfigureAwait( false );
@@ -125,18 +128,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				}
 				catch( ChannelAdvisorProductExportUnavailableException )
 				{
-					// try another ways to pull products from CA side
-					prevProductExportFailed = true;
+					isProductExportFeatureAvailable = false;
 				}
-
-				// fallback
-				if ( prevProductExportFailed )
-					return await DoSkusExistAsync( skus, mark ).ConfigureAwait( false );
 			}
-			else
+			
+			if ( !isProductExportFeatureUsed || !isProductExportFeatureAvailable )
 			{
-				var items = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
-				catalog.AddRange( items.Where( item => !string.IsNullOrWhiteSpace( item.Sku ) ).Select( item => item.Sku.ToLower() ) );
+				var products = await GetSkusAsync( skus, mark ).ConfigureAwait( false );
+				catalog.AddRange( products );
 			}
 
 			foreach( var sku in skus )
@@ -146,6 +145,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			}
 
 			return response;
+		}
+
+		private async Task< IEnumerable< string > > GetSkusAsync( IEnumerable< string > skus, Mark mark = null )
+		{
+			var items = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
+			return items.Where( item => !string.IsNullOrWhiteSpace( item.Sku ) ).Select( item => item.Sku.ToLower() );
 		}
 
 		/// <summary>
