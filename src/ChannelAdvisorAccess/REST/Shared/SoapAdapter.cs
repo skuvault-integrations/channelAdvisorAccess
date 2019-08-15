@@ -1,5 +1,6 @@
 ﻿using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.OrderService;
+using ChannelAdvisorAccess.REST.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// </summary>
 		/// <param name="order"></param>
 		/// <returns></returns>
-		public static OrderResponseDetailComplete ToOrderResponseDetailComplete( this Models.Order order )
+		public static OrderResponseDetailComplete ToOrderResponseDetailComplete( this Models.Order order, DistributionCenter[] distributionCenters )
 		{
 			var response = new OrderResponseDetailComplete()
 			{
@@ -116,6 +117,14 @@ namespace ChannelAdvisorAccess.REST.Shared
 					 Title = item.Title,
 					 Quantity = item.Quantity,
 				};
+				
+				var itemFulFillment = order.Fulfillments.FirstOrDefault( f => f.Items.FirstOrDefault( fi => fi.OrderItemID == item.ID ) != null );
+
+				if ( itemFulFillment != null )
+				{
+					var distributionCenter = distributionCenters.FirstOrDefault( dc => dc.ID == itemFulFillment.DistributionCenterID.Value );
+					orderLineItem.DistributionCenterCode = distributionCenter.Code;
+				}
 				
 				List< OrderLineItemItemPromo > promotions = new List< OrderLineItemItemPromo >();
 

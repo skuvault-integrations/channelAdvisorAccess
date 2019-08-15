@@ -9,6 +9,8 @@ using System.Runtime.Caching;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.REST.Shared;
+using ChannelAdvisorAccess.REST.Services.Items;
+using ChannelAdvisorAccess.REST.Models;
 
 namespace ChannelAdvisorAccess.REST.Services.Orders
 {
@@ -137,7 +139,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
-			var url = ChannelAdvisorEndPoint.OrdersUrl + "?$expand=Items($expand=Promotions),Fulfillments,Adjustments,CustomFields";
+			var url = ChannelAdvisorEndPoint.OrdersUrl + "?$expand=Items($expand=Promotions),Fulfillments($expand=Items),Adjustments,CustomFields";
 
 			if ( !string.IsNullOrEmpty( filter )) 
 				url += "&$filter=" + filter;
@@ -146,9 +148,15 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
 
-				var result = await this.GetResponseAsync< Models.Order >( url, mark );
+				var result = await this.GetResponseAsync< Models.Order >( url, mark ).ConfigureAwait( false );
 
-				orders.AddRange( result.Response.Select( order => order.ToOrderResponseDetailComplete() ).OfType< T >() );
+				var distributionCenters = new DistributionCenter[] { };
+				if ( result.Response.Count() > 0 )
+				{
+					distributionCenters = await new ItemsService( base._credentials, base.AccountName, base._accessToken, base._refreshToken ).GetDistributionCentersAsync().ConfigureAwait( false );
+				}
+
+				orders.AddRange( result.Response.Select( order => order.ToOrderResponseDetailComplete( distributionCenters ) ).OfType< T >() );
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: orders.ToJson(), additionalInfo: this.AdditionalLogInfo(), methodParameters: filter ) );
 			}

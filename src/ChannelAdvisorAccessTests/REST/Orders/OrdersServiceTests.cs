@@ -14,6 +14,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 	{
 		protected const int TestOrderId = 180457;
 		protected const int TestOrderId2 = 178499;
+		protected const int TestOrderId3 = 181648;
 
 		[ Test ]
 		public async Task GetOrdersAsyncByDate()
@@ -115,6 +116,26 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			result.Should().NotBeNullOrEmpty();
 			result.Should().HaveCount(1);
+		}
+
+		[ Test ]
+		public async Task GetOrderWithDifferentItemsDC()
+		{
+			var sku1 = "testSku3";
+			var sku2 = "testsku2";
+
+			var criteria = new OrderCriteria
+			{
+				OrderIDList = new int[] { TestOrderId3 }
+			};
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
+			var order = result.FirstOrDefault();
+			order.Should().NotBeNull();
+			var orderItem1 = order.ShoppingCart.LineItemSKUList.FirstOrDefault( item => item.SKU.Equals( sku1 ) ) as OrderLineItemItemResponse;
+			var orderItem2 = order.ShoppingCart.LineItemSKUList.FirstOrDefault( item => item.SKU.Equals( sku2 ) ) as OrderLineItemItemResponse;
+			orderItem1.DistributionCenterCode.Should().Be( "Louisville" );
+			orderItem2.DistributionCenterCode.Should().Be( "DC4" );
 		}
 	}
 }

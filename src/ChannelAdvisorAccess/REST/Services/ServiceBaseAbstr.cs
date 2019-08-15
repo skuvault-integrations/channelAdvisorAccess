@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
@@ -18,24 +17,21 @@ using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
 using CuttingEdge.Conditions;
 using Newtonsoft.Json;
-using System.Diagnostics;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Linq;
 
 namespace ChannelAdvisorAccess.REST.Services
 {
 	public abstract class RestServiceBaseAbstr : ServiceBaseAbstr
 	{
-		private readonly RestCredentials _credentials;
+		protected readonly RestCredentials _credentials;
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
 		private readonly int _requestTimeout = 5 * 60 * 1000;
 		protected readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
-		private string _accessToken;
+		protected string _accessToken;
 		private DateTime _accessTokenExpiredUtc;
-		private readonly string _refreshToken;
+		protected readonly string _refreshToken;
 		private static AutoResetEvent _waitHandle = new AutoResetEvent( true );
 
 		protected string AccountName { get; private set; }

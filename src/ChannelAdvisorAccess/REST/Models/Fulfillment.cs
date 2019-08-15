@@ -86,6 +86,10 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// </summary>
 		public bool HasShippingLabel { get; set; }
 		/// <summary>
+		/// The fulfilled items which comprise the fulfillment.
+		/// </summary>
+		public FulfillmentItem[] Items { get; set; }
+		/// <summary>
 		/// Reference to the order to which the fulfillment belongs.
 		/// </summary>
 		public Order Order { get; set; }
