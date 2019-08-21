@@ -26,7 +26,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected readonly RestCredentials _credentials;
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
-		private readonly int _requestTimeout = 5 * 60 * 1000;
+		private readonly int _requestTimeout = 10 * 60 * 1000;
 		protected readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
 		protected string _accessToken;
