@@ -54,11 +54,11 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 						if ( exception is HttpRequestException
 								|| exception is ChannelAdvisorUnauthorizedException )
-							caException = new ChannelAdvisorNetworkException( null, exception );
+							caException = new ChannelAdvisorNetworkException( exception.Message, exception );
 						else
 						{
 							if ( !( exception is ChannelAdvisorException ) )
-								caException = new ChannelAdvisorException( null, exception );
+								caException = new ChannelAdvisorException( exception.Message, exception );
 						}
 
 						throw caException;

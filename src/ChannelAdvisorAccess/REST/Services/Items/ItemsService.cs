@@ -974,7 +974,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				while ( responseFileUrl == null )
 				{
 					// wait 15 seconds and ask job status
-					await Task.Delay( 15 * 1000 );
+					await Task.Delay( 15 * 1000 ).ConfigureAwait( false );
 
 					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 
@@ -1006,7 +1006,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				var tooManyRequestsErrorCode = 429;
 
 				if ( channelAdvisorEx != null 
-						&& ( channelAdvisorEx.MessageCode == (int)HttpStatusCode.BadRequest || channelAdvisorEx.MessageCode == tooManyRequestsErrorCode ) )
+						&& ( channelAdvisorEx.MessageCode == (int)HttpStatusCode.BadRequest 
+							|| channelAdvisorEx.MessageCode == tooManyRequestsErrorCode 
+							|| channelAdvisorEx.MessageCode == (int)HttpStatusCode.InternalServerError ) )
 					throw new ChannelAdvisorProductExportUnavailableException( channelAdvisorEx.Message, channelAdvisorEx );
 
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
