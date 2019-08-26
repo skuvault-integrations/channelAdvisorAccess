@@ -144,5 +144,21 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			int totalSkusPages = (int)Math.Ceiling( (double) caCatalogSize / 100 );
 			Assert.IsTrue( sv.Elapsed.TotalSeconds < ( averageRequestProcessingTimeInSec * ( totalSkusPages * averageProductPageProcessingTimeInSec + caSkusQuantity.Count() + 1 ) / threadsNumber ) );
 		}
+
+		[ Test ]
+		public void DoLocationSyncWhenSkuVaultCatalogIsLarge()
+		{
+			int svCatalogSize = 50000;
+			List< InventoryItemSubmit > svProducts = new List< InventoryItemSubmit >();
+
+			for ( int i = 0; i < svCatalogSize; i++ )
+				svProducts.Add( new InventoryItemSubmit() { Sku = "testSku" + i.ToString(), WarehouseLocation = "01-AA-" + (i + 1).ToString() } );
+
+			var caSkus = base.LightWeightItemsService.DoSkusExist( svProducts.Select( item => item.Sku ) )
+										.Where( r => r.Result )
+										.Select( r => r.Sku );
+
+			base.LightWeightItemsService.SynchItems( svProducts.Where( pr => caSkus.Contains( pr.Sku ) ) );
+		}
 	}
 }

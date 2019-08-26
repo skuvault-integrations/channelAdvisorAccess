@@ -32,6 +32,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		private const int avgRequestHandlingTimeInSec = 5;
 		private const int estimateProductsExportProcessingTimeInSec = 120;
 		private const int productExportUsingTimeInSec = 60 * 10;
+		private const int productExportWaitTimeInSec = 15;
+
 		/// <summary>
 		///	Products cache
 		/// </summary>
@@ -140,7 +142,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 			foreach( var sku in skus )
 			{
-				var doesSkuExist = catalog.FirstOrDefault( catalogSku => catalogSku.Equals( sku.ToLower() ) ) != null;
+				var doesSkuExist = catalog.Contains( sku.ToLower() );
 				response.Add( new DoesSkuExistResponse() { Result = doesSkuExist, Sku = sku } );
 			}
 
@@ -974,7 +976,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				while ( responseFileUrl == null )
 				{
 					// wait 15 seconds and ask job status
-					await Task.Delay( 15 * 1000 ).ConfigureAwait( false );
+					await Task.Delay( productExportWaitTimeInSec * 1000 ).ConfigureAwait( false );
 
 					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 

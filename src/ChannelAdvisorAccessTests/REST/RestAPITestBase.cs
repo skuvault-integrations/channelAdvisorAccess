@@ -86,7 +86,7 @@ namespace ChannelAdvisorAccessTests.REST
 		{
 			var path = new Uri( Path.GetDirectoryName( Assembly.GetExecutingAssembly().CodeBase ) ).LocalPath;
 
-			using( var reader = new StreamReader( path + @"\..\..\rest-netherlands-credentials.csv" ) )
+			using( var reader = new StreamReader( path + @"\..\..\rest-credentials.csv" ) )
 			{
 				return new RestServiceCredentials
 				{
