@@ -478,6 +478,8 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="message">response message from server</param>
 		private async Task ThrowIfError( HttpResponseMessage response, string message )
 		{
+			var tooManyRequestsStatus = 429;
+
 			if ( response.IsSuccessStatusCode )
 				return;
 
@@ -492,7 +494,8 @@ namespace ChannelAdvisorAccess.REST.Services
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
 			else if ( response.StatusCode == HttpStatusCode.ServiceUnavailable
-					|| response.StatusCode == HttpStatusCode.InternalServerError )
+					|| response.StatusCode == HttpStatusCode.InternalServerError
+					|| (int)response.StatusCode == tooManyRequestsStatus )
 				throw new ChannelAdvisorNetworkException( message );
 			
 			throw new ChannelAdvisorException( (int)response.StatusCode, message );
