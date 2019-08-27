@@ -148,17 +148,21 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void DoLocationSyncWhenSkuVaultCatalogIsLarge()
 		{
-			int svCatalogSize = 50000;
+			var svCatalogSize = 50000;
+			var warehouseLocationPrefix = "01-AA-";
 			List< InventoryItemSubmit > svProducts = new List< InventoryItemSubmit >();
 
 			for ( int i = 0; i < svCatalogSize; i++ )
-				svProducts.Add( new InventoryItemSubmit() { Sku = "testSku" + i.ToString(), WarehouseLocation = "01-AA-" + (i + 1).ToString() } );
+				svProducts.Add( new InventoryItemSubmit() { Sku = "testSku" + i.ToString(), WarehouseLocation = warehouseLocationPrefix + (i + 1).ToString() } );
 
 			var caSkus = base.LightWeightItemsService.DoSkusExist( svProducts.Select( item => item.Sku ) )
 										.Where( r => r.Result )
 										.Select( r => r.Sku );
+			var commonSkus = svProducts.Where( pr => caSkus.Contains( pr.Sku ) );
+			base.LightWeightItemsService.SynchItems( commonSkus );
 
-			base.LightWeightItemsService.SynchItems( svProducts.Where( pr => caSkus.Contains( pr.Sku ) ) );
+			var commonSkusDetails = base.LightWeightItemsService.GetItems( commonSkus.Select( s => s.Sku ) );
+			Assert.IsTrue( commonSkusDetails.FirstOrDefault( d => d.WarehouseLocation == null || d.WarehouseLocation.IndexOf( warehouseLocationPrefix ) < 0 ) == null );
 		}
 	}
 }

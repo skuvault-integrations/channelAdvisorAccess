@@ -205,6 +205,21 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
+		public void GetItemsByPages()
+		{
+			var skus = new List< string >();
+			int pages = 10;
+			int pageSize = 100;
+
+			for ( int i = 1; i <= pages * pageSize; i++ )
+				skus.Add( "testSku" + i.ToString() );
+
+			var result = this.ItemsService.GetItems( skus );
+
+			result.Should().NotBeNullOrEmpty();
+		}
+
+		[ Test ]
 		public void GetFilteredNewSkus()
 		{
 			var filter = new ItemsFilter

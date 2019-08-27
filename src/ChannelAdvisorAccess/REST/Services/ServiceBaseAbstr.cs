@@ -37,7 +37,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected string AccountName { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
 		protected readonly ActionPolicy ActionPolicy = new ActionPolicy( 3 );
-		protected readonly Throttler Throttler = new Throttler( 5, 1, 10 );
+		protected readonly Throttler Throttler = new Throttler( 4, 1, 10 );
 
 		public string AccountId { get; private set; }
 		/// <summary>
@@ -482,7 +482,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				return;
 
 			if ( message == null )
-				message = await response.Content.ReadAsStringAsync();
+				message = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 
 			if ( response.StatusCode == HttpStatusCode.Unauthorized )
 			{
