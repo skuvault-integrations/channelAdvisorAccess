@@ -126,7 +126,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				try
 				{
 					var products = await this.ImportProducts( mark ).ConfigureAwait( false );
-					catalog.AddRange( products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) ).Select( pr => pr.Sku.ToLower() ) );
+					catalog.AddRange( products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) ).Select( pr => pr.Sku ) );
 				}
 				catch( ChannelAdvisorProductExportUnavailableException )
 				{
@@ -392,42 +392,28 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus, Mark mark = null )
 		{
+			skus = skus.Select( sku => sku.ToLower() );
 			var items = new List< InventoryItemResponse >();
 
 			if ( skus.Count() == 0 )
 				return items;
 
-			int totalProductsNumber = await this.GetCatalogSize( mark );
-			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSizeDefault );
-			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
-			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests ;
+			var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
+			Parallel.For( 0, skus.Count(), options, skuIndex =>
+			{
+				string sku = skus.ElementAt( skuIndex );
 
-			if ( estimateRequestPerSkuTotalProcessingTimeInSec > estimateRequestPerPageTotalProcessingTimeInSec )
-			{
-				// pull catalog from CA side page by page
-				var result = await this.GetProducts( String.Empty, mark ).ConfigureAwait( false );
-				skus = skus.Select( sku => sku.ToLower() );
-				return result.Response.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) && skus.Contains( pr.Sku.ToLower() ) ).Select( pr => pr.ToInventoryItemResponse() );
-			}
-			else
-			{
-				var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
-				Parallel.For( 0, skus.Count(), options, skuIndex =>
+				if ( !string.IsNullOrEmpty( sku ) )
 				{
-					string sku = skus.ElementAt( skuIndex );
+					var product = this.GetProductBySku( sku, mark ).GetAwaiter().GetResult();
 
-					if ( !string.IsNullOrEmpty( sku ) )
+					if ( product != null )
 					{
-						var product = this.GetProductBySku( sku, mark ).GetAwaiter().GetResult();
-
-						if ( product != null )
-						{
-							lock ( items )
-								items.Add( product.ToInventoryItemResponse() );
-						}
+						lock ( items )
+							items.Add( product.ToInventoryItemResponse() );
 					}
-				});
-			}
+				}
+			});
 
 			return items;
 		}
@@ -928,7 +914,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				foreach( var product in result.Response )
 				{
 					if ( !string.IsNullOrEmpty( product.Sku ) )
-						_productsCache.TryAdd( product.Sku, product );
+						_productsCache.TryAdd( product.Sku.ToLower(), product );
 				}
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
@@ -1046,7 +1032,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 								csvReader.Configuration.HasHeaderRecord = true;
 								csvReader.Configuration.Delimiter = "\t";
 
-								return csvReader.GetRecords< ProductExportRow >().Select( row => new Product() { ID = row.ID, Sku = row.Sku } ).ToArray();
+								return csvReader.GetRecords< ProductExportRow >().Select( row => new Product() { ID = row.ID, Sku = row.Sku.ToLower() } ).ToArray();
 							}
 						}
 					}
