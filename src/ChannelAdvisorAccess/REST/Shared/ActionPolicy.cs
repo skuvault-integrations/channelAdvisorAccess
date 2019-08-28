@@ -29,15 +29,15 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// <param name="funcToThrottle"></param>
 		/// <param name="onRetryAttempt">Retry attempts</param>
 		/// <returns></returns>
-		public Task< TResult > ExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle, Action< TimeSpan, int > onRetryAttempt )
+		public Task< TResult > ExecuteAsync< TResult >( Func< Task< TResult > > funcToThrottle, Action< Exception, TimeSpan, int > onRetryAttempt )
 		{
 			return Policy.Handle< ChannelAdvisorNetworkException >()
 				.WaitAndRetryAsync( this._retryAttempts,
 					retryAttempt => TimeSpan.FromSeconds( Math.Pow( 2, retryAttempt ) ),
-					( entityRaw, timeSpan, retryCount, context ) =>
+					( exception, timeSpan, retryCount, context ) =>
 					{
 						if ( onRetryAttempt != null )
-							onRetryAttempt.Invoke( timeSpan, retryCount );
+							onRetryAttempt.Invoke( exception, timeSpan, retryCount );
 					})
 				.ExecuteAsync( async () =>
 				{
