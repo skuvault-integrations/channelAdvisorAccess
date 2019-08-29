@@ -205,6 +205,16 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
+		public void GetItemWithSingleQuoteInName()
+		{
+			var testSku = "AEROPOSTALE NY WOMEN'S JUNIORS ZIP HOODIE HOODED S";
+
+			var result = this.ItemsService.GetItems( new[] { testSku } );
+
+			result.Should().NotBeNullOrEmpty();
+		}
+
+		[ Test ]
 		public void GetItemsByPages()
 		{
 			var skus = new List< string >();

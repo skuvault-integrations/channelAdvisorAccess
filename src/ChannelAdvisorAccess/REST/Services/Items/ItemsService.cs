@@ -869,13 +869,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			if ( _productsCache.TryGetValue( sku, out cachedProduct ) )
 				return cachedProduct;
 
-			var filter = String.Format( "$filter=sku eq '{0}'", Uri.EscapeDataString( sku ) );
+			// following OData 4.0 specification single quote char should be represented as two single quotes
+			var filter = String.Format( "$filter=sku eq '{0}'", Uri.EscapeDataString( sku.Replace( "'", "''" ) ) );
 
 			var result = await this.GetProducts( filter, mark ).ConfigureAwait( false );
-			// CA search case insensitive
-			var product = result.Response.FirstOrDefault( pr => pr.Sku != null && pr.Sku.Equals( sku, StringComparison.InvariantCulture ) );
-
-			return product;
+			return result.Response.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
 		/// <summary>
