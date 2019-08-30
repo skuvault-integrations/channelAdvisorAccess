@@ -249,13 +249,13 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 				// If you get message code = 1 (Unexpected)
 				if( results.GetOrderListResult.MessageCode == 1 )
-					resultData = await this.HandleErrorUnexpectedAsync( orderCriteria ).ConfigureAwait( false );
+					resultData = await this.HandleErrorUnexpectedAsync( mark, orderCriteria ).ConfigureAwait( false );
 
 				return resultData;
 			} ).ConfigureAwait( false );
 		}
 
-		private async Task< OrderResponseItem[] > HandleErrorUnexpectedAsync( OrderCriteria orderCriteria, [ CallerMemberName ] string callerMemberName = "" )
+		private async Task< OrderResponseItem[] > HandleErrorUnexpectedAsync( Mark mark, OrderCriteria orderCriteria, [ CallerMemberName ] string callerMemberName = "" )
 		{
 			var result = new List< OrderResponseItem >();
 			var prevPageSize = orderCriteria.PageSize;
@@ -268,7 +268,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 				var numberAttempt = 0;
 				while( numberAttempt < MaxUnexpectedAttempt )
 				{
+					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 					var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : answer.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 					if( answer.GetOrderListResult.Status == ResultStatus.Success )
 					{
 						result.AddRange( answer.GetOrderListResult.ResultData );
