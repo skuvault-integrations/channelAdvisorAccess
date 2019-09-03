@@ -29,6 +29,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly int _requestTimeout = 10 * 60 * 1000;
 		protected readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
+		private readonly int _batchSize = 100;
 		protected string _accessToken;
 		private DateTime _accessTokenExpiredUtc;
 		protected readonly string _refreshToken;
@@ -38,6 +39,8 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected HttpClient HttpClient { get; private set; }
 		protected readonly ActionPolicy ActionPolicy = new ActionPolicy( 3 );
 		protected readonly Throttler Throttler = new Throttler( 4, 1, 10 );
+		// max 2 000 requests per minute each batch can include 100 requests
+		protected readonly Throttler BatchThrottler = new Throttler( 1, 3, 10 );
 
 		public string AccountId { get; private set; }
 		/// <summary>
@@ -466,13 +469,13 @@ namespace ChannelAdvisorAccess.REST.Services
 					using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
 					{
 						var payload = JsonConvert.SerializeObject( data );
-						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo() ) );
-
 						var content = new StringContent( payload, Encoding.UTF8, "application/json" );
-						var httpResponse = await this.HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token );
+						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo() ) );
+							
+						var httpResponse = await HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token ).ConfigureAwait( false );
 
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo() ) );
-
+							
 						await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
 
 						return httpResponse.StatusCode;
@@ -486,33 +489,112 @@ namespace ChannelAdvisorAccess.REST.Services
 		}
 
 		/// <summary>
+		///	Do batch request
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="batch"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		protected async Task < T[] > DoBatch< T >( BatchBuilder batch, Mark mark = null )
+		{
+			var result = new List< T >();
+
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			var batches = batch.Split( this._batchSize );
+
+			foreach( var batchPart in batches )
+			{
+				result.AddRange( await DoPartialBatch< T >( batchPart, mark ).ConfigureAwait( false ) );
+			}
+
+			return result.ToArray();
+		}
+
+		/// <summary>
+		///	Do batch request
+		/// </summary>
+		/// <param name="payload"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark = null )
+		{
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			var url = ChannelAdvisorEndPoint.BatchUrl;
+
+			return this.BatchThrottler.ExecuteAsync( () => {
+				return this.ActionPolicy.ExecuteAsync( async () =>
+				{
+					using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+					{
+						var entities = new List< T >();
+						string content = null;
+						var multiPartContent = batch.Build();
+						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batch.ToString(), additionalInfo : this.AdditionalLogInfo() ) );
+							
+						var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multiPartContent, cancellationTokenSource.Token ).ConfigureAwait( false );
+
+						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo() ) );
+							
+						await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
+
+						if ( httpResponse.IsSuccessStatusCode )
+						{
+							content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+							int batchStatusCode;
+							entities.AddRange( new MultiPartResponseParser().Parse< T >( content, out batchStatusCode ) );
+							await this.ThrowIfError( batchStatusCode, null );
+						}
+
+						return entities.ToArray();
+					}
+				}, 
+				( exception, timeSpan, retryAttempt ) => { 
+					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
+					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed due to {0} trying repeat call {1} time, waited {2} seconds. Details: {3}", exception, retryAttempt, timeSpan.Seconds, retryDetails ) );
+				} );
+			});
+		}
+
+		/// <summary>
 		///	Validate server response
 		/// </summary>
 		/// <param name="response"></param>
 		/// <param name="message">response message from server</param>
 		private async Task ThrowIfError( HttpResponseMessage response, string message )
 		{
-			var tooManyRequestsStatus = 429;
-
 			if ( response.IsSuccessStatusCode )
 				return;
 
 			if ( message == null )
 				message = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 
-			if ( response.StatusCode == HttpStatusCode.Unauthorized )
+			await ThrowIfError( (int)response.StatusCode, message ).ConfigureAwait( false );
+		}
+
+		private async Task ThrowIfError( int responseStatusCode, string message )
+		{
+			var tooManyRequestsStatus = 429;
+
+			if ( responseStatusCode >= 200 && responseStatusCode < 300 )
+				return;
+
+			if ( responseStatusCode == (int)HttpStatusCode.Unauthorized )
 			{
 				// we have to refresh our access token
 				await this.RefreshAccessToken().ConfigureAwait( false );
 
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
-			else if ( response.StatusCode == HttpStatusCode.ServiceUnavailable
-					|| response.StatusCode == HttpStatusCode.InternalServerError
-					|| (int)response.StatusCode == tooManyRequestsStatus )
+			else if ( responseStatusCode == (int)HttpStatusCode.ServiceUnavailable
+					|| responseStatusCode == (int)HttpStatusCode.InternalServerError
+					|| responseStatusCode == tooManyRequestsStatus )
 				throw new ChannelAdvisorNetworkException( message );
 			
-			throw new ChannelAdvisorException( (int)response.StatusCode, message );
+			throw new ChannelAdvisorException( responseStatusCode, message );
 		}
 
 		/// <summary>

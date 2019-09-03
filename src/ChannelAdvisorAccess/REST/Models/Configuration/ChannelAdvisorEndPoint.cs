@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChannelAdvisorAccess.REST.Models.Configuration
+﻿namespace ChannelAdvisorAccess.REST.Models.Configuration
 {
 	public class ChannelAdvisorEndPoint
 	{
@@ -13,5 +7,6 @@ namespace ChannelAdvisorAccess.REST.Models.Configuration
 		public static readonly string ProductsUrl = "v1/Products";
 		public static readonly string DistributionCentersUrl = "v1/DistributionCenters";
 		public static readonly string ProductExportUrl = "v1/ProductExport";
+		public static readonly string BatchUrl = "/v1/$batch";
 	}
 }

@@ -209,6 +209,9 @@
     <Compile Include="REST\Models\Infrastructure\ProductExportResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportRow.cs" />
     <Compile Include="REST\Shared\ActionPolicy.cs" />
+    <Compile Include="REST\Shared\BatchBuilder.cs" />
+    <Compile Include="REST\Shared\MultiPartResponseParser.cs" />
+    <Compile Include="REST\Shared\ServiceUrlBuilder.cs" />
     <Compile Include="REST\Shared\SoapAdapter.cs" />
     <Compile Include="REST\Models\DistributionCenter.cs" />
     <Compile Include="REST\Models\Product.cs" />

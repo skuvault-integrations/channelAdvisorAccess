@@ -20,6 +20,7 @@ using System.Text;
 using CsvHelper;
 using System.Collections.Concurrent;
 using System.Net;
+using System.Globalization;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
 {
@@ -33,16 +34,6 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		private const int estimateProductsExportProcessingTimeInSec = 120;
 		private const int productExportUsingTimeInSec = 60 * 10;
 		private const int productExportWaitTimeInSec = 15;
-
-		/// <summary>
-		///	Products cache
-		/// </summary>
-		private ConcurrentDictionary< string, Product > _productsCache = new ConcurrentDictionary< string, Product >();
-		private ConcurrentDictionary< string, int > _productsIdCache = new ConcurrentDictionary< string, int >();
-		/// <summary>
-		///  Distribution centers cache
-		/// </summary>
-		private ConcurrentDictionary< string, DistributionCenter > _distributionCentersCache = new ConcurrentDictionary< string, DistributionCenter >();
 
 		/// <summary>
 		///	Rest items service with standard authorization flow
@@ -72,7 +63,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< bool > DoesSkuExistAsync( string sku, Mark mark = null )
 		{
-			return await this.GetProductBySku( sku, mark ).ConfigureAwait( false ) != null;
+			return await this.GetProductWithIdOnlyBySku( sku, mark ).ConfigureAwait( false ) != null;
 		}
 
 		/// <summary>
@@ -83,7 +74,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public bool DoesSkuExist( string sku, Mark mark = null )
 		{
-			return this.DoesSkuExistAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.DoesSkuExistAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -94,7 +85,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, Mark mark = null )
 		{
-			return this.DoSkusExistAsync( skus, mark ).GetAwaiter().GetResult();
+			return this.DoSkusExistAsync( skus, mark ).Result;
 		}
 
 		/// <summary>
@@ -115,45 +106,53 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSizeDefault );
 			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
 			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
-			bool isProductExportFeatureUsed = false;
-			bool isProductExportFeatureAvailable = true;
 			
 			// check skus existance directly by sku or pulling the whole catalog by page took more than 10 minutes, we use product export feature in this case
 			if ( Math.Min( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerPageTotalProcessingTimeInSec ) >= productExportUsingTimeInSec )
 			{
-				isProductExportFeatureUsed = true;
-
 				try
 				{
 					var products = await this.ImportProducts( mark ).ConfigureAwait( false );
-					catalog.AddRange( products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) ).Select( pr => pr.Sku ) );
+					catalog.AddRange( products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) ).Select( pr => pr.Sku.ToLower() ) );
+
+					foreach( var sku in skus )
+					{
+						var doesSkuExist = catalog.Contains( sku.ToLower() );
+						response.Add( new DoesSkuExistResponse() { Result = doesSkuExist, Sku = sku } );
+					}
+
+					return response;
 				}
-				catch( ChannelAdvisorProductExportUnavailableException )
-				{
-					isProductExportFeatureAvailable = false;
-				}
+				catch( ChannelAdvisorProductExportUnavailableException ) { }
 			}
-			
-			if ( !isProductExportFeatureUsed || !isProductExportFeatureAvailable )
-			{
-				var products = await GetSkusAsync( skus, mark ).ConfigureAwait( false );
-				catalog.AddRange( products );
-			}
+
+			var existingProducts = await this.GetProductsWithIdOnly( skus, mark ).ConfigureAwait( false );
+			var existingSkus = existingProducts.Select( pr => pr.Sku.ToLower() );
 
 			foreach( var sku in skus )
 			{
-				var doesSkuExist = catalog.Contains( sku.ToLower() );
+				var doesSkuExist = existingSkus.Contains( sku.ToLower() );
 				response.Add( new DoesSkuExistResponse() { Result = doesSkuExist, Sku = sku } );
 			}
 
 			return response;
 		}
 
-		private async Task< IEnumerable< string > > GetSkusAsync( IEnumerable< string > skus, Mark mark = null )
+		private async Task< IEnumerable< Product > > GetProductsWithIdOnly( IEnumerable< string > skus, Mark mark )
 		{
-			var items = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
-			return items.Where( item => !string.IsNullOrWhiteSpace( item.Sku ) ).Select( item => item.Sku.ToLower() );
+			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
+			var urlBuilder = new ItemsServiceUrlBuilder();
+
+			foreach( var sku in skus )
+			{
+				batchBuilder.AddGetRequest( urlBuilder.GetProductWithIdOnlyBySkuUrl( sku ) );
+			}
+
+			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark ).ConfigureAwait( false );
+
+			return productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First() );
 		}
+
 
 		/// <summary>
 		///	Gets all items from stock
@@ -162,7 +161,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public IEnumerable< InventoryItemResponse > GetAllItems( Mark mark = null )
 		{
-			return this.GetAllItemsAsync( mark ).GetAwaiter().GetResult();
+			return this.GetAllItemsAsync( mark ).Result;
 		}
 
 		/// <summary>
@@ -172,7 +171,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable < InventoryItemResponse > > GetAllItemsAsync( Mark mark = null )
 		{
-			var result = await this.GetProducts( null, mark ).ConfigureAwait( false );
+			var result = await this.GetProductsWithAllProperties( null, mark ).ConfigureAwait( false );
 
 			return result.Response.Select( product => product.ToInventoryItemResponse() );
 		}
@@ -184,7 +183,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public IEnumerable< string > GetAllSkus( Mark mark = null )
 		{
-			return this.GetAllSkusAsync( mark ).GetAwaiter().GetResult();
+			return this.GetAllSkusAsync( mark ).Result;
 		}
 
 		/// <summary>
@@ -194,9 +193,22 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< string > > GetAllSkusAsync( Mark mark = null )
 		{
-			var products = await this.GetAllItemsAsync( mark ).ConfigureAwait( false );
+			var skus = new List< string >();
+			int pageNumber = 0;
 
-			return products.Select( product => product.Sku ).ToArray();
+			while (true)
+			{
+				var url = new ItemsServiceUrlBuilder().GetProductsUrl( "", "ID,Sku", null );
+				var page = await this.GetProducts( url, mark, pageNumber ).ConfigureAwait( false );
+				skus.AddRange( page.Response.Select( pr => pr.Sku ) );
+
+				if ( page.AllPagesQueried )
+					break;
+
+				pageNumber++;
+			}
+
+			return skus;
 		}
 
 		/// <summary>
@@ -208,11 +220,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark = null, int delatInMs = 5000 )
 		{
-			return this.GetAvailableQuantitiesAsync( skus, mark ).GetAwaiter().GetResult();
+			return this.GetAvailableQuantitiesAsync( skus, mark ).Result;
 		}
 
 		/// <summary>
-		///	Gets available quantity asynchronously for each sku
+		///	Returns skus available quantity
 		/// </summary>
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
@@ -220,17 +232,23 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, Mark mark = null )
 		{
 			var inventoryQuantity = new List< InventoryQuantityResponse >();
+			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
+			var urlBuilder = new ItemsServiceUrlBuilder();
 
-			var products = await this.GetItemsAsync( skus, mark ).ConfigureAwait( false );
+			var urls = skus.Select( s => urlBuilder.GetProductWithQuantityOnlyBySkuUrl( s ) );
+			batchBuilder.AddGetRequests( urls );
+
+			var responses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark ).ConfigureAwait( false );
+			var skusQuantities = responses.Where( r => r.Value.Length > 0 ).Select( r => r.Value.FirstOrDefault() );
 
 			foreach( var sku in skus )
 			{
-				var product = products.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
+				var product = skusQuantities.FirstOrDefault( sq => sq.Sku.ToLower().Equals( sku.ToLower() ) );
 
 				if ( product == null )
 					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, MessageCode = 113, Message = String.Format( "The specified SKU {0} does not exist", sku ) });
 				else
-					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, Quantity = product.Quantity.Available });
+					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, Quantity = product.TotalAvailableQuantity });
 			}
 
 			return inventoryQuantity.ToArray();
@@ -244,7 +262,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public int GetAvailableQuantity( string sku, Mark mark = null )
 		{
-			return this.GetAvailableQuantityAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.GetAvailableQuantityAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -255,14 +273,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< int > GetAvailableQuantityAsync( string sku, Mark mark = null )
 		{
-			var quantity = 0;
-
-			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithQuantityOnlyBySku( sku, mark ).ConfigureAwait( false );
 
 			if ( product != null )
-				quantity = product.TotalAvailableQuantity;
+				return product.TotalAvailableQuantity;
 
-			return quantity;
+			return 0;
 		}
 
 		/// <summary>
@@ -272,7 +288,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public DistributionCenterResponse[] GetDistributionCenterList( Mark mark = null )
 		{
-			return this.GetDistributionCenterListAsync( mark ).GetAwaiter().GetResult();
+			return this.GetDistributionCenterListAsync( mark ).Result;
 		}
 
 		/// <summary>
@@ -282,13 +298,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( Mark mark = null )
 		{
-			var distributionCenters = new List< DistributionCenterResponse >();
-
 			var response = await this.GetDistributionCentersAsync( mark ).ConfigureAwait( false );
-
-			distributionCenters.AddRange( response.Select( dc => dc.ToDistributionCenterResponse() ) );
-			
-			return distributionCenters.ToArray();
+			return response.Select( dc => dc.ToDistributionCenterResponse() ).ToArray();
 		}
 
 		/// <summary>
@@ -306,18 +317,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-
 				var result = await base.GetResponseAsync< DistributionCenter >( ChannelAdvisorEndPoint.DistributionCentersUrl, mark );
-
 				distributionCenters.AddRange( result.Response.Where( dc => !dc.IsDeleted ) );
-
-				// add to cache
-				foreach( var dc in distributionCenters )
-					_distributionCentersCache.TryAdd( dc.Code, dc );
-
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenters.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 			}
-			catch(Exception exception)
+			catch( Exception exception )
 			{
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo()), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
@@ -335,12 +339,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< DistributionCenter > GetDistributionCenterAsync( string code, Mark mark )
 		{
-			DistributionCenter distributionCenterCached;
-			if ( _distributionCentersCache.TryGetValue( code, out distributionCenterCached ) )
-				return distributionCenterCached;
-
-			var distributionCenters = await GetDistributionCentersAsync( mark );
-
+			var distributionCenters = await GetDistributionCentersAsync( mark ).ConfigureAwait( false );
 			return distributionCenters.FirstOrDefault( dc => dc.Code.ToLower().Equals( code.ToLower() ) );
 		}
 
@@ -352,7 +351,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public QuantityInfoResponse GetItemQuantities( string sku, Mark mark = null )
 		{
-			return this.GetItemQuantitiesAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.GetItemQuantitiesAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -363,14 +362,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, Mark mark = null )
 		{
-			QuantityInfoResponse qualityInfo = null;
-
 			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait ( false );
 
 			if ( product != null )
-				qualityInfo = product.ToQuantityInfoResponse();
+				return product.ToQuantityInfoResponse();
 
-			return qualityInfo;
+			return null;
 		}
 
 		/// <summary>
@@ -381,7 +378,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, Mark mark = null )
 		{
-			return this.GetItemsAsync( skus, mark ).GetAwaiter().GetResult();
+			return this.GetItemsAsync( skus, mark ).Result;
 		}
 
 		/// <summary>
@@ -392,30 +389,17 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus, Mark mark = null )
 		{
-			skus = skus.Select( sku => sku.ToLower() );
-			var items = new List< InventoryItemResponse >();
+			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
+			var urlBuilder = new ItemsServiceUrlBuilder();
 
-			if ( skus.Count() == 0 )
-				return items;
-
-			var options = new ParallelOptions() {  MaxDegreeOfParallelism = this._maxConcurrentRequests };
-			Parallel.For( 0, skus.Count(), options, skuIndex =>
+			foreach( var sku in skus )
 			{
-				string sku = skus.ElementAt( skuIndex );
+				batchBuilder.AddGetRequest( urlBuilder.GetProductBySkuUrl( sku, null, null ) );
+			}
 
-				if ( !string.IsNullOrEmpty( sku ) )
-				{
-					var product = this.GetProductBySku( sku, mark ).GetAwaiter().GetResult();
+			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark ).ConfigureAwait( false );
 
-					if ( product != null )
-					{
-						lock ( items )
-							items.Add( product.ToInventoryItemResponse() );
-					}
-				}
-			});
-
-			return items;
+			return productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First().ToInventoryItemResponse() );
 		}
 
 		/// <summary>
@@ -439,13 +423,13 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			Condition.Requires( itemQuantityAndPrice ).IsNotNull();
 			Condition.Requires( itemQuantityAndPrice.Quantity ).IsNotNull();
 
-			int? productId = await this.GetProductIdBySku( itemQuantityAndPrice.Sku, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithIdOnlyBySku( itemQuantityAndPrice.Sku, mark ).ConfigureAwait( false );
 
-			if ( productId != null )
+			if ( product != null )
 			{
 				var distributionCenter = await this.GetDistributionCenterAsync( itemQuantityAndPrice.DistributionCenterCode, mark );
 
-				if (distributionCenter != null)
+				if (distributionCenter != null && !distributionCenter.IsExternallyManaged ) // cannot update quantity on externally managed warehouse
 				{
 					var request = new UpdateQuantityRequest()
 					{
@@ -455,15 +439,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 					try
 					{
-						var url = String.Format( "{0}({1})/UpdateQuantity", ChannelAdvisorEndPoint.ProductsUrl, productId.Value );
+						var url = new ItemsServiceUrlBuilder().GetUpdateProductQuantityUrl( product.ID );
 						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo() ) );
 						await base.PostAsync( url, new { Value = request }, mark ).ConfigureAwait( false );
 						
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: request.ToJson(), additionalInfo : this.AdditionalLogInfo()) );
-						
-						// invalidate cache
-						Product removedCachedProduct;
-						_productsCache.TryRemove( itemQuantityAndPrice.Sku, out removedCachedProduct );
 					}
 					catch( Exception exception )
 					{
@@ -493,14 +473,35 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark = null )
 		{
-			await RefreshProductsIdCacheIfRequired( itemQuantityAndPrices.Count(), mark ).ConfigureAwait( false );
+			var distributionCenters = await this.GetDistributionCentersAsync( mark ).ConfigureAwait( false );
+			var products = await this.GetProductsWithIdOnly( itemQuantityAndPrices.Select( iq => iq.Sku ), mark ).ConfigureAwait( false );
+			var batch = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
+			var urlBuilder = new ItemsServiceUrlBuilder();
 
-			var options = new ParallelOptions() {  MaxDegreeOfParallelism = base._maxConcurrentRequests };
-			Parallel.For( 0, itemQuantityAndPrices.Count(), options, itemIndex =>
+			foreach( var itemQuantity in itemQuantityAndPrices )
 			{
-				var item = itemQuantityAndPrices.ElementAt( itemIndex );
-				this.UpdateQuantityAndPriceAsync( item, mark ).GetAwaiter().GetResult();
-			} );
+				var product = products.FirstOrDefault( pr => pr.Sku.ToLower().Equals( itemQuantity.Sku.ToLower() ) );
+
+				if ( product == null )
+					continue;
+
+				var distributionCenter = distributionCenters.FirstOrDefault( dc => dc.Code.ToLower().Equals( itemQuantity.DistributionCenterCode.ToLower() ) );
+
+				if ( distributionCenter == null )
+					continue;
+
+				var url = urlBuilder.GetUpdateProductQuantityUrl( product.ID );
+
+				var request = new UpdateQuantityRequest()
+				{
+					UpdateType = itemQuantity.UpdateType,
+					Updates = new UpdateQuantityDC[] { new UpdateQuantityDC() { DistributionCenterID = distributionCenter.ID, Quantity = itemQuantity.Quantity.Value } }
+				};
+				
+				batch.AddPostRequest( url, new { Value = request }.ToJson() );
+			}
+
+			await base.DoBatch< ODataResponse <Product> >( batch, mark ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -511,7 +512,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public StoreInfo GetStoreInfo( string sku, Mark mark = null )
 		{
-			return this.GetStoreInfoAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.GetStoreInfoAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -522,7 +523,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public DistributionCenterInfoResponse[] GetShippingInfo( string sku, Mark mark = null )
 		{
-			return this.GetShippingInfoAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.GetShippingInfoAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -534,7 +535,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, Mark mark = null )
 		{
 			var response = new List< DistributionCenterInfoResponse >();
-			var product = await this.GetProductBySku( sku, mark );
+			var product = await this.GetProductWithQuantityOnlyBySku( sku, mark ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
@@ -547,10 +548,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 					if ( distributionCenter != null )
 					{
 						response.Add( new DistributionCenterInfoResponse()
-									{
-										AvailableQuantity = dcQuantity.AvailableQuantity,
-										DistributionCenterCode = distributionCenter.Code
-									} );
+						{
+							AvailableQuantity = dcQuantity.AvailableQuantity,
+							DistributionCenterCode = distributionCenter.Code
+						} );
 					}
 				}
 			}
@@ -566,13 +567,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< StoreInfo > GetStoreInfoAsync( string sku, Mark mark = null )
 		{
-			StoreInfo storeInfo = null;
-
-			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithStoreInfoOnlyBySku( sku, mark ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
-				storeInfo = new StoreInfo()
+				return new StoreInfo()
 				{
 					 Title = product.StoreTitle,
 					 Description = product.StoreDescription,
@@ -580,7 +579,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				};
 			}
 
-			return storeInfo;
+			return null;
 		}
 
 		/// <summary>
@@ -591,7 +590,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public AttributeInfo[] GetAttributes( string sku, Mark mark = null )
 		{
-			return this.GetAttributesAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.GetAttributesAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -604,7 +603,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			var attributes = new List< AttributeInfo >();
 
-			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithAttributesOnlyBySku( sku, mark ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
@@ -629,7 +628,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public VariationInfo GetVariationInfo( string sku, Mark mark = null )
 		{
-			return this.GetVariationInfoAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.GetVariationInfoAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -640,13 +639,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< VariationInfo > GetVariationInfoAsync( string sku, Mark mark = null )
 		{
-			VariationInfo variationInfo = null;
-
-			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithVariationInfoOnlyBySku( sku, mark ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
-				variationInfo = new VariationInfo()
+				var variationInfo = new VariationInfo()
 				{
 					 IsInRelationship = product.IsInRelationship,
 					 IsParent = product.IsParent,
@@ -660,9 +657,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 					if ( parentProduct != null )
 						variationInfo.ParentSku = parentProduct.Sku;
 				}
+
+				return variationInfo;
 			}
 
-			return variationInfo;
+			return null;
 		}
 
 		/// <summary>
@@ -673,7 +672,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public ImageInfoResponse[] GetImageList( string sku, Mark mark = null )
 		{
-			return this.GetImageListAsync( sku, mark ).GetAwaiter().GetResult();
+			return this.GetImageListAsync( sku, mark ).Result;
 		}
 
 		/// <summary>
@@ -685,7 +684,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark = null )
 		{
 			var productImages = new List< ImageInfoResponse >();
-			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
+			var product = await this.GetProductBySku( sku, "ID,Sku,Images", "Images", mark ).ConfigureAwait( false );
 
 			if ( product != null && product.Images != null )
 			{
@@ -708,7 +707,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark = null )
 		{
-			return this.GetFilteredItemsAsync( filter, mark ).GetAwaiter().GetResult();
+			return this.GetFilteredItemsAsync( filter, mark ).Result;
 		}
 
 		/// <summary>
@@ -735,9 +734,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int pageNumber, int pageLimit = pageSizeDefault, Mark mark = null )
 		{
 			var inventoryItems = new List< InventoryItemResponse >();
-			var filterParam = this.GetFilter( filter );
+			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, null, null );
 
-			var result = await this.GetProducts( filterParam, mark, pageNumber: pageNumber, pageSize: pageLimit ).ConfigureAwait( false );
+			var result = await this.GetProducts( url, mark, pageNumber: pageNumber, pageSize: pageLimit ).ConfigureAwait( false );
 
 			foreach( var product in result.Response )
 				inventoryItems.Add( product.ToInventoryItemResponse() );
@@ -753,7 +752,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter, Mark mark = null )
 		{
-			return this.GetFilteredSkusAsync( filter, mark ).GetAwaiter().GetResult();
+			return this.GetFilteredSkusAsync( filter, mark ).Result;
 		}
 
 		/// <summary>
@@ -764,9 +763,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark = null )
 		{
-			var pagedResponse = await this.GetFilteredSkusAsync( filter, 0, pageSizeDefault, mark ).ConfigureAwait( false );
-
-			return pagedResponse.Response;
+			return ( await this.GetFilteredSkusAsync( filter, 0, pageSizeDefault, mark ).ConfigureAwait( false ) ).Response;
 		}
 
 		/// <summary>
@@ -779,9 +776,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null )
 		{
-			var result = await this.GetFilteredItemsAsync( filter, startPage, pageLimit, mark ).ConfigureAwait( false );
+			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, "ID,Sku", null );
+			var result = await this.GetProducts( url, mark, pageNumber: startPage, pageSize: pageLimit ).ConfigureAwait( false );
 
-			return new PagedApiResponse< string >( result.Response.Select( item => item.Sku ).ToArray(), result.FinalPageNumber, result.AllPagesQueried );
+			return new PagedApiResponse< string >( result.Response.Select( item => item.Sku ), result.FinalPageNumber, result.AllPagesQueried );
 		}
 		
 		/// <summary>
@@ -804,22 +802,19 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null )
 		{
-			int? productId = await this.GetProductIdBySku( item.Sku, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithIdOnlyBySku( item.Sku, mark ).ConfigureAwait( false );
 
-			if ( productId == null )
+			if ( product == null )
 				return;
 
-			var request = this.GetUpdateFields( item );
+			var request = this.GetUpdateProductFieldsRequest( item );
 
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-				var url = String.Format( "{0}({1})", ChannelAdvisorEndPoint.ProductsUrl, productId.Value );
+				var url = new ItemsServiceUrlBuilder().GetUpdateProductUrl( product.ID );
 				await base.PutAsync( url, request ).ConfigureAwait( false );
-
-				Product removedCachedProduct;
-				_productsCache.TryRemove( item.Sku, out removedCachedProduct );
 						
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : string.Empty, additionalInfo : this.AdditionalLogInfo()) );
 			}
@@ -839,7 +834,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="mark"></param>
 		public void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null )
 		{
-			this.SynchItemsAsync( items, isCreateNew, mark ).GetAwaiter().GetResult();
+			SynchItemsAsync( items, isCreateNew, mark ).GetAwaiter().GetResult();
 		}
 
 		/// <summary>
@@ -851,69 +846,202 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null )
 		{
-			await RefreshProductsIdCacheIfRequired( items.Count(), mark ).ConfigureAwait( false );
-
+			var products = await this.GetProductsWithIdOnly( items.Select( i => i.Sku ), mark ).ConfigureAwait( false );
+			var batch = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
+			var urlBuilder = new ItemsServiceUrlBuilder();
+			
 			foreach( var item in items )
-				await this.SynchItemAsync( item, isCreateNew, mark ).ConfigureAwait( false );
+			{
+				var product = products.FirstOrDefault( pr => pr.Sku.ToLower().Equals( item.Sku.ToLower() ) );
+
+				if ( product == null )
+					continue;
+
+				var url = urlBuilder.GetUpdateProductUrl( product.ID );
+				var payload = GetUpdateProductFieldsRequest( item );
+				batch.AddPutRequest( url, payload.ToJson() );
+			}
+
+			await base.DoBatch< ODataResponse< Product > >( batch, mark ).ConfigureAwait( false );
 		}
 
 		/// <summary>
-		///	Gets product by sku asynchronously
+		///	Search product by sku
 		/// </summary>
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private async Task< Product > GetProductBySku( string sku, Mark mark )
+		private Task< Product > GetProductBySku( string sku, Mark mark )
 		{
-			Product cachedProduct;
-			if ( _productsCache.TryGetValue( sku, out cachedProduct ) )
-				return cachedProduct;
+			return this.GetProductBySku( sku, null, null, mark );
+		}
 
-			// following OData 4.0 specification single quote char should be represented as two single quotes
-			var filter = String.Format( "$filter=sku eq '{0}'", Uri.EscapeDataString( sku.Replace( "'", "''" ) ) );
+		/// <summary>
+		///	Search product by sku and limit properties by id
+		/// </summary>
+		/// <param name="sku"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private Task< Product > GetProductWithIdOnlyBySku( string sku, Mark mark )
+		{
+			var url = new ItemsServiceUrlBuilder().GetProductWithIdOnlyBySkuUrl( sku );
+			return this.GetProductBySku( sku, url, mark );
+		}
 
-			var result = await this.GetProducts( filter, mark ).ConfigureAwait( false );
+		/// <summary>
+		///	Search product by sku and limit properties by store information
+		/// </summary>
+		/// <param name="sku"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private Task< Product > GetProductWithStoreInfoOnlyBySku( string sku, Mark mark )
+		{
+			var url = new ItemsServiceUrlBuilder().GetProductWithStoreInfoOnlyBySkuUrl( sku );
+			return this.GetProductBySku( sku, url, mark );
+		}
+
+		/// <summary>
+		///	Search product by sku and limit properties by attributes
+		/// </summary>
+		/// <param name="sku"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private Task< Product > GetProductWithAttributesOnlyBySku( string sku, Mark mark )
+		{
+			var url = new ItemsServiceUrlBuilder().GetProductWithAttributesOnlyBySkuUrl( sku );
+			return this.GetProductBySku( sku, url, mark );
+		}
+
+		/// <summary>
+		///	Search product by sku and limit properties by variation info
+		/// </summary>
+		/// <param name="sku"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private Task< Product > GetProductWithVariationInfoOnlyBySku( string sku, Mark mark )
+		{
+			var url = new ItemsServiceUrlBuilder().GetProductWithVariationInfoOnlyBySkuUrl( sku );
+			return this.GetProductBySku( sku, url, mark );
+		}
+		
+		/// <summary>
+		///	Search product by sku and limit properties by quantity
+		/// </summary>
+		/// <param name="sku"></param>
+		/// <param name="selectProperties"></param>
+		/// <param name="expandProperties"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private Task< Product > GetProductWithQuantityOnlyBySku( string sku, Mark mark )
+		{
+			var url = new ItemsServiceUrlBuilder().GetProductWithQuantityOnlyBySkuUrl( sku );
+			return this.GetProductBySku( sku, url, mark );
+		}
+
+		/// <summary>
+		///	Search product
+		/// </summary>
+		/// <param name="filterProperties"></param>
+		/// <param name="mark"></param>
+		/// <param name="pageNumber"></param>
+		/// <param name="pageSize"></param>
+		/// <returns></returns>
+		private Task< PagedApiResponse< Product > > GetProductsWithAllProperties( string filterProperties, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault )
+		{
+			var url = this.GetProductsUrl( filterProperties, "DCQuantities,Attributes,Images", null );
+			return this.GetProducts( url, mark, pageNumber, pageSize );
+		}
+
+		/// <summary>
+		///	Search product by sku
+		/// </summary>
+		/// <param name="sku"></param>
+		/// <param name="selectProperties"></param>
+		/// <param name="expandProperties"></param>
+		/// <param name="mark"></param>
+		/// <returns></returns>
+		private async Task< Product > GetProductBySku( string sku, string selectProperties, string expandProperties, Mark mark )
+		{
+			var url = this.GetProductBySkuUrl( sku, selectProperties, expandProperties );
+			var result = await this.GetProducts( url, mark ).ConfigureAwait( false );
+			
 			return result.Response.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
+		}
+
+		private async Task< Product > GetProductBySku( string sku, string url, Mark mark )
+		{
+			var result = await this.GetProducts( url, mark ).ConfigureAwait( false );
+			return result.Response.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
+		}
+
+		private string GetProductBySkuUrl( string sku, string selectProperties, string expandProperties )
+		{
+			// following OData 4.0 specification single quote char should be represented as two single quotes
+			var filter = string.Format( "sku eq '{0}'", Uri.EscapeDataString( sku.Replace( "'", "''" ) ) );
+
+			return GetUrl( ChannelAdvisorEndPoint.ProductsUrl, filter, selectProperties, expandProperties );
+		}
+
+		private string GetProductsUrl( string filterProperties, string selectProperties, string expandProperties )
+		{
+			return GetUrl( ChannelAdvisorEndPoint.ProductsUrl, filterProperties, selectProperties, expandProperties );
+		}
+
+		/// <summary>
+		///	Build url for specified endpoint
+		/// </summary>
+		/// <param name="baseUrl"></param>
+		/// <param name="filterProperties"></param>
+		/// <param name="selectProperties"></param>
+		/// <param name="expandProperties"></param>
+		/// <returns></returns>
+		private string GetUrl( string baseUrl, string filterProperties, string selectProperties, string expandProperties )
+		{
+			var requestParams = new List< string >();
+
+			// filter products by sku
+			if ( !string.IsNullOrEmpty( filterProperties ) )
+			{
+				requestParams.Add( string.Format( "$filter={0}", filterProperties ) );
+			}
+
+			// expand product properties
+			if ( !string.IsNullOrEmpty( expandProperties ) )
+			{
+				requestParams.Add( string.Format( "$expand={0}", expandProperties ) );
+			}
+
+			// select only specified properties
+			if ( !string.IsNullOrEmpty( selectProperties ) )
+			{
+				requestParams.Add( string.Format( "$select={0}", selectProperties ) );
+			}
+
+			return baseUrl + "?" + string.Join( "&", requestParams.ToArray() );
 		}
 
 		/// <summary>
 		///	Gets products
 		/// </summary>
-		/// <param name="filter"></param>
+		/// <param name="filterProperties"></param>
+		/// <param name="selectProperties"></param>
+		/// <param name="expandProperties"></param>
 		/// <param name="mark"></param>
 		/// <param name="pageNumber"></param>
 		/// <param name="pageSize"></param>
 		/// <returns></returns>
-		private async Task< PagedApiResponse< Product > > GetProducts( string filter, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault )
+		private async Task< PagedApiResponse< Product > > GetProducts( string url, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
 			PagedApiResponse< Product > result = null;
-			var requestParams = new List< string >();
-
-			// filter products by sku
-			if ( !string.IsNullOrEmpty( filter ) )
-				requestParams.Add( filter );
-
-			// include extra data in server response
-			var expandParam = "$expand=DCQuantities,Attributes,Images";
-			requestParams.Add( expandParam );
 
 			try
 			{
-				var url = ChannelAdvisorEndPoint.ProductsUrl + "?" + string.Join( "&", requestParams.ToArray() );
-
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 
 				result = await base.GetResponseAsync< Product >( url, mark, pageNumber: pageNumber, pageSize: pageSize ).ConfigureAwait( false );
-
-				// add to cache
-				foreach( var product in result.Response )
-				{
-					if ( !string.IsNullOrEmpty( product.Sku ) )
-						_productsCache.TryAdd( product.Sku.ToLower(), product );
-				}
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
 					methodParameters: url,
@@ -980,9 +1108,6 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 						// handle result
 						var fileData = await this.DownloadFile( responseFileUrl ).ConfigureAwait( false );
 						products = ReadZippedCsv( fileData );
-
-						// update cache
-						SetProductsIdentificatorCache( products );
 					}
 				}
 			}
@@ -1129,131 +1254,26 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			return product;
 		}
 	
-		/// <summary>
-		///	Returns product Id by sku
-		/// </summary>
-		/// <param name="sku"></param>
-		/// <param name="mark"></param>
-		/// <returns></returns>
-		private async Task< int? > GetProductIdBySku( string sku, Mark mark )
+		private Dictionary< string, object > GetUpdateProductFieldsRequest( InventoryItemSubmit item )
 		{
-			int? productId = null;
+			var payload = new Dictionary< string, object >();
 
-			int cachedProductId;
-			if ( _productsIdCache.TryGetValue( sku, out cachedProductId ) )
-				return cachedProductId;
-
-			var product = await this.GetProductBySku( sku, mark ).ConfigureAwait( false );
-
-			if ( product != null )
-				return product.ID;
-			
-			return productId;
-		}
-
-		/// <summary>
-		///	Refresh products ids cache
-		/// </summary>
-		/// <param name="skusNumber"></param>
-		/// <param name="mark"></param>
-		/// <returns></returns>
-		private async Task RefreshProductsIdCacheIfRequired( int skusNumber, Mark mark )
-		{
-			double estimateRequestProcessingTimeInSec = skusNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
-
-			if ( estimateRequestProcessingTimeInSec > estimateProductsExportProcessingTimeInSec && _productsIdCache.Count() == 0 )
-				await ImportProducts( mark ).ConfigureAwait( false );
-		}
-
-		/// <summary>
-		///	Set products ids cache
-		/// </summary>
-		/// <param name="products"></param>
-		private void SetProductsIdentificatorCache( Product[] products )
-		{
-			_productsIdCache.Clear();
-
-			foreach( var product in products )
+			if ( item.UPC != null )
 			{
-				if ( string.IsNullOrEmpty( product.Sku ) )
-					continue;
-
-				_productsIdCache.TryAdd( product.Sku, product.ID );
-			}
-		}
-
-		/// <summary>
-		///	Gets filter value for REST end point
-		/// </summary>
-		/// <param name="filter"></param>
-		/// <returns></returns>
-		private string GetFilter( ItemsFilter filter )
-		{
-			var filterClauses = new List< string >();
-
-			if ( filter.Criteria != null )
-			{
-				var criteria = filter.Criteria;
-
-				if ( !string.IsNullOrEmpty( criteria.ClassificationName ) )
-					filterClauses.Add( String.Format( "Classification eq '{0}'", criteria.ClassificationName ) );
-
-				if ( !string.IsNullOrEmpty( criteria.LabelName ))
-					filterClauses.Add( String.Format( "Labels/Any (l: l/Name eq '{0}')", criteria.LabelName ) );
-
-				if ( !string.IsNullOrEmpty( criteria.DateRangeField ))
-				{
-					string filterFieldName = null;
-
-					if ( criteria.DateRangeField.Equals( TimeStampFields.CreateDate ) )
-						filterFieldName = "CreateDateUtc";
-					else if ( criteria.DateRangeField.Equals( TimeStampFields.LastUpdateDate ))
-						filterFieldName = "UpdateDateUtc";
-
-					if ( filterFieldName != null )
-					{
-						if ( criteria.DateRangeStartGMT.HasValue )
-							filterClauses.Add( String.Format( "{0} ge {1} ", filterFieldName, this.ConvertDate( criteria.DateRangeStartGMT.Value ) ) );
-
-						if ( criteria.DateRangeEndGMT.HasValue )
-							filterClauses.Add( String.Format( "{0} le {1}", filterFieldName, this.ConvertDate( criteria.DateRangeEndGMT.Value ) ) );
-					}
-				}
+				payload.Add( "UPC", item.UPC );
 			}
 
-			return "$filter=" + string.Join(" and ", filterClauses.ToArray() );
-		}
-	
-		/// <summary>
-		///	Gets not nullable fields for product update request
-		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
-		private Dictionary< string, object > GetUpdateFields< T >( T item )
-		{
-			var fields = new Dictionary< string, object >();
-
-			foreach( var property in typeof( T ).GetProperties() )
+			if ( item.PriceInfo != null )
 			{
-				var value = property.GetValue( item );
-
-				if ( value != null 
-					&& !value.GetType().IsArray
-					&& !property.Name.Equals( "Sku" ) )
-				{
-					if ( value is PriceInfo )
-					{
-						var priceProperties = this.GetUpdateFields( (PriceInfo) value );
-
-						foreach( var priceField in priceProperties )
-							fields.Add( priceField.Key, priceField.Value );
-					}
-					else
-						fields.Add( property.Name, value );
-				}
+				payload.Add( "Cost", item.PriceInfo.Cost );
 			}
 
-			return fields;
+			if ( item.WarehouseLocation != null )
+			{
+				payload.Add( "WarehouseLocation", item.WarehouseLocation );
+			}
+
+			return payload;
 		}
 
 		public void Ping(Mark mark = null)

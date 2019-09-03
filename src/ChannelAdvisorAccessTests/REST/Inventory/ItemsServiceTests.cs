@@ -36,12 +36,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void UpdateSkusQuantity()
 		{
-			//ClearSkuQuantityForEachDC( TestSku );
-			//ClearSkuQuantityForEachDC( TestSku2 );
+			ClearSkuQuantityForEachDc( TestSku );
+			ClearSkuQuantityForEachDc( TestSku2 );
 
 			var request = new InventoryItemQuantityAndPrice[]
 			{
-				CreateItemQuantityAndPrice( TestSku, 100 ),
+				CreateItemQuantityAndPrice( TestSku, 150 ),
 				CreateItemQuantityAndPrice( TestSku2, 110 )
 			};
 
@@ -51,7 +51,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 
 			quantities.Should().NotBeNullOrEmpty();
 			quantities.Should().HaveCount( 2 );
-			quantities.First( item => item.SKU.Equals( TestSku ) ).Quantity.Should().Be( 100 );
+			quantities.First( item => item.SKU.Equals( TestSku ) ).Quantity.Should().Be( 150 );
 			quantities.First( item => item.SKU.Equals( TestSku2 ) ).Quantity.Should().Be( 110 );
 		}
 
@@ -60,11 +60,11 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			List< InventoryItemQuantityAndPrice > request = new List<InventoryItemQuantityAndPrice>();
 			string baseSku = "testSku";
-			int skusNumber = 100;
+			int skusNumber = 2000;
 
 			for (int i = 1; i <= skusNumber; i++ )
 			{
-				var itemRequest = CreateItemQuantityAndPrice( baseSku + i.ToString(), i );
+				var itemRequest = CreateItemQuantityAndPrice( baseSku + i.ToString(), i * 2 );
 				request.Add( itemRequest );
 			}
 
@@ -114,32 +114,29 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
-		[ Ignore ]
-		public void UpdateSkuLocationBulk()
+		public void UpdateSkuLocationWhenSourceCatalogIsLarge()
 		{
-			// let's generate 1k skus
 			List< InventoryItemSubmit > inventoryItems = new List< InventoryItemSubmit >();
 			var i = 1;
-			var maxSkus = 1000;
+			var maxSkus = 10000;
 
 			while ( i <= maxSkus )
 			{
 				inventoryItems.Add( new InventoryItemSubmit()
 				{
 					 Sku = "testSku" + i.ToString(),
-					 WarehouseLocation = "A" + i.ToString()
+					 WarehouseLocation = "ADC" + i.ToString()
 				});
 
 				i += 1;
 			}
 
-			var parallelOptions = new ParallelOptions();
-			parallelOptions.MaxDegreeOfParallelism = 50;
+			this.ItemsService.SynchItems( inventoryItems );
 
-			Parallel.For( 0, inventoryItems.Count, parallelOptions, ( index ) =>
-			{
-				this.ItemsService.SynchItemAsync( inventoryItems[ index ] ).GetAwaiter().GetResult();
-			});
+			var items = this.ItemsService.GetItems( new string[] { "testSku1", "testSku150" } );
+			items.Should().NotBeNullOrEmpty();
+			items.First().WarehouseLocation.Should().Be( "ADC1" );
+			items.Last().WarehouseLocation.Should().Be( "ADC150" );
 		}
 
 		[ Test ]
@@ -167,8 +164,6 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				 Sku = TestSku,
 				 PriceInfo = new PriceInfo()
 				 {
-					RetailPrice = 11.0m, 
-					StorePrice = 10.0m,
 					Cost = 12.0m
 				 }
 			};
@@ -178,9 +173,30 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku } ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
-			result.PriceInfo.RetailPrice.Should().Be( 11.0m );
-			result.PriceInfo.StorePrice.Should().Be( 10.0m );
 			result.PriceInfo.Cost.Should().Be( 12.0m );
+		}
+
+		[ Test ]
+		public void UpdateSkuPriceAndUpc()
+		{
+			var testUPC = "123456";
+			InventoryItemSubmit submitItem = new InventoryItemSubmit()
+			{
+				 Sku = TestSku,
+				 PriceInfo = new PriceInfo()
+				 {
+					Cost = 12.0m
+				 },
+				 UPC = testUPC
+			};
+
+			this.ItemsService.SynchItemAsync( submitItem ).GetAwaiter().GetResult();
+
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku } ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
+
+			result.Should().NotBeNull();
+			result.PriceInfo.Cost.Should().Be( 12.0m );
+			result.UPC.Should().Be( testUPC );
 		}
 
 		[ Test ]
@@ -376,7 +392,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
-		public void DoSkusExistWhenTenantCatalogIsLarge()
+		public void DoSkusExistWhenSourceCatalogIsLarge()
 		{
 			List< string > skus = new List< string >();
 
@@ -422,6 +438,20 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			result[ 1 ].SKU.ShouldBeEquivalentTo( incorrectSku );
 			result[ 1 ].MessageCode.Should().BeGreaterThan( 0 );
 			result[ 1 ].Quantity.ShouldBeEquivalentTo( 0 );
+		}
+
+		[ Test ]
+		public void GetAvailableQuantitiesWhenSourceCatalogIsLarge()
+		{
+			var skus = new List< string >();
+
+			for ( int i = 0; i < 10000; i++ )
+				skus.Add( "testSku" + i.ToString() );
+
+			var result = this.ItemsService.GetAvailableQuantities( skus );
+
+			result.Should().NotBeNullOrEmpty();
+			result.Count().Should().Be( skus.Count() );
 		}
 
 		[ Test ]
