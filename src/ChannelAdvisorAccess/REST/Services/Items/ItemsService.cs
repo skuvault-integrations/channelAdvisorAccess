@@ -928,8 +928,6 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		///	Search product by sku and limit properties by quantity
 		/// </summary>
 		/// <param name="sku"></param>
-		/// <param name="selectProperties"></param>
-		/// <param name="expandProperties"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
 		private Task< Product > GetProductWithQuantityOnlyBySku( string sku, Mark mark )
@@ -1023,9 +1021,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <summary>
 		///	Gets products
 		/// </summary>
-		/// <param name="filterProperties"></param>
-		/// <param name="selectProperties"></param>
-		/// <param name="expandProperties"></param>
+		/// <param name="url"></param>
 		/// <param name="mark"></param>
 		/// <param name="pageNumber"></param>
 		/// <param name="pageSize"></param>

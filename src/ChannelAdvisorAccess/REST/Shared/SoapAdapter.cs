@@ -15,6 +15,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		///	Converts REST order response to SOAP response
 		/// </summary>
 		/// <param name="order"></param>
+		/// <param name="distributionCenters"></param>
 		/// <returns></returns>
 		public static OrderResponseDetailComplete ToOrderResponseDetailComplete( this Models.Order order, DistributionCenter[] distributionCenters )
 		{

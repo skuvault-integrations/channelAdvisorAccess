@@ -515,7 +515,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Do batch request
 		/// </summary>
-		/// <param name="payload"></param>
+		/// <param name="batch"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
 		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark = null )
