@@ -144,10 +144,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		{
 			_waitHandle.WaitOne();
 
-			// access token is not expired yet
-			if ( this._accessTokenExpiredUtc >= DateTime.UtcNow )
-				return;
-
 			this.SetBasicAuthorizationHeader();
 
 			var requestData = new Dictionary< string, string >
@@ -193,11 +189,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		private async Task RefreshAccessTokenByRestCredentials()
 		{
 			_waitHandle.WaitOne();
-
-			// access token is not expired yet
-			if ( this._accessTokenExpiredUtc >= DateTime.UtcNow )
-				return;
-
 			this.SetBasicAuthorizationHeader();
 
 			var requestData = new Dictionary< string, string > { { "grant_type", "refresh_token" }, { "refresh_token", this._refreshToken } };
@@ -206,7 +197,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			try
 			{
 				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
-				var responseStr = await response.Content.ReadAsStringAsync();
+				var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
 				if ( !string.IsNullOrEmpty( result.Error ) )
@@ -545,7 +536,7 @@ namespace ChannelAdvisorAccess.REST.Services
 							int batchStatusCode;
 							entities.AddRange( new MultiPartResponseParser().Parse< T >( content, out batchStatusCode ) );
 
-							await this.ThrowIfError( batchStatusCode, content );
+							await this.ThrowIfError( batchStatusCode, content ).ConfigureAwait( false );
 						}
 
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
