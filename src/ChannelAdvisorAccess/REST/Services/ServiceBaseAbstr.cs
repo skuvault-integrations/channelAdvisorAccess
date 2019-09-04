@@ -39,8 +39,8 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected HttpClient HttpClient { get; private set; }
 		protected readonly ActionPolicy ActionPolicy = new ActionPolicy( 3 );
 		protected readonly Throttler Throttler = new Throttler( 4, 1, 10 );
-		// max 2 000 requests per minute each batch can include 100 requests
-		protected readonly Throttler BatchThrottler = new Throttler( 1, 3, 10 );
+		// 2 000 requests max per minute each batch can include 100 requests (limited to 1500)
+		protected readonly Throttler BatchThrottler = new Throttler( 1, 4, 10 );
 
 		public string AccountId { get; private set; }
 		/// <summary>
@@ -531,13 +531,11 @@ namespace ChannelAdvisorAccess.REST.Services
 					using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
 					{
 						var entities = new List< T >();
-						string content = null;
+						string content = string.Empty;
 						var multiPartContent = batch.Build();
 						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batch.ToString(), additionalInfo : this.AdditionalLogInfo() ) );
 							
 						var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multiPartContent, cancellationTokenSource.Token ).ConfigureAwait( false );
-
-						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo() ) );
 							
 						await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
 
@@ -546,8 +544,11 @@ namespace ChannelAdvisorAccess.REST.Services
 							content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 							int batchStatusCode;
 							entities.AddRange( new MultiPartResponseParser().Parse< T >( content, out batchStatusCode ) );
-							await this.ThrowIfError( batchStatusCode, null );
+
+							await this.ThrowIfError( batchStatusCode, content );
 						}
+
+						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 
 						return entities.ToArray();
 					}
@@ -589,9 +590,10 @@ namespace ChannelAdvisorAccess.REST.Services
 
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
-			else if ( responseStatusCode == (int)HttpStatusCode.ServiceUnavailable
-					|| responseStatusCode == (int)HttpStatusCode.InternalServerError
-					|| responseStatusCode == tooManyRequestsStatus )
+			else if ( responseStatusCode >= 500
+					|| responseStatusCode == tooManyRequestsStatus
+					// batch responses sometimes contain this code due to factors on ChannelAdvisor side
+					|| responseStatusCode == (int)HttpStatusCode.NotAcceptable )
 				throw new ChannelAdvisorNetworkException( message );
 			
 			throw new ChannelAdvisorException( responseStatusCode, message );
