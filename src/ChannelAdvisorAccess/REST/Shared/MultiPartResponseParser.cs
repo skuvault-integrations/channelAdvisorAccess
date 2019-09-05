@@ -44,7 +44,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 						int httpRequestStatusCode = 0;
 						if ( int.TryParse( temp[0], out httpRequestStatusCode ) )
 						{
-							if ( httpRequestStatusCode != httpBatchStatusCode )
+							if ( httpRequestStatusCode >= 300 )
 								httpBatchStatusCode = httpRequestStatusCode;
 						}
 					}

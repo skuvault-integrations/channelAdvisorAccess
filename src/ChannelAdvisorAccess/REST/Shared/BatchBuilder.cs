@@ -66,30 +66,38 @@ namespace ChannelAdvisorAccess.REST.Shared
 			return batches.ToArray();
 		}
 
-		public MultipartContent Build()
+		public MultipartContent[] Build( int currentBatchSize )
 		{
-			var multiPartContent = new MultipartContent( "mixed", "changeset" );
+			var multipartContents = new List< MultipartContent >();
+			var requestGroups = this.ToChunks( this._requestParts, currentBatchSize );
 
-			foreach( var part in _requestParts )
+			foreach( var requestGroup in requestGroups )
 			{
-				var requestContent = string.Format( "\r\n{0} {1} HTTP/1.1", part.Method.ToString().ToUpper(), part.Url );
+				var multiPartContent = new MultipartContent( "mixed", "changeset" );
 
-				if ( part.Method == HttpMethod.Post || part.Method == HttpMethod.Put )
+				foreach( var part in requestGroup )
 				{
-					requestContent += "\r\nContent-Type: application/json \r\n\r\n";
-					requestContent += part.Payload;
-				}
-				else
-					requestContent += "\r\n";
+					var requestContent = string.Format( "\r\n{0} {1} HTTP/1.1", part.Method.ToString().ToUpper(), part.Url );
 
-				var content = new StreamContent( new MemoryStream( Encoding.UTF8.GetBytes( requestContent ) ) );
-				content.Headers.Add( "Content-Type", part.ContentType );
-				content.Headers.Add( "Content-Transfer-Encoding", part.ContentTransferEncoding );
-				content.Headers.Add( "Content-ID", part.Id.ToString() );
-				multiPartContent.Add( content );
+					if ( part.Method == HttpMethod.Post || part.Method == HttpMethod.Put )
+					{
+						requestContent += "\r\nContent-Type: application/json \r\n\r\n";
+						requestContent += part.Payload;
+					}
+					else
+						requestContent += "\r\n";
+
+					var content = new StreamContent( new MemoryStream( Encoding.UTF8.GetBytes( requestContent ) ) );
+					content.Headers.Add( "Content-Type", part.ContentType );
+					content.Headers.Add( "Content-Transfer-Encoding", part.ContentTransferEncoding );
+					content.Headers.Add( "Content-ID", part.Id.ToString() );
+					multiPartContent.Add( content );
+				}
+
+				multipartContents.Add( multiPartContent );
 			}
-			
-			return multiPartContent;
+
+			return multipartContents.ToArray();
 		}
 
 		public override string ToString()
