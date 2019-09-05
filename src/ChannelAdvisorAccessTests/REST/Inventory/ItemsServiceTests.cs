@@ -394,9 +394,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void DoSkusExistWhenSourceCatalogIsLarge()
 		{
-			List< string > skus = new List< string >();
+			var skus = new List< string >();
 
-			for ( int i = 0; i < 10000; i++ )
+			for ( int i = 0; i < 50000; i++ )
 				skus.Add( "testSku" + i.ToString() );
 
 			var result = this.ItemsService.DoSkusExist( skus );
@@ -405,7 +405,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
-		public void DoSkusWithSpecialName()
+		public void DoSkusExistWithSpecialName()
 		{
 			var testSku = "ROYAL-252-#-02";
 			var result = this.ItemsService.DoSkusExist( new[] { testSku } );
@@ -445,7 +445,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			var skus = new List< string >();
 
-			for ( int i = 0; i < 10000; i++ )
+			for ( int i = 0; i < 500; i++ )
 				skus.Add( "testSku" + i.ToString() );
 
 			var result = this.ItemsService.GetAvailableQuantities( skus );
@@ -556,5 +556,24 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 10 );
 		}
+
+		[ Test ]
+		public void GetProductsIdUsingCache()
+		{
+			var itemsService = this.ItemsService as ChannelAdvisorAccess.REST.Services.Items.ItemsService;
+			var cache = new Dictionary< string, int >
+			{
+				{ TestSku, 10 },
+				{ TestSku2, 12 }
+			};
+
+			itemsService.SetProductCache( cache );
+			var productsId = itemsService.GetProductsId( new string[] { TestSku, TestSku2 }, null ).Result;
+
+			productsId.Should().NotBeEmpty();
+			productsId[ TestSku ].Should().Be( 10 );
+			productsId[ TestSku2 ].Should().Be( 12 );
+		}
+
 	}
 }

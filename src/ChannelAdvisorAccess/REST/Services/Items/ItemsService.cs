@@ -31,9 +31,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		private const int pageSizeDefault = 100;
 		private const int avgRequestHandlingTimeInSec = 5;
-		private const int estimateProductsExportProcessingTimeInSec = 120;
-		private const int productExportUsingTimeInSec = 60 * 10;
+		private const int avgProductExportTimeInSec = 60 * 10;
 		private const int productExportWaitTimeInSec = 15;
+
+		private Dictionary< string, int > _productsCache;
 
 		/// <summary>
 		///	Rest items service with standard authorization flow
@@ -54,6 +55,15 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="accountName">Tenant account name</param>
 		public ItemsService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName ) 
 			: base( credentials, soapCredentials, accountId, accountName ) { }
+
+		/// <summary>
+		///	Set product cache to avoid extra requests which seek product id
+		/// </summary>
+		/// <param name="productCache"></param>
+		public void SetProductCache( Dictionary< string, int > productCache )
+		{
+			this._productsCache = productCache;
+		}
 
 		/// <summary>
 		///	Checks asynchronously if sku exists 
@@ -101,45 +111,54 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			if ( skus.Count() == 0 )
 				return response;
 
-			var catalog = new List< string >();
-			int totalProductsNumber = await this.GetCatalogSize( mark );
-			int totalPageRequestsNumber = (int)Math.Ceiling( (double)totalProductsNumber / pageSizeDefault );
-			double estimateRequestPerSkuTotalProcessingTimeInSec = skus.Count() * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
-			double estimateRequestPerPageTotalProcessingTimeInSec = totalPageRequestsNumber * avgRequestHandlingTimeInSec / base._maxConcurrentRequests;
-			
-			// check skus existance directly by sku or pulling the whole catalog by page took more than 10 minutes, we use product export feature in this case
-			if ( Math.Min( estimateRequestPerSkuTotalProcessingTimeInSec, estimateRequestPerPageTotalProcessingTimeInSec ) >= productExportUsingTimeInSec )
-			{
-				try
-				{
-					var products = await this.ImportProducts( mark ).ConfigureAwait( false );
-					catalog.AddRange( products.Where( pr => !string.IsNullOrWhiteSpace( pr.Sku ) ).Select( pr => pr.Sku.ToLower() ) );
-
-					foreach( var sku in skus )
-					{
-						var doesSkuExist = catalog.Contains( sku.ToLower() );
-						response.Add( new DoesSkuExistResponse() { Result = doesSkuExist, Sku = sku } );
-					}
-
-					return response;
-				}
-				catch( ChannelAdvisorProductExportUnavailableException ) { }
-			}
-
-			var existingProducts = await this.GetProductsWithIdOnly( skus, mark ).ConfigureAwait( false );
-			var existingSkus = existingProducts.Select( pr => pr.Sku.ToLower() );
+			var productIds = await this.GetProductsId( skus, mark ).ConfigureAwait( false );
 
 			foreach( var sku in skus )
 			{
-				var doesSkuExist = existingSkus.Contains( sku.ToLower() );
+				var doesSkuExist = productIds.ContainsKey( sku.ToLower() );
 				response.Add( new DoesSkuExistResponse() { Result = doesSkuExist, Sku = sku } );
 			}
 
 			return response;
 		}
 
-		private async Task< IEnumerable< Product > > GetProductsWithIdOnly( IEnumerable< string > skus, Mark mark )
+		public async Task< Dictionary< string, int > > GetProductsId( IEnumerable< string > skus, Mark mark )
 		{
+			if ( _productsCache != null )
+			{
+				return GetProductsWithIdOnlyFromCache( skus );
+			}
+
+			double estimateRequestPerSkuTotalProcessingTimeInSec = Math.Ceiling( (double)skus.Count() / base._batchSize ) * avgRequestHandlingTimeInSec;
+
+			// use product export if it saves time
+			if ( estimateRequestPerSkuTotalProcessingTimeInSec > avgProductExportTimeInSec )
+			{
+				try
+				{
+					return await this.ImportProducts( mark ).ConfigureAwait( false );
+				}
+				catch( ChannelAdvisorProductExportUnavailableException ) { }
+			}
+
+			if ( skus.Count() == 1 )
+			{
+				var product = await GetProductWithIdOnlyBySku( skus.First(), mark ).ConfigureAwait( false );
+
+				if ( product != null )
+				{
+					return new Dictionary< string, int >() { { product.Sku.ToLower(), product.ID } };
+				}
+				
+				return new Dictionary< string, int >();
+			}
+
+			return await GetProductsWithIdOnlyByBatch( skus, mark ).ConfigureAwait( false );
+		}
+
+		private async Task< Dictionary< string, int > > GetProductsWithIdOnlyByBatch( IEnumerable< string > skus, Mark mark )
+		{
+			var productIds = new Dictionary< string, int >();
 			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
 			var urlBuilder = new ItemsServiceUrlBuilder();
 
@@ -149,10 +168,38 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			}
 
 			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark ).ConfigureAwait( false );
+			var products = productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First() );
 
-			return productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First() );
+			foreach( var product in products )
+			{
+				var sku = product.Sku.ToLower();
+
+				if ( !productIds.ContainsKey( sku ) )
+				{
+					productIds.Add( sku, product.ID );
+				}
+			}
+
+			return productIds;
 		}
 
+		private Dictionary< string, int > GetProductsWithIdOnlyFromCache( IEnumerable< string > skus )
+		{
+			var productsId = new Dictionary< string, int >();
+
+			foreach( string sku in skus )
+			{
+				var tmp = sku.ToLower();
+
+				if ( _productsCache.ContainsKey( tmp ) )
+				{
+					int productId = _productsCache[ tmp ];
+					productsId.Add( tmp, productId );
+				}
+			}
+
+			return productsId;
+		}
 
 		/// <summary>
 		///	Gets all items from stock
@@ -474,23 +521,22 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark = null )
 		{
 			var distributionCenters = await this.GetDistributionCentersAsync( mark ).ConfigureAwait( false );
-			var products = await this.GetProductsWithIdOnly( itemQuantityAndPrices.Select( iq => iq.Sku ), mark ).ConfigureAwait( false );
+			var productsId = await this.GetProductsId( itemQuantityAndPrices.Select( iq => iq.Sku ), mark ).ConfigureAwait( false );
 			var batch = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
 			var urlBuilder = new ItemsServiceUrlBuilder();
 
 			foreach( var itemQuantity in itemQuantityAndPrices )
 			{
-				var product = products.FirstOrDefault( pr => pr.Sku.ToLower().Equals( itemQuantity.Sku.ToLower() ) );
-
-				if ( product == null )
+				if ( !productsId.ContainsKey( itemQuantity.Sku.ToLower() ) )
 					continue;
 
+				int productId = productsId[ itemQuantity.Sku.ToLower() ];
 				var distributionCenter = distributionCenters.FirstOrDefault( dc => dc.Code.ToLower().Equals( itemQuantity.DistributionCenterCode.ToLower() ) );
 
 				if ( distributionCenter == null )
 					continue;
 
-				var url = urlBuilder.GetUpdateProductQuantityUrl( product.ID );
+				var url = urlBuilder.GetUpdateProductQuantityUrl( productId );
 
 				var request = new UpdateQuantityRequest()
 				{
@@ -846,18 +892,18 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null )
 		{
-			var products = await this.GetProductsWithIdOnly( items.Select( i => i.Sku ), mark ).ConfigureAwait( false );
+			var productsId = await this.GetProductsId( items.Select( i => i.Sku ), mark ).ConfigureAwait( false );
 			var batch = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
 			var urlBuilder = new ItemsServiceUrlBuilder();
 			
 			foreach( var item in items )
 			{
-				var product = products.FirstOrDefault( pr => pr.Sku.ToLower().Equals( item.Sku.ToLower() ) );
-
-				if ( product == null )
+				if ( !productsId.ContainsKey( item.Sku.ToLower() ) )
 					continue;
 
-				var url = urlBuilder.GetUpdateProductUrl( product.ID );
+				int productId = productsId[ item.Sku.ToLower() ];
+
+				var url = urlBuilder.GetUpdateProductUrl( productId );
 				var payload = GetUpdateProductFieldsRequest( item );
 				batch.AddPutRequest( url, payload.ToJson() );
 			}
@@ -1060,12 +1106,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private async Task< Product[] > ImportProducts( Mark mark )
+		public async Task< Dictionary< string, int > > ImportProducts( Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
-
-			Product[] products = new Product[] { };
 
 			string csvHeader = "id, sku";
 			string responseFileUrl = null;
@@ -1103,7 +1147,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 						// handle result
 						var fileData = await this.DownloadFile( responseFileUrl ).ConfigureAwait( false );
-						products = ReadZippedCsv( fileData );
+						return ReadZippedCsv( fileData );
 					}
 				}
 			}
@@ -1123,7 +1167,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				throw channelAdvisorException;
 			}
 
-			return products;
+			return new Dictionary< string, int >();
 		}
 
 		/// <summary>
@@ -1131,7 +1175,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="fileData"></param>
 		/// <returns></returns>
-		private Product[] ReadZippedCsv( byte[] fileData )
+		private Dictionary< string, int > ReadZippedCsv( byte[] fileData )
 		{
 			using( var memoryStream = new MemoryStream( fileData ) )
 			{
@@ -1151,14 +1195,27 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 								csvReader.Configuration.HasHeaderRecord = true;
 								csvReader.Configuration.Delimiter = "\t";
 
-								return csvReader.GetRecords< ProductExportRow >().Select( row => new Product() { ID = row.ID, Sku = row.Sku.ToLower() } ).ToArray();
+								var rows = csvReader.GetRecords< ProductExportRow >();
+								var productIds = new Dictionary< string, int >();
+
+								foreach( var row in rows )
+								{
+									string sku = row.Sku.ToLower();
+
+									if ( !productIds.ContainsKey( sku ) )
+									{
+										productIds.Add( sku, row.ID );
+									}
+								}
+
+								return productIds;
 							}
 						}
 					}
 				}
 			}
 
-			return new Product[] { };
+			return new Dictionary< string, int >();
 		}
 
 		/// <summary>

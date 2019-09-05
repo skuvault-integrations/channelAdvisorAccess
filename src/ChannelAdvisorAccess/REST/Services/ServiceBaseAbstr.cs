@@ -29,7 +29,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly int _requestTimeout = 10 * 60 * 1000;
 		protected readonly int _maxConcurrentRequests = 4;
 		private readonly int _minPageSize = 20;
-		private readonly int _batchSize = 100;
+		protected readonly int _batchSize = 100;
 		protected string _accessToken;
 		private DateTime _accessTokenExpiredUtc;
 		protected readonly string _refreshToken;
