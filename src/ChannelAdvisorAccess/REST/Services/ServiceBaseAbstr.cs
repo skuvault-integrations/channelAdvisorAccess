@@ -26,12 +26,14 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected readonly RestCredentials _credentials;
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
-		private readonly int _requestTimeout = 10 * 60 * 1000;
-		protected readonly int _maxConcurrentRequests = 4;
-		private readonly int _minPageSize = 20;
-		protected int _maxBatchSize = 100;
-		protected int _minBatchSize = 30;
+
+		private const int _requestTimeout = 10 * 60 * 1000;
+		protected const int _maxConcurrentRequests = 4;
+		private const int _minPageSize = 20;
+		protected const int _maxBatchSize = 100;
+		protected const int _minBatchSize = 30;
 		protected int _currentBatchSize = 100;
+
 		protected string _accessToken;
 		private DateTime _accessTokenExpiredUtc;
 		protected readonly string _refreshToken;
@@ -44,7 +46,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		// 2 000 requests max per minute each batch can include 100 requests (limited to 1500)
 		protected readonly Throttler BatchThrottler = new Throttler( 1, 4, 10 );
 
-		private readonly int _tooManyRequestsStatusCode = 429;
+		private const int _tooManyRequestsStatusCode = 429;
 
 		public string AccountId { get; private set; }
 		/// <summary>
@@ -72,7 +74,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			this.AccountName = accountName;
 			this._accessToken = accessToken;
 			this._refreshToken = refreshToken;
-			this._currentBatchSize = this._maxBatchSize;
+			this._currentBatchSize = _maxBatchSize;
 
 			this.SetupHttpClient();
 		}
@@ -95,7 +97,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			this.AccountId = accountId;
 			this.AccountName = accountName;
 
-			this._currentBatchSize = this._maxBatchSize;
+			this._currentBatchSize = _maxBatchSize;
 
 			this.SetupHttpClient();
 		}
@@ -106,7 +108,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected void SetupHttpClient()
 		{
 			this.HttpClient = new HttpClient { BaseAddress = new Uri( ChannelAdvisorEndPoint.BaseApiUrl ) };
-			this.HttpClient.Timeout = TimeSpan.FromMilliseconds( this._requestTimeout );
+			this.HttpClient.Timeout = TimeSpan.FromMilliseconds( _requestTimeout );
 			this.HttpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json") );
 			this.SetDefaultAuthorizationHeader();
 		}
@@ -335,7 +337,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) ) 
+						using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) ) 
 						{
 							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo() ) );
 
@@ -387,7 +389,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+						using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
 						{
 							var content = new StringContent( body, Encoding.UTF8, "text/plain" );
 							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: body, additionalInfo : this.AdditionalLogInfo() ) );
@@ -426,7 +428,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+						using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
 						{
 							var payload = JsonConvert.SerializeObject( data );
 							var content = new StringContent( payload, Encoding.UTF8, "application/json" );
@@ -464,7 +466,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
-					using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+					using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
 					{
 						var payload = JsonConvert.SerializeObject( data );
 						var content = new StringContent( payload, Encoding.UTF8, "application/json" );
@@ -526,15 +528,16 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.BatchThrottler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
-					using( var cancellationTokenSource = new CancellationTokenSource( this._requestTimeout ) )
+					using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
 					{
 						var entities = new List< T >();
-						var multiPartContents = batch.Build( this._currentBatchSize );
+						var batches = batch.Split( this._currentBatchSize );
 
-						foreach( var multipartContent in multiPartContents )
+						foreach( var batchPart in batches )
 						{
-							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batch.ToString(), additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batchPart.ToString(), additionalInfo : this.AdditionalLogInfo() ) );
 							
+							var multipartContent = batchPart.Build();
 							var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cancellationTokenSource.Token ).ConfigureAwait( false );
 							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
@@ -544,7 +547,7 @@ namespace ChannelAdvisorAccess.REST.Services
 							if ( (int)httpResponse.StatusCode == _tooManyRequestsStatusCode )
 							{
 								// slowly decrease the number of requests in the batch
-								if ( this._currentBatchSize >= this._minBatchSize )
+								if ( this._currentBatchSize >= _minBatchSize )
 									this._currentBatchSize = (int)Math.Ceiling( this._currentBatchSize * 0.75 );
 							}
 
@@ -592,7 +595,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
 			else if ( responseStatusCode >= 500
-					|| responseStatusCode == this._tooManyRequestsStatusCode
+					|| responseStatusCode == _tooManyRequestsStatusCode
 					// batch response sometimes contains this code due to factors on ChannelAdvisor side
 					|| responseStatusCode == (int)HttpStatusCode.NotAcceptable )
 				throw new ChannelAdvisorNetworkException( message );

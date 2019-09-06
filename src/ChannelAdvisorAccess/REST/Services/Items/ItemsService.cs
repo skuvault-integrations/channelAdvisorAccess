@@ -129,7 +129,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				return GetProductsWithIdOnlyFromCache( skus );
 			}
 
-			double estimateRequestPerSkuTotalProcessingTimeInSec = Math.Ceiling( (double)skus.Count() / base._maxBatchSize ) * avgRequestHandlingTimeInSec;
+			double estimateRequestPerSkuTotalProcessingTimeInSec = Math.Ceiling( (double)skus.Count() / _maxBatchSize ) * avgRequestHandlingTimeInSec;
 
 			// use product export if it saves time
 			if ( estimateRequestPerSkuTotalProcessingTimeInSec > avgProductExportTimeInSec )
