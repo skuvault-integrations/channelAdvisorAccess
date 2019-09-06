@@ -31,7 +31,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected const int _maxConcurrentRequests = 4;
 		private const int _minPageSize = 20;
 		protected const int _maxBatchSize = 100;
-		protected const int _minBatchSize = 30;
+		protected const int _minBatchSize = 20;
 		protected int _currentBatchSize = 100;
 
 		protected string _accessToken;
@@ -41,7 +41,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 		protected string AccountName { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
-		protected readonly ActionPolicy ActionPolicy = new ActionPolicy( 3 );
+		protected readonly ActionPolicy ActionPolicy = new ActionPolicy( 5 );
 		protected readonly Throttler Throttler = new Throttler( 4, 1, 10 );
 		// 2 000 requests max per minute each batch can include 100 requests (limited to 1500)
 		protected readonly Throttler BatchThrottler = new Throttler( 1, 4, 10 );
@@ -548,7 +548,9 @@ namespace ChannelAdvisorAccess.REST.Services
 							{
 								// slowly decrease the number of requests in the batch
 								if ( this._currentBatchSize >= _minBatchSize )
-									this._currentBatchSize = (int)Math.Ceiling( this._currentBatchSize * 0.75 );
+								{
+									this._currentBatchSize = (int)Math.Ceiling( this._currentBatchSize * 0.7 );
+								}
 							}
 
 							await this.ThrowIfError( batchStatusCode, content ).ConfigureAwait( false );
