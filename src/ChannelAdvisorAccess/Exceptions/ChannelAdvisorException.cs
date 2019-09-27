@@ -11,7 +11,7 @@ namespace ChannelAdvisorAccess.Exceptions
 		private readonly int _messageCode;
 		private readonly string _errorMessage;
 
-		public ChannelAdvisorException( int code, string message )
+		public ChannelAdvisorException( int code, string message ) : base( message )
 		{
 			this._messageCode = code;
 			this._errorMessage = message;

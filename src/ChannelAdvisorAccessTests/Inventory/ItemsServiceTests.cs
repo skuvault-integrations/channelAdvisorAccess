@@ -14,6 +14,13 @@ namespace ChannelAdvisorAccessTests.Inventory
 		public void UpdateSkuQuantity()
 		{
 			//------------ Arrange
+
+			// clear product quantity for all distribution centers
+			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList().Select(dc => dc.DistributionCenterCode).ToArray();
+
+			foreach(string distributionCenterCode in distributionCentersCodes)
+				this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 0, distributionCenterCode ) );
+
 			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 2 ) );
 
 			//------------ Act
@@ -25,7 +32,12 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 		private static InventoryItemQuantityAndPrice CreateItemQuantityAndPrice( int quantity )
 		{
-			return new InventoryItemQuantityAndPrice { Sku = TestSku, Quantity = quantity, UpdateType = InventoryQuantityUpdateTypes.Available, DistributionCenterCode = TestDistributionCenterCode };
+			return CreateItemQuantityAndPrice(quantity, TestDistributionCenterCode);
+		}
+
+		private static InventoryItemQuantityAndPrice CreateItemQuantityAndPrice( int quantity, string distributionCenterCode )
+		{
+			return new InventoryItemQuantityAndPrice { Sku = TestSku, Quantity = quantity, UpdateType = InventoryQuantityUpdateTypes.Available, DistributionCenterCode = distributionCenterCode };
 		}
 
 		[ Test ]
@@ -228,7 +240,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
 			result.Count().ShouldBeEquivalentTo( 1 );
-			result.First().Sku.ShouldBeEquivalentTo( TestSku );
+			result.First().Sku.ToLower().ShouldBeEquivalentTo( TestSku.ToLower() );
 		}
 
 		[ Test ]
@@ -243,7 +255,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
 			result.Count().ShouldBeEquivalentTo( 1 );
-			result.First().Sku.ShouldBeEquivalentTo( TestSku );
+			result.First().Sku.ToLower().ShouldBeEquivalentTo( TestSku.ToLower() );
 		}
 
 		[ Test ]

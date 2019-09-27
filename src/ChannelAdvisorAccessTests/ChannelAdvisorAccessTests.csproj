@@ -14,6 +14,8 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,7 +73,12 @@
     <Compile Include="Inventory\DistributionCenterTests.cs" />
     <Compile Include="Inventory\ItemsServiceTests.cs" />
     <Compile Include="Orders\OrdersServiceTests.cs" />
+    <Compile Include="REST\Inventory\DistributionCenterTests.cs" />
+    <Compile Include="REST\Inventory\ItemsServiceTests.cs" />
+    <Compile Include="REST\Inventory\SyncTests.cs" />
+    <Compile Include="REST\Orders\OrdersServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="REST\RestAPITestBase.cs" />
     <Compile Include="TestsBase.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -29,6 +29,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="name">The account user-friendly name.</param>
 		/// <param name="accountId">The account id.</param>
 		/// <param name="cache">The cache.</param>
+		///  <param name="logDetailsEnum">Log level detail</param>
 		/// <remarks>If <paramref name="cache"/> is <c>null</c> no caching takes place.</remarks>
 		public ItemsService( APICredentials credentials, string name, string accountId, ObjectCache cache = null, LogDetailsEnum logDetailsEnum = LogDetailsEnum.Undefined )
 		{

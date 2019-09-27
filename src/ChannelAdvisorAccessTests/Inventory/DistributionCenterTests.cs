@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using System.Linq;
 
 namespace ChannelAdvisorAccessTests.Inventory
 {
@@ -15,7 +16,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			dcList.Length.Should().BeGreaterThan( 0 );
-			dcList[ 0 ].DistributionCenterCode.Should().Be( TestDistributionCenterCode );
+			dcList.Select(dc => dc.DistributionCenterCode).Should().Contain(TestDistributionCenterCode);
 		}
 	}
 }

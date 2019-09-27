@@ -7,14 +7,14 @@ namespace ChannelAdvisorAccess.Services.Items
 {
 	public abstract class ServiceBaseAbstr
 	{
-		protected string CreateMethodCallInfo( string methodParameters = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "" )
+		protected string CreateMethodCallInfo( string methodParameters = "", string payload = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "" )
 		{
 			try
 			{
 				mark = mark ?? Mark.Blank();
 				var connectionInfo = this.ToJson();
 				var str = string.Format(
-					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters:{2} {4}{5}{6}{7}}}",
+					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters: '{2}' {8}{4}{5}{6}{7}}}",
 					memberName,
 					connectionInfo,
 					string.IsNullOrWhiteSpace( methodParameters ) ? PredefinedValues.EmptyJsonObject : methodParameters,
@@ -22,7 +22,8 @@ namespace ChannelAdvisorAccess.Services.Items
 					string.IsNullOrWhiteSpace( errors ) ? string.Empty : ", Errors:" + errors,
 					string.IsNullOrWhiteSpace( methodResult ) ? string.Empty : ", Result:" + methodResult,
 					string.IsNullOrWhiteSpace( notes ) ? string.Empty : ",Notes: " + notes,
-					string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo
+					string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", " + additionalInfo,
+					string.IsNullOrWhiteSpace( payload ) ? string.Empty : ", Body: '" + payload + "'" 
 					);
 				return str;
 			}

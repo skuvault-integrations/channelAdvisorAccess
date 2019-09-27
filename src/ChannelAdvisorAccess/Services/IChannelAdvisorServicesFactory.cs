@@ -1,3 +1,4 @@
+using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services.Admin;
 using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.Services.Listing;
@@ -9,8 +10,8 @@ namespace ChannelAdvisorAccess.Services
 	public interface IChannelAdvisorServicesFactory
 	{
 		IAdminService CreateAdminService();
-		IOrdersService CreateOrdersService( string accountName, string accountId );
-		IItemsService CreateItemsService( string accountName, string accountId );
+		IOrdersService CreateOrdersService( ChannelAdvisorConfig config );
+		IItemsService CreateItemsService( ChannelAdvisorConfig config );
 		IShippingService CreateShippingService( string accountName, string accountId );
 		IListingService CreateListingService( string accountName, string accountId );
 	}

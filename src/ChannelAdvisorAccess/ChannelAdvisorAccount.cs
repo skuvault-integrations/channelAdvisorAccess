@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ChannelAdvisorAccess.CurrencyConversion;
+using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services;
 using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.Services.Listing;
@@ -28,8 +29,8 @@ namespace ChannelAdvisorAccess
 			this.IsActive = isActive;
 			this.IsMain = isMain;
 
-			this.ItemsService = servicesFactory.CreateItemsService( name, id );
-			this.OrdersService = servicesFactory.CreateOrdersService( name, id );
+			this.ItemsService = servicesFactory.CreateItemsService( new ChannelAdvisorConfig( name ) { AccountId = id } );
+			this.OrdersService = servicesFactory.CreateOrdersService( new ChannelAdvisorConfig( name ) { AccountId = id } );
 			this.ShippingService = servicesFactory.CreateShippingService( name, id );
 			this.ListingService = servicesFactory.CreateListingService( name, id );
 

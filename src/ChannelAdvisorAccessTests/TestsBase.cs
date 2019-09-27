@@ -20,7 +20,7 @@ namespace ChannelAdvisorAccessTests
 		[ SetUp ]
 		public void Init()
 		{
-			var factory = new ChannelAdvisorServicesFactory( Credentials.DeveloperKey, Credentials.DeveloperPassword, MemoryCache.Default );
+			var factory = new ChannelAdvisorServicesFactory( Credentials.DeveloperKey, Credentials.DeveloperPassword, null, null, MemoryCache.Default );
 			this.AdminService = factory.CreateAdminService();
 			this.ItemsService = factory.CreateItemsService( "test", Credentials.AccountId );
 			this.ListingService = factory.CreateListingService( "test", Credentials.AccountId );
