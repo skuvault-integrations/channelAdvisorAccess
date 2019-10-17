@@ -191,7 +191,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 				clauses.Add( String.Format( "(CheckoutDateUtc ge {0} and CheckoutDateUtc le {1}) or (PaymentDateUtc ge {0} and PaymentDateUtc le {1}) or (ShippingDateUtc ge {0} and ShippingDateUtc le {1}) and ", base.ConvertDate( criteria.StatusUpdateFilterBeginTimeGMT.Value ), base.ConvertDate( criteria.StatusUpdateFilterEndTimeGMT.Value ) ) );
 
 			if ( orderId != null )
-				clauses.Add( String.Format( "SiteOrderID eq '{0}' and ", orderId.Value.ToString() ) );
+				clauses.Add( String.Format( "ID eq {0} and ", orderId.Value.ToString() ) );
 
 			if ( clauses.Count > 0 )
 				clauses[ clauses.Count - 1] = clauses.Last().Substring( 0, clauses.Last().LastIndexOf( "and" ) );
