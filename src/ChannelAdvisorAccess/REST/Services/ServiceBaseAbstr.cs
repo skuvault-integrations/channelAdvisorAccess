@@ -311,8 +311,13 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			string url = apiUrl;
 
+			if ( !apiUrl.Contains( "?" ) )
+			{
+				url += "?";
+			}
+
 			if ( requestDataSetSize )
-				url += ( apiUrl.Contains("?") ? "&" : "?" ) + "$count=true";
+				url += "&$count=true";
 
 			if ( pageSize != null && page > 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;
