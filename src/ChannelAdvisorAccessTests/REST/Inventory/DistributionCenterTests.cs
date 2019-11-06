@@ -17,7 +17,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			var result = this.ItemsService.GetDistributionCenterListAsync( null ).GetAwaiter().GetResult();
 
-			result.Should().HaveCount( 4 );
+			result.Count().Should().BeGreaterThan( 4 );
 		}
 
 		[ Test ]
