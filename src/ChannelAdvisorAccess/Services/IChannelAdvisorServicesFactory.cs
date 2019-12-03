@@ -11,7 +11,7 @@ namespace ChannelAdvisorAccess.Services
 	{
 		IAdminService CreateAdminService();
 		IOrdersService CreateOrdersService( ChannelAdvisorConfig config );
-		IItemsService CreateItemsService( ChannelAdvisorConfig config );
+		IItemsService CreateItemsService( ChannelAdvisorConfig config, LogDetailsEnum logDetailsEnum = LogDetailsEnum.Undefined );
 		IShippingService CreateShippingService( string accountName, string accountId );
 		IListingService CreateListingService( string accountName, string accountId );
 	}

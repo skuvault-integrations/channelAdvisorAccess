@@ -105,31 +105,33 @@ namespace ChannelAdvisorAccess.Services
 				return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken );
 		}
 
-		/// <summary>
-		///	Returns Items service
-		/// </summary>
-		/// <param name="config"></param>
-		/// <returns></returns>
-		public IItemsService CreateItemsService( ChannelAdvisorConfig config )
+		///  <summary>
+		/// 	Returns Items service
+		///  </summary>
+		///  <param name="config"></param>
+		///  <param name="logDetailsEnum"></param>
+		///  <returns></returns>
+		public IItemsService CreateItemsService( ChannelAdvisorConfig config, LogDetailsEnum logDetailsEnum = LogDetailsEnum.Undefined )
 		{
 			if ( config.ApiVersion == ChannelAdvisorApiVersion.Soap )
-				return CreateItemsService( config.AccountName, config.AccountId );
+				return CreateItemsService( config.AccountName, config.AccountId, logDetailsEnum );
 			else
 				return CreateItemsRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, config.SoapCompatibilityAuth );
 		}
 
-		/// <summary>
-		///	Returns Soap items service for concrete tenant
-		/// </summary>
-		/// <param name="accountName">User friendly account name</param>
-		/// <param name="accountId">Tenant account id (GUID)</param>
-		/// <returns></returns>
-		public IItemsService CreateItemsService( string accountName, string accountId )
+		///  <summary>
+		/// 	Returns Soap items service for concrete tenant
+		///  </summary>
+		///  <param name="accountName">User friendly account name</param>
+		///  <param name="accountId">Tenant account id (GUID)</param>
+		///  <param name="logDetailsEnum"></param>
+		///  <returns></returns>
+		public IItemsService CreateItemsService( string accountName, string accountId, LogDetailsEnum logDetailsEnum = LogDetailsEnum.Undefined )
 		{
 			SetSecurityProtocol();
 
 			var inventoryCredentials = new InventoryService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
-			return new ItemsService( inventoryCredentials, accountName, accountId, this._cache ){ SlidingCacheExpiration = this._slidingCacheExpiration };
+			return new ItemsService( inventoryCredentials, accountName, accountId, this._cache, logDetailsEnum ){ SlidingCacheExpiration = this._slidingCacheExpiration };
 		}
 
 		/// <summary>
