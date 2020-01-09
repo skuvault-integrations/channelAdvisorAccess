@@ -1,11 +1,9 @@
 ﻿using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.REST.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ChannelAdvisorAccess.Misc;
 
 namespace ChannelAdvisorAccess.REST.Shared
 {
@@ -53,6 +51,8 @@ namespace ChannelAdvisorAccess.REST.Shared
 					VATGiftWrapOption = order.GiftOptionsTaxType.ToString(),
 					VATShippingOption = order.ShippingTaxType.ToString(),
 					VATTaxCalculationOption = order.OrderTaxType.ToString(),
+					LineItemInvoiceList = order.TotalTaxPrice.ToLineItemInvoiceList(),
+					LineItemPromoList = order.AdditionalCostOrDiscount.ToLineItemPromoList()
 				},
 				BillingInfo = new BillingInfo()
 				{
