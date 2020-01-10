@@ -198,6 +198,7 @@
     <Compile Include="Misc\ExtensionsInternal.cs" />
     <Compile Include="Misc\ChannelAdvisorLogger.cs" />
     <Compile Include="Misc\Mark.cs" />
+    <Compile Include="Misc\OrderExtensions.cs" />
     <Compile Include="Misc\PagedApiResponse.cs" />
     <Compile Include="Misc\ItemExtensions.cs" />
     <Compile Include="Misc\PredefinedValues.cs" />
