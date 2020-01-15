@@ -74,14 +74,15 @@ namespace ChannelAdvisorAccess.Services
 		/// </summary>
 		/// <param name="accountName">Tenant account name</param>
 		/// <param name="accountId">Tenant account id</param>
+		/// <param name="itemsService">Items service (to get Distribution Centers)</param>
 		/// <returns></returns>
-		public IOrdersService CreateOrdersRestServiceWithSoapCompatibleAuth( string accountName, string accountId )
+		public IOrdersService CreateOrdersRestServiceWithSoapCompatibleAuth( string accountName, string accountId, IItemsService itemsService )
 		{
 			SetSecurityProtocol();
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			
-			return new REST.Services.Orders.OrdersService( credentials, soapCredentials, accountId, accountName );
+			return new REST.Services.Orders.OrdersService( credentials, soapCredentials, accountId, accountName, itemsService );
 		}
 
 		/// <summary>
@@ -100,9 +101,15 @@ namespace ChannelAdvisorAccess.Services
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 
 			if ( soapCompatibleAuth )
-				return this.CreateOrdersRestServiceWithSoapCompatibleAuth( accountName, accountId );
+			{
+				var itemsService = this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId );
+				return this.CreateOrdersRestServiceWithSoapCompatibleAuth( accountName, accountId, itemsService);
+			}
 			else
-				return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken );
+			{ 
+				var itemsService = new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken );
+				return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken, itemsService );
+			}
 		}
 
 		/// <summary>

@@ -121,5 +121,10 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 		#endregion
+
+		public Task< REST.Models.DistributionCenter[] > GetDistributionCentersAsync( Mark mark = null )
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
