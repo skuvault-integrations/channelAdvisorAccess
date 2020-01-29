@@ -5,12 +5,11 @@ using ChannelAdvisorAccess.Services.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Caching;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.REST.Shared;
-using ChannelAdvisorAccess.REST.Services.Items;
 using ChannelAdvisorAccess.REST.Models;
+using ChannelAdvisorAccess.Services.Items;
 
 namespace ChannelAdvisorAccess.REST.Services.Orders
 {
@@ -19,6 +18,8 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 	/// </summary>
 	public class OrdersService : RestServiceBaseAbstr, IOrdersService
 	{
+		private readonly IItemsService _itemsService;
+
 		/// <summary>
 		///	Rest service with standard authorization flow
 		/// </summary>
@@ -26,8 +27,12 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="accountName">Tenant account name</param>
 		/// <param name="accessToken">Tenant access token</param>
 		/// <param name="refreshToken">Tenant refresh token</param>
-		public OrdersService( RestCredentials credentials, string accountName, string accessToken, string refreshToken ) 
-			: base( credentials, accountName, accessToken, refreshToken ) { }
+		/// <param name="itemsService">Items service (to get Distribution Centers)</param>
+		public OrdersService( RestCredentials credentials, string accountName, string accessToken, string refreshToken, IItemsService itemsService ) 
+			: base( credentials, accountName, accessToken, refreshToken ) 
+		{ 
+			this._itemsService = itemsService;		
+		}
 
 		/// <summary>
 		///	Rest service with soap compatible authorization flow
@@ -36,8 +41,12 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="soapCredentials">Soap application credentials</param>
 		/// <param name="accountId">Tenant account id</param>
 		/// <param name="accountName">Tenant account name</param>
-		public OrdersService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName ) 
-			: base( credentials, soapCredentials, accountId, accountName ) { }
+		/// <param name="itemsService">Items service (to get Distribution Centers)</param>
+		public OrdersService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, IItemsService itemsService ) 
+			: base( credentials, soapCredentials, accountId, accountName ) 
+		{
+			this._itemsService = itemsService;
+		}
 
 		/// <summary>
 		///	Gets orders by created date range
@@ -153,7 +162,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 				var distributionCenters = new DistributionCenter[] { };
 				if ( result.Response.Count() > 0 )
 				{
-					distributionCenters = await new ItemsService( base._credentials, base.AccountName, base._accessToken, base._refreshToken ).GetDistributionCentersAsync().ConfigureAwait( false );
+					distributionCenters = await this._itemsService.GetDistributionCentersAsync().ConfigureAwait( false );
 				}
 
 				orders.AddRange( result.Response.Select( order => order.ToOrderResponseDetailComplete( distributionCenters ) ).OfType< T >() );

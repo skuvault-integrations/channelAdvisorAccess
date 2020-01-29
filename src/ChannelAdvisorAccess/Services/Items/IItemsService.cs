@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.REST.Models;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
@@ -117,6 +118,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null );
 		void SynchItem( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null );
 		Task SynchItemAsync( InventoryItemSubmit item, bool isCreateNew = false, Mark mark = null );
+		Task< DistributionCenter[] > GetDistributionCentersAsync( Mark mark = null );
 		void SynchItems( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null );
 		Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, bool isCreateNew = false, Mark mark = null );
 		void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark = null );

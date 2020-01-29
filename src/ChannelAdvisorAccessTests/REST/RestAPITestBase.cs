@@ -45,13 +45,13 @@ namespace ChannelAdvisorAccessTests.REST
 
 			if ( credentials.useSoapCredentials )
 			{
-				this.OrdersService = factory.CreateOrdersRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId );
 				this.ItemsService = factory.CreateItemsRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId );
+				this.OrdersService = factory.CreateOrdersRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId, this.ItemsService );
 			}
 			else
 			{
-				this.OrdersService = factory.CreateOrdersRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
 				this.ItemsService = factory.CreateItemsRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
+				this.OrdersService = factory.CreateOrdersRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
 			}
 
 			var lightweightCaAccountCredentials = LoadLightWeightCaAccountCredentials();
