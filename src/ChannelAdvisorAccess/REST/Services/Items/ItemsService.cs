@@ -1194,6 +1194,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 							{
 								csvReader.Configuration.HasHeaderRecord = true;
 								csvReader.Configuration.Delimiter = "\t";
+								csvReader.Configuration.BadDataFound = null;
 
 								var rows = csvReader.GetRecords< ProductExportRow >();
 								var productIds = new Dictionary< string, int >();
