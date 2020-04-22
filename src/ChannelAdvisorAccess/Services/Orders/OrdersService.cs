@@ -222,6 +222,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 					if( ordersFromPage == null || ordersFromPage.Length == 0 )
 						break;
 
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark: mark, methodResult: ordersFromPage.OfType< T >().ToJson(), additionalInfo: "\"Result of ordersFromPage.OfType< T >() for page\"" ) );
 					orders.AddRange( ordersFromPage.OfType< T >() );
 					orderCriteria.PageNumberFilter += 1;
 				}
@@ -286,6 +287,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			orderCriteria.PageSize = prevPageSize;
 			orderCriteria.PageNumberFilter = prevPageNumber;
 
+			ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark: mark, methodResult: result.Select( o => o.OrderID ).ToJson(), additionalInfo: "\"Final result after looping\"", methodParameters: orderCriteria.ToJson() ) );
 			return result.ToArray();
 		}
 
