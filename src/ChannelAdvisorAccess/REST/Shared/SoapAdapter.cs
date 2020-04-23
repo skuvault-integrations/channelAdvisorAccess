@@ -43,7 +43,8 @@ namespace ChannelAdvisorAccess.REST.Shared
 					PostalCode = order.ShippingPostalCode,
 					Region = order.ShippingStateOrProvince,
 					RegionDescription = order.ShippingStateOrProvinceName,
-					Suffix = order.ShippingSuffix
+					Suffix = order.ShippingSuffix,
+					ShipmentList = order.Fulfillments.ToShipmentList()
 				},
 				ShoppingCart = new OrderCart()
 				{
@@ -284,6 +285,19 @@ namespace ChannelAdvisorAccess.REST.Shared
 			};
 
 			return response;
+		}
+
+		public static Shipment [] ToShipmentList( this Fulfillment [] fulfillments )
+		{
+			if ( fulfillments == null )
+				return null;
+
+			return fulfillments.Select( o => new Shipment
+			{
+				ShippingCarrier = o.ShippingCarrier,
+				ShippingClass = o.ShippingClass,
+				TrackingNumber = o.TrackingNumber
+			} ).ToArray();
 		}
 	}
 }

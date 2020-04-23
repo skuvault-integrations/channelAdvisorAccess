@@ -80,6 +80,7 @@
     <Compile Include="REST\Orders\OrdersServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="REST\RestAPITestBase.cs" />
+    <Compile Include="REST\Shared\SoapAdapterTests.cs" />
     <Compile Include="TestsBase.cs" />
   </ItemGroup>
   <ItemGroup>
