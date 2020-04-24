@@ -163,6 +163,9 @@ namespace ChannelAdvisorAccess.REST.Shared
 				response.OrderState = "Cancelled";
 				
 			response.ShoppingCart.LineItemSKUList = shoppingCartItems.ToArray();
+			//Return the REST SiteID (marketplace) via the SOAP equivalent field
+			if( response.ShoppingCart.LineItemSKUList.Any() )
+				response.ShoppingCart.LineItemSKUList.First().ItemSaleSource = order.SiteID.ToString();
 
 			List< CustomValue > customValues = new List< CustomValue >();
 
