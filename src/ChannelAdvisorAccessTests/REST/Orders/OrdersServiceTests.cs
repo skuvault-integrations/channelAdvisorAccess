@@ -57,14 +57,16 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = new DateTime(2019, 01, 01),
-				StatusUpdateFilterEndTimeGMT = new DateTime(2019, 05, 01)
+				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddMonths( -2 ),
+				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
+				DetailLevel = DetailLevelTypes.Complete
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 2 );
+			Assert.IsFalse( result.Any( r => r.ShippingInfo.ShipmentList == null ) );
 		}
 
 		[ Test ]

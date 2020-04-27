@@ -43,7 +43,8 @@ namespace ChannelAdvisorAccess.REST.Shared
 					PostalCode = order.ShippingPostalCode,
 					Region = order.ShippingStateOrProvince,
 					RegionDescription = order.ShippingStateOrProvinceName,
-					Suffix = order.ShippingSuffix
+					Suffix = order.ShippingSuffix,
+					ShipmentList = order.Fulfillments.ToShipmentList()
 				},
 				ShoppingCart = new OrderCart()
 				{
@@ -162,6 +163,9 @@ namespace ChannelAdvisorAccess.REST.Shared
 				response.OrderState = "Cancelled";
 				
 			response.ShoppingCart.LineItemSKUList = shoppingCartItems.ToArray();
+			//Return the REST SiteID (marketplace) via the SOAP equivalent field
+			if( response.ShoppingCart.LineItemSKUList.Any() )
+				response.ShoppingCart.LineItemSKUList.First().ItemSaleSource = order.SiteID.ToString();
 
 			List< CustomValue > customValues = new List< CustomValue >();
 
@@ -284,6 +288,19 @@ namespace ChannelAdvisorAccess.REST.Shared
 			};
 
 			return response;
+		}
+
+		public static Shipment [] ToShipmentList( this Fulfillment [] fulfillments )
+		{
+			if ( fulfillments == null )
+				return null;
+
+			return fulfillments.Select( o => new Shipment
+			{
+				ShippingCarrier = o.ShippingCarrier,
+				ShippingClass = o.ShippingClass,
+				TrackingNumber = o.TrackingNumber
+			} ).ToArray();
 		}
 	}
 }
