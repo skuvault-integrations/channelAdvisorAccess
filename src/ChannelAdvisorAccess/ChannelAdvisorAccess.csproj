@@ -194,6 +194,7 @@
     <Compile Include="Exceptions\ChannelAdvisorException.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Misc\AP.cs" />
+    <Compile Include="Misc\MarketplaceSiteTokenEnum.cs" />
     <Compile Include="Misc\ChannelAdvisorConfig.cs" />
     <Compile Include="Misc\ExtensionsInternal.cs" />
     <Compile Include="Misc\ChannelAdvisorLogger.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="REST\Models\Infrastructure\OAuthResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportRow.cs" />
+    <Compile Include="REST\Models\MarketplaceSiteIdEnum.cs" />
     <Compile Include="REST\Shared\ActionPolicy.cs" />
     <Compile Include="REST\Shared\BatchBuilder.cs" />
     <Compile Include="REST\Shared\MultiPartResponseParser.cs" />
