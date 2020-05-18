@@ -52,7 +52,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 					VATGiftWrapOption = order.GiftOptionsTaxType.ToString(),
 					VATShippingOption = order.ShippingTaxType.ToString(),
 					VATTaxCalculationOption = order.OrderTaxType.ToString(),
-					LineItemInvoiceList = order.TotalTaxPrice.ToLineItemInvoiceList(),
+					LineItemInvoiceList = OrderExtensions.ToLineItemInvoiceList( order.TotalTaxPrice, order.TotalShippingPrice ),
 					LineItemPromoList = order.AdditionalCostOrDiscount.ToLineItemPromoList()
 				},
 				BillingInfo = new BillingInfo()
