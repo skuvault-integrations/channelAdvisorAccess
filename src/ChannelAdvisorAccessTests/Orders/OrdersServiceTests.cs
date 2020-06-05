@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.OrderService;
@@ -58,6 +59,21 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//Always returned as 0 from the CA api
 			//shoppingCart.LineItemSKUList.Any(x => x.ItemPromoList != null && x.ItemPromoList.Any()).Should().BeTrue();
 			shoppingCart.LineItemPromoList.Any( x => x.UnitPrice != 0 ).Should().BeTrue();
+		}
+
+		[ Test ]
+		public async Task GetOrdersAsync_ShouldReturnShippingCost()
+		{
+			var criteria = new OrderCriteria
+			{
+				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddMonths( -2 ),
+				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
+				DetailLevel = DetailLevelTypes.Complete
+			};
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
+
+			result.Any( o => o.ShoppingCart.LineItemInvoiceList.Any( i => i.LineItemType == "Shipping" ) ).Should().BeTrue();
 		}
 	}
 }

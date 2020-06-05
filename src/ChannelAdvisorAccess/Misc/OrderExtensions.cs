@@ -5,7 +5,7 @@ namespace ChannelAdvisorAccess.Misc
 {
 	public static class OrderExtensions
 	{
-		public static OrderLineItemInvoice[] ToLineItemInvoiceList( this decimal? totalTaxPrice )
+		public static OrderLineItemInvoice[] ToLineItemInvoiceList( decimal? totalTaxPrice, decimal? totalShippingPrice )
 		{
 			var list = new List< OrderLineItemInvoice >();
 
@@ -15,6 +15,16 @@ namespace ChannelAdvisorAccess.Misc
 					{
 						UnitPrice = totalTaxPrice.Value,
 						LineItemType = "SalesTax"
+					}
+				);
+			}
+
+			if ( totalShippingPrice != null ) 
+			{ 
+				list.Add( new OrderLineItemInvoice
+					{
+						UnitPrice = totalShippingPrice.Value,
+						LineItemType = "Shipping"
 					}
 				);
 			}

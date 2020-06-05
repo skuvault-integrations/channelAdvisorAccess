@@ -11,11 +11,14 @@ namespace ChannelAdvisorAccessTests.Misc
 		public static void ToLineItemInvoiceList()
 		{
 			decimal? totalTax = 1.2m;
+			decimal totalShipping = 2.3m;
 
-			var lineItemInvoiceList = totalTax.ToLineItemInvoiceList();
+			var lineItemInvoiceList = OrderExtensions.ToLineItemInvoiceList( totalTax, totalShipping );
 
 			lineItemInvoiceList[ 0 ].UnitPrice.Should().Be( totalTax );
 			lineItemInvoiceList[ 0 ].LineItemType.Should().Be( "SalesTax" );
+			lineItemInvoiceList[ 1 ].UnitPrice.Should().Be( totalShipping );
+			lineItemInvoiceList[ 1 ].LineItemType.Should().Be( "Shipping" );
 		}
 
 		[ Test ]
