@@ -1028,7 +1028,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
 
 				var skusParts = ToChunks( skus, 100 );
-				var inventoryQuantityResponses = ( await skusParts.ProcessInBatchAsync( 3, async s =>
+				var inventoryQuantityResponses = ( await skusParts.ProcessInBatchAsync( 1, async s =>
 				{
 					var requestResult = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 					{
