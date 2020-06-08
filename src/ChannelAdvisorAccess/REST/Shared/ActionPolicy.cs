@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.REST.Exceptions;
@@ -14,6 +11,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 	public class ActionPolicy
 	{
 		private readonly int _retryAttempts;
+		private const int MaxRetryWaitTimeInSec = 600;
 
 		public ActionPolicy( int attempts )
 		{
@@ -33,7 +31,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		{
 			return Policy.Handle< ChannelAdvisorNetworkException >()
 				.WaitAndRetryAsync( this._retryAttempts,
-					retryAttempt => TimeSpan.FromSeconds( Math.Pow( 2, retryAttempt ) ),
+					retryAttempt => this.GetDelayBeforeNextAttempt( retryAttempt ),
 					( exception, timeSpan, retryCount, context ) =>
 					{
 						if ( onRetryAttempt != null )
@@ -64,6 +62,11 @@ namespace ChannelAdvisorAccess.REST.Shared
 						throw caException;
 					}
 				});
+		}
+
+		public TimeSpan GetDelayBeforeNextAttempt( int retryAttempt )
+		{
+			return TimeSpan.FromSeconds( (int)Math.Min( MaxRetryWaitTimeInSec, Math.Pow( 2, retryAttempt ) ) );
 		}
 	}
 }

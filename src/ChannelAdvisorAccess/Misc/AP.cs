@@ -13,7 +13,7 @@ namespace ChannelAdvisorAccess.Misc
 	public static class AP
 	{
 		private const int RetryCount = 10;
-		private const int Wait429After = 5;
+		private const int MaxRetryWaitTimeInSec = 600;
 
 		private static readonly ActionPolicy _query = CreateQuery();
 		private static readonly ActionPolicyAsync _queryAsync = CreateQueryAsync();
@@ -120,16 +120,15 @@ namespace ChannelAdvisorAccess.Misc
 
 		private static TimeSpan GetDelay( Exception ex, int retryNumber )
 		{
-			if( ( retryNumber > Wait429After ) && IsError429( ex ) )
-				return GetDelayFor429Exception();
+			if( IsError429( ex ) )
+				return GetDelayFor429Exception( retryNumber );
 
 			return TimeSpan.FromSeconds( 0.5 + retryNumber );
 		}
 
-		private static TimeSpan GetDelayFor429Exception()
+		public static TimeSpan GetDelayFor429Exception( int retryNumber )
 		{
-			var minutesLeftInTheHour = 62 - DateTime.UtcNow.Minute; // wait until current our ends + 2 extra minutes for buffer
-			return TimeSpan.FromMinutes( minutesLeftInTheHour );
+			return TimeSpan.FromSeconds( (int)Math.Min( MaxRetryWaitTimeInSec, Math.Pow( 2, retryNumber ) ) );
 		}
 
 		private static HttpStatusCode? GetHttpStatusCode( WebException webException )
