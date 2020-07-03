@@ -38,7 +38,6 @@ namespace ChannelAdvisorAccess.Services
 
 		public IAdminService CreateAdminService()
 		{
-			SetSecurityProtocol();
 			var adminCredentials = new AdminService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			return new Admin.AdminService( adminCredentials );
 		}
@@ -64,7 +63,6 @@ namespace ChannelAdvisorAccess.Services
 		/// <returns></returns>
 		public IOrdersService CreateOrdersService( string accountName, string accountId )
 		{
-			SetSecurityProtocol();
 			var ordersCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			return new OrdersService( ordersCredentials, accountName, accountId, this._cache );
 		}
@@ -78,7 +76,6 @@ namespace ChannelAdvisorAccess.Services
 		/// <returns></returns>
 		public IOrdersService CreateOrdersRestServiceWithSoapCompatibleAuth( string accountName, string accountId, IItemsService itemsService )
 		{
-			SetSecurityProtocol();
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			
@@ -96,8 +93,6 @@ namespace ChannelAdvisorAccess.Services
 		/// <returns></returns>
 		public IOrdersService CreateOrdersRestService( string accountName, string accountId, string accessToken, string refreshToken, bool soapCompatibleAuth = false )
 		{
-			SetSecurityProtocol();
-
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 
 			if ( soapCompatibleAuth )
@@ -133,8 +128,6 @@ namespace ChannelAdvisorAccess.Services
 		/// <returns></returns>
 		public IItemsService CreateItemsService( string accountName, string accountId )
 		{
-			SetSecurityProtocol();
-
 			var inventoryCredentials = new InventoryService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			return new ItemsService( inventoryCredentials, accountName, accountId, this._cache ){ SlidingCacheExpiration = this._slidingCacheExpiration };
 		}
@@ -174,23 +167,14 @@ namespace ChannelAdvisorAccess.Services
 
 		public IShippingService CreateShippingService( string accountName, string accountId )
 		{
-			SetSecurityProtocol();
 			var shippingCredentials = new ShippingService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			return new Shipping.ShippingService( shippingCredentials, accountName, accountId );
 		}
 
 		public IListingService CreateListingService( string accountName, string accountId )
 		{
-			SetSecurityProtocol();
 			var listingCredentials = new ListingService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			return new Listing.ListingService( listingCredentials, accountName, accountId );
 		}
-
-		#region SSL certificate hack
-		public static void SetSecurityProtocol()
-		{
-			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
-		}
-		#endregion
 	}
 }
