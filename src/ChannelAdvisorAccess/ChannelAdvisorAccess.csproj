@@ -207,6 +207,7 @@
     <Compile Include="REST\Exceptions\ChannelAdvisorNetworkException.cs" />
     <Compile Include="REST\Exceptions\ChannelAdvisorProductExportFailedException.cs" />
     <Compile Include="REST\Models\Configuration\ChannelAdvisorEndPoint.cs" />
+    <Compile Include="REST\Models\Infrastructure\BatchResponses.cs" />
     <Compile Include="REST\Models\Infrastructure\OAuthResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportRow.cs" />

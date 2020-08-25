@@ -547,7 +547,7 @@ namespace ChannelAdvisorAccess.REST.Services
 							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
 							int batchStatusCode;
-							entities.AddRange( new MultiPartResponseParser().Parse< T >( content, out batchStatusCode ) );
+							entities.AddRange( MultiPartResponseParser.Parse< T >( content, out batchStatusCode ) );
 
 							if ( (int)httpResponse.StatusCode == _tooManyRequestsStatusCode )
 							{
