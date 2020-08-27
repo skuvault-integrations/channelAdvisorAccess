@@ -54,5 +54,19 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 			batchStatusCode.Should().Be( unauthorized401 );
 			result[ 0 ].Error.Message.Should().Be( "Authorization has been denied for this request." );
 		}
+
+		[ Test ]
+		public void GivenSomeItemsHave401StatusButLastOneHas200_WhenCallMultiPartResponseParser_ThenReturns401BatchStatusCode()
+		{
+			int batchStatusCode;
+			const int unauthorized401 = ( int ) HttpStatusCode.Unauthorized;
+			var responseItems401TheLast200 = "{\"responses\":[{\"id\":\"1\",\"status\":500,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"2\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"3\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"4\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"5\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"6\",\"status\":200,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"@odata.context\":\"https://api.channeladvisor.com/v1/$metadata#Products(ID,Sku)\",\"value\":[{\"ID\":10059896,\"Sku\":\"testkit2\"},{\"ID\":22222222,\"Sku\":\"testsku2\"}]}}]}";
+
+			var result = MultiPartResponseParser.Parse< ODataResponse< Product > >( responseItems401TheLast200, out batchStatusCode ).ToList();
+
+			batchStatusCode.Should().Be( unauthorized401 );
+			result[ 0 ].Error.Message.Should().Be( "Authorization has been denied for this request." );
+			result[ 5 ].Value.First().Sku.Should().Be( "testkit2" );
+		}
 	}
 }
