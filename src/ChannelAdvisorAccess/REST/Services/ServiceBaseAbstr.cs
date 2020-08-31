@@ -135,13 +135,14 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Gets refresh token via developer console credentials
 		/// </summary>
+		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private Task RefreshAccessToken()
+		private Task RefreshAccessToken( Mark mark )
 		{
 			if ( string.IsNullOrEmpty( this._accessToken ) )
 				return this.RefreshAccessTokenBySoapCredentials();
 			else
-				return this.RefreshAccessTokenByRestCredentials();
+				return this.RefreshAccessTokenByRestCredentials( mark );
 		}
 
 		/// <summary>
@@ -194,18 +195,24 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Gets refresh token by REST credentials
 		/// </summary>
+		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenByRestCredentials()
+		private async Task RefreshAccessTokenByRestCredentials( Mark mark )
 		{
 			_waitHandle.WaitOne();
 			this.SetBasicAuthorizationHeader();
+			AddAccountInfoToHeader();
 
 			var requestData = new Dictionary< string, string > { { "grant_type", "refresh_token" }, { "refresh_token", this._refreshToken } };
 			var content = new FormUrlEncodedContent( requestData );
+			const string requestTokenUrl = "oauth2/token";
+
+			var payloadForLog = new { GrantType = requestData[ "grant_type" ], RefreshToken = ChannelAdvisorLogger.SanitizeToken( requestData[ "refresh_token" ] ) };
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 
 			try
 			{
-				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
+				var response = await this.HttpClient.PostAsync( requestTokenUrl, content ).ConfigureAwait( false );
 				var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
@@ -214,6 +221,9 @@ namespace ChannelAdvisorAccess.REST.Services
 
 				this._accessToken = result.AccessToken;
 				this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
+
+				var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 			}
 			catch( Exception ex )
 			{
@@ -225,6 +235,15 @@ namespace ChannelAdvisorAccess.REST.Services
 				_waitHandle.Set();
 				this.SetDefaultAuthorizationHeader();
 			}
+		}
+
+		private void AddAccountInfoToHeader()
+		{
+			if( !this.HttpClient.DefaultRequestHeaders.Contains( "account_name" ) )
+				this.HttpClient.DefaultRequestHeaders.Add( "account_name", this.AccountName );
+
+			if( !this.HttpClient.DefaultRequestHeaders.Contains( "account_id" ) )
+				this.HttpClient.DefaultRequestHeaders.Add( "account_id", this.AccountId );
 		}
 
 		/// <summary>
@@ -351,7 +370,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, additionalInfo : this.AdditionalLogInfo() ) );
 
-							await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, responseStr, mark ).ConfigureAwait( false );
 					
 							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
@@ -404,7 +423,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, additionalInfo : this.AdditionalLogInfo() ) );
 
-							await this.ThrowIfError( httpResponse, responseStr ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, responseStr, mark ).ConfigureAwait( false );
 
 							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
@@ -443,7 +462,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo() ) );
 							
-							await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, null, mark ).ConfigureAwait( false );
 
 							return httpResponse.StatusCode;
 						}
@@ -481,7 +500,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo() ) );
 							
-						await this.ThrowIfError( httpResponse, null ).ConfigureAwait( false );
+						await this.ThrowIfError( httpResponse, null, mark ).ConfigureAwait( false );
 
 						return httpResponse.StatusCode;
 					}
@@ -547,7 +566,7 @@ namespace ChannelAdvisorAccess.REST.Services
 							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
 							int batchStatusCode;
-							entities.AddRange( new MultiPartResponseParser().Parse< T >( content, out batchStatusCode ) );
+							entities.AddRange( MultiPartResponseParser.Parse< T >( content, out batchStatusCode ) );
 
 							if ( (int)httpResponse.StatusCode == _tooManyRequestsStatusCode )
 							{
@@ -558,7 +577,7 @@ namespace ChannelAdvisorAccess.REST.Services
 								}
 							}
 
-							await this.ThrowIfError( batchStatusCode, content ).ConfigureAwait( false );
+							await this.ThrowIfError( batchStatusCode, content, mark ).ConfigureAwait( false );
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 						}
@@ -578,7 +597,8 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="response"></param>
 		/// <param name="message">response message from server</param>
-		private async Task ThrowIfError( HttpResponseMessage response, string message )
+		/// <param name="mark">mark for logging</param>
+		private async Task ThrowIfError( HttpResponseMessage response, string message, Mark mark )
 		{
 			if ( response.IsSuccessStatusCode )
 				return;
@@ -586,10 +606,10 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( message == null )
 				message = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 
-			await ThrowIfError( (int)response.StatusCode, message ).ConfigureAwait( false );
+			await ThrowIfError( (int)response.StatusCode, message, mark ).ConfigureAwait( false );
 		}
 
-		private async Task ThrowIfError( int responseStatusCode, string message )
+		private async Task ThrowIfError( int responseStatusCode, string message, Mark mark )
 		{
 			if ( responseStatusCode >= 200 && responseStatusCode < 300 )
 				return;
@@ -597,7 +617,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( responseStatusCode == (int)HttpStatusCode.Unauthorized )
 			{
 				// we have to refresh our access token
-				await this.RefreshAccessToken().ConfigureAwait( false );
+				await this.RefreshAccessToken( mark ).ConfigureAwait( false );
 
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}

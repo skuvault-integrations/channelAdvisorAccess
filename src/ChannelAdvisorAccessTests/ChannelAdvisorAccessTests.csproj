@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Inventory\DistributionCenterTests.cs" />
     <Compile Include="Inventory\ItemsServiceTests.cs" />
+    <Compile Include="Misc\ChannelAdvisorLoggerTests.cs" />
     <Compile Include="Misc\OrderExtensionsTests.cs" />
     <Compile Include="Orders\OrdersServiceTests.cs" />
     <Compile Include="REST\Inventory\DistributionCenterTests.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="REST\Orders\OrdersServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="REST\RestAPITestBase.cs" />
+    <Compile Include="REST\Shared\MultiPartResponseParserTests.cs" />
     <Compile Include="REST\Shared\SoapAdapterTests.cs" />
     <Compile Include="TestsBase.cs" />
   </ItemGroup>
