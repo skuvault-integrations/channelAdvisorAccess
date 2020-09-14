@@ -95,8 +95,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <typeparam name="T"></typeparam>
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
+		/// <param name="mark"></param>
 		/// <returns></returns>
-		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate ) where T : OrderResponseItem
+		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark = null ) where T : OrderResponseItem
 		{
 			OrderCriteria criteria = new OrderCriteria()
 			{
@@ -104,7 +105,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate,
 			};
 
-			return this.GetOrdersAsync< T >( criteria );
+			return this.GetOrdersAsync< T >( criteria, mark );
 		}
 
 		/// <summary>

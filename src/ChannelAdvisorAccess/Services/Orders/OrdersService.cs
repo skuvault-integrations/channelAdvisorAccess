@@ -75,7 +75,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return this.GetOrders< T >( orderCriteria );
 		}
 
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
@@ -84,7 +84,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate
 			};
 
-			return await this.GetOrdersAsync< T >( orderCriteria ).ConfigureAwait( false );
+			return await this.GetOrdersAsync< T >( orderCriteria, mark ).ConfigureAwait( false );
 		}
 
 		/// <summary>
