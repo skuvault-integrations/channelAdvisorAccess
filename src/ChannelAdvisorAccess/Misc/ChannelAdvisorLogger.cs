@@ -10,7 +10,7 @@ namespace ChannelAdvisorAccess.Misc
 	public class ChannelAdvisorLogger
 	{
 		private static readonly string _versionInfo;
-		private const string CaMark = "channelAdvisor";
+		private const string ChannelType = "channelAdvisor";
 		private const int MaxLogLineSize = 0xA00000; //10mb
 
 		static ChannelAdvisorLogger()
@@ -24,64 +24,93 @@ namespace ChannelAdvisorAccess.Misc
 			return NetcoLogger.GetLogger( "ChannelAdvisorLogger" );
 		}
 
-		public static void LogTraceException( Exception exception )
-		{
-			Log().Trace( exception, "{channel} An exception occured. [ver:{version}]", CaMark, _versionInfo );
+		public static void LogTraceException( CallInfoBasic info, Exception exception, string message = "" )
+		{			
+			var logType = "An exception occurred";
+			LogTraceException( logType, message, info, exception );
 		}
 
-		public static void LogTraceStarted( string info )
+		public static void LogTraceFailure( string message, CallInfoBasic info )
+		{
+			var logType = "A call failed";
+			Log().Trace( "[{channel}] [{logType}]:{[{mark}] [{memberName}] {connectionInfo} {message}{additionalInfo} [ver:{version}]}", 
+				ChannelType, logType, info.Mark, info.MemberName, info.ConnectionInfo, message,
+				info.AdditionalInfo, _versionInfo );
+		}
+
+		public static void LogTraceStarted( CallInfo info )
 		{
 			TraceLog( "Trace Start call", info );
 		}
 
-		public static void LogTraceEnd( string info )
+		public static void LogTraceEnd( CallInfo info )
 		{
 			TraceLog( "Trace End call", info );
 		}
 
-		public static void LogStarted( string info )
+		public static void LogStarted( CallInfo info )
 		{
 			TraceLog( "Start call", info );
 		}
 
-		public static void LogEnd( string info )
+		public static void LogEnd( CallInfo info )
 		{
 			TraceLog( "End call", info );
 		}
 
-		public static void LogTrace( Exception ex, string info )
+		public static void LogTrace( CallInfo info )
 		{
 			TraceLog( "Trace info", info );
 		}
 
-		public static void LogTrace( string info )
-		{
-			TraceLog( "Trace info", info );
-		}
-
-		public static void LogTraceRetryStarted( string info )
+		public static void LogTraceRetryStarted( CallInfo info )
 		{
 			TraceLog( "TraceRetryStarted info", info );
 		}
 
-		public static void LogTraceRetryEnd( string info )
+		public static void LogTraceRetryException( RetryInfo info, Exception exception )
+		{
+			var logType = "Retry failed";
+			var message = $"Call failed due to an exception, trying repeat call {info.RetryAttempt} time, waited {info.WaitDurationSecs} seconds. ";
+			LogTraceException( logType, message, info, exception );
+		}
+
+		public static void LogTraceRetryScheduled( RetryInfo info, Exception exception )
+		{
+			var logType = "Retry scheduled after exception";
+			var message = $"Retrying CA API get call for the {info.RetryAttempt} time, delay in secs: {info.WaitDurationSecs}. ";
+			LogTraceException( logType, message, info, exception );
+		}
+
+		public static void LogTraceException( string logType, string message, CallInfoBasic info, Exception exception )
+		{
+			Log().Trace( exception, "[{channel}] [{logType}]:{[{mark}] [{memberName}] {methodParams} {connectionInfo} {message}{additionalInfo} [ver:{version}]}", 
+				ChannelType, logType, info.Mark, info.MemberName, info.MethodParameters, info.ConnectionInfo, message,
+				info.AdditionalInfo, _versionInfo );
+		}
+
+		public static void LogTraceRetryEnd( CallInfo info )
 		{
 			TraceLog( "TraceRetryEnd info", info );
 		}
 
-		private static void TraceLog( string type, string info )
+		private static void TraceLog( string logType, CallInfo info )
 		{
-			if( info.Length < MaxLogLineSize )
+			var payloadResponseDetails = info.GetPayloadResponseText();
+			const string format = "[{channel}] [{logType}]:{[{mark}] [{memberName}] {methodParams} {connectionInfo} {notes} {payloadResponseDetails} {additionalInfo}, [ver:{version}]}";
+			if( payloadResponseDetails.Length + format.Length < MaxLogLineSize )
 			{
-				Log().Trace( "[{channel}] {type}:{info}, [ver:{version}]", CaMark, type, info, _versionInfo );
+				Log().Trace( format, ChannelType, logType, info.Mark, info.MemberName, info.MethodParameters, info.ConnectionInfo, info.Notes, payloadResponseDetails, info.AdditionalInfo, _versionInfo );
 				return;
 			}
 
 			var pageNumber = 1;
 			var pageId = Guid.NewGuid();
-			foreach( var page in SplitString( info, MaxLogLineSize ) )
+			foreach( var logPage in SplitString( payloadResponseDetails, MaxLogLineSize ) )
 			{
-				Log().Trace( "[{channel}] page:{page} pageId:{pageId} {type}:{info}, [ver:{version}]", CaMark, pageNumber++, pageId, type, page, _versionInfo );
+				Log().Trace( "[{channel}] page:{page} pageId:{pageId} [{logType}]:{[{mark}] [{memberName}] {methodParams} {connectionInfo} {notes} {payloadResponseDetails} {additionalInfo}, [ver:{version}]}", 
+					ChannelType, pageNumber++, pageId, logType, info.Mark, info.MemberName, info.MethodParameters, info.ConnectionInfo, info.Notes,
+					logPage, info.AdditionalInfo, _versionInfo );
 			}
 		}
 
