@@ -858,7 +858,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				var url = new ItemsServiceUrlBuilder().GetUpdateProductUrl( product.ID );
 				await base.PutAsync( url, request ).ConfigureAwait( false );
 						
-				ChannelAdvisorLogger.LogEnd( new CallInfo( connectionInfo: this.ToJson(), mark : mark, methodResult : string.Empty, additionalInfo : this.AdditionalLogInfo()) );
+				ChannelAdvisorLogger.LogEnd( new CallInfo( connectionInfo: this.ToJson(), mark : mark, additionalInfo : this.AdditionalLogInfo()) );
 			}
 			catch( Exception exception )
 			{

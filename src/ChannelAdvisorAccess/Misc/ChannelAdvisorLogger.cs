@@ -33,9 +33,9 @@ namespace ChannelAdvisorAccess.Misc
 		public static void LogTraceFailure( string message, CallInfoBasic info )
 		{
 			var logType = "A call failed";
-			Log().Trace( "[{channel}] [{logType}]:{[{mark}] [{memberName}] {connectionInfo} {message}{additionalInfo} [ver:{version}]}", 
-				ChannelType, logType, info.Mark, info.MemberName, info.ConnectionInfo, message,
-				info.AdditionalInfo, _versionInfo );
+			Log().Trace( "[{channel}] {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", ConnectionInfo:" + info.ConnectionInfo + ", " +
+				"Message:\"" + message + "\"" + info.AdditionalInfoLog + ", [ver:{version}}", 
+				ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
 		}
 
 		public static void LogTraceStarted( CallInfo info )
@@ -84,9 +84,10 @@ namespace ChannelAdvisorAccess.Misc
 
 		public static void LogTraceException( string logType, string message, CallInfoBasic info, Exception exception )
 		{
-			Log().Trace( exception, "[{channel}] [{logType}]:{[{mark}] [{memberName}] {methodParams} {connectionInfo} {message}{additionalInfo} [ver:{version}]}", 
-				ChannelType, logType, info.Mark, info.MemberName, info.MethodParameters, info.ConnectionInfo, message,
-				info.AdditionalInfo, _versionInfo );
+			var messageLog = string.IsNullOrWhiteSpace( message ) ? string.Empty : $", Message:\"{message}\"";
+			Log().Trace( exception, "[{channel}] {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", MethodParams:\"" + info.MethodParameters + "\", " + 
+				"ConnectionInfo:" + info.ConnectionInfo + messageLog + info.AdditionalInfoLog + ", [ver:{version}}", 
+				ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
 		}
 
 		public static void LogTraceRetryEnd( CallInfo info )
@@ -96,21 +97,22 @@ namespace ChannelAdvisorAccess.Misc
 
 		private static void TraceLog( string logType, CallInfo info )
 		{
-			var payloadResponseDetails = info.GetPayloadResponseText();
-			const string format = "[{channel}] [{logType}]:{[{mark}] [{memberName}] {methodParams} {connectionInfo} {notes} {payloadResponseDetails} {additionalInfo}, [ver:{version}]}";
-			if( payloadResponseDetails.Length + format.Length < MaxLogLineSize )
+			var payloadAndResponse = info.PayloadAndResponseLog;
+			var formatWithPayloadAndResponse = "[{channel}] {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", MethodParams:\"" + info.MethodParameters + "\", " + 
+				"ConnectionInfo:" + info.ConnectionInfo + info.NotesLog + payloadAndResponse + info.AdditionalInfoLog + ", [ver:{version}}";
+			if( formatWithPayloadAndResponse.Length < MaxLogLineSize )
 			{
-				Log().Trace( format, ChannelType, logType, info.Mark, info.MemberName, info.MethodParameters, info.ConnectionInfo, info.Notes, payloadResponseDetails, info.AdditionalInfo, _versionInfo );
+				Log().Trace( formatWithPayloadAndResponse, ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
 				return;
 			}
 
 			var pageNumber = 1;
 			var pageId = Guid.NewGuid();
-			foreach( var logPage in SplitString( payloadResponseDetails, MaxLogLineSize ) )
+			foreach( var payloadAndResponsePage in SplitString( payloadAndResponse, MaxLogLineSize ) )
 			{
-				Log().Trace( "[{channel}] page:{page} pageId:{pageId} [{logType}]:{[{mark}] [{memberName}] {methodParams} {connectionInfo} {notes} {payloadResponseDetails} {additionalInfo}, [ver:{version}]}", 
-					ChannelType, pageNumber++, pageId, logType, info.Mark, info.MemberName, info.MethodParameters, info.ConnectionInfo, info.Notes,
-					logPage, info.AdditionalInfo, _versionInfo );
+				Log().Trace( "[{channel}] page:" + pageNumber++ + " pageId:" + pageId + " {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", MethodParams:\"" + info.MethodParameters + "\", " + 
+					"ConnectionInfo:" + info.ConnectionInfo + info.NotesLog + payloadAndResponsePage + info.AdditionalInfoLog + ", [ver:{version}}", 
+					ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
 			}
 		}
 
