@@ -34,8 +34,8 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			var logType = "A call failed";
 			Log().Trace( "[{channel}] {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", ConnectionInfo:" + info.ConnectionInfo + ", " +
-				"Message:\"" + message + "\"" + info.AdditionalInfoLog + ", [ver:{version}}", 
-				ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
+				"Message:\"" + message + "\", AdditionalInfo:{callAdditionalInfo}, [ver:{version}}", 
+				ChannelType, logType, info.Mark, info.MemberName, info.AdditionalInfo, _versionInfo );
 		}
 
 		public static void LogTraceStarted( CallInfo info )
@@ -86,8 +86,8 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			var messageLog = string.IsNullOrWhiteSpace( message ) ? string.Empty : $", Message:\"{message}\"";
 			Log().Trace( exception, "[{channel}] {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", MethodParams:\"" + info.MethodParameters + "\", " + 
-				"ConnectionInfo:" + info.ConnectionInfo + messageLog + info.AdditionalInfoLog + ", [ver:{version}}", 
-				ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
+				"ConnectionInfo:" + info.ConnectionInfo + messageLog + ", AdditionalInfo:{callAdditionalInfo}, [ver:{version}}", 
+				ChannelType, logType, info.Mark, info.MemberName, info.AdditionalInfo, _versionInfo );
 		}
 
 		public static void LogTraceRetryEnd( CallInfo info )
@@ -99,10 +99,10 @@ namespace ChannelAdvisorAccess.Misc
 		{
 			var payloadAndResponse = info.PayloadAndResponseLog;
 			var formatWithPayloadAndResponse = "[{channel}] {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", MethodParams:\"" + info.MethodParameters + "\", " + 
-				"ConnectionInfo:" + info.ConnectionInfo + info.NotesLog + payloadAndResponse + info.AdditionalInfoLog + ", [ver:{version}}";
+				"ConnectionInfo:" + info.ConnectionInfo + info.NotesLog + payloadAndResponse + ", AdditionalInfo:{callAdditionalInfo}, [ver:{version}}";
 			if( formatWithPayloadAndResponse.Length < MaxLogLineSize )
 			{
-				Log().Trace( formatWithPayloadAndResponse, ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
+				Log().Trace( formatWithPayloadAndResponse, ChannelType, logType, info.Mark, info.MemberName, info.AdditionalInfo, _versionInfo );
 				return;
 			}
 
@@ -111,8 +111,8 @@ namespace ChannelAdvisorAccess.Misc
 			foreach( var payloadAndResponsePage in SplitString( payloadAndResponse, MaxLogLineSize ) )
 			{
 				Log().Trace( "[{channel}] page:" + pageNumber++ + " pageId:" + pageId + " {type}:{Mark:\"{mark}\", MemberName:\"{callMemberName}\", MethodParams:\"" + info.MethodParameters + "\", " + 
-					"ConnectionInfo:" + info.ConnectionInfo + info.NotesLog + payloadAndResponsePage + info.AdditionalInfoLog + ", [ver:{version}}", 
-					ChannelType, logType, info.Mark, info.MemberName, _versionInfo );
+					"ConnectionInfo:" + info.ConnectionInfo + info.NotesLog + payloadAndResponsePage + ", AdditionalInfo:{callAdditionalInfo}, [ver:{version}}", 
+					ChannelType, logType, info.Mark, info.MemberName, info.AdditionalInfo, _versionInfo );
 			}
 		}
 

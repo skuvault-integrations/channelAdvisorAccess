@@ -8,7 +8,7 @@ namespace ChannelAdvisorAccess.Misc
 		public Mark Mark { get; }
 		public string MemberName { get; }
 		public string ConnectionInfo { get; }
-		public string AdditionalInfoLog { get; }
+		public string AdditionalInfo { get; }
 		public string MethodParameters { get; }
 
 		public CallInfoBasic( string connectionInfo, string additionalInfo, string methodParameters = "", Mark mark = null, [ CallerMemberName ] string memberName = "" )
@@ -16,7 +16,7 @@ namespace ChannelAdvisorAccess.Misc
 			this.Mark = mark ?? Mark.Blank();
 			this.MemberName = memberName;
 			this.ConnectionInfo = connectionInfo;
-			this.AdditionalInfoLog = string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : $", AdditionalInfo:{additionalInfo}";
+			this.AdditionalInfo = additionalInfo;
 			this.MethodParameters = methodParameters;
 		}
 	}
