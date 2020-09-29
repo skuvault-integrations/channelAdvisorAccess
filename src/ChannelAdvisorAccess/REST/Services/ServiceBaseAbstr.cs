@@ -616,7 +616,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 		private async Task ThrowIfError( int responseStatusCode, string message, Mark mark )
 		{
-			var isUnauthorized = message == "{\"$id\":\"1\",\"Message\":\"Authorization has been denied for this request.\"}";
+			var isUnauthorized = message.ToUpperInvariant().Contains( "MESSAGE\":\"AUTHORIZATION HAS BEEN DENIED FOR THIS REQUEST.\"" );
 			if ( responseStatusCode >= 200 && responseStatusCode < 300 && !isUnauthorized )
 				return;
 
