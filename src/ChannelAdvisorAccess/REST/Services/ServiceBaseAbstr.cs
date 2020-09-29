@@ -140,7 +140,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private Task RefreshAccessToken( Mark mark )
 		{
 			if ( string.IsNullOrEmpty( this._accessToken ) )
-				return this.RefreshAccessTokenBySoapCredentials();
+				return this.RefreshAccessTokenBySoapCredentials( mark );
 			else
 				return this.RefreshAccessTokenByRestCredentials( mark );
 		}
@@ -149,8 +149,9 @@ namespace ChannelAdvisorAccess.REST.Services
 		///	Gets refresh token by SOAP credentials
 		///	This is way how to obtain refresh token using existing credentials without involving partner
 		/// </summary>
+		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenBySoapCredentials()
+		private async Task RefreshAccessTokenBySoapCredentials( Mark mark )
 		{
 			_waitHandle.WaitOne();
 
@@ -168,6 +169,10 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			var content = new FormUrlEncodedContent( requestData );
 
+			var payloadForLog = new { GrantType = requestData[ "grant_type" ], ClientId = requestData[ "client_id" ], AccountId = requestData[ "account_id" ],
+				Scope = requestData[ "scope" ] };
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
+
 			try
 			{
 				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
@@ -179,6 +184,9 @@ namespace ChannelAdvisorAccess.REST.Services
 
 				this._accessToken = result.AccessToken;
 				this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
+
+				var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 			}
 			catch( Exception ex )
 			{
@@ -611,10 +619,11 @@ namespace ChannelAdvisorAccess.REST.Services
 
 		private async Task ThrowIfError( int responseStatusCode, string message, Mark mark )
 		{
-			if ( responseStatusCode >= 200 && responseStatusCode < 300 )
+			var isUnauthorized = message == "{\"$id\":\"1\",\"Message\":\"Authorization has been denied for this request.\"}";
+			if ( responseStatusCode >= 200 && responseStatusCode < 300 && !isUnauthorized )
 				return;
 
-			if ( responseStatusCode == (int)HttpStatusCode.Unauthorized )
+			if ( responseStatusCode == (int)HttpStatusCode.Unauthorized || isUnauthorized )
 			{
 				// we have to refresh our access token
 				await this.RefreshAccessToken( mark ).ConfigureAwait( false );
