@@ -608,9 +608,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="mark">mark for logging</param>
 		private async Task ThrowIfError( HttpResponseMessage response, string message, Mark mark )
 		{
-			if ( response.IsSuccessStatusCode )
-				return;
-
 			if ( message == null )
 				message = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 
