@@ -376,7 +376,7 @@ namespace ChannelAdvisorAccess.REST.Services
 							var httpResponse = await this.HttpClient.GetAsync( url, cancellationTokenSource.Token ).ConfigureAwait( false );
 							var responseStr = await httpResponse.Content.ReadAsStringAsync();
 
-							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, returnStatusCode: httpResponse.StatusCode.ToString(), additionalInfo : this.AdditionalLogInfo() ) );
 
 							await this.ThrowIfError( httpResponse, responseStr, mark ).ConfigureAwait( false );
 					
