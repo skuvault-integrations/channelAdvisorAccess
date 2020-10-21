@@ -29,6 +29,14 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 		public string Name{ get; private set; }
 
+		public DateTime LastActivityTime
+		{
+			get
+			{
+				return base.LastNetworkActivityTime;
+			}
+		}
+
 		public OrdersService( APICredentials credentials, string accountName, string accountId, ObjectCache cache = null ): this( credentials, accountId, cache )
 		{
 			this.Name = accountName;
@@ -39,8 +47,12 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._credentials = credentials;
 			this.AccountId = accountId;
 			this._client = new OrderServiceSoapClient();
+			
 			this._fulfillmentServiceCredentials = new FulfillmentService.APICredentials { DeveloperKey = this._credentials.DeveloperKey, Password = this._credentials.Password };
 			this._fulfillmentServiceClient = new FulfillmentService.FulfillmentServiceSoapClient();
+
+			TrackSoapClientNetworkActivity( this._client.InnerChannel );
+			TrackSoapClientNetworkActivity( this._fulfillmentServiceClient.InnerChannel );
 		}
 
 		#region Ping

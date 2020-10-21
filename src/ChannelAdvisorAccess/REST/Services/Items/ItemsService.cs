@@ -58,6 +58,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			: base( credentials, soapCredentials, accountId, accountName, timeouts ) { }
 
 		/// <summary>
+		///	Last service's network activity time. Can be used to monitor service's state.
+		/// </summary>
+		public DateTime LastActivityTime
+		{
+			get { return base.LastNetworkActivityTime; }
+		}
+
+		/// <summary>
 		///	Set product cache to avoid extra requests which seek product id
 		/// </summary>
 		/// <param name="productCache"></param>

@@ -137,5 +137,10 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		DistributionCenterResponse[] GetDistributionCenterList( CancellationToken token, Mark mark = null );
 		Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( CancellationToken token, Mark mark = null );
+
+		/// <summary>
+		///	This property can be used by the client to monitor the last access library's network activity time.
+		/// </summary>
+		DateTime LastActivityTime { get; }
 	}
 }

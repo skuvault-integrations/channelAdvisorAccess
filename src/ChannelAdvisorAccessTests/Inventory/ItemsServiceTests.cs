@@ -334,6 +334,15 @@ namespace ChannelAdvisorAccessTests.Inventory
 		}
 
 		[ Test ]
+		public void WhenGetStoreInfoAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
+		{
+			var activityTimeBeforeMakingAnyCall = DateTime.UtcNow;
+			this.ItemsService.GetStoreInfoAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+
+			this.ItemsService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyCall );
+		}
+
+		[ Test ]
 		public void GetShippingInfo()
 		{
 			//------------ Arrange

@@ -89,5 +89,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 		int SubmitOrder( OrderSubmit orderSubmit, CancellationToken token );
 
 		Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, CancellationToken token );
+
+		/// <summary>
+		///	This property can be used by the client to monitor the last access library's network activity time.
+		/// </summary>
+		DateTime LastActivityTime { get; }
 	}
 }

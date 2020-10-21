@@ -76,5 +76,21 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			result.Any( o => o.ShoppingCart.LineItemInvoiceList.Any( i => i.LineItemType == "Shipping" ) ).Should().BeTrue();
 		}
+
+		[ Test ]
+		public async Task WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
+		{
+			var activityTimeBeforeMakingAnyRequest = this.OrdersService.LastActivityTime;
+			var criteria = new OrderCriteria
+			{
+				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddDays( -14 ),
+				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
+				DetailLevel = DetailLevelTypes.Complete
+			};
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+
+			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
+		}
 	}
 }

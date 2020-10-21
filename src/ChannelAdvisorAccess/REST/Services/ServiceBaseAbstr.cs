@@ -57,6 +57,8 @@ namespace ChannelAdvisorAccess.REST.Services
 			get { return this.AccountName; }
 		}
 
+		protected DateTime LastNetworkActivityTime { get; private set; }
+
 		/// <summary>
 		///	Rest service for work with orders
 		/// </summary>
@@ -80,6 +82,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			this.Timeouts = timeouts;
 
 			this.SetupHttpClient();
+			this.LastNetworkActivityTime = DateTime.UtcNow;
 		}
 
 		/// <summary>
@@ -105,6 +108,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			this.Timeouts = timeouts;
 
 			this.SetupHttpClient();
+			this.LastNetworkActivityTime = DateTime.UtcNow;
 		}
 
 		/// <summary>
@@ -187,8 +191,10 @@ namespace ChannelAdvisorAccess.REST.Services
 					if ( operationTimeout != null )
 						cts.CancelAfter( operationTimeout.Value );
 
+					RefreshLastNetworkActivityTime();
 					var response = await this.HttpClient.PostAsync( "oauth2/token", content, cts.Token ).ConfigureAwait( false );
 					var responseStr = await response.Content.ReadAsStringAsync();
+					RefreshLastNetworkActivityTime();
 					var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
 					if ( !string.IsNullOrEmpty( result.Error ) )
@@ -203,6 +209,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 			catch( Exception ex )
 			{
+				RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( ex.Message, ex );
 				throw channelAdvisorException;
 			}
@@ -238,8 +245,10 @@ namespace ChannelAdvisorAccess.REST.Services
 					if ( operationTimeout != null )
 						cts.CancelAfter( operationTimeout.Value );
 
+					RefreshLastNetworkActivityTime();
 					var response = await this.HttpClient.PostAsync( requestTokenUrl, content, cts.Token ).ConfigureAwait( false );
 					var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
+					RefreshLastNetworkActivityTime();
 					var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
 					if ( !string.IsNullOrEmpty( result.Error ) )
@@ -254,6 +263,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 			catch( Exception ex )
 			{
+				RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( ex.Message, ex );
 				throw channelAdvisorException;
 			}
@@ -395,8 +405,10 @@ namespace ChannelAdvisorAccess.REST.Services
 
 							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
+							RefreshLastNetworkActivityTime();
 							var httpResponse = await this.HttpClient.GetAsync( url, cts.Token ).ConfigureAwait( false );
 							var responseStr = await httpResponse.Content.ReadAsStringAsync();
+							RefreshLastNetworkActivityTime();
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, returnStatusCode: httpResponse.StatusCode.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
@@ -408,6 +420,7 @@ namespace ChannelAdvisorAccess.REST.Services
 						}
 					}, 
 					( exception, timeSpan, retryAttempt ) => { 
+						RefreshLastNetworkActivityTime();
 						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
 						ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed due to {0} trying repeat call {1} time, waited {2} seconds. Details: {3}", exception, retryAttempt, timeSpan.Seconds, retryDetails ) );
 					} );
@@ -451,8 +464,10 @@ namespace ChannelAdvisorAccess.REST.Services
 							var content = new StringContent( body, Encoding.UTF8, "text/plain" );
 							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: body, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
+							RefreshLastNetworkActivityTime();
 							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cts.Token ).ConfigureAwait( false );
 							var responseStr = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+							RefreshLastNetworkActivityTime();
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
@@ -464,6 +479,7 @@ namespace ChannelAdvisorAccess.REST.Services
 						}
 					}, 
 					( exception, timeSpan, retryAttempt ) => { 
+						RefreshLastNetworkActivityTime();
 						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
 						ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed due to {0} trying repeat call {1} time, waited {2} seconds. Details: {3}", exception, retryAttempt, timeSpan.Seconds, retryDetails ) );
 					} );
@@ -494,8 +510,9 @@ namespace ChannelAdvisorAccess.REST.Services
 							var content = new StringContent( payload, Encoding.UTF8, "application/json" );
 							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
+							RefreshLastNetworkActivityTime();
 							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cts.Token ).ConfigureAwait( false );
-
+							RefreshLastNetworkActivityTime();
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
 							await this.ThrowIfError( httpResponse, null, cts.Token, mark ).ConfigureAwait( false );
@@ -504,6 +521,7 @@ namespace ChannelAdvisorAccess.REST.Services
 						}
 					}, 
 					( exception, timeSpan, retryAttempt ) => { 
+						RefreshLastNetworkActivityTime();
 						string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
 						ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed due to {0} trying repeat call {1} time, waited {2} seconds. Details: {3}", exception, retryAttempt, timeSpan.Seconds, retryDetails ) );
 					} );
@@ -535,8 +553,9 @@ namespace ChannelAdvisorAccess.REST.Services
 						var content = new StringContent( payload, Encoding.UTF8, "application/json" );
 						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
+						RefreshLastNetworkActivityTime();
 						var httpResponse = await HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, cts.Token ).ConfigureAwait( false );
-
+						RefreshLastNetworkActivityTime();
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
 						await this.ThrowIfError( httpResponse, null, cts.Token, mark ).ConfigureAwait( false );
@@ -545,6 +564,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					}
 				}, 
 				( exception, timeSpan, retryAttempt ) => { 
+					RefreshLastNetworkActivityTime();
 					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: apiUrl );
 					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed due to {0} trying repeat call {1} time, waited {2} seconds. Details: {3}", exception, retryAttempt, timeSpan.Seconds, retryDetails ) );
 				} );
@@ -604,8 +624,10 @@ namespace ChannelAdvisorAccess.REST.Services
 							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batchPart.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
 							var multipartContent = batchPart.Build();
+							RefreshLastNetworkActivityTime();
 							var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cts.Token ).ConfigureAwait( false );
 							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+							RefreshLastNetworkActivityTime();
 
 							int batchStatusCode;
 							entities.AddRange( MultiPartResponseParser.Parse< T >( content, out batchStatusCode ) );
@@ -628,6 +650,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					}
 				}, 
 				( exception, timeSpan, retryAttempt ) => { 
+					RefreshLastNetworkActivityTime();
 					string retryDetails = this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo(), methodParameters: url );
 					ChannelAdvisorLogger.LogTraceRetryStarted( String.Format("Call failed due to {0} trying repeat call {1} time, waited {2} seconds. Details: {3}", exception, retryAttempt, timeSpan.Seconds, retryDetails ) );
 				} );
@@ -705,6 +728,15 @@ namespace ChannelAdvisorAccess.REST.Services
 		private void InitSecurityProtocol()
 		{
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+		}
+
+		/// <summary>
+		///	This method is used to update service's last network activity time.
+		///	It's called every time before making API request to server or after handling the response.
+		/// </summary>
+		private void RefreshLastNetworkActivityTime()
+		{
+			this.LastNetworkActivityTime = DateTime.UtcNow;
 		}
 	}
 }

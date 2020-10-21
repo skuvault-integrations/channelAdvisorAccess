@@ -50,6 +50,14 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		}
 
 		/// <summary>
+		///	Last service's network activity time. Can be used to monitor service's state.
+		/// </summary>
+		public DateTime LastActivityTime
+		{
+			get { return base.LastNetworkActivityTime; }
+		}
+
+		/// <summary>
 		///	Gets orders by created date range
 		/// </summary>
 		/// <typeparam name="T"></typeparam>

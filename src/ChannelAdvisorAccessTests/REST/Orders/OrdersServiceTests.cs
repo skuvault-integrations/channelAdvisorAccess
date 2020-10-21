@@ -208,5 +208,14 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 			ex.InnerException.Should().NotBeNull();
 			ex.InnerException.InnerException.GetType().Should().Be( typeof( TaskCanceledException ) );
 		}
+
+		[ Test ]
+		public async Task WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
+		{
+			var activityTimeBeforeMakingAnyRequest = DateTime.UtcNow;
+			await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -14 ), DateTime.UtcNow, CancellationToken.None );
+
+			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
+		}
 	}
 }

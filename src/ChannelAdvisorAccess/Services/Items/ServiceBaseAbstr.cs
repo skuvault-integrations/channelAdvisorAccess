@@ -1,5 +1,7 @@
 using System;
+using System.Net;
 using System.Runtime.CompilerServices;
+using System.ServiceModel;
 using ChannelAdvisorAccess.Misc;
 using Newtonsoft.Json;
 
@@ -7,6 +9,14 @@ namespace ChannelAdvisorAccess.Services.Items
 {
 	public abstract class ServiceBaseAbstr
 	{
+		protected ServiceBaseAbstr()
+		{
+			this.LastNetworkActivityTime = DateTime.UtcNow;
+			InitSecurityProtocol();
+		}
+
+		protected DateTime LastNetworkActivityTime { get; set; }
+
 		protected string CreateMethodCallInfo( string methodParameters = "", string payload = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "", string returnStatusCode = "", int? operationTimeout = null )
 		{
 			try
@@ -35,6 +45,29 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
+		protected void TrackSoapClientNetworkActivity( IClientChannel clientChannel )
+		{
+			clientChannel.Opening += TrackSoapClientNetworkActivity;
+			clientChannel.Opened += TrackSoapClientNetworkActivity;
+			clientChannel.Closing += TrackSoapClientNetworkActivity;
+			clientChannel.Closed += TrackSoapClientNetworkActivity;
+			clientChannel.Faulted += TrackSoapClientNetworkActivity;
+		}
+
+		private void TrackSoapClientNetworkActivity( object sender, EventArgs args )
+		{
+			RefreshLastNetworkActivityTime();
+		}
+
+		/// <summary>
+		///	This method is used to update service's last network activity time.
+		///	It's called every time before making API request to server or after handling the response.
+		/// </summary>
+		private void RefreshLastNetworkActivityTime()
+		{
+			this.LastNetworkActivityTime = DateTime.UtcNow;
+		}
+
 		private Func< string > _additionalLogInfo;
 
 		[ JsonIgnore ]
@@ -42,6 +75,11 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			get { return this._additionalLogInfo ?? ( () => string.Empty ); }
 			set { this._additionalLogInfo = value; }
+		}
+
+		private void InitSecurityProtocol()
+		{
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 		}
 	}
 }
