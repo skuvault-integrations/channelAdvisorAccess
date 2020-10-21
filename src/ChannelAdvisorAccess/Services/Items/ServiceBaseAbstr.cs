@@ -7,14 +7,14 @@ namespace ChannelAdvisorAccess.Services.Items
 {
 	public abstract class ServiceBaseAbstr
 	{
-		protected string CreateMethodCallInfo( string methodParameters = "", string payload = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "", string returnStatusCode = "" )
+		protected string CreateMethodCallInfo( string methodParameters = "", string payload = "", Mark mark = null, string errors = "", string methodResult = "", string additionalInfo = "", string notes = "", [ CallerMemberName ] string memberName = "", string returnStatusCode = "", int? operationTimeout = null )
 		{
 			try
 			{
 				mark = mark ?? Mark.Blank();
 				var connectionInfo = this.ToJson();
 				var str = string.Format(
-					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters: {2} {8}{4}{5}{6}{7}{9}}}",
+					"{{Mark:\"{3}\", MethodName:{0}, ConnectionInfo:{1}, MethodParameters: {2} {8}{4}{5}{6}{7}{9}{10}}}",
 					memberName,
 					connectionInfo,
 					string.IsNullOrWhiteSpace( methodParameters ) ? PredefinedValues.EmptyJsonObject : methodParameters,
@@ -24,7 +24,8 @@ namespace ChannelAdvisorAccess.Services.Items
 					string.IsNullOrWhiteSpace( notes ) ? string.Empty : ",Notes: " + notes,
 					string.IsNullOrWhiteSpace( additionalInfo ) ? string.Empty : ", AdditionalInfo: " + additionalInfo,
 					string.IsNullOrWhiteSpace( payload ) ? string.Empty : ", Body: " + payload,
-					string.IsNullOrWhiteSpace( returnStatusCode ) ? string.Empty : ", ReturnStatus: \"" + returnStatusCode + "\""
+					string.IsNullOrWhiteSpace( returnStatusCode ) ? string.Empty : ", ReturnStatus: \"" + returnStatusCode + "\"",
+					operationTimeout == null ? string.Empty : ", Timeout: " + operationTimeout + " ms"
 					);
 				return str;
 			}

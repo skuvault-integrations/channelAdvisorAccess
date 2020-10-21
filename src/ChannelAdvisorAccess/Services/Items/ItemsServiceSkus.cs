@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
@@ -9,7 +10,7 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region  Skus
-		public IEnumerable< string > GetAllSkus( Mark mark = null )
+		public IEnumerable< string > GetAllSkus( CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -17,7 +18,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-				var filteredSkus = this.GetFilteredSkus( new ItemsFilter(), mark );
+				var filteredSkus = this.GetFilteredSkus( new ItemsFilter(), token, mark );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 				return filteredSkus;
 			}
@@ -29,7 +30,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< IEnumerable< string > > GetAllSkusAsync( Mark mark = null )
+		public async Task< IEnumerable< string > > GetAllSkusAsync( CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -37,7 +38,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-				var filteredSkus = await this.GetFilteredSkusAsync( new ItemsFilter(), mark ).ConfigureAwait( false );
+				var filteredSkus = await this.GetFilteredSkusAsync( new ItemsFilter(), token, mark ).ConfigureAwait( false );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : filteredSkus.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 				return filteredSkus;
 			}
@@ -49,7 +50,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter, Mark mark = null )
+		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter, CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -114,7 +115,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark = null )
+		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -168,7 +169,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark = null )
+		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();

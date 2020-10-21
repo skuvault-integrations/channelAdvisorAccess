@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
+using ChannelAdvisorAccess.REST.Shared;
 
 namespace ChannelAdvisorAccessTests.REST
 {
@@ -36,29 +37,31 @@ namespace ChannelAdvisorAccessTests.REST
 	public class RestAPITestBase
 	{
 		private const bool useSOAPCredentials = false;
+		protected ChannelAdvisorServicesFactory ServicesFactory { get; set; }
+		protected RestServiceCredentials RestCredentials { get; set; }
 
 		[ SetUp ]
 		public void Init()
 		{
-			var credentials = LoadCredentials();
-			var factory = new ChannelAdvisorServicesFactory( credentials.DeveloperKey, credentials.DeveloperPassword, credentials.ApplicationId, credentials.SharedSecret );
+			RestCredentials = LoadCredentials();
+			var credentials = RestCredentials;
+			ServicesFactory = new ChannelAdvisorServicesFactory( credentials.DeveloperKey, credentials.DeveloperPassword, credentials.ApplicationId, credentials.SharedSecret );
+			var timeouts = new ChannelAdvisorTimeouts();
 
 			if ( credentials.useSoapCredentials )
 			{
-				this.ItemsService = factory.CreateItemsRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId );
-				this.OrdersService = factory.CreateOrdersRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId, this.ItemsService );
+				this.ItemsService = ServicesFactory.CreateItemsRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId, timeouts );
+				this.OrdersService = ServicesFactory.CreateOrdersRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId, this.ItemsService, timeouts );
 			}
 			else
 			{
-				this.ItemsService = factory.CreateItemsRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
-				this.OrdersService = factory.CreateOrdersRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken );
+				this.ItemsService = ServicesFactory.CreateItemsRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken, timeouts );
+				this.OrdersService = ServicesFactory.CreateOrdersRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken, timeouts );
 			}
 
 			var lightweightCaAccountCredentials = LoadLightWeightCaAccountCredentials();
 			var lightWeightCaAccountFactory = new ChannelAdvisorServicesFactory( lightweightCaAccountCredentials.DeveloperKey, lightweightCaAccountCredentials.DeveloperPassword, lightweightCaAccountCredentials.ApplicationId, lightweightCaAccountCredentials.SharedSecret );
-			this.LightWeightItemsService = lightWeightCaAccountFactory.CreateItemsRestService( lightweightCaAccountCredentials.AccountName, null, lightweightCaAccountCredentials.AccessToken, lightweightCaAccountCredentials.RefreshToken );
-
-			NetcoLogger.LoggerFactory = new NLogLoggerFactory();
+			this.LightWeightItemsService = lightWeightCaAccountFactory.CreateItemsRestService( lightweightCaAccountCredentials.AccountName, null, lightweightCaAccountCredentials.AccessToken, lightweightCaAccountCredentials.RefreshToken, timeouts );
 		}
 
 		private RestServiceCredentials LoadCredentials()

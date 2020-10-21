@@ -1,4 +1,5 @@
-﻿using CuttingEdge.Conditions;
+﻿using ChannelAdvisorAccess.REST.Shared;
+using CuttingEdge.Conditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,16 @@ namespace ChannelAdvisorAccess.Misc
 		public bool SoapCompatibilityAuth { get; set; }
 		public string AccessToken { get; set; }
 		public string RefreshToken { get; set; }
+		public ChannelAdvisorTimeouts Timeouts { get; private set; }
 
-		public ChannelAdvisorConfig( string accountName ) {
+		public ChannelAdvisorConfig( string accountName, ChannelAdvisorTimeouts timeouts ) {
 			Condition.Requires( accountName, "accountName" );
 
 			this.AccountName = accountName;
+			this.Timeouts = timeouts;
 		}
+
+		public ChannelAdvisorConfig( string accountName ) : this( accountName, new ChannelAdvisorTimeouts() ) { }
 	}
 
 	public enum ChannelAdvisorApiVersion { Soap, Rest }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
@@ -63,7 +64,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		#endregion
 
 		#region API methods
-		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate )
+		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
@@ -72,10 +73,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate
 			};
 
-			return this.GetOrders< T >( orderCriteria );
+			return this.GetOrders< T >( orderCriteria, token );
 		}
 
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
@@ -84,7 +85,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate
 			};
 
-			return await this.GetOrdersAsync< T >( orderCriteria ).ConfigureAwait( false );
+			return await this.GetOrdersAsync< T >( orderCriteria, CancellationToken.None ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -94,10 +95,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="startDate">The start date.</param>
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
-		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate )
+		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, CancellationToken token )
 			where T : OrderResponseItem
 		{
-			return this.GetOrders< T >( startDate, endDate ).ToList();
+			return this.GetOrders< T >( startDate, endDate, token ).ToList();
 		}
 
 		private readonly Dictionary< string, int > _pageSizes = new Dictionary< string, int >
@@ -114,7 +115,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
+		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
@@ -197,7 +198,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark = null )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			if( mark.IsBlank() )
@@ -296,7 +297,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// </summary>
 		/// <param name="orderSubmit">The order submit.</param>
 		/// <returns>New order CA id.</returns>
-		public int SubmitOrder( OrderSubmit orderSubmit )
+		public int SubmitOrder( OrderSubmit orderSubmit, CancellationToken token )
 		{
 			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
@@ -306,7 +307,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			} );
 		}
 
-		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit )
+		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, CancellationToken token )
 		{
 			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
@@ -419,7 +420,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 		#endregion
 
-		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates )
+		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, CancellationToken token )
 		{
 			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
@@ -429,7 +430,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			} );
 		}
 
-		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates )
+		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, CancellationToken token )
 		{
 			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
@@ -31,7 +32,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Iterator to go over orders 1 order at a time.</returns>
 		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
-		IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate )
+		IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, CancellationToken token )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -41,7 +42,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Iterator to go over orders 1 order at a time.</returns>
 		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate )
+		Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, CancellationToken token )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -51,7 +52,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="startDate">The start date.</param>
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
-		IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate )
+		IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, CancellationToken token )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -60,7 +61,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria )
+		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, CancellationToken token )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -70,23 +71,23 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark = null )
+		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem;
 
 		/// <summary>Updates the order list.</summary>
 		/// <param name="orderUpdates">The order updates.</param>
 		/// <returns>Result of updates.</returns>
-		IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates );
+		IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, CancellationToken token );
 
-		Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates );
+		Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, CancellationToken token );
 
 		/// <summary>
 		/// Submits the order.
 		/// </summary>
 		/// <param name="orderSubmit">The order submit.</param>
 		/// <returns>New order CA id.</returns>
-		int SubmitOrder( OrderSubmit orderSubmit );
+		int SubmitOrder( OrderSubmit orderSubmit, CancellationToken token );
 
-		Task< int > SubmitOrderAsync( OrderSubmit orderSubmit );
+		Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, CancellationToken token );
 	}
 }

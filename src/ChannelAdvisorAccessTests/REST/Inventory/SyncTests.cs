@@ -8,6 +8,7 @@ using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.Services.Items;
 using System.Diagnostics;
 using System;
+using System.Threading;
 
 namespace ChannelAdvisorAccessTests.REST.Inventory
 {
@@ -28,7 +29,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			int threadsNumber = 4;
 			int svCatalogSize = 10000;
-			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService ).GetCatalogSize( null ).GetAwaiter().GetResult();
+			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService ).GetCatalogSize( CancellationToken.None, null ).GetAwaiter().GetResult();
 			List< string > svSkus = new List< string >();
 
 			for ( int i = 0; i < svCatalogSize; i++ )
@@ -37,12 +38,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var sv = Stopwatch.StartNew();
 
 			// we should use CA product export feature to pull catalog as fast as possible
-			var caSkus = this.ItemsService.DoSkusExist( svSkus );
+			var caSkus = this.ItemsService.DoSkusExist( svSkus, CancellationToken.None );
 			// we should pull products directly by sku to get available quantity (can't get available quantity via export)
-			var caSkusQuantity = this.ItemsService.GetAvailableQuantities( caSkus.Where( item => item.Result ).Select( item => item.Sku ) );
+			var caSkusQuantity = this.ItemsService.GetAvailableQuantities( caSkus.Where( item => item.Result ).Select( item => item.Sku ), CancellationToken.None );
 
 			List< InventoryItemQuantityAndPrice > requests = new List<InventoryItemQuantityAndPrice>();
-			var dc = this.ItemsService.GetDistributionCenterList().First();
+			var dc = this.ItemsService.GetDistributionCenterList( CancellationToken.None ).First();
 
 			foreach ( var caSkuQuantity in caSkusQuantity )
 			{
@@ -55,7 +56,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				});
 			}
 
-			this.ItemsService.UpdateQuantityAndPrices( requests );
+			this.ItemsService.UpdateQuantityAndPrices( requests, CancellationToken.None );
 
 			Assert.IsTrue( sv.Elapsed.TotalSeconds < ( averageProductExportProcessingTimeInSec + averageRequestProcessingTimeInSec * ( caSkusQuantity.Count() * 2 + 1 ) / threadsNumber ) );
 		}
@@ -70,7 +71,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			int threadsNumber = 4;
 			int svCatalogSize = 200;
-			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService ).GetCatalogSize( null ).GetAwaiter().GetResult();
+			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService)this.ItemsService ).GetCatalogSize( CancellationToken.None, null ).GetAwaiter().GetResult();
 			List< string > svSkus = new List< string >();
 
 			for ( int i = 0; i < svCatalogSize; i++ )
@@ -79,12 +80,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var sv = Stopwatch.StartNew();
 
 			// we should pull product data directly by sku
-			var caSkus = this.ItemsService.DoSkusExist( svSkus );
+			var caSkus = this.ItemsService.DoSkusExist( svSkus, CancellationToken.None );
 			// we should pull products directly by sku to get available quantity (can't get available quantity via export)
-			var caSkusQuantity = this.ItemsService.GetAvailableQuantities( caSkus.Where( item => item.Result ).Select( item => item.Sku ) );
+			var caSkusQuantity = this.ItemsService.GetAvailableQuantities( caSkus.Where( item => item.Result ).Select( item => item.Sku ), CancellationToken.None );
 
 			List< InventoryItemQuantityAndPrice > requests = new List<InventoryItemQuantityAndPrice>();
-			var dc = this.ItemsService.GetDistributionCenterList().First();
+			var dc = this.ItemsService.GetDistributionCenterList( CancellationToken.None ).First();
 
 			foreach ( var caSkuQuantity in caSkusQuantity )
 			{
@@ -97,7 +98,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				});
 			}
 
-			this.ItemsService.UpdateQuantityAndPrices( requests );
+			this.ItemsService.UpdateQuantityAndPrices( requests, CancellationToken.None );
 
 			Assert.IsTrue( sv.Elapsed.TotalSeconds < ( averageRequestProcessingTimeInSec * ( caSkusQuantity.Count() * 2 + 1 ) / threadsNumber ) );
 		}
@@ -112,7 +113,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			int threadsNumber = 4;
 			int svCatalogSize = 10000;
-			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService )base.LightWeightItemsService).GetCatalogSize( null ).GetAwaiter().GetResult();
+			int caCatalogSize = ( (ChannelAdvisorAccess.REST.Services.Items.ItemsService )base.LightWeightItemsService).GetCatalogSize( CancellationToken.None, null ).GetAwaiter().GetResult();
 			List< string > svSkus = new List< string >();
 
 			for ( int i = 0; i < svCatalogSize; i++ )
@@ -121,12 +122,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var sv = Stopwatch.StartNew();
 
 			// we should pull product data directly by sku
-			var caSkus = base.LightWeightItemsService.DoSkusExist( svSkus );
+			var caSkus = base.LightWeightItemsService.DoSkusExist( svSkus, CancellationToken.None );
 			// we should pull products directly by sku to get available quantity (can't get available quantity via export)
-			var caSkusQuantity = base.LightWeightItemsService.GetAvailableQuantities( caSkus.Where( item => item.Result ).Select( item => item.Sku ) );
+			var caSkusQuantity = base.LightWeightItemsService.GetAvailableQuantities( caSkus.Where( item => item.Result ).Select( item => item.Sku ), CancellationToken.None );
 
 			List< InventoryItemQuantityAndPrice > requests = new List<InventoryItemQuantityAndPrice>();
-			var dc = base.LightWeightItemsService.GetDistributionCenterList().First();
+			var dc = base.LightWeightItemsService.GetDistributionCenterList( CancellationToken.None ).First();
 
 			foreach ( var caSkuQuantity in caSkusQuantity )
 			{
@@ -139,7 +140,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				});
 			}
 
-			base.LightWeightItemsService.UpdateQuantityAndPrices( requests );
+			base.LightWeightItemsService.UpdateQuantityAndPrices( requests, CancellationToken.None );
 
 			int totalSkusPages = (int)Math.Ceiling( (double) caCatalogSize / 100 );
 			Assert.IsTrue( sv.Elapsed.TotalSeconds < ( averageRequestProcessingTimeInSec * ( totalSkusPages * averageProductPageProcessingTimeInSec + caSkusQuantity.Count() + 1 ) / threadsNumber ) );
@@ -155,13 +156,13 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			for ( int i = 0; i < svCatalogSize; i++ )
 				svProducts.Add( new InventoryItemSubmit() { Sku = "testSku" + i.ToString(), WarehouseLocation = warehouseLocationPrefix + (i + 1).ToString() } );
 
-			var caSkus = base.LightWeightItemsService.DoSkusExist( svProducts.Select( item => item.Sku ) )
+			var caSkus = base.LightWeightItemsService.DoSkusExist( svProducts.Select( item => item.Sku ), CancellationToken.None )
 										.Where( r => r.Result )
 										.Select( r => r.Sku );
 			var commonSkus = svProducts.Where( pr => caSkus.Contains( pr.Sku ) );
-			base.LightWeightItemsService.SynchItems( commonSkus );
+			base.LightWeightItemsService.SynchItems( commonSkus, CancellationToken.None );
 
-			var commonSkusDetails = base.LightWeightItemsService.GetItems( commonSkus.Select( s => s.Sku ) );
+			var commonSkusDetails = base.LightWeightItemsService.GetItems( commonSkus.Select( s => s.Sku ), CancellationToken.None );
 			Assert.IsTrue( commonSkusDetails.FirstOrDefault( d => d.WarehouseLocation == null || d.WarehouseLocation.IndexOf( warehouseLocationPrefix ) < 0 ) == null );
 		}
 	}

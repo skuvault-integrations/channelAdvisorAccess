@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.OrderService;
@@ -22,7 +23,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				OrderIDList = new int[] { TestOrderId, TestOrderId2 },
 				DetailLevel = DetailLevelTypes.Complete
 			};
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
 
 			result.Should().NotBeEmpty();
 		}
@@ -36,7 +37,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
 
 			OrderCart shoppingCart = result.First().ShoppingCart;
 			//Always returned as 0 from the CA api
@@ -53,7 +54,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync<OrderResponseDetailComplete>(criteria);
+			var result = await this.OrdersService.GetOrdersAsync<OrderResponseDetailComplete>( criteria, CancellationToken.None );
 
 			OrderCart shoppingCart = result.First().ShoppingCart;
 			//Always returned as 0 from the CA api
@@ -71,7 +72,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
 
 			result.Any( o => o.ShoppingCart.LineItemInvoiceList.Any( i => i.LineItemType == "Shipping" ) ).Should().BeTrue();
 		}

@@ -27,7 +27,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		private readonly APICredentials _soapCredentials;
 		private readonly string[] _scope = new string[] { "orders", "inventory" };
 
-		private const int _requestTimeout = 10 * 60 * 1000;
+		private const int _maxTimeout = 30 * 60 * 1000;
 		protected const int _maxConcurrentRequests = 4;
 		private const int _minPageSize = 20;
 		protected const int _maxBatchSize = 100;
@@ -45,6 +45,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected readonly Throttler Throttler = new Throttler( 4, 1, 10 );
 		// 2 000 requests max per minute each batch can include 100 requests (limited to 1500)
 		protected readonly Throttler BatchThrottler = new Throttler( 1, 4, 10 );
+		protected readonly ChannelAdvisorTimeouts Timeouts;
 
 		private const int _tooManyRequestsStatusCode = 429;
 
@@ -63,7 +64,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="accountName">Tenant account name</param>
 		/// <param name="accessToken">Tenant access token</param>
 		/// <param name="refreshToken">Tenant refresh token</param>
-		protected RestServiceBaseAbstr( RestCredentials credentials, string accountName, string accessToken, string refreshToken )
+		protected RestServiceBaseAbstr( RestCredentials credentials, string accountName, string accessToken, string refreshToken, ChannelAdvisorTimeouts timeouts )
 		{
 			Condition.Requires( credentials ).IsNotNull();
 			Condition.Requires( accountName ).IsNotNullOrEmpty();
@@ -76,6 +77,8 @@ namespace ChannelAdvisorAccess.REST.Services
 			this._refreshToken = refreshToken;
 			this._currentBatchSize = _maxBatchSize;
 
+			this.Timeouts = timeouts;
+
 			this.SetupHttpClient();
 		}
 
@@ -86,7 +89,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="soapCredentials">Soap credentials</param>
 		/// <param name="accountName">Tenant account name (used for logging)</param>
 		/// <param name="accountId">Tenant account id</param>
-		protected RestServiceBaseAbstr( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName )
+		protected RestServiceBaseAbstr( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, ChannelAdvisorTimeouts timeouts )
 		{
 			Condition.Requires( credentials ).IsNotNull();
 			Condition.Requires( soapCredentials ).IsNotNull();
@@ -99,6 +102,8 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			this._currentBatchSize = _maxBatchSize;
 
+			this.Timeouts = timeouts;
+
 			this.SetupHttpClient();
 		}
 
@@ -108,9 +113,11 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected void SetupHttpClient()
 		{
 			this.HttpClient = new HttpClient { BaseAddress = new Uri( ChannelAdvisorEndPoint.BaseApiUrl ) };
-			this.HttpClient.Timeout = TimeSpan.FromMilliseconds( _requestTimeout );
+			this.HttpClient.Timeout = TimeSpan.FromMilliseconds( _maxTimeout );
 			this.HttpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json") );
 			this.SetDefaultAuthorizationHeader();
+
+			this.InitSecurityProtocol();
 		}
 
 		/// <summary>
@@ -137,12 +144,12 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private Task RefreshAccessToken( Mark mark )
+		private Task RefreshAccessToken( CancellationToken token, Mark mark )
 		{
 			if ( string.IsNullOrEmpty( this._accessToken ) )
-				return this.RefreshAccessTokenBySoapCredentials( mark );
+				return this.RefreshAccessTokenBySoapCredentials( token, mark, Timeouts[ ChannelAdvisorOperationEnum.RefreshAccessTokenBySoapCredentials ] );
 			else
-				return this.RefreshAccessTokenByRestCredentials( mark );
+				return this.RefreshAccessTokenByRestCredentials( token, mark, Timeouts[ ChannelAdvisorOperationEnum.RefreshAccessTokenByRestCredentials ] );
 		}
 
 		/// <summary>
@@ -151,7 +158,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenBySoapCredentials( Mark mark )
+		private async Task RefreshAccessTokenBySoapCredentials( CancellationToken token, Mark mark, int? operationTimeout = null )
 		{
 			_waitHandle.WaitOne();
 
@@ -171,22 +178,28 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			var payloadForLog = new { GrantType = requestData[ "grant_type" ], ClientId = requestData[ "client_id" ], AccountId = requestData[ "account_id" ],
 				Scope = requestData[ "scope" ] };
-			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
 			try
 			{
-				var response = await this.HttpClient.PostAsync( "oauth2/token", content ).ConfigureAwait( false );
-				var responseStr = await response.Content.ReadAsStringAsync();
-				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
+				using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
+				{
+					if ( operationTimeout != null )
+						cts.CancelAfter( operationTimeout.Value );
 
-				if ( !string.IsNullOrEmpty( result.Error ) )
-					throw new ChannelAdvisorUnauthorizedException( result.Error );
+					var response = await this.HttpClient.PostAsync( "oauth2/token", content, cts.Token ).ConfigureAwait( false );
+					var responseStr = await response.Content.ReadAsStringAsync();
+					var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
-				this._accessToken = result.AccessToken;
-				this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
+					if ( !string.IsNullOrEmpty( result.Error ) )
+						throw new ChannelAdvisorUnauthorizedException( result.Error );
 
-				var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
+					this._accessToken = result.AccessToken;
+					this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
+
+					var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+				}
 			}
 			catch( Exception ex )
 			{
@@ -205,7 +218,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenByRestCredentials( Mark mark )
+		private async Task RefreshAccessTokenByRestCredentials( CancellationToken token, Mark mark, int? operationTimeout = null )
 		{
 			_waitHandle.WaitOne();
 			this.SetBasicAuthorizationHeader();
@@ -216,22 +229,28 @@ namespace ChannelAdvisorAccess.REST.Services
 			const string requestTokenUrl = "oauth2/token";
 
 			var payloadForLog = new { GrantType = requestData[ "grant_type" ], RefreshToken = ChannelAdvisorLogger.SanitizeToken( requestData[ "refresh_token" ] ) };
-			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
 			try
 			{
-				var response = await this.HttpClient.PostAsync( requestTokenUrl, content ).ConfigureAwait( false );
-				var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
-				var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
+				using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
+				{
+					if ( operationTimeout != null )
+						cts.CancelAfter( operationTimeout.Value );
 
-				if ( !string.IsNullOrEmpty( result.Error ) )
-					throw new ChannelAdvisorUnauthorizedException( result.Error );
+					var response = await this.HttpClient.PostAsync( requestTokenUrl, content, cts.Token ).ConfigureAwait( false );
+					var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
+					var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
-				this._accessToken = result.AccessToken;
-				this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
+					if ( !string.IsNullOrEmpty( result.Error ) )
+						throw new ChannelAdvisorUnauthorizedException( result.Error );
 
-				var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
+					this._accessToken = result.AccessToken;
+					this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
+
+					var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+				}
 			}
 			catch( Exception ex )
 			{
@@ -263,7 +282,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="pageNumber">Page ( 0 - all pages )</param>
 		/// <param name="pageSize">Page size</param>
 		/// <returns></returns>
-		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark = null, bool collections = true, int pageNumber = 0, int? pageSize = null )
+		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, CancellationToken token, Mark mark = null, bool collections = true, int pageNumber = 0, int? pageSize = null, int? operationTimeout = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -274,7 +293,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( pageNumber > 0 )
 				startPage = pageNumber;
 			
-			var response = await this.GetResponseAsyncByPage< T >( apiUrl, startPage, collections, pageSize, mark ).ConfigureAwait( false );
+			var response = await this.GetResponseAsyncByPage< T >( apiUrl, startPage, token, collections, pageSize, mark, operationTimeout ).ConfigureAwait( false );
 
 			if ( response.Value != null )
 				entities.AddRange( response.Value );
@@ -295,7 +314,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					var options = new ParallelOptions() {  MaxDegreeOfParallelism = 1 };
 					Parallel.For( nextPage, totalPages, options, () => new List< T >(), ( currentPage, pls, tempResult ) =>
 					{
-						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, false, serviceRecommendedPageSize, mark ).GetAwaiter().GetResult();
+						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, token, false, serviceRecommendedPageSize, mark, operationTimeout ).GetAwaiter().GetResult();
 						tempResult.AddRange( pagedResponse.Value );
 
 						return tempResult;
@@ -331,7 +350,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="pageSize"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, bool requestDataSetSize = false, int? pageSize = null, Mark mark = null )
+		protected Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, CancellationToken token, bool requestDataSetSize = false, int? pageSize = null, Mark mark = null, int? operationTimeout = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -349,7 +368,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( pageSize != null && page > 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;
 
-			return GetEntityAsync< ODataResponse< T > >( url, mark );
+			return GetEntityAsync< ODataResponse< T > >( url, token, mark, operationTimeout );
 		}
 
 		/// <summary>
@@ -359,7 +378,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="apiUrl"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< T > GetEntityAsync< T >( string apiUrl, Mark mark = null )
+		protected Task< T > GetEntityAsync< T >( string apiUrl, CancellationToken token, Mark mark = null, int? operationTimeout = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -369,16 +388,19 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) ) 
+						using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 						{
-							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo() ) );
+							if ( operationTimeout != null )
+								cts.CancelAfter( operationTimeout.Value );
 
-							var httpResponse = await this.HttpClient.GetAsync( url, cancellationTokenSource.Token ).ConfigureAwait( false );
+							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+
+							var httpResponse = await this.HttpClient.GetAsync( url, cts.Token ).ConfigureAwait( false );
 							var responseStr = await httpResponse.Content.ReadAsStringAsync();
 
-							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, returnStatusCode: httpResponse.StatusCode.ToString(), additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, returnStatusCode: httpResponse.StatusCode.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
-							await this.ThrowIfError( httpResponse, responseStr, mark ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, responseStr, cts.Token, mark ).ConfigureAwait( false );
 					
 							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
@@ -411,7 +433,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="body"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, Mark mark = null )
+		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, CancellationToken token, Mark mark = null, int? operationTimeout = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -421,17 +443,20 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
+						using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 						{
+							if ( operationTimeout != null )
+								cts.CancelAfter( operationTimeout.Value );
+
 							var content = new StringContent( body, Encoding.UTF8, "text/plain" );
-							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: body, additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: body, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
-							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token ).ConfigureAwait( false );
+							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cts.Token ).ConfigureAwait( false );
 							var responseStr = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
-							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
-							await this.ThrowIfError( httpResponse, responseStr, mark ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, responseStr, cts.Token, mark ).ConfigureAwait( false );
 
 							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
@@ -452,7 +477,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="data"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task PostAsync< T >( string apiUrl, T data, Mark mark = null )
+		protected Task PostAsync< T >( string apiUrl, T data, CancellationToken token, Mark mark = null, int? operationTimeout = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -460,17 +485,20 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 					{
-						using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
+						using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 						{
+							if ( operationTimeout != null )
+								cts.CancelAfter( operationTimeout.Value );
+
 							var payload = JsonConvert.SerializeObject( data );
 							var content = new StringContent( payload, Encoding.UTF8, "application/json" );
-							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
-							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token ).ConfigureAwait( false );
+							var httpResponse = await HttpClient.PostAsync( apiUrl + "?access_token=" + this._accessToken, content, cts.Token ).ConfigureAwait( false );
 
-							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
-							await this.ThrowIfError( httpResponse, null, mark ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, null, cts.Token, mark ).ConfigureAwait( false );
 
 							return httpResponse.StatusCode;
 						}
@@ -490,7 +518,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="data"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data, Mark mark = null )
+		protected Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data, CancellationToken token, Mark mark = null, int? operationTimeout = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -498,17 +526,20 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.Throttler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
-					using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
+					using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 					{
+						if ( operationTimeout != null )
+							cts.CancelAfter( operationTimeout.Value );
+
 						var payload = JsonConvert.SerializeObject( data );
 						var content = new StringContent( payload, Encoding.UTF8, "application/json" );
-						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo() ) );
+						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, payload: payload, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
-						var httpResponse = await HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, cancellationTokenSource.Token ).ConfigureAwait( false );
+						var httpResponse = await HttpClient.PutAsync( apiUrl + "?access_token=" + this._accessToken, content, cts.Token ).ConfigureAwait( false );
 
-						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo() ) );
+						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
-						await this.ThrowIfError( httpResponse, null, mark ).ConfigureAwait( false );
+						await this.ThrowIfError( httpResponse, null, cts.Token, mark ).ConfigureAwait( false );
 
 						return httpResponse.StatusCode;
 					}
@@ -527,7 +558,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="batch"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task < T[] > DoBatch< T >( BatchBuilder batch, Mark mark = null )
+		protected async Task < T[] > DoBatch< T >( BatchBuilder batch, CancellationToken token, Mark mark = null, int? operationTimeout = null )
 		{
 			var result = new List< T >();
 
@@ -538,7 +569,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			foreach( var batchPart in batches )
 			{
-				result.AddRange( await DoPartialBatch< T >( batchPart, mark ).ConfigureAwait( false ) );
+				result.AddRange( await DoPartialBatch< T >( batchPart, token, mark, operationTimeout ).ConfigureAwait( false ) );
 			}
 
 			return result.ToArray();
@@ -550,7 +581,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="batch"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark = null )
+		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, CancellationToken token, Mark mark = null, int? operationTimeout = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -560,17 +591,20 @@ namespace ChannelAdvisorAccess.REST.Services
 			return this.BatchThrottler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
-					using( var cancellationTokenSource = new CancellationTokenSource( _requestTimeout ) )
+					using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 					{
 						var entities = new List< T >();
 						var batches = batch.Split( this._currentBatchSize );
 
 						foreach( var batchPart in batches )
 						{
-							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batchPart.ToString(), additionalInfo : this.AdditionalLogInfo() ) );
+							if ( operationTimeout != null )
+								cts.CancelAfter( operationTimeout.Value );
+
+							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batchPart.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
 							var multipartContent = batchPart.Build();
-							var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cancellationTokenSource.Token ).ConfigureAwait( false );
+							var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cts.Token ).ConfigureAwait( false );
 							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
 							int batchStatusCode;
@@ -585,9 +619,9 @@ namespace ChannelAdvisorAccess.REST.Services
 								}
 							}
 
-							await this.ThrowIfError( batchStatusCode, content, mark ).ConfigureAwait( false );
+							await this.ThrowIfError( batchStatusCode, content, cts.Token, mark ).ConfigureAwait( false );
 
-							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
+							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 						}
 
 						return entities.ToArray();
@@ -606,15 +640,15 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="response"></param>
 		/// <param name="message">response message from server</param>
 		/// <param name="mark">mark for logging</param>
-		private async Task ThrowIfError( HttpResponseMessage response, string message, Mark mark )
+		private async Task ThrowIfError( HttpResponseMessage response, string message, CancellationToken token, Mark mark )
 		{
 			if ( message == null )
 				message = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 
-			await ThrowIfError( (int)response.StatusCode, message, mark ).ConfigureAwait( false );
+			await ThrowIfError( (int)response.StatusCode, message, token, mark ).ConfigureAwait( false );
 		}
 
-		private async Task ThrowIfError( int responseStatusCode, string message, Mark mark )
+		private async Task ThrowIfError( int responseStatusCode, string message, CancellationToken token, Mark mark )
 		{
 			var isUnauthorized = message.ToUpperInvariant().Contains( "MESSAGE\":\"AUTHORIZATION HAS BEEN DENIED FOR THIS REQUEST.\"" );
 			if ( responseStatusCode >= 200 && responseStatusCode < 300 && !isUnauthorized )
@@ -623,7 +657,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( responseStatusCode == (int)HttpStatusCode.Unauthorized || isUnauthorized )
 			{
 				// we have to refresh our access token
-				await this.RefreshAccessToken( mark ).ConfigureAwait( false );
+				await this.RefreshAccessToken( token, mark ).ConfigureAwait( false );
 
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
@@ -666,6 +700,11 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 
 			return pageSize;
+		}
+
+		private void InitSecurityProtocol()
+		{
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 		}
 	}
 }

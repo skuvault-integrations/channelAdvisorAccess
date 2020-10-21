@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
@@ -8,7 +9,7 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region Delete item
-		public void DeleteItem( string sku, Mark mark = null )
+		public void DeleteItem( string sku, CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -34,7 +35,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task DeleteItemAsync( string sku, Mark mark = null )
+		public async Task DeleteItemAsync( string sku, CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
