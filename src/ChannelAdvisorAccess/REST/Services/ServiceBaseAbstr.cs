@@ -57,8 +57,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			get { return this.AccountName; }
 		}
 
-		protected DateTime LastNetworkActivityTime { get; private set; }
-
 		/// <summary>
 		///	Rest service for work with orders
 		/// </summary>
@@ -120,8 +118,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			this.HttpClient.Timeout = TimeSpan.FromMilliseconds( _maxTimeout );
 			this.HttpClient.DefaultRequestHeaders.Accept.Add( new MediaTypeWithQualityHeaderValue("application/json") );
 			this.SetDefaultAuthorizationHeader();
-
-			this.InitSecurityProtocol();
 		}
 
 		/// <summary>
@@ -723,11 +719,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 
 			return pageSize;
-		}
-
-		private void InitSecurityProtocol()
-		{
-			ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 		}
 
 		/// <summary>

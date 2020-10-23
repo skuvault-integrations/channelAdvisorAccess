@@ -47,12 +47,12 @@ namespace ChannelAdvisorAccess.Services
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public IOrdersService CreateOrdersService( ChannelAdvisorConfig config )
+		public IOrdersService CreateOrdersService( ChannelAdvisorConfig config, ChannelAdvisorTimeouts timeouts )
 		{
 			if ( config.ApiVersion == ChannelAdvisorApiVersion.Soap )
 				return CreateOrdersService( config.AccountName, config.AccountId );
 			else
-				return CreateOrdersRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, config.Timeouts, config.SoapCompatibilityAuth );
+				return CreateOrdersRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, timeouts, config.SoapCompatibilityAuth );
 		}
 
 		/// <summary>
@@ -112,12 +112,12 @@ namespace ChannelAdvisorAccess.Services
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public IItemsService CreateItemsService( ChannelAdvisorConfig config )
+		public IItemsService CreateItemsService( ChannelAdvisorConfig config, ChannelAdvisorTimeouts timeouts )
 		{
 			if ( config.ApiVersion == ChannelAdvisorApiVersion.Soap )
 				return CreateItemsService( config.AccountName, config.AccountId );
 			else
-				return CreateItemsRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, config.Timeouts, config.SoapCompatibilityAuth );
+				return CreateItemsRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, timeouts, config.SoapCompatibilityAuth );
 		}
 
 		/// <summary>

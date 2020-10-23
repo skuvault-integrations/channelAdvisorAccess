@@ -16,16 +16,12 @@ namespace ChannelAdvisorAccess.Misc
 		public bool SoapCompatibilityAuth { get; set; }
 		public string AccessToken { get; set; }
 		public string RefreshToken { get; set; }
-		public ChannelAdvisorTimeouts Timeouts { get; private set; }
 
-		public ChannelAdvisorConfig( string accountName, ChannelAdvisorTimeouts timeouts ) {
+		public ChannelAdvisorConfig( string accountName ) {
 			Condition.Requires( accountName, "accountName" );
 
 			this.AccountName = accountName;
-			this.Timeouts = timeouts;
 		}
-
-		public ChannelAdvisorConfig( string accountName ) : this( accountName, new ChannelAdvisorTimeouts() ) { }
 	}
 
 	public enum ChannelAdvisorApiVersion { Soap, Rest }
