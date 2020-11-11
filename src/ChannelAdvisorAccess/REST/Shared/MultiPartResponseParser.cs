@@ -31,7 +31,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 				batchResponses.Responses.ToList() : new List< BatchResponse< T > >();
 				var lastItemWithStatus300AndUp = batchResponsesList.LastOrDefault( x => x.Status >= 300 );
 				httpBatchStatusCode = ( lastItemWithStatus300AndUp != null ) ? lastItemWithStatus300AndUp.Status : ( int ) HttpStatusCode.OK;
-				result = batchResponsesList.Select( x => x.Body ) ?? new List< T >();
+				result = batchResponsesList.Select( x => x.Body );
 				return true;
 			}
 
