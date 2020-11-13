@@ -626,7 +626,15 @@ namespace ChannelAdvisorAccess.REST.Services
 							RefreshLastNetworkActivityTime();
 
 							int batchStatusCode;
-							entities.AddRange( MultiPartResponseParser.Parse< T >( content, out batchStatusCode ) );
+							IEnumerable< T > parsedEntities;
+							if ( MultiPartResponseParser.TryParse< T >( content, out batchStatusCode, out parsedEntities ) )
+							{
+								entities.AddRange( parsedEntities );
+							}
+							else
+							{
+								batchStatusCode = (int)httpResponse.StatusCode;
+							}
 
 							if ( (int)httpResponse.StatusCode == _tooManyRequestsStatusCode )
 							{
