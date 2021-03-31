@@ -573,15 +573,23 @@ namespace ChannelAdvisorAccess.REST.Services
 							var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cancellationTokenSource.Token ).ConfigureAwait( false );
 							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 
-							int batchStatusCode;
-							entities.AddRange( MultiPartResponseParser.Parse< T >( content, out batchStatusCode ) );
+							int batchStatusCode = ( int )HttpStatusCode.OK;
 
-							if ( (int)httpResponse.StatusCode == _tooManyRequestsStatusCode )
+							try
+							{
+								entities.AddRange( MultiPartResponseParser.Parse<T>( content, out batchStatusCode ) );
+							}
+							catch ( Exception err )
+							{
+								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", err.Message, content ) );
+							}
+
+							if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
 							{
 								// slowly decrease the number of requests in the batch
 								if ( this._currentBatchSize >= _minBatchSize )
 								{
-									this._currentBatchSize = (int)Math.Ceiling( this._currentBatchSize * 0.7 );
+									this._currentBatchSize = ( int )Math.Ceiling( this._currentBatchSize * 0.7 );
 								}
 							}
 
