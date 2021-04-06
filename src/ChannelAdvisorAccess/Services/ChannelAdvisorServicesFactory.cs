@@ -47,12 +47,12 @@ namespace ChannelAdvisorAccess.Services
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public IOrdersService CreateOrdersService( ChannelAdvisorConfig config )
+		public IOrdersService CreateOrdersService( ChannelAdvisorConfig config, ChannelAdvisorTimeouts timeouts )
 		{
 			if ( config.ApiVersion == ChannelAdvisorApiVersion.Soap )
 				return CreateOrdersService( config.AccountName, config.AccountId );
 			else
-				return CreateOrdersRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, config.SoapCompatibilityAuth );
+				return CreateOrdersRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, timeouts, config.SoapCompatibilityAuth );
 		}
 
 		/// <summary>
@@ -74,12 +74,12 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="accountId">Tenant account id</param>
 		/// <param name="itemsService">Items service (to get Distribution Centers)</param>
 		/// <returns></returns>
-		public IOrdersService CreateOrdersRestServiceWithSoapCompatibleAuth( string accountName, string accountId, IItemsService itemsService )
+		public IOrdersService CreateOrdersRestServiceWithSoapCompatibleAuth( string accountName, string accountId, IItemsService itemsService, ChannelAdvisorTimeouts timeouts )
 		{
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 			
-			return new REST.Services.Orders.OrdersService( credentials, soapCredentials, accountId, accountName, itemsService );
+			return new REST.Services.Orders.OrdersService( credentials, soapCredentials, accountId, accountName, itemsService, timeouts );
 		}
 
 		/// <summary>
@@ -91,19 +91,19 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="refreshToken">Tenant refresh token</param>
 		/// <param name="soapCompatibleAuth">Soap compatible authorization flow</param>
 		/// <returns></returns>
-		public IOrdersService CreateOrdersRestService( string accountName, string accountId, string accessToken, string refreshToken, bool soapCompatibleAuth = false )
+		public IOrdersService CreateOrdersRestService( string accountName, string accountId, string accessToken, string refreshToken, ChannelAdvisorTimeouts timeouts, bool soapCompatibleAuth = false )
 		{
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 
 			if ( soapCompatibleAuth )
 			{
-				var itemsService = this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId );
-				return this.CreateOrdersRestServiceWithSoapCompatibleAuth( accountName, accountId, itemsService);
+				var itemsService = this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId, timeouts );
+				return this.CreateOrdersRestServiceWithSoapCompatibleAuth( accountName, accountId, itemsService, timeouts );
 			}
 			else
 			{ 
-				var itemsService = new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken );
-				return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken, itemsService );
+				var itemsService = new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken, timeouts );
+				return new REST.Services.Orders.OrdersService( credentials, accountName, accessToken, refreshToken, itemsService, timeouts );
 			}
 		}
 
@@ -112,12 +112,12 @@ namespace ChannelAdvisorAccess.Services
 		/// </summary>
 		/// <param name="config"></param>
 		/// <returns></returns>
-		public IItemsService CreateItemsService( ChannelAdvisorConfig config )
+		public IItemsService CreateItemsService( ChannelAdvisorConfig config, ChannelAdvisorTimeouts timeouts )
 		{
 			if ( config.ApiVersion == ChannelAdvisorApiVersion.Soap )
 				return CreateItemsService( config.AccountName, config.AccountId );
 			else
-				return CreateItemsRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, config.SoapCompatibilityAuth );
+				return CreateItemsRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, timeouts, config.SoapCompatibilityAuth );
 		}
 
 		/// <summary>
@@ -138,12 +138,12 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="accountName"></param>
 		/// <param name="accountId"></param>
 		/// <returns></returns>
-		public IItemsService CreateItemsRestServiceWithSoapCompatibleAuth( string accountName, string accountId )
+		public IItemsService CreateItemsRestServiceWithSoapCompatibleAuth( string accountName, string accountId, ChannelAdvisorTimeouts timeouts )
 		{
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
 
-			return new REST.Services.Items.ItemsService( credentials, soapCredentials, accountId, accountName );
+			return new REST.Services.Items.ItemsService( credentials, soapCredentials, accountId, accountName, timeouts );
 		}
 
 		/// <summary>
@@ -155,14 +155,14 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="refreshToken"></param>
 		/// <param name="soapCompatibleAuth"></param>
 		/// <returns></returns>
-		public IItemsService CreateItemsRestService( string accountName, string accountId, string accessToken, string refreshToken, bool soapCompatibleAuth = false )
+		public IItemsService CreateItemsRestService( string accountName, string accountId, string accessToken, string refreshToken, ChannelAdvisorTimeouts timeouts, bool soapCompatibleAuth = false )
 		{
 			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
 
 			if ( soapCompatibleAuth )
-				return this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId );
+				return this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId, timeouts );
 			else
-				return new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken );
+				return new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken, timeouts );
 		}
 
 		public IShippingService CreateShippingService( string accountName, string accountId )

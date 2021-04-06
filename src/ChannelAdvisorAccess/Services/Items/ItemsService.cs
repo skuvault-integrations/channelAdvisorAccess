@@ -42,6 +42,13 @@ namespace ChannelAdvisorAccess.Services.Items
 			this._cache = cache;
 			this.SlidingCacheExpiration = ObjectCache.NoSlidingExpiration;
 			this._allItemsCacheKey = string.Format( "caAllItems_ID_{0}", this.AccountId );
+
+			TrackSoapClientNetworkActivity( this._client.InnerChannel );
+		}
+
+		public DateTime LastActivityTime
+		{
+			get { return base.LastNetworkActivityTime; }
 		}
 
 		#region Check for Success

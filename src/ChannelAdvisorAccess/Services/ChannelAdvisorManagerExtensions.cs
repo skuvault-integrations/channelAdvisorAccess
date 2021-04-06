@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services.Items;
@@ -10,11 +11,11 @@ namespace ChannelAdvisorAccess.Services
 	public static class ChannelAdvisorManagerExtensions
 	{
 		#region Orders
-		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId )
+		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrders< T >( start, end );
+			return orderService.GetOrders< T >( start, end, token );
 		}
 
 		/// <summary>
@@ -36,18 +37,18 @@ namespace ChannelAdvisorAccess.Services
 		///	var orders = this.GetOrders&lt; OrderResponseDetailHigh >( orderCriteria );
 		/// </code>
 		/// </example>
-		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, OrderCriteria orderCriteria, string accountId )
+		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, OrderCriteria orderCriteria, string accountId, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrders< T >( orderCriteria );
+			return orderService.GetOrders< T >( orderCriteria, token );
 		}
 
-		public static IList< T > GetOrdersList< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId )
+		public static IList< T > GetOrdersList< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrdersList< T >( start, end );
+			return orderService.GetOrdersList< T >( start, end, token );
 		}
 		#endregion
 
@@ -60,10 +61,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <returns>
 		/// Collection of all items in the account inventory.
 		/// </returns>
-		public static IEnumerable< InventoryItemResponse > GetAllItems( this IChannelAdvisorManager manager, string accountId )
+		public static IEnumerable< InventoryItemResponse > GetAllItems( this IChannelAdvisorManager manager, string accountId, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetAllItems();
+			return itemService.GetAllItems( token );
 		}
 
 		/// <summary>
@@ -73,10 +74,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="accountId">The account id.</param>
 		/// <param name="skus">The skus.</param>
 		/// <returns>List of items matching supplied SKUs.</returns>
-		public static IEnumerable< InventoryItemResponse > GetItems( this IChannelAdvisorManager manager, string accountId, string[] skus )
+		public static IEnumerable< InventoryItemResponse > GetItems( this IChannelAdvisorManager manager, string accountId, string[] skus, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetItems( skus );
+			return itemService.GetItems( skus, token );
 		}
 
 		/// <summary>
@@ -92,10 +93,10 @@ namespace ChannelAdvisorAccess.Services
 		/// See <see href="http://developer.channeladvisor.com/display/cadn/InventoryItemCriteria"/> for more details.</remarks>
 		/// <example>Filtering by partial SKU
 		/// <code>itemsFilter.Criteria.PartialSku = "partSku";</code></example>
-		public static IEnumerable< InventoryItemResponse > GetFilteredItems( this IChannelAdvisorManager manager, string accountId, ItemsFilter filter )
+		public static IEnumerable< InventoryItemResponse > GetFilteredItems( this IChannelAdvisorManager manager, string accountId, ItemsFilter filter, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetFilteredItems( filter );
+			return itemService.GetFilteredItems( filter, token );
 		}
 
 		/// <summary>
@@ -111,9 +112,9 @@ namespace ChannelAdvisorAccess.Services
 		/// <code>
 		/// var item = ChannelAdvisorFacade.GetItem( "account id", "sku to get" );
 		/// </code></example>
-		public static InventoryItemResponse GetItem( this IChannelAdvisorManager manager, string accountId, string sku )
+		public static InventoryItemResponse GetItem( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
 		{
-			var items = GetItems( manager, accountId, new[] { sku } );
+			var items = GetItems( manager, accountId, new[] { sku }, token );
 			return items.FirstOrDefault();
 		}
 
@@ -124,10 +125,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="accountId">The account id.</param>
 		/// <param name="sku">The sku.</param>
 		/// <returns>Item attributes collection.</returns>
-		public static AttributeInfo[] GetAttributes( this IChannelAdvisorManager manager, string accountId, string sku )
+		public static AttributeInfo[] GetAttributes( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
 		{
 			var itemsService = manager.GetItemsServiceByAccountId( accountId );
-			return itemsService.GetAttributes( sku ); 
+			return itemsService.GetAttributes( sku, token ); 
 		}
 
 		/// <summary>
@@ -140,10 +141,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <remarks>This is required since <see cref="GetItems(IChannelAdvisorManager,string,string[])"/> returns
 		/// only available quantity.</remarks>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
-		public static QuantityInfoResponse GetItemQuantities( this IChannelAdvisorManager manager, string accountId, string sku )
+		public static QuantityInfoResponse GetItemQuantities( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
 		{
 			var itemsService = manager.GetItemsServiceByAccountId( accountId );
-			return itemsService.GetItemQuantities( sku );
+			return itemsService.GetItemQuantities( sku, token );
 		}
 
 		/// <summary>
@@ -155,10 +156,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <remarks>If SKU exists, item is updated, otherwise it's created.
 		/// <para>For update, populate only properties you want updated. Other properties remain unchanged.</para></remarks>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/SynchInventoryItemList"/>
-		public static void SynchItems( this IChannelAdvisorManager manager, string accountId, List< InventoryItemSubmit > items )
+		public static void SynchItems( this IChannelAdvisorManager manager, string accountId, List< InventoryItemSubmit > items, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.SynchItems( items );
+			itemService.SynchItems( items, token );
 		}
 
 		/// <summary>
@@ -170,10 +171,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <remarks>If SKU exists, item is updated, otherwise it's created.
 		/// <para>For update, populate only properties you want updated. Other properties remain unchanged.</para></remarks>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/SynchInventoryItemList"/>
-		public static void SynchItem( this IChannelAdvisorManager manager, string accountId, InventoryItemSubmit item )
+		public static void SynchItem( this IChannelAdvisorManager manager, string accountId, InventoryItemSubmit item, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.SynchItem( item );
+			itemService.SynchItem( item, token );
 		}
 
 		/// <summary>
@@ -182,10 +183,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="manager">The manager.</param>
 		/// <param name="accountId">The account id.</param>
 		/// <param name="itemQuantityAndPrice">The item quantity and price.</param>
-		public static void UpdateQuantityAndPrice( this IChannelAdvisorManager manager, string accountId, InventoryItemQuantityAndPrice itemQuantityAndPrice )
+		public static void UpdateQuantityAndPrice( this IChannelAdvisorManager manager, string accountId, InventoryItemQuantityAndPrice itemQuantityAndPrice, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.UpdateQuantityAndPrice( itemQuantityAndPrice );
+			itemService.UpdateQuantityAndPrice( itemQuantityAndPrice, token );
 		}
 
 		/// <summary>
@@ -194,10 +195,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="manager">The manager.</param>
 		/// <param name="accountId">The account id.</param>
 		/// <param name="itemQuantityAndPrice">The item quantity and price.</param>
-		public static void UpdateQuantityAndPrices( this IChannelAdvisorManager manager, string accountId, List< InventoryItemQuantityAndPrice > itemQuantityAndPrice )
+		public static void UpdateQuantityAndPrices( this IChannelAdvisorManager manager, string accountId, List< InventoryItemQuantityAndPrice > itemQuantityAndPrice, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.UpdateQuantityAndPrices( itemQuantityAndPrice );
+			itemService.UpdateQuantityAndPrices( itemQuantityAndPrice, token );
 		}
 
 		/// <summary>
@@ -206,10 +207,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="manager">The manager.</param>
 		/// <param name="accountId">The account id.</param>
 		/// <param name="sku">The sku of the item to delete.</param>
-		public static void DeleteItem( this IChannelAdvisorManager manager, string accountId, string sku )
+		public static void DeleteItem( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.DeleteItem( sku );
+			itemService.DeleteItem( sku, token );
 		}
 		#endregion
 
