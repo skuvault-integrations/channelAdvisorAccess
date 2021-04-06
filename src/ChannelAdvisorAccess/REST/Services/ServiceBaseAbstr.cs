@@ -579,9 +579,10 @@ namespace ChannelAdvisorAccess.REST.Services
 							{
 								entities.AddRange( MultiPartResponseParser.Parse<T>( content, out batchStatusCode ) );
 							}
-							catch ( Exception err )
+							catch ( Exception ex )
 							{
-								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", err.Message, content ) );
+								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", ex.Message, content ) );																
+								throw ex;
 							}
 
 							if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
