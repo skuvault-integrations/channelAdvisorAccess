@@ -93,6 +93,9 @@ namespace ChannelAdvisorAccess.Misc
 
 		public static string SanitizeToken( string token )
 		{
+			if ( string.IsNullOrWhiteSpace( token ) )
+				return string.Empty;
+
 			var length = token.Length;
 			return token.Substring( 0, Math.Min( 4, length ) ) + "****" + token.Substring( length - Math.Min( 4, length ) ); 
 		}

@@ -29,8 +29,8 @@ namespace ChannelAdvisorAccess
 			this.IsActive = isActive;
 			this.IsMain = isMain;
 
-			this.ItemsService = servicesFactory.CreateItemsService( new ChannelAdvisorConfig( name ) { AccountId = id } );
-			this.OrdersService = servicesFactory.CreateOrdersService( new ChannelAdvisorConfig( name ) { AccountId = id } );
+			this.ItemsService = servicesFactory.CreateItemsService( new ChannelAdvisorConfig( name ) { AccountId = id }, new REST.Shared.ChannelAdvisorTimeouts() );
+			this.OrdersService = servicesFactory.CreateOrdersService( new ChannelAdvisorConfig( name ) { AccountId = id }, new REST.Shared.ChannelAdvisorTimeouts() );
 			this.ShippingService = servicesFactory.CreateShippingService( name, id );
 			this.ListingService = servicesFactory.CreateListingService( name, id );
 

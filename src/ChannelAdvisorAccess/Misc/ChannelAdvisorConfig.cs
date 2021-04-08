@@ -1,4 +1,5 @@
-﻿using CuttingEdge.Conditions;
+﻿using ChannelAdvisorAccess.REST.Shared;
+using CuttingEdge.Conditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

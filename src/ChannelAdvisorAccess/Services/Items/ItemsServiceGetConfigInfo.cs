@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
@@ -9,7 +10,7 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region Get Config Info
-		public ClassificationConfigurationInformation[] GetClassificationConfigInfo( Mark mark = null )
+		public ClassificationConfigurationInformation[] GetClassificationConfigInfo( CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -37,7 +38,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( Mark mark = null )
+		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -65,7 +66,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public DistributionCenterResponse[] GetDistributionCenterList( Mark mark = null )
+		public DistributionCenterResponse[] GetDistributionCenterList( CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -93,7 +94,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( Mark mark = null )
+		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( CancellationToken token, Mark mark = null )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -122,7 +123,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		}
 		#endregion
 
-		public Task< REST.Models.DistributionCenter[] > GetDistributionCentersAsync( Mark mark = null )
+		public Task< REST.Models.DistributionCenter[] > GetDistributionCentersAsync( CancellationToken token, Mark mark = null )
 		{
 			throw new NotImplementedException();
 		}

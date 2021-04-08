@@ -26,8 +26,6 @@ namespace ChannelAdvisorAccessTests
 			this.ListingService = factory.CreateListingService( "test", Credentials.AccountId );
 			this.OrdersService = factory.CreateOrdersService( "test", Credentials.AccountId );
 			this.ShippingService = factory.CreateShippingService( "test", Credentials.AccountId );
-
-			NetcoLogger.LoggerFactory = new NLogLoggerFactory();
 		}
 
 		public IShippingService ShippingService{ get; private set; }
