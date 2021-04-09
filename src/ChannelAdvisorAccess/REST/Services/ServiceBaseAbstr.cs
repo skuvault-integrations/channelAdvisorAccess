@@ -243,10 +243,22 @@ namespace ChannelAdvisorAccess.REST.Services
 
 					RefreshLastNetworkActivityTime();
 					var response = await this.HttpClient.PostAsync( requestTokenUrl, content, cts.Token ).ConfigureAwait( false );
-					var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
-					RefreshLastNetworkActivityTime();
-					var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
+					var result = new OAuthResponse();
+					var responseStr = string.Empty;
 
+					try
+					{
+						responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
+						RefreshLastNetworkActivityTime();
+						result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
+					}
+					catch( Exception responseEx )
+					{
+						ChannelAdvisorLogger.LogTrace(String.Format("Failed due to: '{0}', response: {1}", responseEx.Message, responseStr ) );
+						var channelAdvisorException = new ChannelAdvisorException( responseEx.Message, responseEx );
+						throw channelAdvisorException;
+					}
+					
 					if ( !string.IsNullOrEmpty( result.Error ) )
 						throw new ChannelAdvisorUnauthorizedException( result.Error );
 
@@ -643,7 +655,7 @@ namespace ChannelAdvisorAccess.REST.Services
 							}
 							catch ( Exception ex )
 							{
-								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", ex.Message, content ) );																
+								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", ex.Message, content ) );
 								throw ex;
 							}
 
