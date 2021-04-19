@@ -254,9 +254,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					}
 					catch( Exception responseEx )
 					{
-						ChannelAdvisorLogger.LogTrace(String.Format("Failed due to: '{0}', response: {1}", responseEx.Message, responseStr ) );
-						var channelAdvisorException = new ChannelAdvisorException( responseEx.Message, responseEx );
-						throw channelAdvisorException;
+						ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", responseEx.Message, responseStr ) );						
 					}
 					
 					if ( !string.IsNullOrEmpty( result.Error ) )
@@ -647,16 +645,13 @@ namespace ChannelAdvisorAccess.REST.Services
 									entities.AddRange( parsedEntities );
 								}
 								else
-								{
-									var error = String.Format( "Can't parse the response: {0}", content );
-									ChannelAdvisorLogger.LogTrace( error );
-									throw new ChannelAdvisorException( (int) HttpStatusCode.InternalServerError, error );
+								{									
+									ChannelAdvisorLogger.LogTrace( String.Format( "Can't parse the response: {0}", content ) );									
 								}
 							}
 							catch ( Exception ex )
 							{
-								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", ex.Message, content ) );
-								throw ex;
+								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", ex.Message, content ) );								
 							}
 
 							if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
