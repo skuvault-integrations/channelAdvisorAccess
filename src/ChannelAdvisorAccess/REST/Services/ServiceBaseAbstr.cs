@@ -253,8 +253,10 @@ namespace ChannelAdvisorAccess.REST.Services
 						result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 					}
 					catch( Exception responseEx )
-					{
-						ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", responseEx.Message, responseStr ) );						
+					{						
+						ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: responseStr, errors: "Failed due to" + responseEx.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+						var channelAdvisorException = new ChannelAdvisorException( responseEx.Message, responseEx );
+						throw channelAdvisorException;
 					}
 					
 					if ( !string.IsNullOrEmpty( result.Error ) )
@@ -645,13 +647,13 @@ namespace ChannelAdvisorAccess.REST.Services
 									entities.AddRange( parsedEntities );
 								}
 								else
-								{									
-									ChannelAdvisorLogger.LogTrace( String.Format( "Can't parse the response: {0}", content ) );									
+								{								
+									ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content, errors: "Can't parse the response", additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 								}
 							}
 							catch ( Exception ex )
-							{
-								ChannelAdvisorLogger.LogTrace( String.Format( "Failed due to: '{0}', response: {1}", ex.Message, content ) );								
+							{								
+								ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content, errors: "Failed due to: " + ex.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							}
 
 							if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
