@@ -309,13 +309,14 @@ namespace ChannelAdvisorAccess.REST.Services
 			// check if we have extra pages 
 			if ( response.NextLink != null && response.Count != null )
 			{
-				var totalRecords = response.Count.Value;
-				var serviceRecommendedPageSize = this.GetPageSizeFromUrl( response.NextLink );
-				var totalPages = (int)Math.Ceiling( totalRecords * 1.0 / serviceRecommendedPageSize ) + 1; 
+				var totalRecords = response.Count.Value;				
 				
 				// if specific page was not requested
 				if ( pageNumber <= 0 )
 				{
+					var serviceRecommendedPageSize = this.GetPageSizeFromUrl( response.NextLink );
+					var totalPages = ( int )Math.Ceiling( totalRecords * 1.0 / serviceRecommendedPageSize ) + 1;
+
 					var nextPage = 2;
 					var options = new ParallelOptions() {  MaxDegreeOfParallelism = 1 };
 					Parallel.For( nextPage, totalPages, options, () => new List< T >(), ( currentPage, pls, tempResult ) =>
@@ -334,6 +335,8 @@ namespace ChannelAdvisorAccess.REST.Services
 				}
 				else
 				{
+					var totalPages = pageSize.HasValue ? ( int )Math.Ceiling( totalRecords * 1.0 / pageSize.Value ) : 1;
+
 					// if we request non existing page CA always returns first page
 					if ( pageNumber > totalPages )
 					{
@@ -374,7 +377,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( pageSize != null && page > 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;
 
-			return GetEntityAsync< ODataResponse< T > >( url, token, mark, operationTimeout );
+			return GetEntityAsync< ODataResponse< T > >( url, token, mark, operationTimeout ); 
 		}
 
 		/// <summary>
@@ -408,8 +411,8 @@ namespace ChannelAdvisorAccess.REST.Services
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, returnStatusCode: httpResponse.StatusCode.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
-							await this.ThrowIfError( httpResponse, responseStr, cts.Token, mark ).ConfigureAwait( false );
-					
+							await this.ThrowIfError( httpResponse, responseStr, cts.Token, mark ).ConfigureAwait( false );												
+
 							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
 							return message;
