@@ -243,10 +243,22 @@ namespace ChannelAdvisorAccess.REST.Services
 
 					RefreshLastNetworkActivityTime();
 					var response = await this.HttpClient.PostAsync( requestTokenUrl, content, cts.Token ).ConfigureAwait( false );
-					var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
-					RefreshLastNetworkActivityTime();
-					var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
+					var result = new OAuthResponse();
+					var responseStr = string.Empty;
 
+					try
+					{
+						responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
+						RefreshLastNetworkActivityTime();
+						result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
+					}
+					catch( Exception responseEx )
+					{						
+						ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: responseStr, errors: "Failed due to" + responseEx.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+						var channelAdvisorException = new ChannelAdvisorException( responseEx.Message, responseEx );
+						throw channelAdvisorException;
+					}
+					
 					if ( !string.IsNullOrEmpty( result.Error ) )
 						throw new ChannelAdvisorUnauthorizedException( result.Error );
 
@@ -625,23 +637,31 @@ namespace ChannelAdvisorAccess.REST.Services
 							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
 							RefreshLastNetworkActivityTime();
 
-							int batchStatusCode;
-							IEnumerable< T > parsedEntities;
-							if ( MultiPartResponseParser.TryParse< T >( content, out batchStatusCode, out parsedEntities ) )
-							{
-								entities.AddRange( parsedEntities );
+							int batchStatusCode = ( int )HttpStatusCode.OK;
+
+							try
+							{								
+								IEnumerable< T > parsedEntities;
+								if ( MultiPartResponseParser.TryParse< T >( content, out batchStatusCode, out parsedEntities ) )
+								{
+									entities.AddRange( parsedEntities );
+								}
+								else
+								{								
+									ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content, errors: "Can't parse the response", additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+								}
 							}
-							else
-							{
-								batchStatusCode = (int)httpResponse.StatusCode;
+							catch ( Exception ex )
+							{								
+								ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content, errors: "Failed due to: " + ex.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							}
 
-							if ( (int)httpResponse.StatusCode == _tooManyRequestsStatusCode )
+							if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
 							{
 								// slowly decrease the number of requests in the batch
 								if ( this._currentBatchSize >= _minBatchSize )
 								{
-									this._currentBatchSize = (int)Math.Ceiling( this._currentBatchSize * 0.7 );
+									this._currentBatchSize = ( int )Math.Ceiling( this._currentBatchSize * 0.7 );
 								}
 							}
 
