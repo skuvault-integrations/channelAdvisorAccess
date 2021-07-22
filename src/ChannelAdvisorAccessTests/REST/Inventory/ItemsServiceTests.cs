@@ -306,7 +306,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[Test]
 		public async Task GetFilteredSkusPageByUpdateDateForPeriod()
 		{
-			var startDate = DateTime.Now.AddDays( -90 );
+			var startDate = DateTime.Now.AddDays( -89 );
 			var endDate = DateTime.Now;
 
 			var filter = new ItemsFilter

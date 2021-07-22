@@ -138,7 +138,8 @@ namespace ChannelAdvisorAccess.REST.Shared
 		{
 			get
 			{
-				if ( _timeouts.TryGetValue( operation, out ChannelAdvisorOperationTimeout timeout ) )
+				ChannelAdvisorOperationTimeout timeout;
+				if ( _timeouts.TryGetValue( operation, out timeout ) )
 					return timeout.TimeoutInMs;
 
 				return DefaultOperationTimeout.TimeoutInMs;
