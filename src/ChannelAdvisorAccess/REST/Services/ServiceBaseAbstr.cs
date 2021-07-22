@@ -347,7 +347,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				}
 				else
 				{
-					var totalPages = pageSize.HasValue ? ( int )Math.Ceiling( totalRecords * 1.0 / pageSize.Value ) : 1;
+					var totalPages = pageSize.HasValue && pageSize.Value != 0 ? ( int )Math.Ceiling( totalRecords * 1.0 / pageSize.Value ) : 1;
 
 					// if we request non existing page CA always returns first page
 					if ( pageNumber > totalPages )
