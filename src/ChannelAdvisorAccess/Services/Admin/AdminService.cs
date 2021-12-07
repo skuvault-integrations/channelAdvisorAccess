@@ -4,18 +4,16 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.AdminService;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.Services.Items;
 using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Admin
 {
-	public class AdminService: IAdminService
+	public class AdminService: ServiceBaseAbstr, IAdminService
 	{
 		private readonly APICredentials _credentials;
 		private readonly AdminServiceSoapClient _client;
-
-		[ JsonIgnore ]
-		public Func< string > AdditionalLogInfo{ get; set; }
-
+		
 		private string AdditionalLogInfoString
 		{
 			get
@@ -80,7 +78,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 				AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = this._client.Ping( this._credentials );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
 				} );
 
@@ -88,6 +88,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 			catch( Exception exception )
 			{
+				this.RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
@@ -104,7 +105,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 				await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.PingResult );
 				} ).ConfigureAwait( false );
 
@@ -112,6 +115,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 			catch( Exception exception )
 			{
+				this.RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
@@ -173,7 +177,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 				var authorizationResponses = AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = this._client.GetAuthorizationList( this._credentials, localId );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
 					return result.ResultData;
 				} );
@@ -184,6 +190,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 			catch( Exception exception )
 			{
+				this.RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
@@ -200,7 +207,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 				var authorizationResponses = await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = await this._client.GetAuthorizationListAsync( this._credentials, localId ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.GetAuthorizationListResult );
 					return result.GetAuthorizationListResult.ResultData;
 				} ).ConfigureAwait( false );
@@ -211,6 +220,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 			catch( Exception exception )
 			{
+				this.RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
@@ -227,7 +237,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 				var requestAccess = AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = this._client.RequestAccess( this._credentials, localId );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
 					return result.ResultData;
 				} );
@@ -237,6 +249,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 			catch( Exception exception )
 			{
+				this.RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
@@ -253,7 +266,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 
 				var requestAsyncResult = await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = await this._client.RequestAccessAsync( this._credentials, localId ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.RequestAccessResult );
 					return result.RequestAccessResult.ResultData;
 				} ).ConfigureAwait( false );
@@ -264,6 +279,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 			catch( Exception exception )
 			{
+				this.RefreshLastNetworkActivityTime();
 				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfoString ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;

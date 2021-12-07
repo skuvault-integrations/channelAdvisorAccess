@@ -12,8 +12,9 @@ namespace ChannelAdvisorAccessTests.Inventory
 	[ TestFixture ]
 	public class OrdersServiceTests: TestsBase
 	{
-		protected const int TestOrderId = 182948;
-		protected const int TestOrderId2 = 182949;
+		protected const int TestOrderId = 185936;
+		protected const int TestOrderId2 = 185938;
+		protected const int TestOrderId3 = 185939;		
 
 		[ Test ]
 		public async Task GetOrdersAsync()
@@ -26,6 +27,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
 
 			result.Should().NotBeEmpty();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -33,7 +35,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 		{
 			var criteria = new OrderCriteria
 			{
-				OrderIDList = new int[] { TestOrderId, TestOrderId2 },
+				OrderIDList = new int[] { TestOrderId3 },
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
@@ -50,11 +52,11 @@ namespace ChannelAdvisorAccessTests.Inventory
 		{
 			var criteria = new OrderCriteria
 			{
-				OrderIDList = new int[] { TestOrderId, TestOrderId2 },
+				OrderIDList = new int[] { TestOrderId3 },
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync<OrderResponseDetailComplete>( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
 
 			OrderCart shoppingCart = result.First().ShoppingCart;
 			//Always returned as 0 from the CA api
@@ -91,6 +93,11 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
 
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
+		}
+
+		private void ValidateLastActivityDateTimeUpdated()
+		{
+			this.OrdersService.LastActivityTime.Should().NotBe( this.serviceLastActivityDateTime );			
 		}
 	}
 }

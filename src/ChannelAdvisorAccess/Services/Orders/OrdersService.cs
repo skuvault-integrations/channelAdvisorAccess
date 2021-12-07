@@ -49,10 +49,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._client = new OrderServiceSoapClient();
 			
 			this._fulfillmentServiceCredentials = new FulfillmentService.APICredentials { DeveloperKey = this._credentials.DeveloperKey, Password = this._credentials.Password };
-			this._fulfillmentServiceClient = new FulfillmentService.FulfillmentServiceSoapClient();
-
-			TrackSoapClientNetworkActivity( this._client.InnerChannel );
-			TrackSoapClientNetworkActivity( this._fulfillmentServiceClient.InnerChannel );
+			this._fulfillmentServiceClient = new FulfillmentService.FulfillmentServiceSoapClient();			
 		}
 
 		#region Ping
@@ -60,7 +57,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = this._client.Ping( this._credentials );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result );
 			} );
 		}
@@ -69,7 +68,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result.PingResult );
 			} ).ConfigureAwait( false );
 		}
@@ -159,7 +160,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+				this.RefreshLastNetworkActivityTime();
 				CheckCaSuccess( results );
 				var resultData = results.ResultData ?? new OrderResponseItem[ 0 ];
 
@@ -184,7 +187,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 				var numberAttempt = 0;
 				while( numberAttempt < MaxUnexpectedAttempt )
 				{
+					this.RefreshLastNetworkActivityTime();
 					var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+					this.RefreshLastNetworkActivityTime();
 					if( answer.Status == ResultStatus.Success )
 					{
 						result.AddRange( answer.ResultData );
@@ -257,7 +262,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ) ).Get( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				CheckCaSuccess( results.GetOrderListResult );
 				var resultData = results.GetOrderListResult.ResultData ?? new OrderResponseItem[ 0 ];
 
@@ -283,7 +290,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 				while( numberAttempt < MaxUnexpectedAttempt )
 				{
 					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
+					this.RefreshLastNetworkActivityTime();
 					var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : answer.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 					if( answer.GetOrderListResult.Status == ResultStatus.Success )
 					{
@@ -313,7 +322,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( apiResults );
 				return apiResults.ResultData;
 			} );
@@ -323,7 +334,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( apiResults.SubmitOrderResult );
 				return apiResults.SubmitOrderResult.ResultData;
 			} ).ConfigureAwait( false );
@@ -350,7 +363,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				var ordersFulfillment = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var results = this._fulfillmentServiceClient.GetOrderFulfillmentDetailList( this._fulfillmentServiceCredentials, this.AccountId, part.ToArray(), null );
+					this.RefreshLastNetworkActivityTime();
 					CheckCaSuccess( results );
 					var resultData = results.ResultData ?? new FulfillmentService.OrderFulfillmentResponse[ 0 ];
 
@@ -385,7 +400,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				var ordersFulfillment = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var results = await this._fulfillmentServiceClient.GetOrderFulfillmentDetailListAsync( this._fulfillmentServiceCredentials, this.AccountId, part.ToArray(), null ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					CheckCaSuccess( results.GetOrderFulfillmentDetailListResult );
 					var resultData = results.GetOrderFulfillmentDetailListResult.ResultData ?? new FulfillmentService.OrderFulfillmentResponse[ 0 ];
 
@@ -436,7 +453,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( results );
 				return results.ResultData;
 			} );
@@ -446,7 +465,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( results.UpdateOrderListResult );
 				return results.UpdateOrderListResult.ResultData;
 			} ).ConfigureAwait( false );

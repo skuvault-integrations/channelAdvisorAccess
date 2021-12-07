@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.ShippingService;
 using Netco.Extensions;
 using Netco.Logging;
@@ -12,14 +13,11 @@ using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {
-	public class ShippingService: IShippingService
+	public class ShippingService: ServiceBaseAbstr, IShippingService
 	{
 		private readonly APICredentials _credentials;
 		private readonly ShippingServiceSoapClient _client;
-
-		[ JsonIgnore ]
-		public Func< string > AdditionalLogInfo{ get; set; }
-
+		
 		public ShippingService( APICredentials credentials, string accountId )
 		{
 			this._credentials = credentials;
@@ -40,7 +38,9 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = this._client.Ping( this._credentials );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result );
 			} );
 		}
@@ -49,7 +49,9 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result.PingResult );
 			} ).ConfigureAwait( false );
 		}
@@ -62,12 +64,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreateShipmentByOrderId( orderId, carrierCode, classCode, trackingNumber, dateShipped ) );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( orderId.ToString( CultureInfo.InvariantCulture ), this.AccountId, carrierCode, classCode, trackingNumber, e );
 			}
 		}
@@ -78,12 +83,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreateShipmentByOrderId( orderId, carrierCode, classCode, trackingNumber, dateShipped ) ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( orderId.ToString( CultureInfo.InvariantCulture ), this.AccountId, carrierCode, classCode, trackingNumber, e );
 			}
 		}
@@ -113,12 +121,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreateShipmentByClientId( clientOrderId, carrierCode, classCode, trackingNumber, dateShipped ) );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( clientOrderId, this.AccountId, carrierCode, classCode, trackingNumber, e );
 			}
 		}
@@ -129,12 +140,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreateShipmentByClientId( clientOrderId, carrierCode, classCode, trackingNumber, dateShipped ) ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( clientOrderId, this.AccountId, carrierCode, classCode, trackingNumber, e );
 			}
 		}
@@ -164,12 +178,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreatePartialShipmentByOrderId( orderId, partialShipmentContents ) );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( orderId.ToString( CultureInfo.InvariantCulture ), this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber, e );
 			}
 		}
@@ -180,12 +197,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreatePartialShipmentByOrderId( orderId, partialShipmentContents ) ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( orderId.ToString( CultureInfo.InvariantCulture ), this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber, e );
 			}
 		}
@@ -209,12 +229,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, CreatePartialShipmentByClientId( clientOrderId, partialShipmentContents ) );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
 				} );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( clientOrderId, this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber, e );
 			}
 		}
@@ -225,12 +248,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			{
 				await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
 					var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, CreatePartialShipmentByClientId( clientOrderId, partialShipmentContents ) ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 				} ).ConfigureAwait( false );
 			}
 			catch( Exception e )
 			{
+				this.RefreshLastNetworkActivityTime();
 				throw new MarkOrderShippedException( clientOrderId, this.AccountId, partialShipmentContents.CarrierCode, partialShipmentContents.ClassCode, partialShipmentContents.TrackingNumber, e );
 			}
 		}
@@ -253,7 +279,9 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			orderShipments.DoWithPages( 50, p => AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = this._client.SubmitOrderShipmentList( this._credentials, this.AccountId, p.ToArray() );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result );
 			} ) );
 		}
@@ -262,7 +290,9 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			await orderShipments.DoWithPagesAsync( 50, async p => await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = await this._client.SubmitOrderShipmentListAsync( this._credentials, this.AccountId, p.ToArray() ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result.SubmitOrderShipmentListResult );
 			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 		}
@@ -291,7 +321,9 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = this._client.GetOrderShipmentHistoryList( this._credentials, this.AccountId, orderIdList, clientOrderIdentifierList );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result );
 				return result.ResultData;
 			} );
@@ -301,7 +333,9 @@ namespace ChannelAdvisorAccess.Services.Shipping
 		{
 			return await AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = await this._client.GetOrderShipmentHistoryListAsync( this._credentials, this.AccountId, orderIdList, clientOrderIdentifierList ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result.GetOrderShipmentHistoryListResult );
 				return result.GetOrderShipmentHistoryListResult.ResultData;
 			} ).ConfigureAwait( false );
@@ -309,14 +343,18 @@ namespace ChannelAdvisorAccess.Services.Shipping
 
 		public ShippingCarrier[] GetShippingCarrierList()
 		{
+			this.RefreshLastNetworkActivityTime();
 			var result = this._client.GetShippingCarrierList( this._credentials, this.AccountId );
+			this.RefreshLastNetworkActivityTime();
 			this.CheckCaSuccess( result );
 			return result.ResultData;
 		}
 
 		public async Task< ShippingCarrier[] > GetShippingCarrierListAsync()
 		{
+			this.RefreshLastNetworkActivityTime();
 			var result = await this._client.GetShippingCarrierListAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
+			this.RefreshLastNetworkActivityTime();
 			this.CheckCaSuccess( result.GetShippingCarrierListResult );
 			return result.GetShippingCarrierListResult.ResultData;
 		}

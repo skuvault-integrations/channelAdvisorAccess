@@ -751,14 +751,5 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			return pageSize;
 		}
-
-		/// <summary>
-		///	This method is used to update service's last network activity time.
-		///	It's called every time before making API request to server or after handling the response.
-		/// </summary>
-		private void RefreshLastNetworkActivityTime()
-		{
-			this.LastNetworkActivityTime = DateTime.UtcNow;
-		}
 	}
 }

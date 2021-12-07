@@ -5,20 +5,18 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.ListingService;
 using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.Services.Items;
 using Netco.Extensions;
 using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Listing
 {
-	public class ListingService: IListingService
+	public class ListingService: ServiceBaseAbstr, IListingService
 	{
 		private readonly APICredentials _credentials;
 		private readonly ListingServiceSoapClient _client;
 		public string Name{ get; private set; }
-		public string AccountId{ get; private set; }
-
-		[ JsonIgnore ]
-		public Func< string > AdditionalLogInfo{ get; set; }
+		public string AccountId{ get; private set; }		
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListingService"/> class.
@@ -39,7 +37,9 @@ namespace ChannelAdvisorAccess.Services.Listing
 		{
 			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = this._client.Ping( this._credentials );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result );
 			} );
 		}
@@ -48,7 +48,9 @@ namespace ChannelAdvisorAccess.Services.Listing
 		{
 			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result.PingResult );
 			} ).ConfigureAwait( false );
 		}
@@ -61,7 +63,9 @@ namespace ChannelAdvisorAccess.Services.Listing
 
 			itemSkus.DoWithPages( 100, s => AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = this._client.WithdrawListings( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result );
 			} ) );
 		}
@@ -73,7 +77,9 @@ namespace ChannelAdvisorAccess.Services.Listing
 
 			await itemSkus.DoWithPagesAsync( 100, async s => await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
 				var result = await this._client.WithdrawListingsAsync( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
 				this.CheckCaSuccess( result.WithdrawListingsResult );
 			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
 		}

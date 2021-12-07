@@ -17,7 +17,8 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			dcList.Length.Should().BeGreaterThan( 0 );
-			dcList.Select(dc => dc.DistributionCenterCode).Should().Contain(TestDistributionCenterCode);
+			dcList.Select( dc => dc.DistributionCenterCode ).Should().Contain( TestDistributionCenterCode );
+			this.ItemsService.LastActivityTime.Should().NotBe( this.serviceLastActivityDateTime );
 		}
 	}
 }
