@@ -21,8 +21,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				var classificationConfigurationInformations = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 				{
-					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );					
 					var result = this._client.GetClassificationConfigurationInformation( this._credentials, this.AccountId );
 					this.RefreshLastNetworkActivityTime();
 					CheckCaSuccess( result );
@@ -52,8 +52,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				var classificationConfigurationInformations = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
-					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );					
 					var result = await this._client.GetClassificationConfigurationInformationAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
 					this.RefreshLastNetworkActivityTime();
 					CheckCaSuccess( result.GetClassificationConfigurationInformationResult );
@@ -83,8 +83,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				var distributionCenterResponses = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 				{
-					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );					
 					var result = this._client.GetDistributionCenterList( this._credentials, this.AccountId );
 					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result );
@@ -114,8 +114,8 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				var distributionCenterResponses = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
-					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );					
 					var result = await this._client.GetDistributionCenterListAsync( this._credentials, this.AccountId ).ConfigureAwait( false );
 					this.RefreshLastNetworkActivityTime();
 					this.CheckCaSuccess( result.GetDistributionCenterListResult );
