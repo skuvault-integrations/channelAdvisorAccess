@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ChannelAdvisorAccess.InventoryService;
+using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services.Items;
 
@@ -11,11 +12,11 @@ namespace ChannelAdvisorAccess.Services
 	public static class ChannelAdvisorManagerExtensions
 	{
 		#region Orders
-		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token )
+		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrders< T >( start, end, token );
+			return orderService.GetOrders< T >( start, end, token, mark );
 		}
 
 		/// <summary>
@@ -37,18 +38,18 @@ namespace ChannelAdvisorAccess.Services
 		///	var orders = this.GetOrders&lt; OrderResponseDetailHigh >( orderCriteria );
 		/// </code>
 		/// </example>
-		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, OrderCriteria orderCriteria, string accountId, CancellationToken token )
+		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, OrderCriteria orderCriteria, string accountId, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrders< T >( orderCriteria, token );
+			return orderService.GetOrders< T >( orderCriteria, token, mark );
 		}
 
-		public static IList< T > GetOrdersList< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token )
+		public static IList< T > GetOrdersList< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrdersList< T >( start, end, token );
+			return orderService.GetOrdersList< T >( start, end, token, mark );
 		}
 		#endregion
 
@@ -226,10 +227,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="trackingNumber">The tracking number.</param>
 		/// <param name="dateShipped">The date shipped when order was shipped (will be converted to UTC).</param>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/OrderShipped"/>
-		public static void MarkOrderShipped( this IChannelAdvisorManager manager, string accountId, int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped )
+		public static void MarkOrderShipped( this IChannelAdvisorManager manager, string accountId, int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped, Mark mark = null )
 		{
 			var shippingService = manager.GetShippingServiceByAccountId( accountId );
-			shippingService.MarkOrderShipped( orderId, carrierCode, classCode, trackingNumber, dateShipped );
+			shippingService.MarkOrderShipped( orderId, carrierCode, classCode, trackingNumber, dateShipped, mark );
 		}
 		#endregion
 	}

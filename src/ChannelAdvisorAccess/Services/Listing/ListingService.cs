@@ -33,55 +33,132 @@ namespace ChannelAdvisorAccess.Services.Listing
 		}
 
 		#region Ping
-		public void Ping()
+		public void Ping( Mark mark = null )
 		{
-			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var result = this._client.Ping( this._credentials );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( result );
+				} );
+
+				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+			}
+			catch (Exception exception)
 			{
 				this.RefreshLastNetworkActivityTime();
-				var result = this._client.Ping( this._credentials );
-				this.RefreshLastNetworkActivityTime();
-				this.CheckCaSuccess( result );
-			} );
+				var channelAdvisorException = new ChannelAdvisorException(this.CreateMethodCallInfo(mark: mark, additionalInfo: this.AdditionalLogInfo()), exception);
+				ChannelAdvisorLogger.LogTraceException(channelAdvisorException);
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task PingAsync()
+		public async Task PingAsync( Mark mark = null )
 		{
-			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( result.PingResult );
+				} ).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+			}
+			catch ( Exception exception )
 			{
 				this.RefreshLastNetworkActivityTime();
-				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
-				this.RefreshLastNetworkActivityTime();
-				this.CheckCaSuccess( result.PingResult );
-			} ).ConfigureAwait( false );
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 		#endregion
 
-		public void WithdrawListing( IList< string > itemSkus, string withdrawReason )
+		public void WithdrawListing( IList< string > itemSkus, string withdrawReason, Mark mark = null )
 		{
-			if( itemSkus == null || itemSkus.Count == 0 )
-				return;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			itemSkus.DoWithPages( 100, s => AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+			try
+			{				
+				if( itemSkus == null || itemSkus.Count == 0 )
+					return;
+
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				itemSkus.DoWithPages( 100, s => AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var result = this._client.WithdrawListings( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( result );
+				} ) );
+
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+			}
+			catch ( Exception exception )
 			{
 				this.RefreshLastNetworkActivityTime();
-				var result = this._client.WithdrawListings( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason );
-				this.RefreshLastNetworkActivityTime();
-				this.CheckCaSuccess( result );
-			} ) );
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task WithdrawListingAsync( IList< string > itemSkus, string withdrawReason )
+		public async Task WithdrawListingAsync( IList< string > itemSkus, string withdrawReason, Mark mark = null )
 		{
-			if( itemSkus == null || itemSkus.Count == 0 )
-				return;
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
 
-			await itemSkus.DoWithPagesAsync( 100, async s => await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+			try
+			{
+				if( itemSkus == null || itemSkus.Count == 0 )
+					return;
+
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				await itemSkus.DoWithPagesAsync( 100, async s => await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var result = await this._client.WithdrawListingsAsync( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( result.WithdrawListingsResult );
+				} ).ConfigureAwait( false ) ).ConfigureAwait( false );
+
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+			}
+			catch ( Exception exception )
 			{
 				this.RefreshLastNetworkActivityTime();
-				var result = await this._client.WithdrawListingsAsync( this._credentials, this.AccountId, s.ToArray(), null, withdrawReason ).ConfigureAwait( false );
-				this.RefreshLastNetworkActivityTime();
-				this.CheckCaSuccess( result.WithdrawListingsResult );
-			} ).ConfigureAwait( false ) ).ConfigureAwait( false );
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		private void CheckCaSuccess( APIResultOfInt32 result )
