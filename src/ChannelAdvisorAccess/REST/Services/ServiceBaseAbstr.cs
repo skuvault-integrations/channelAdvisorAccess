@@ -706,9 +706,11 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			if ( responseStatusCode == (int)HttpStatusCode.Unauthorized || isUnauthorized )
 			{
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), notes: $"Start to Refresh Access Token. Current Token: {token}" ) );
 				// we have to refresh our access token
 				await this.RefreshAccessToken( token, mark ).ConfigureAwait( false );
-
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), notes: $"Finish to Refresh Access Token. Current Token: {token}" ) );
+				
 				throw new ChannelAdvisorUnauthorizedException( message );
 			}
 			else if ( responseStatusCode >= 500
