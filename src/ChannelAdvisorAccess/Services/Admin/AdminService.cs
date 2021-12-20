@@ -5,6 +5,7 @@ using ChannelAdvisorAccess.AdminService;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services.Items;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Admin
 {

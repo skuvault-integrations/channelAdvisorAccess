@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using Netco.Extensions;
+using Netco.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

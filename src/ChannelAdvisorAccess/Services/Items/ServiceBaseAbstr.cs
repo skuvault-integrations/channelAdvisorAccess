@@ -3,6 +3,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using ChannelAdvisorAccess.Misc;
+using Netco.Logging;
 using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Items

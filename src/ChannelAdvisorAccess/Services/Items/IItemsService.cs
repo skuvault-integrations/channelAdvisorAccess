@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.REST.Models;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Items
 {

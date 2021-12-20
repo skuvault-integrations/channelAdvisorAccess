@@ -11,6 +11,7 @@ using ChannelAdvisorAccess.REST.Shared;
 using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.Services.Items;
 using System.Threading;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.REST.Services.Orders
 {

@@ -8,6 +8,7 @@ using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
 using CuttingEdge.Conditions;
 using Netco.Extensions;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Items
 {

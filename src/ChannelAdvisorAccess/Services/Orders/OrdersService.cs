@@ -10,6 +10,7 @@ using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services.Items;
 using Netco.Extensions;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {

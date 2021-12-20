@@ -6,12 +6,14 @@ using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services.Items;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services
 {
 	public static class ChannelAdvisorManagerExtensions
 	{
 		#region Orders
+		
 		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{

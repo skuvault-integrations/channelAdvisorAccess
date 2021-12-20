@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Items
 {

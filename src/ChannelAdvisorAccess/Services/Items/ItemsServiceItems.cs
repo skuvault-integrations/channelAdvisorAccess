@@ -8,6 +8,7 @@ using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
 using Netco.Extensions;
+using Netco.Logging;
 using Netco.Utils;
 
 namespace ChannelAdvisorAccess.Services.Items

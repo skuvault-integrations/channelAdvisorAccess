@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.ShippingService;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ChannelAdvisorAccess.AdminService;
 using ChannelAdvisorAccess.Misc;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Admin
 {

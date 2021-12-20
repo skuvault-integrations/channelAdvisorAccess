@@ -7,6 +7,7 @@ using ChannelAdvisorAccess.ListingService;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services.Items;
 using Netco.Extensions;
+using Netco.Logging;
 using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Listing

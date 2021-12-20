@@ -22,6 +22,7 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Globalization;
 using System.Threading;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
 {

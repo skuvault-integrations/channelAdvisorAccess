@@ -1,6 +1,7 @@
 using ChannelAdvisorAccess.Misc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Listing
 {

@@ -18,6 +18,7 @@ using ChannelAdvisorAccess.REST.Shared;
 using CuttingEdge.Conditions;
 using Newtonsoft.Json;
 using System.Linq;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.REST.Services
 {

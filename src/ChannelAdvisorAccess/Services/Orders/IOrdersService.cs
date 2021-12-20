@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {

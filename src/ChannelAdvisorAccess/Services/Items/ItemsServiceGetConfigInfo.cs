@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
+using Netco.Logging;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
