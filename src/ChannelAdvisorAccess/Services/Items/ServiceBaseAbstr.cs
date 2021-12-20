@@ -44,26 +44,12 @@ namespace ChannelAdvisorAccess.Services.Items
 				return PredefinedValues.EmptyJsonObject;
 			}
 		}
-
-		protected void TrackSoapClientNetworkActivity( IClientChannel clientChannel )
-		{
-			clientChannel.Opening += TrackSoapClientNetworkActivity;
-			clientChannel.Opened += TrackSoapClientNetworkActivity;
-			clientChannel.Closing += TrackSoapClientNetworkActivity;
-			clientChannel.Closed += TrackSoapClientNetworkActivity;
-			clientChannel.Faulted += TrackSoapClientNetworkActivity;
-		}
-
-		private void TrackSoapClientNetworkActivity( object sender, EventArgs args )
-		{
-			RefreshLastNetworkActivityTime();
-		}
-
+		
 		/// <summary>
 		///	This method is used to update service's last network activity time.
 		///	It's called every time before making API request to server or after handling the response.
 		/// </summary>
-		private void RefreshLastNetworkActivityTime()
+		protected void RefreshLastNetworkActivityTime()
 		{
 			this.LastNetworkActivityTime = DateTime.UtcNow;
 		}

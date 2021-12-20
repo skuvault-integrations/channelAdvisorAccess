@@ -49,34 +49,73 @@ namespace ChannelAdvisorAccess.Services.Orders
 			this._client = new OrderServiceSoapClient();
 			
 			this._fulfillmentServiceCredentials = new FulfillmentService.APICredentials { DeveloperKey = this._credentials.DeveloperKey, Password = this._credentials.Password };
-			this._fulfillmentServiceClient = new FulfillmentService.FulfillmentServiceSoapClient();
-
-			TrackSoapClientNetworkActivity( this._client.InnerChannel );
-			TrackSoapClientNetworkActivity( this._fulfillmentServiceClient.InnerChannel );
+			this._fulfillmentServiceClient = new FulfillmentService.FulfillmentServiceSoapClient();			
 		}
 
 		#region Ping
-		public void Ping()
+		public void Ping( Mark mark = null )
 		{
-			AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{	
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var result = this._client.Ping( this._credentials );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( result );
+				} );				
+
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+			}
+			catch( Exception exception )
 			{
-				var result = this._client.Ping( this._credentials );
-				this.CheckCaSuccess( result );
-			} );
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task PingAsync()
+		public async Task PingAsync( Mark mark = null )
 		{
-			await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
-				this.CheckCaSuccess( result.PingResult );
-			} ).ConfigureAwait( false );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( result.PingResult );
+				} ).ConfigureAwait( false );				
+
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+			}
+			catch( Exception exception )
+			{
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 		#endregion
 
 		#region API methods
-		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, CancellationToken token )
+		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
@@ -85,10 +124,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate
 			};
 
-			return this.GetOrders< T >( orderCriteria, token );
+			return this.GetOrders< T >( orderCriteria, token, mark );
 		}
 
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, CancellationToken token )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
@@ -97,7 +136,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate
 			};
 
-			return await this.GetOrdersAsync< T >( orderCriteria, CancellationToken.None ).ConfigureAwait( false );
+			return await this.GetOrdersAsync< T >( orderCriteria, CancellationToken.None, mark ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -106,8 +145,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="startDate">The start date.</param>
 		/// <param name="endDate">The end date.</param>
+		/// <param name="mark">Session Mark</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
-		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, CancellationToken token )
+		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null  )
 			where T : OrderResponseItem
 		{
 			return this.GetOrders< T >( startDate, endDate, token ).ToList();
@@ -126,8 +166,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="orderCriteria">The order criteria.</param>
+		/// <param name="token">Cancellation Token</param>
+		/// <param name="mark">Session Mark</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, CancellationToken token )
+		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, CancellationToken token, Mark mark = null )
 			where T : OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
@@ -141,7 +183,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 			while( true )
 			{
-				var ordersFromPage = this.GetOrdersPage( orderCriteria );
+				var ordersFromPage = this.GetOrdersPage( orderCriteria, mark );
 
 				if( ordersFromPage == null || ordersFromPage.Length == 0 )
 					break;
@@ -155,52 +197,90 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return orders;
 		}
 
-		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria )
+		private OrderResponseItem[] GetOrdersPage( OrderCriteria orderCriteria, Mark mark = null )
 		{
-			return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{				
+				return AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );				
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo() ) );
+					CheckCaSuccess( results );
+					var resultData = results.ResultData ?? new OrderResponseItem[ 0 ];
+
+					// If you get message code = 1 (Unexpected)
+					if( results.MessageCode == 1 )
+						resultData = this.HandleErrorUnexpected( orderCriteria, mark: mark );
+					
+					return resultData;
+				} );
+			}
+			catch( Exception exception )
 			{
-				var results = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
-				CheckCaSuccess( results );
-				var resultData = results.ResultData ?? new OrderResponseItem[ 0 ];
-
-				// If you get message code = 1 (Unexpected)
-				if( results.MessageCode == 1 )
-					resultData = this.HandleErrorUnexpected( orderCriteria );
-
-				return resultData;
-			} );
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		private OrderResponseItem[] HandleErrorUnexpected( OrderCriteria orderCriteria, [ CallerMemberName ] string callerMemberName = "" )
+		private OrderResponseItem[] HandleErrorUnexpected( OrderCriteria orderCriteria, [ CallerMemberName ] string callerMemberName = "", Mark mark = null )
 		{
-			var result = new List< OrderResponseItem >();
-			var prevPageSize = orderCriteria.PageSize;
-			var prevPageNumber = orderCriteria.PageNumberFilter;
-			var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
-			for( var i = 1; i <= prevPageSize; i++ )
-			{
-				orderCriteria.PageSize = 1;
-				orderCriteria.PageNumberFilter = pageNumberBy1 + i;
-				var numberAttempt = 0;
-				while( numberAttempt < MaxUnexpectedAttempt )
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
+			{				
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				var result = new List< OrderResponseItem >();
+				var prevPageSize = orderCriteria.PageSize;
+				var prevPageNumber = orderCriteria.PageNumberFilter;
+				var pageNumberBy1 = prevPageSize * ( prevPageNumber - 1 );
+				for( var i = 1; i <= prevPageSize; i++ )
 				{
-					var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
-					if( answer.Status == ResultStatus.Success )
+					orderCriteria.PageSize = 1;
+					orderCriteria.PageNumberFilter = pageNumberBy1 + i;
+					var numberAttempt = 0;
+					while( numberAttempt < MaxUnexpectedAttempt )
 					{
-						result.AddRange( answer.ResultData );
-						break;
-					}
+						this.RefreshLastNetworkActivityTime();
+						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+						var answer = this._client.GetOrderList( this._credentials, this.AccountId, orderCriteria );
+						this.RefreshLastNetworkActivityTime();
+						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark: mark, additionalInfo: this.AdditionalLogInfo() ) );
+						if( answer.Status == ResultStatus.Success )
+						{
+							result.AddRange( answer.ResultData );
+							break;
+						}
 					
-					numberAttempt++;
-					this.LogUnexpectedError( orderCriteria, answer, pageNumberBy1 + i, callerMemberName, numberAttempt );
-					this.DoDelayUnexpectedAsync( new TimeSpan( 0, 2, 0 ), numberAttempt ).Wait();
+						numberAttempt++;
+						this.LogUnexpectedError( orderCriteria, answer, pageNumberBy1 + i, callerMemberName, numberAttempt );
+						this.DoDelayUnexpectedAsync( new TimeSpan( 0, 2, 0 ), numberAttempt ).Wait();
+					}
 				}
+
+				orderCriteria.PageSize = prevPageSize;
+				orderCriteria.PageNumberFilter = prevPageNumber;	
+				
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+
+				return result.ToArray();
 			}
-
-			orderCriteria.PageSize = prevPageSize;
-			orderCriteria.PageNumberFilter = prevPageNumber;
-
-			return result.ToArray();
+			catch( Exception exception )
+			{
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		/// <summary>
@@ -243,6 +323,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 				await this.CheckFulfillmentStatusAsync( orders, mark );
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
+				
 				return orders;
 			}
 			catch( Exception exception )
@@ -257,7 +338,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			return await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo, mark : mark ) ).Get( async () =>
 			{
+				this.RefreshLastNetworkActivityTime();
+				ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 				var results = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
+				this.RefreshLastNetworkActivityTime();
+				ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 				CheckCaSuccess( results.GetOrderListResult );
 				var resultData = results.GetOrderListResult.ResultData ?? new OrderResponseItem[ 0 ];
 
@@ -270,7 +355,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 
 		private async Task< OrderResponseItem[] > HandleErrorUnexpectedAsync( Mark mark, OrderCriteria orderCriteria, [ CallerMemberName ] string callerMemberName = "" )
-		{
+		{		
 			var result = new List< OrderResponseItem >();
 			var prevPageSize = orderCriteria.PageSize;
 			var prevPageNumber = orderCriteria.PageNumberFilter;
@@ -282,8 +367,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 				var numberAttempt = 0;
 				while( numberAttempt < MaxUnexpectedAttempt )
 				{
+					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 					var answer = await this._client.GetOrderListAsync( this._credentials, this.AccountId, orderCriteria ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : answer.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 					if( answer.GetOrderListResult.Status == ResultStatus.Success )
 					{
@@ -309,24 +396,58 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// </summary>
 		/// <param name="orderSubmit">The order submit.</param>
 		/// <returns>New order CA id.</returns>
-		public int SubmitOrder( OrderSubmit orderSubmit, CancellationToken token )
+		public int SubmitOrder( OrderSubmit orderSubmit, CancellationToken token, Mark mark = null )
 		{
-			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
-				this.CheckCaSuccess( apiResults );
-				return apiResults.ResultData;
-			} );
+				return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var apiResults = this._client.SubmitOrder( this._credentials, this.AccountId, orderSubmit );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( apiResults );
+					return apiResults.ResultData;
+				} );
+			}
+			catch( Exception exception )
+			{
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, CancellationToken token )
+		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, CancellationToken token, Mark mark = null )
 		{
-			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit ).ConfigureAwait( false );
-				this.CheckCaSuccess( apiResults.SubmitOrderResult );
-				return apiResults.SubmitOrderResult.ResultData;
-			} ).ConfigureAwait( false );
+				return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var apiResults = await this._client.SubmitOrderAsync( this._credentials, this.AccountId, orderSubmit ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( apiResults.SubmitOrderResult );
+					return apiResults.SubmitOrderResult.ResultData;
+				} ).ConfigureAwait( false );
+			}
+			catch( Exception exception )
+			{
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 		#endregion
 
@@ -350,7 +471,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				var ordersFulfillment = AP.CreateQuery( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
 				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					var results = this._fulfillmentServiceClient.GetOrderFulfillmentDetailList( this._fulfillmentServiceCredentials, this.AccountId, part.ToArray(), null );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					CheckCaSuccess( results );
 					var resultData = results.ResultData ?? new FulfillmentService.OrderFulfillmentResponse[ 0 ];
 
@@ -362,6 +487,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 				var cancelledOrderIdsPart = ordersFulfillment.Where( o => o.FulfillmentList.All( fulfillment => fulfillment.FulfillmentStatus == "Canceled" ) ).Select( o => o.OrderID );
 				cancelledOrderIds.AddRange( cancelledOrderIdsPart );
 			}
+
 			ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : cancelledOrderIds.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : refundedOrderIds.ToJson() ) );
 
 			CancelOrders( orders, cancelledOrderIds );
@@ -385,7 +511,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 			{
 				var ordersFulfillment = await AP.CreateQueryAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
 				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					var results = await this._fulfillmentServiceClient.GetOrderFulfillmentDetailListAsync( this._fulfillmentServiceCredentials, this.AccountId, part.ToArray(), null ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					CheckCaSuccess( results.GetOrderFulfillmentDetailListResult );
 					var resultData = results.GetOrderFulfillmentDetailListResult.ResultData ?? new FulfillmentService.OrderFulfillmentResponse[ 0 ];
 
@@ -432,24 +562,58 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 		#endregion
 
-		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, CancellationToken token )
+		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, CancellationToken token, Mark mark = null )
 		{
-			return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
-				this.CheckCaSuccess( results );
-				return results.ResultData;
-			} );
+				return AP.CreateSubmit( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var results = this._client.UpdateOrderList( this._credentials, this.AccountId, orderUpdates );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( results );
+					return results.ResultData;
+				} );
+			}
+			catch( Exception exception )
+			{
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
-		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, CancellationToken token )
+		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, CancellationToken token, Mark mark = null )
 		{
-			return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+			if( mark.IsBlank() )
+				mark = Mark.CreateNew();
+
+			try
 			{
-				var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates ).ConfigureAwait( false );
-				this.CheckCaSuccess( results.UpdateOrderListResult );
-				return results.UpdateOrderListResult.ResultData;
-			} ).ConfigureAwait( false );
+				return await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Get( async () =>
+				{
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					var results = await this._client.UpdateOrderListAsync( this._credentials, this.AccountId, orderUpdates ).ConfigureAwait( false );
+					this.RefreshLastNetworkActivityTime();
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					this.CheckCaSuccess( results.UpdateOrderListResult );
+					return results.UpdateOrderListResult.ResultData;
+				} ).ConfigureAwait( false );
+			}
+			catch( Exception exception )
+			{
+				this.RefreshLastNetworkActivityTime();
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 		}
 
 		private static void CheckCaSuccess( APIResultOfArrayOfOrderResponseItem orderList )

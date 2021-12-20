@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Caching;
 using ChannelAdvisorAccess.Services;
 using ChannelAdvisorAccess.Services.Admin;
@@ -16,6 +17,7 @@ namespace ChannelAdvisorAccessTests
 	{
 		protected const string TestDistributionCenterCode = "Louisville";
 		protected const string TestSku = "testSku1";
+		protected DateTime serviceLastActivityDateTime = DateTime.Now;
 
 		[ SetUp ]
 		public void Init()
@@ -26,6 +28,7 @@ namespace ChannelAdvisorAccessTests
 			this.ListingService = factory.CreateListingService( "test", Credentials.AccountId );
 			this.OrdersService = factory.CreateOrdersService( "test", Credentials.AccountId );
 			this.ShippingService = factory.CreateShippingService( "test", Credentials.AccountId );
+			this.serviceLastActivityDateTime = DateTime.Now;
 		}
 
 		public IShippingService ShippingService{ get; private set; }

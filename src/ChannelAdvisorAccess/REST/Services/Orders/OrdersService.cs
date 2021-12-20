@@ -64,7 +64,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, CancellationToken token ) where T : OrderResponseItem
+		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null ) where T : OrderResponseItem
 		{
 			var criteria = new OrderCriteria()
 			{
@@ -72,7 +72,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate,
 			};
 
-			return this.GetOrders< T >( criteria, token );
+			return this.GetOrders< T >( criteria, token, mark );
 		}
 
 		/// <summary>
@@ -81,9 +81,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <typeparam name="T"></typeparam>
 		/// <param name="orderCriteria"></param>
 		/// <returns></returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, CancellationToken token ) where T : OrderResponseItem
+		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, CancellationToken token, Mark mark = null ) where T : OrderResponseItem
 		{
-			return this.GetOrdersAsync< T >( orderCriteria, token ).GetAwaiter().GetResult();
+			return this.GetOrdersAsync< T >( orderCriteria, token, mark ).GetAwaiter().GetResult();
 		}
 
 		/// <summary>
@@ -93,9 +93,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, CancellationToken token ) where T : OrderResponseItem
+		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null ) where T : OrderResponseItem
 		{
-			return this.GetOrders< T >( startDate, endDate, token ).ToList();
+			return this.GetOrders< T >( startDate, endDate, token, mark ).ToList();
 		}
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, CancellationToken token ) where T : OrderResponseItem
+		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null ) where T : OrderResponseItem
 		{
 			OrderCriteria criteria = new OrderCriteria()
 			{
@@ -113,7 +113,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 				StatusUpdateFilterEndTimeGMT = endDate,
 			};
 
-			return this.GetOrdersAsync< T >( criteria, token );
+			return this.GetOrdersAsync< T >( criteria, token, mark );
 		}
 
 		/// <summary>
@@ -217,32 +217,32 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			return string.Join( " ", clauses );
 		}
 
-		public void Ping()
+		public void Ping( Mark mark )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task PingAsync()
+		public Task PingAsync( Mark mark )
 		{
 			throw new NotImplementedException();
 		}
 
-		public int SubmitOrder(OrderSubmit orderSubmit, CancellationToken token )
+		public int SubmitOrder( OrderSubmit orderSubmit, CancellationToken token, Mark mark )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<int> SubmitOrderAsync(OrderSubmit orderSubmit, CancellationToken token )
+		public Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, CancellationToken token, Mark mark )
 		{
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<OrderUpdateResponse> UpdateOrderList(OrderUpdateSubmit[] orderUpdates, CancellationToken token)
+		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, CancellationToken token, Mark mark )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<IEnumerable<OrderUpdateResponse>> UpdateOrderListAsync(OrderUpdateSubmit[] orderUpdates, CancellationToken token )
+		public Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, CancellationToken token, Mark mark )
 		{
 			throw new NotImplementedException();
 		}
