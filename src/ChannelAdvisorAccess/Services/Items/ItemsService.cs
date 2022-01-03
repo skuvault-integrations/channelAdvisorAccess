@@ -213,5 +213,15 @@ namespace ChannelAdvisorAccess.Services.Items
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
 		#endregion
+
+		#region IDisposable implementation
+
+		public void Dispose()
+		{
+			Dispose( _client, true );
+			GC.SuppressFinalize( this );
+		}
+
+		#endregion
 	}
 }

@@ -172,5 +172,15 @@ namespace ChannelAdvisorAccess.Services.Listing
 			if( result.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
+
+		#region IDisposable implementation
+
+		public void Dispose()
+		{
+			Dispose( _client, true );
+			GC.SuppressFinalize( this );
+		}
+
+		#endregion
 	}
 }

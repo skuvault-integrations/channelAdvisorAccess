@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.AdminService;
 using ChannelAdvisorAccess.Exceptions;
@@ -8,7 +7,7 @@ using ChannelAdvisorAccess.Services.Items;
 
 namespace ChannelAdvisorAccess.Services.Admin
 {
-	public class AdminService: ServiceBaseAbstr, IAdminService
+	public class AdminService: ServiceBaseAbstr, IAdminService, IDisposable
 	{
 		private readonly APICredentials _credentials;
 		private readonly AdminServiceSoapClient _client;
@@ -268,5 +267,15 @@ namespace ChannelAdvisorAccess.Services.Admin
 			if( results.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( results.MessageCode, results.Message );
 		}
+
+		#region IDisposable implementation
+
+		public void Dispose()
+		{
+			Dispose( _client, true );
+			GC.SuppressFinalize( this );
+		}
+
+		#endregion
 	}
 }

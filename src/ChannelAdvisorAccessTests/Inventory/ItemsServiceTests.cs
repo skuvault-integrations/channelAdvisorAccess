@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.InventoryService;
+using ChannelAdvisorAccess.Services;
+using ChannelAdvisorAccess.Services.Items;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -465,6 +468,27 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var existingsSkus = this.ItemsService.DoSkusExistAsync( allSkus, CancellationToken.None ).GetAwaiter().GetResult();
 			System.Diagnostics.Debug.WriteLine( ( DateTime.Now - startTime ).TotalSeconds );
 			//------------ Assert
+		}
+
+		[ Test ]
+		public void ItemsService_IsDisposable()
+		{
+			var factory = new ChannelAdvisorServicesFactory( Credentials.DeveloperKey, Credentials.DeveloperPassword, null, null );
+			ItemsService service;
+
+			using ( service = ( ItemsService )factory.CreateItemsService( "test", Credentials.AccountId ) )
+			{
+				Debug.Assert( !service.Disposed ); // not be disposed yet
+			}
+
+			try
+			{
+				Debug.Assert( service.Disposed ); // expecting an exception.
+			}
+			catch ( Exception ex )
+			{
+				Debug.Assert( ex is ObjectDisposedException ); 
+			}
 		}
 
 		private void ValidateLastActivityDateTimeUpdated()

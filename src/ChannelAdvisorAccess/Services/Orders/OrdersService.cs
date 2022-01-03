@@ -663,5 +663,15 @@ namespace ChannelAdvisorAccess.Services.Orders
 			ChannelAdvisorLogger.LogTrace( string.Format( @"Wait by reason of error 1 (Unexpected) {0} minute(s). Attempt: {1}", time.Minutes, attempt ) );
 			await Task.Delay( time ).ConfigureAwait( false );
 		}
+
+		#region IDisposable implementation
+
+		public void Dispose()
+		{
+			Dispose( _client, true );
+			GC.SuppressFinalize( this );
+		}
+
+		#endregion
 	}
 }

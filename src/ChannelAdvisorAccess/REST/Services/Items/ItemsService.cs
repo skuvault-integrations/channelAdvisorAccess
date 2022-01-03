@@ -1,5 +1,4 @@
-﻿using ChannelAdvisorAccess.Constants;
-using ChannelAdvisorAccess.Exceptions;
+﻿using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.Services.Items;
@@ -18,9 +17,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.IO;
 using System.Text;
 using CsvHelper;
-using System.Collections.Concurrent;
 using System.Net;
-using System.Globalization;
 using System.Threading;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
@@ -1407,5 +1404,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        public void Dispose()
+        {            
+        }
+    }
 }

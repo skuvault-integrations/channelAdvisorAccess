@@ -6,7 +6,7 @@ using ChannelAdvisorAccess.ShippingService;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {
-	public interface IShippingService
+	public interface IShippingService : IDisposable
 	{
 		string Name { get; }
 		string AccountId { get; }

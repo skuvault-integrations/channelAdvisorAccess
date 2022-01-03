@@ -246,5 +246,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		{
 			throw new NotImplementedException();
 		}
+
+		public void Dispose()
+		{
+		}
 	}
 }

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.OrderService;
+using ChannelAdvisorAccess.Services;
+using ChannelAdvisorAccess.Services.Orders;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -93,6 +96,27 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
 
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
+		}
+
+		[ Test ]
+		public void AdminService_IsDisposable()
+		{
+			var factory = new ChannelAdvisorServicesFactory( Credentials.DeveloperKey, Credentials.DeveloperPassword, null, null );
+			OrdersService service;
+			
+			using ( service = ( OrdersService )factory.CreateOrdersService( "test", Credentials.AccountId ) )
+			{
+				Debug.Assert( !service.Disposed ); // not be disposed yet
+			}
+
+			try
+			{
+				Debug.Assert( service.Disposed ); // expecting an exception.
+			}
+			catch ( Exception ex )
+			{
+				Debug.Assert( ex is ObjectDisposedException ); 
+			}
 		}
 
 		private void ValidateLastActivityDateTimeUpdated()

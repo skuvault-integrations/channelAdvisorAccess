@@ -67,5 +67,37 @@ namespace ChannelAdvisorAccess.Services.Items
 		{
 			ServicePointManager.SecurityProtocol |= SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 		}
-	}
+
+		#region IDisposable
+
+		internal bool disposedValue = false;
+
+		public bool Disposed
+		{
+			get
+			{
+				if ( !this.disposedValue )
+				{
+					return this.disposedValue;
+				}
+
+				throw new ObjectDisposedException( "CanBeDisposed" );
+			}
+		}
+
+		internal void Dispose< T >( ClientBase< T > client, bool disposing ) where T : class
+		{
+			if ( !disposedValue )
+			{
+				if ( disposing )
+				{
+					client.Close();
+				}
+
+				disposedValue = true;
+			}
+		}
+
+        #endregion
+    }
 }

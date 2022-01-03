@@ -7,7 +7,7 @@ using ChannelAdvisorAccess.OrderService;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {
-	public interface IOrdersService
+	public interface IOrdersService : IDisposable
 	{
 		/// <summary>
 		/// Gets the account name.

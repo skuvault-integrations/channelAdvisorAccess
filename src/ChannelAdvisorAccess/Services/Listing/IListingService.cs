@@ -1,4 +1,5 @@
 using ChannelAdvisorAccess.Misc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace ChannelAdvisorAccess.Services.Listing
 	/// <summary>
 	/// Service to work with CA listings.
 	/// </summary>
-	public interface IListingService
+	public interface IListingService : IDisposable
 	{
 		void Ping( Mark mark = null );
 		Task PingAsync( Mark mark = null );
