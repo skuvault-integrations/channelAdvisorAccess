@@ -1405,8 +1405,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			throw new NotImplementedException();
 		}
 
-        public void Dispose()
-        {            
-        }
-    }
+		/// <summary>
+		/// Dispose method to implement the interfaces IItemsService -> IDisposable
+		/// it's empty because nothing to dispose for REST methods
+		/// </summary>
+		public void Dispose()
+		{
+		}
+	}
 }
