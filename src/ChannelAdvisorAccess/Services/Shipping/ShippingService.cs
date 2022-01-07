@@ -8,8 +8,6 @@ using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.ShippingService;
 using Netco.Extensions;
-using Netco.Logging;
-using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {
