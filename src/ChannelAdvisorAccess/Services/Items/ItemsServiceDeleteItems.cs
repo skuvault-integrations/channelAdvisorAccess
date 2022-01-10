@@ -9,11 +9,8 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region Delete item
-		public void DeleteItem( string sku, CancellationToken token, Mark mark = null )
+		public void DeleteItem( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -38,11 +35,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task DeleteItemAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task DeleteItemAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -66,6 +60,6 @@ namespace ChannelAdvisorAccess.Services.Items
 				throw channelAdvisorException;
 			}
 		}
-		#endregion}
+		#endregion
 	}
 }

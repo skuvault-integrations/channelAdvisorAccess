@@ -12,7 +12,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns>List of authorization records</returns>
-		AuthorizationResponse[] GetAuthorizationList( Mark mark = null );
+		AuthorizationResponse[] GetAuthorizationList( Mark mark );
 
 		/// <summary>
 		/// Gets authorization record which corresponds to the specified ChannelAdvisor Account
@@ -20,7 +20,7 @@ namespace ChannelAdvisorAccess.Services.Admin
 		/// <param name="localId">A number which uniquely identifies a ChannelAdvisor Account</param>
 		/// <param name="mark"></param>
 		/// <returns>List with a single authorization record</returns>
-		AuthorizationResponse[] GetAuthorizationList( string localId, Mark mark = null );
+		AuthorizationResponse[] GetAuthorizationList( string localId, Mark mark );
 
 		/// <summary>
 		/// Allows to request access to a specific ChannelAdvisor Account
@@ -28,12 +28,12 @@ namespace ChannelAdvisorAccess.Services.Admin
 		/// <param name="localId">A number which uniquely identifies a ChannelAdvisor Account</param>
 		/// <param name="mark"></param>
 		/// <returns>True if the request was created. False otherwise</returns>
-		bool RequestAccess( int localId, Mark mark = null );
+		bool RequestAccess( int localId, Mark mark );
 
-		void Ping( Mark mark = null );
-		Task PingAsync( Mark mark = null );
-		Task< AuthorizationResponse[] > GetAuthorizationListAsync( Mark mark = null );
-		Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId, Mark mark = null );
-		Task< bool > RequestAccessAsync( int localId, Mark mark = null );
+		void Ping( Mark mark );
+		Task PingAsync( Mark mark );
+		Task< AuthorizationResponse[] > GetAuthorizationListAsync( Mark mark );
+		Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId, Mark mark );
+		Task< bool > RequestAccessAsync( int localId, Mark mark );
 	}
 }

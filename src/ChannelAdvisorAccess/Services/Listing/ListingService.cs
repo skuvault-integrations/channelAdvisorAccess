@@ -33,11 +33,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 		}
 
 		#region Ping
-		public void Ping( Mark mark = null )
+		public void Ping( Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -50,10 +47,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.CheckCaSuccess( result );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: result.ToJson(), additionalInfo: this.AdditionalLogInfo() ) );
 				} );
-
-				ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-
 			}
 			catch (Exception exception)
 			{
@@ -64,11 +59,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 			}
 		}
 
-		public async Task PingAsync( Mark mark = null )
+		public async Task PingAsync( Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -81,9 +73,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.CheckCaSuccess( result.PingResult );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: result.PingResult.ToJson(), additionalInfo: this.AdditionalLogInfo() ) );
 				} ).ConfigureAwait( false );
-
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 			}
 			catch ( Exception exception )
 			{
@@ -95,13 +86,10 @@ namespace ChannelAdvisorAccess.Services.Listing
 		}
 		#endregion
 
-		public void WithdrawListing( IList< string > itemSkus, string withdrawReason, Mark mark = null )
+		public void WithdrawListing( IList< string > itemSkus, string withdrawReason, Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
-			{				
+			{
 				if( itemSkus == null || itemSkus.Count == 0 )
 					return;
 
@@ -115,9 +103,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.CheckCaSuccess( result );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 				} ) );
-
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 			}
 			catch ( Exception exception )
 			{
@@ -128,11 +115,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 			}
 		}
 
-		public async Task WithdrawListingAsync( IList< string > itemSkus, string withdrawReason, Mark mark = null )
+		public async Task WithdrawListingAsync( IList< string > itemSkus, string withdrawReason, Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				if( itemSkus == null || itemSkus.Count == 0 )
@@ -148,9 +132,8 @@ namespace ChannelAdvisorAccess.Services.Listing
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					this.CheckCaSuccess( result.WithdrawListingsResult );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult: result.WithdrawListingsResult.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 				} ).ConfigureAwait( false ) ).ConfigureAwait( false );
-
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 			}
 			catch ( Exception exception )
 			{

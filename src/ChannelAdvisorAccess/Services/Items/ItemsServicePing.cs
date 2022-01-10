@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
@@ -8,11 +9,8 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region Ping
-		public void Ping( Mark mark = null )
+		public void Ping( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -36,11 +34,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task PingAsync( Mark mark = null )
+		public async Task PingAsync( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );

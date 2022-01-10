@@ -12,14 +12,11 @@ using Netco.Utils;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
-	public partial class ItemsService
+	public partial class ItemsService : IItemsService
 	{
 		#region Get items
-		public bool DoesSkuExist( string sku, CancellationToken token, Mark mark = null )
+		public bool DoesSkuExist( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku.ToJson() ) );
@@ -47,11 +44,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< bool > DoesSkuExistAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< bool > DoesSkuExistAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku.ToJson() ) );
@@ -78,11 +72,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
@@ -117,11 +108,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
@@ -155,20 +143,17 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public IEnumerable< InventoryItemResponse > GetAllItems( CancellationToken token, Mark mark = null )
+		public IEnumerable< InventoryItemResponse > GetAllItems( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
 				IEnumerable< InventoryItemResponse > inventoryItemResponses;
 				if( this.UseCache() )
-					inventoryItemResponses = this.GetCachedInventory( token, mark );
+					inventoryItemResponses = this.GetCachedInventory( mark, token );
 				else
-					inventoryItemResponses = this.DownloadAllItems( token, mark );
+					inventoryItemResponses = this.DownloadAllItems( mark, token );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodResult : inventoryItemResponses.ToJson() ) );
 
 				return inventoryItemResponses;
@@ -181,11 +166,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		private IEnumerable< InventoryItemResponse > GetCachedInventory( CancellationToken token, Mark mark = null )
+		private IEnumerable< InventoryItemResponse > GetCachedInventory( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 			IEnumerable< InventoryItemResponse > inventoryItemResponses;
 			lock( this._inventoryCacheLock )
@@ -195,7 +177,7 @@ namespace ChannelAdvisorAccess.Services.Items
 					inventoryItemResponses = cachedInventory;
 				else
 				{
-					var items = this.DownloadAllItems( token, mark ).ToList();
+					var items = this.DownloadAllItems( mark, token ).ToList();
 					this._cache.Set( this._allItemsCacheKey, items, new CacheItemPolicy { SlidingExpiration = this.SlidingCacheExpiration } );
 					inventoryItemResponses = items;
 				}
@@ -204,7 +186,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			return inventoryItemResponses;
 		}
 
-		private IEnumerable< InventoryItemResponse > DownloadAllItems( CancellationToken token, Mark mark = null )
+		private IEnumerable< InventoryItemResponse > DownloadAllItems( Mark mark, CancellationToken token )
 		{
 			ChannelAdvisorLogger.LogTraceStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
@@ -213,7 +195,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				DetailLevel = { IncludeClassificationInfo = true, IncludePriceInfo = true, IncludeQuantityInfo = true }
 			};
 
-			var inventoryItemResponses = this.GetFilteredItems( filter, token, mark );
+			var inventoryItemResponses = this.GetFilteredItems( filter, mark, token );
 			ChannelAdvisorLogger.LogTraceEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodResult : inventoryItemResponses.ToJson() ) );
 
 			return inventoryItemResponses;
@@ -233,15 +215,12 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// for non-existing skus.</returns>
 		/// <remarks>Items are pulled 1 at a time to handle non-existing skus.
 		/// This results in slower performance.</remarks>
-		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-				var checkedSkus = this.DoSkusExist( skus, token, mark );
+				var checkedSkus = this.DoSkusExist( skus, mark, token );
 				var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
 
 				var message = "{\"ExistingSkus\":\"" + existingSkus.ToJson() + "\"}";
@@ -272,15 +251,12 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-				var checkedSkus = await this.DoSkusExistAsync( skus, token, mark ).ConfigureAwait( false );
+				var checkedSkus = await this.DoSkusExistAsync( skus, mark, token ).ConfigureAwait( false );
 				var existingSkus = checkedSkus.Where( s => s.Result ).Select( s => s.Sku );
 
 				var message = "{\"ExistingSkus\":\"" + existingSkus.ToJson() + "\"}";
@@ -321,11 +297,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="mark">use it to simplify navigation inside log, allows to view call ierarchy</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, CancellationToken token, Mark mark = null )
+		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : filter.ToJson() ) );
@@ -389,11 +362,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="mark">use it to simplify navigation inside log, allows to view call ierarchy</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : filter.ToJson() ) );
@@ -455,11 +425,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="mark">use it to simplify navigation inside log, allows to view call ierarchy</param>
 		/// <returns>Items matching supplied filter.</returns>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/GetFilteredInventoryItemList"/>
-		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, CancellationToken token, int pageLimit, Mark mark = null )
+		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int startPage, Mark mark, int pageLimit, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : filter.ToJson() ) );
@@ -515,11 +482,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public AttributeInfo[] GetAttributes( string sku, CancellationToken token, Mark mark = null )
+		public AttributeInfo[] GetAttributes( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -547,11 +511,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< AttributeInfo[] > GetAttributesAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< AttributeInfo[] > GetAttributesAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -586,11 +547,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// <param name="mark"></param>
 		/// <returns>Item quantities.</returns>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
-		public QuantityInfoResponse GetItemQuantities( string sku, CancellationToken token, Mark mark = null )
+		public QuantityInfoResponse GetItemQuantities( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -620,11 +578,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -654,11 +609,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation( CancellationToken token, Mark mark = null )
+		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -687,11 +639,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync( CancellationToken token, Mark mark = null )
+		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -719,11 +668,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public StoreInfo GetStoreInfo( string sku, CancellationToken token, Mark mark = null )
+		public StoreInfo GetStoreInfo( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -751,11 +697,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< StoreInfo > GetStoreInfoAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< StoreInfo > GetStoreInfoAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -782,11 +725,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public ImageInfoResponse[] GetImageList( string sku, CancellationToken token, Mark mark = null )
+		public ImageInfoResponse[] GetImageList( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -813,11 +753,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -845,11 +782,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public DistributionCenterInfoResponse[] GetShippingInfo( string sku, CancellationToken token, Mark mark = null )
+		public DistributionCenterInfoResponse[] GetShippingInfo( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -876,11 +810,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -908,11 +839,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public VariationInfo GetVariationInfo( string sku, CancellationToken token, Mark mark = null )
+		public VariationInfo GetVariationInfo( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -940,11 +868,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< VariationInfo > GetVariationInfoAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< VariationInfo > GetVariationInfoAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -980,11 +905,8 @@ namespace ChannelAdvisorAccess.Services.Items
 		/// The Available quantity for the specified sku.
 		/// </returns>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryQuantity"/>
-		public int GetAvailableQuantity( string sku, CancellationToken token, Mark mark = null )
+		public int GetAvailableQuantity( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -1010,11 +932,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< int > GetAvailableQuantityAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< int > GetAvailableQuantityAsync( string sku, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : sku ) );
@@ -1056,11 +975,8 @@ namespace ChannelAdvisorAccess.Services.Items
 				yield return chunk;
 		}
 
-		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, CancellationToken token, Mark mark = null, int delayInMs = 5000 )
+		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark, int delayInMs = 5000, CancellationToken token = default )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );
@@ -1097,11 +1013,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : skus.ToJson() ) );

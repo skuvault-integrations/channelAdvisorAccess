@@ -10,9 +10,9 @@ namespace ChannelAdvisorAccess.Services.Listing
 	/// </summary>
 	public interface IListingService : IDisposable
 	{
-		void Ping( Mark mark = null );
-		Task PingAsync( Mark mark = null );
-		void WithdrawListing( IList< string > itemSkus, string withdrawReason, Mark mark = null );
-		Task WithdrawListingAsync( IList< string > itemSkus, string withdrawReason, Mark mark = null );
+		void Ping( Mark mark );
+		Task PingAsync( Mark mark );
+		void WithdrawListing( IList< string > itemSkus, string withdrawReason, Mark mark );
+		Task WithdrawListingAsync( IList< string > itemSkus, string withdrawReason, Mark mark );
 	}
 }
