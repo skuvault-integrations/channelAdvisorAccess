@@ -26,13 +26,13 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			this.ClearSkuQuantityForEachDc( TestSku );
 			var newQuantity = new Random().Next( 1, 100 );
 
-			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( TestSku, 10 ), CancellationToken.None );
+			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( TestSku, 10 ), this.Mark );
 
 			//------------ Act
-			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( TestSku, newQuantity ), CancellationToken.None );
+			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( TestSku, newQuantity ), this.Mark );
 
 			//------------ Assert
-			this.ItemsService.GetAvailableQuantity( TestSku, CancellationToken.None ).Should().Be( newQuantity );
+			this.ItemsService.GetAvailableQuantity( TestSku, this.Mark ).Should().Be( newQuantity );
 		}
 
 		[ Test ]
@@ -47,9 +47,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				CreateItemQuantityAndPrice( TestSku2, 110 )
 			};
 
-			this.ItemsService.UpdateQuantityAndPricesAsync( request, CancellationToken.None ).GetAwaiter().GetResult();
+			this.ItemsService.UpdateQuantityAndPricesAsync( request, this.Mark ).GetAwaiter().GetResult();
 
-			var quantities = this.ItemsService.GetAvailableQuantitiesAsync( new string[] { TestSku, TestSku2 }, CancellationToken.None ).GetAwaiter().GetResult();
+			var quantities = this.ItemsService.GetAvailableQuantitiesAsync( new string[] { TestSku, TestSku2 }, this.Mark ).GetAwaiter().GetResult();
 
 			quantities.Should().NotBeNullOrEmpty();
 			quantities.Should().HaveCount( 2 );
@@ -70,9 +70,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				request.Add( itemRequest );
 			}
 
-			this.ItemsService.UpdateQuantityAndPricesAsync( request, CancellationToken.None ).GetAwaiter().GetResult();
+			this.ItemsService.UpdateQuantityAndPricesAsync( request, this.Mark ).GetAwaiter().GetResult();
 
-			var quantities = this.ItemsService.GetAvailableQuantitiesAsync( request.Select( i => i.Sku ), CancellationToken.None ).GetAwaiter().GetResult();
+			var quantities = this.ItemsService.GetAvailableQuantitiesAsync( request.Select( i => i.Sku ), this.Mark ).GetAwaiter().GetResult();
 
 			quantities.Should().NotBeNullOrEmpty();
 			quantities.Should().HaveCount( skusNumber );
@@ -80,11 +80,11 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 
 		private void ClearSkuQuantityForEachDc( string sku )
 		{
-			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList( CancellationToken.None ).Select( dc => dc.DistributionCenterCode ).ToArray();
+			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList( this.Mark ).Select( dc => dc.DistributionCenterCode ).ToArray();
 
 			foreach( string distributionCenterCode in distributionCentersCodes )
 			{
-				this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( sku, 0, distributionCenterCode ), CancellationToken.None );
+				this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( sku, 0, distributionCenterCode ), this.Mark );
 			}
 		}
 
@@ -107,9 +107,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				 WarehouseLocation = TestSkuLocation
 			};
 
-			this.ItemsService.SynchItemAsync( submitItem, CancellationToken.None ).GetAwaiter().GetResult();
+			this.ItemsService.SynchItemAsync( submitItem, this.Mark ).GetAwaiter().GetResult();
 
-			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, CancellationToken.None ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, this.Mark ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
 			result.WarehouseLocation.Should().Equals( TestSkuLocation );
@@ -133,9 +133,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				i += 1;
 			}
 
-			this.ItemsService.SynchItems( inventoryItems, CancellationToken.None );
+			this.ItemsService.SynchItems( inventoryItems, this.Mark );
 
-			var items = this.ItemsService.GetItems( new string[] { "testSku1", "testSku150" }, CancellationToken.None );
+			var items = this.ItemsService.GetItems( new string[] { "testSku1", "testSku150" }, this.Mark );
 			items.Should().NotBeNullOrEmpty();
 			items.First().WarehouseLocation.Should().Be( "ADC1" );
 			items.Last().WarehouseLocation.Should().Be( "ADC150" );
@@ -150,9 +150,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				 UPC = TestSkuUPC
 			};
 
-			this.ItemsService.SynchItemAsync( submitItem, CancellationToken.None ).GetAwaiter().GetResult();
+			this.ItemsService.SynchItemAsync( submitItem, this.Mark ).GetAwaiter().GetResult();
 
-			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, CancellationToken.None ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, this.Mark ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
 			result.UPC.Should().Equals( TestSkuUPC );
@@ -171,9 +171,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				 }
 			};
 
-			this.ItemsService.SynchItemAsync( submitItem, CancellationToken.None ).GetAwaiter().GetResult();
+			this.ItemsService.SynchItemAsync( submitItem, this.Mark ).GetAwaiter().GetResult();
 
-			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, CancellationToken.None ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, this.Mark ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
 			result.PriceInfo.Cost.Should().Be( newCost );
@@ -194,9 +194,9 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				 UPC = testUPC
 			};
 
-			this.ItemsService.SynchItemAsync( submitItem, CancellationToken.None ).GetAwaiter().GetResult();
+			this.ItemsService.SynchItemAsync( submitItem, this.Mark ).GetAwaiter().GetResult();
 
-			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, CancellationToken.None ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
+			var result = this.ItemsService.GetItemsAsync( new string[] { TestSku }, this.Mark ).GetAwaiter().GetResult().FirstOrDefault( item => item.Sku.ToLower().Equals( TestSku.ToLower() ) );
 
 			result.Should().NotBeNull();
 			result.PriceInfo.Cost.Should().Be( newCost );
@@ -206,7 +206,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void GetItemQuantitiesAsync()
 		{
-			var result = this.ItemsService.GetItemQuantitiesAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetItemQuantitiesAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			result.Should().NotBeNull();
 			result.Available.Should().BeGreaterThan( 0 );
@@ -217,7 +217,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			var incorrectSku = TestSku + Guid.NewGuid();
 
-			var result = this.ItemsService.GetItems( new[] { TestSku, incorrectSku }, CancellationToken.None );
+			var result = this.ItemsService.GetItems( new[] { TestSku, incorrectSku }, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().ShouldBeEquivalentTo( 1 );
@@ -229,7 +229,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			var testSku = "AEROPOSTALE NY WOMEN'S JUNIORS ZIP HOODIE HOODED S";
 
-			var result = this.ItemsService.GetItems( new[] { testSku }, CancellationToken.None );
+			var result = this.ItemsService.GetItems( new[] { testSku }, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 		}
@@ -244,7 +244,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			for ( int i = 1; i <= pages * pageSize; i++ )
 				skus.Add( "testSku" + i.ToString() );
 
-			var result = this.ItemsService.GetItems( skus, CancellationToken.None );
+			var result = this.ItemsService.GetItems( skus, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 		}
@@ -261,7 +261,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				 }
 			};
 
-			var skus = this.ItemsService.GetFilteredSkusAsync( filter, CancellationToken.None ).GetAwaiter().GetResult();
+			var skus = this.ItemsService.GetFilteredSkusAsync( filter, this.Mark ).GetAwaiter().GetResult();
 
 			skus.Should().NotBeNullOrEmpty();
 		}
@@ -273,12 +273,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			{
 				 Criteria = new InventoryItemCriteria(){
 					DateRangeField = TimeStampFields.LastUpdateDate,
-					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
+					DateRangeStartGMT = DateTime.Now.AddMonths( -1 ),
 					DateRangeEndGMT = DateTime.Now
 				 }
 			};
 
-			var skus = this.ItemsService.GetFilteredSkusAsync( filter, CancellationToken.None ).GetAwaiter().GetResult();
+			var skus = this.ItemsService.GetFilteredSkusAsync( filter, this.Mark ).GetAwaiter().GetResult();
 
 			skus.Should().NotBeNullOrEmpty();
 		}
@@ -291,12 +291,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			{
 				 Criteria = new InventoryItemCriteria(){
 					DateRangeField = TimeStampFields.LastUpdateDate,
-					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
+					DateRangeStartGMT = DateTime.Now.AddMonths( -1 ),
 					DateRangeEndGMT = DateTime.Now
 				 }
 			};
 
-			var result = this.ItemsService.GetFilteredSkusAsync( filter, page, 100, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetFilteredSkusAsync( filter, page, 100, this.Mark ).GetAwaiter().GetResult();
 
 			result.AllPagesQueried.Should().BeFalse();
 			result.FinalPageNumber.Should().Be( page );
@@ -325,7 +325,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var skus = new List< string >();
 			while ( !skuListSyncComplete )
 			{
-				var result = await this.ItemsService.GetFilteredSkusAsync( filter, skuListStartPage, pageSize, CancellationToken.None );
+				var result = await this.ItemsService.GetFilteredSkusAsync( filter, skuListStartPage, pageSize, this.Mark );
 				skus.AddRange( result.Response );				
 				skuListSyncComplete = result.AllPagesQueried;
 				skuListStartPage = result.AllPagesQueried ? 1 : result.FinalPageNumber + 1;				
@@ -343,12 +343,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			{
 				 Criteria = new InventoryItemCriteria(){
 					DateRangeField = TimeStampFields.LastUpdateDate,
-					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
+					DateRangeStartGMT = DateTime.Now.AddMonths( -1 ),
 					DateRangeEndGMT = DateTime.Now
 				 }
 			};
 
-			var result = this.ItemsService.GetFilteredItemsAsync( filter, page, CancellationToken.None, pageSize, null ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetFilteredItemsAsync( filter, page, this.Mark, pageSize ).GetAwaiter().GetResult();
 
 			result.Response.Should().NotBeNullOrEmpty();
 			result.AllPagesQueried.Should().BeFalse();
@@ -363,12 +363,12 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			{
 				 Criteria = new InventoryItemCriteria(){
 					DateRangeField = TimeStampFields.LastUpdateDate,
-					DateRangeStartGMT = DateTime.Now.AddMonths( -3 ),
+					DateRangeStartGMT = DateTime.Now.AddMonths( -1 ),
 					DateRangeEndGMT = DateTime.Now
 				 }
 			};
 
-			var result = this.ItemsService.GetFilteredItemsAsync( filter, page, CancellationToken.None, pageSize, null ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetFilteredItemsAsync( filter, page, this.Mark, pageSize ).GetAwaiter().GetResult();
 
 			result.Response.Should().BeEmpty();
 			result.AllPagesQueried.Should().BeTrue();
@@ -388,7 +388,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				 }
 			};
 
-			var skus = this.ItemsService.GetFilteredSkusAsync( filter, CancellationToken.None ).GetAwaiter().GetResult();
+			var skus = this.ItemsService.GetFilteredSkusAsync( filter, this.Mark ).GetAwaiter().GetResult();
 
 			skus.Should().NotBeNullOrEmpty();
 		}
@@ -397,7 +397,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Ignore ]
 		public void GetAllItems()
 		{
-			var result = this.ItemsService.GetAllItems( CancellationToken.None );
+			var result = this.ItemsService.GetAllItems( this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 		}
@@ -405,14 +405,14 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void DoesSkuExist_When_Exist()
 		{
-			var result = this.ItemsService.DoesSkuExist( TestSku, CancellationToken.None );
+			var result = this.ItemsService.DoesSkuExist( TestSku, this.Mark );
 			result.Should().BeTrue();
 		}
 
 		[ Test ]
 		public void DoesSkuExist_When_Not_Exist()
 		{
-			var result = this.ItemsService.DoesSkuExist( TestSku + Guid.NewGuid(), CancellationToken.None );
+			var result = this.ItemsService.DoesSkuExist( TestSku + Guid.NewGuid(), this.Mark );
 
 			result.Should().BeFalse();
 		}
@@ -421,7 +421,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		public void DoSkusExist()
 		{
 			var incorrectSku = TestSku + Guid.NewGuid();
-			var result = this.ItemsService.DoSkusExist( new[] { TestSku, incorrectSku }, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( new[] { TestSku, incorrectSku }, this.Mark );
 
 			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
 		}
@@ -434,7 +434,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			for ( int i = 0; i < 50000; i++ )
 				skus.Add( "testSku" + i.ToString() );
 
-			var result = this.ItemsService.DoSkusExist( skus, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( skus, this.Mark );
 
 			result.Count().Should().Be( skus.Count() );
 		}
@@ -443,7 +443,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		public void DoSkusExistWithSpecialName()
 		{
 			var testSku = "ROYAL-252-#-02";
-			var result = this.ItemsService.DoSkusExist( new[] { testSku }, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( new[] { testSku }, this.Mark );
 
 			result.First().Result.Should().BeFalse();
 		}
@@ -453,7 +453,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			var kitSku = "kit2019-03-16T00:08:10.002";
 
-			var result = this.ItemsService.DoSkusExist( new[] { kitSku }, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( new[] { kitSku }, this.Mark );
 
 			result.First().Result.Should().BeFalse();
 		}
@@ -463,7 +463,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		{
 			var incorrectSku = TestSku + Guid.NewGuid();
 
-			var result = this.ItemsService.GetAvailableQuantities( new[] { TestSku, incorrectSku }, CancellationToken.None ).ToArray();
+			var result = this.ItemsService.GetAvailableQuantities( new[] { TestSku, incorrectSku }, this.Mark ).ToArray();
 
 			result.Should().NotBeNull();
 			result.Length.ShouldBeEquivalentTo( 2 );
@@ -483,7 +483,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			for ( int i = 0; i < 500; i++ )
 				skus.Add( "testSku" + i.ToString() );
 
-			var result = this.ItemsService.GetAvailableQuantities( skus, CancellationToken.None );
+			var result = this.ItemsService.GetAvailableQuantities( skus, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().Be( skus.Count() );
@@ -492,7 +492,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void GetAvailableQuantity()
 		{
-			int quantity = this.ItemsService.GetAvailableQuantityAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			int quantity = this.ItemsService.GetAvailableQuantityAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			quantity.Should().BeGreaterThan(0);
 		}
@@ -501,7 +501,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Ignore ]
 		public void GetClassificationConfigurationInformation()
 		{
-			var result = this.ItemsService.GetClassificationConfigurationInformation( CancellationToken.None );
+			var result = this.ItemsService.GetClassificationConfigurationInformation( this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 		}
@@ -509,7 +509,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void GetStoreInfo()
 		{
-			var result = this.ItemsService.GetStoreInfo( TestSku, CancellationToken.None );
+			var result = this.ItemsService.GetStoreInfo( TestSku, this.Mark );
 
 			result.Should().NotBeNull();
 		}
@@ -517,7 +517,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void GetShippingInfo()
 		{
-			var result = this.ItemsService.GetShippingInfo( TestSku, CancellationToken.None );
+			var result = this.ItemsService.GetShippingInfo( TestSku, this.Mark );
 
 			result.Should().NotBeNull();
 			result.Length.Should().BeGreaterThan( 0 );
@@ -526,7 +526,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void GetSkuAttributes()
 		{
-			var result = this.ItemsService.GetAttributes( TestSku, CancellationToken.None  );
+			var result = this.ItemsService.GetAttributes( TestSku, this.Mark  );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Length.Should().BeGreaterOrEqualTo( 3 );
@@ -539,7 +539,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		public void GetVariationInfo()
 		{
 			var variationSku = "ALTERNATE 1";
-			var result = this.ItemsService.GetVariationInfo( variationSku, CancellationToken.None  );
+			var result = this.ItemsService.GetVariationInfo( variationSku, this.Mark  );
 
 			result.Should().NotBeNull();
 		}
@@ -547,7 +547,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		[ Test ]
 		public void GetSkuImages()
 		{
-			var result = this.ItemsService.GetImageList( TestSku, CancellationToken.None );
+			var result = this.ItemsService.GetImageList( TestSku, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Should().HaveCount(1);
@@ -564,7 +564,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				ClassificationName = classificationName
 			};
 
-			var result = this.ItemsService.GetFilteredItems( filter, CancellationToken.None );
+			var result = this.ItemsService.GetFilteredItems( filter, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 10 );
@@ -586,7 +586,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 				LabelName = labelName
 			};
 
-			var result = this.ItemsService.GetFilteredItems( filter, CancellationToken.None );
+			var result = this.ItemsService.GetFilteredItems( filter, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 10 );
@@ -603,7 +603,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			};
 
 			itemsService.SetProductCache( cache );
-			var productsId = itemsService.GetProductsId( new string[] { TestSku, TestSku2 }, CancellationToken.None, null ).Result;
+			var productsId = itemsService.GetProductsId( new string[] { TestSku, TestSku2 }, this.Mark ).Result;
 
 			productsId.Should().NotBeEmpty();
 			productsId[ TestSku ].Should().Be( 10 );

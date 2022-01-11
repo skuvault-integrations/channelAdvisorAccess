@@ -21,7 +21,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		[ Test ]
 		public async Task GetOrdersAsyncByDate()
 		{
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -14 ), DateTime.UtcNow, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 0 );
@@ -35,7 +35,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				OrderCreationFilterBeginTimeGMT = new DateTime(2018, 11, 01)
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 20 );
@@ -49,7 +49,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				OrderCreationFilterEndTimeGMT = new DateTime(2019, 4, 01)
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 10 );
@@ -65,7 +65,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 2 );
@@ -81,7 +81,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				StatusUpdateFilterEndTimeGMT = new DateTime(2019, 06, 03, 13, 0, 0)
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 1 );
@@ -95,7 +95,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				OrderIDList = new int[] { TestOrderId, TestOrderId2 }
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Should().HaveCount(2);
@@ -116,7 +116,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				OrderIDList = orders.ToArray()
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Should().HaveCount(1);
@@ -133,7 +133,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				OrderIDList = new int[] { TestOrderId3 }
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 			var order = result.FirstOrDefault();
 			order.Should().NotBeNull();
 			var orderItem1 = order.ShoppingCart.LineItemSKUList.FirstOrDefault( item => item.SKU.Equals( sku1 ) ) as OrderLineItemItemResponse;
@@ -151,7 +151,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			OrderCart shoppingCart = result.First().ShoppingCart;
 			//Always returned as 0 from the CA api
@@ -168,7 +168,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			OrderCart shoppingCart = result.First().ShoppingCart;
 			//Always returned as 0 from the CA api
@@ -186,7 +186,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 			
 			result.Any( o => o.ShoppingCart.LineItemInvoiceList.Any( i => i.LineItemType == "Shipping" ) ).Should().BeTrue();
 		}
@@ -201,7 +201,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 			var ordersService = ServicesFactory.CreateOrdersRestService( RestCredentials.AccountName, null, RestCredentials.AccessToken, RestCredentials.RefreshToken, timeouts );
 
 			var ex = Assert.Throws< ChannelAdvisorException >( async () => {
-				var orders = await ordersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -3 ), DateTime.UtcNow, CancellationToken.None );
+				var orders = await ordersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -3 ), DateTime.UtcNow, this.Mark );
 			} );
 			
 			ex.Should().NotBeNull();
@@ -213,7 +213,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		public async Task WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
 		{
 			var activityTimeBeforeMakingAnyRequest = DateTime.UtcNow;
-			await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -14 ), DateTime.UtcNow, CancellationToken.None );
+			await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -14 ), DateTime.UtcNow, this.Mark );
 
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
 		}

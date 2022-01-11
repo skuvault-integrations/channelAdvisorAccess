@@ -27,7 +27,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				OrderIDList = new int[] { TestOrderId, TestOrderId2 },
 				DetailLevel = DetailLevelTypes.Complete
 			};
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Should().NotBeEmpty();
 			ValidateLastActivityDateTimeUpdated();
@@ -42,7 +42,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			OrderCart shoppingCart = result.First().ShoppingCart;
 			//Always returned as 0 from the CA api
@@ -59,7 +59,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			OrderCart shoppingCart = result.First().ShoppingCart;
 			//Always returned as 0 from the CA api
@@ -77,7 +77,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			result.Any( o => o.ShoppingCart.LineItemInvoiceList.Any( i => i.LineItemType == "Shipping" ) ).Should().BeTrue();
 		}
@@ -93,7 +93,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, CancellationToken.None );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
 
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
 		}

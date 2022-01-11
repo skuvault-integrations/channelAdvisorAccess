@@ -13,7 +13,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var dcList = this.ItemsService.GetDistributionCenterList( CancellationToken.None );
+			var dcList = this.ItemsService.GetDistributionCenterList( this.Mark, CancellationToken.None );
 
 			//------------ Assert
 			dcList.Length.Should().BeGreaterThan( 0 );

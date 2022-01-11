@@ -61,7 +61,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		}
 
 		#region Ping
-		public void Ping( Mark mark, CancellationToken token )
+		public void Ping( Mark mark, CancellationToken token = default )
 		{
 			try
 			{	
@@ -87,7 +87,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			}
 		}
 
-		public async Task PingAsync( Mark mark, CancellationToken token )
+		public async Task PingAsync( Mark mark, CancellationToken token = default )
 		{
 			try
 			{
@@ -115,7 +115,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		#endregion
 
 		#region API methods
-		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token )
+		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
@@ -127,7 +127,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return this.GetOrders< T >( orderCriteria, mark, token );
 		}
 
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default )
 			where T : OrderResponseItem
 		{
 			var orderCriteria = new OrderCriteria
@@ -147,7 +147,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <param name="mark">Session Mark</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
-		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token )
+		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default )
 			where T : OrderResponseItem
 		{
 			return this.GetOrders< T >( startDate, endDate, mark, token ).ToList();
@@ -160,7 +160,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>		
 		/// <param name="mark">Session Mark</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token )
+		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default )
 			where T : OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
@@ -195,7 +195,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default )
 			where T : OrderResponseItem
 		{
 			try
@@ -241,7 +241,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// </summary>
 		/// <param name="orderSubmit">The order submit.</param>
 		/// <returns>New order CA id.</returns>
-		public int SubmitOrder( OrderSubmit orderSubmit, Mark mark, CancellationToken token )
+		public int SubmitOrder( OrderSubmit orderSubmit, Mark mark, CancellationToken token = default )
 		{
 			try
 			{
@@ -270,7 +270,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			}
 		}
 
-		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, Mark mark, CancellationToken token )
+		public async Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, Mark mark, CancellationToken token = default )
 		{
 			try
 			{
@@ -299,7 +299,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			}
 		}
 
-		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token )
+		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token = default )
 		{			
 			try
 			{
@@ -328,7 +328,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 			}
 		}
 
-		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token )
+		public async Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token = default )
 		{
 			try
 			{
