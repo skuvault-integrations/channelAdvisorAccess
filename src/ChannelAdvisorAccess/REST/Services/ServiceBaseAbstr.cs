@@ -158,7 +158,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenBySoapCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		private async Task RefreshAccessTokenBySoapCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			_waitHandle.WaitOne();
 
@@ -221,7 +221,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenByRestCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		private async Task RefreshAccessTokenByRestCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			_waitHandle.WaitOne();
 			this.SetBasicAuthorizationHeader();
@@ -300,7 +300,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="pageNumber">Page ( 0 - all pages )</param>
 		/// <param name="pageSize">Page size</param>
 		/// <returns></returns>
-		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark, bool collections = true, int pageNumber = 0, int? pageSize = null, int? operationTimeout = null, CancellationToken token = default )
+		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark, bool collections = true, int pageNumber = 0, int? pageSize = null, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -371,7 +371,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="pageSize"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, Mark mark, bool requestDataSetSize = false, int? pageSize = null, int? operationTimeout = null, CancellationToken token = default )
+		protected Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, Mark mark, bool requestDataSetSize = false, int? pageSize = null, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -399,7 +399,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="apiUrl"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< T > GetEntityAsync< T >( string apiUrl, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		protected Task< T > GetEntityAsync< T >( string apiUrl, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -457,7 +457,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="body"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -504,7 +504,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="data"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task PostAsync< T >( string apiUrl, T data, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		protected Task PostAsync< T >( string apiUrl, T data, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -547,7 +547,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="data"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		protected Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -589,7 +589,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="batch"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task < T[] > DoBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		protected async Task < T[] > DoBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			var result = new List< T >();
 
@@ -612,7 +612,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="batch"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();

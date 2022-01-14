@@ -150,7 +150,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="filter"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync < T >( string filter, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		public async Task< IEnumerable< T > > GetOrdersAsync < T >( string filter, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			var orders = new List< T >();
 			

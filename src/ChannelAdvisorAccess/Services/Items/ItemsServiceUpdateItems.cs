@@ -14,7 +14,7 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region Update items
-		public void SynchItem( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default )
+		public void SynchItem( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
 			var parameters = new { item, isCreateNew };
 
@@ -46,7 +46,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task SynchItemAsync( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default )
+		public async Task SynchItemAsync( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
 			var parameters = new { item, isCreateNew };
 
@@ -77,7 +77,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void SynchItems( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default )
+		public void SynchItems( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
 			var parameters = new { items, isCreateNew };
 
@@ -115,7 +115,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default )
+		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
 			var parameters = new { items, isCreateNew };
 
@@ -152,7 +152,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token )
+		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			try
 			{
@@ -178,7 +178,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token )
+		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			try
 			{
@@ -204,7 +204,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token )
+		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			try
 			{
@@ -235,7 +235,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token )
+		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			try
 			{
@@ -264,7 +264,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token )
+		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
@@ -299,7 +299,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token )
+		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
@@ -329,7 +329,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token )
+		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
@@ -362,7 +362,7 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token )
+		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
 
