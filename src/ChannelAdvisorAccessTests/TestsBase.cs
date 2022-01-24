@@ -11,6 +11,7 @@ using ChannelAdvisorAccess.Services.Shipping;
 using Netco.Logging;
 using Netco.Logging.NLogIntegration;
 using NUnit.Framework;
+using Mark = ChannelAdvisorAccess.Misc.Mark;
 
 namespace ChannelAdvisorAccessTests
 {

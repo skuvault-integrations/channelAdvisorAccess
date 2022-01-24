@@ -75,7 +75,7 @@ task NuGet Package, Version, {
 <package>
 	<metadata>
 		<id>$project_name</id>
-		<version>$Version</version>
+		<version>$Version-beta</version>
 		<authors>Agile Harbor</authors>
 		<owners>Agile Harbor</owners>
 		<projectUrl>https://github.com/agileharbor/$project_name</projectUrl>
@@ -87,12 +87,12 @@ task NuGet Package, Version, {
 		<tags>$project_short_name</tags>
 		<dependencies> 
 			<group targetFramework="net45">
-				<dependency id="Netco" version="1.5.1" />
+				<dependency id="Netco" version="2.0.2" />
 				<dependency id="CuttingEdge.Conditions" version="1.2.0.0" />
 				<dependency id="Newtonsoft.Json" version="7.0.1" />
-				<dependency id="Polly-Signed" version="5.9.0" />
+				<dependency id="Polly" version="7.2.2" />
 				<dependency id="SharpZipLib" version="1.1.0" />
-				<dependency id="CsvHelper" version="2.16.3" />
+				<dependency id="CsvHelper" version="12.0.0" />
 			</group>
 		</dependencies>
         <frameworkAssemblies>
