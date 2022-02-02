@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.REST.Shared;
 using ChannelAdvisorAccess.Misc;
+using Mark = ChannelAdvisorAccess.Misc.Mark;
 
 namespace ChannelAdvisorAccessTests.REST
 {
