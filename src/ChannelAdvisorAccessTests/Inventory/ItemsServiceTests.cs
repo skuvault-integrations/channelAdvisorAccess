@@ -29,6 +29,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			this.ItemsService.GetAvailableQuantity( TestSku, CancellationToken.None ).Should().Be( 5 );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		private static InventoryItemQuantityAndPrice CreateItemQuantityAndPrice( int quantity )
@@ -50,6 +51,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			this.ItemsService.Ping();
 
 			//------------ Assert
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -61,6 +63,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			this.ItemsService.PingAsync().GetAwaiter().GetResult();
 
 			//------------ Assert
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -73,6 +76,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().BeTrue();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -84,7 +88,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = this.ItemsService.DoesSkuExist( TestSku + Guid.NewGuid(), CancellationToken.None );
 
 			//------------ Assert
-			result.Should().BeFalse();
+			result.Should().BeFalse();			
 		}
 
 		[ Test ]
@@ -97,6 +101,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().BeTrue();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -227,6 +232,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -242,6 +248,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			result.Should().NotBeNullOrEmpty();
 			result.Count().ShouldBeEquivalentTo( 1 );
 			result.First().Sku.ToLower().ShouldBeEquivalentTo( TestSku.ToLower() );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -257,6 +264,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			result.Should().NotBeNullOrEmpty();
 			result.Count().ShouldBeEquivalentTo( 1 );
 			result.First().Sku.ToLower().ShouldBeEquivalentTo( TestSku.ToLower() );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -270,6 +278,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Assert
 			result.Should().NotBeNull();
 			result.Available.Should().BeGreaterThan( 0 );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -283,6 +292,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Assert
 			result.Should().NotBeNull();
 			result.Available.Should().BeGreaterThan( 0 );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -295,6 +305,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -307,6 +318,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -319,6 +331,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNull();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -330,7 +343,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = this.ItemsService.GetStoreInfoAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
 
 			//------------ Assert
-			result.Should().NotBeNull();
+			result.Should().NotBeNull();			
 		}
 
 		[ Test ]
@@ -353,6 +366,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Assert
 			result.Should().NotBeNull();
 			result.Length.Should().BeGreaterThan( 0 );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -366,6 +380,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Assert
 			result.Should().NotBeNull();
 			result.Length.Should().BeGreaterThan( 0 );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -378,6 +393,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNull();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -390,6 +406,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNull();
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -410,6 +427,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			result[ 1 ].SKU.ShouldBeEquivalentTo( incorrectSku );
 			result[ 1 ].MessageCode.Should().BeGreaterThan( 0 );
 			result[ 1 ].Quantity.ShouldBeEquivalentTo( 0 );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -430,6 +448,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			result[ 1 ].SKU.ShouldBeEquivalentTo( incorrectSku );
 			result[ 1 ].MessageCode.Should().BeGreaterThan( 0 );
 			result[ 1 ].Quantity.ShouldBeEquivalentTo( 0 );
+			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
@@ -446,6 +465,11 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var existingsSkus = this.ItemsService.DoSkusExistAsync( allSkus, CancellationToken.None ).GetAwaiter().GetResult();
 			System.Diagnostics.Debug.WriteLine( ( DateTime.Now - startTime ).TotalSeconds );
 			//------------ Assert
+		}
+
+		private void ValidateLastActivityDateTimeUpdated()
+		{ 
+			this.ItemsService.LastActivityTime.Should().NotBe( this.serviceLastActivityDateTime );			
 		}
 
 		//IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark = null );
