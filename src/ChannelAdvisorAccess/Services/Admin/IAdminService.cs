@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ChannelAdvisorAccess.AdminService;
 using ChannelAdvisorAccess.Misc;
 
 namespace ChannelAdvisorAccess.Services.Admin
 {
-	public interface IAdminService
+	public interface IAdminService : IDisposable
 	{
 		/// <summary>
 		/// Gets all authorization records

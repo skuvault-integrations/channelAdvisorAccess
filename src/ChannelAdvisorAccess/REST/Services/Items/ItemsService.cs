@@ -1,5 +1,4 @@
-﻿using ChannelAdvisorAccess.Constants;
-using ChannelAdvisorAccess.Exceptions;
+﻿using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.Services.Items;
@@ -18,9 +17,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.IO;
 using System.Text;
 using CsvHelper;
-using System.Collections.Concurrent;
 using System.Net;
-using System.Globalization;
 using System.Threading;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
@@ -1406,6 +1403,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( CancellationToken token, Mark mark = null )
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Dispose method to implement the interfaces IItemsService -> IDisposable
+		/// it's empty because nothing to dispose for REST methods
+		/// </summary>
+		public void Dispose()
+		{
 		}
 	}
 }

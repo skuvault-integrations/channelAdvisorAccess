@@ -8,12 +8,10 @@ using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.ShippingService;
 using Netco.Extensions;
-using Netco.Logging;
-using Newtonsoft.Json;
 
 namespace ChannelAdvisorAccess.Services.Shipping
 {
-	public class ShippingService: ServiceBaseAbstr, IShippingService
+	public class ShippingService: ServiceBaseAbstr, IShippingService, IDisposable
 	{
 		private readonly APICredentials _credentials;
 		private readonly ShippingServiceSoapClient _client;
@@ -434,5 +432,15 @@ namespace ChannelAdvisorAccess.Services.Shipping
 			if( result.Status != ResultStatus.Success )
 				throw new ChannelAdvisorException( result.MessageCode, result.Message );
 		}
+
+		#region IDisposable implementation
+
+		public void Dispose()
+		{
+			Dispose( _client, true );
+			GC.SuppressFinalize( this );
+		}
+
+		#endregion
 	}
 }

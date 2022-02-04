@@ -8,7 +8,7 @@ using ChannelAdvisorAccess.REST.Models;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
-	public interface IItemsService
+	public interface IItemsService : IDisposable
 	{
 		/// <summary>
 		/// Gets the account name.

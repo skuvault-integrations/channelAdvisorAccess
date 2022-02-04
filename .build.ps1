@@ -113,4 +113,4 @@ task NuGet Package, Version, {
 	}
 }
 
-task . Init, Build, Package, Zip, NuGet
+task . Init, Build, Package, NuGet
