@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Caching;
+using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.Services;
 using ChannelAdvisorAccess.Services.Admin;
 using ChannelAdvisorAccess.Services.Items;
@@ -10,6 +11,7 @@ using ChannelAdvisorAccess.Services.Shipping;
 using Netco.Logging;
 using Netco.Logging.NLogIntegration;
 using NUnit.Framework;
+using Mark = ChannelAdvisorAccess.Misc.Mark;
 
 namespace ChannelAdvisorAccessTests
 {
@@ -18,6 +20,14 @@ namespace ChannelAdvisorAccessTests
 		protected const string TestDistributionCenterCode = "Louisville";
 		protected const string TestSku = "testSku1";
 		protected DateTime serviceLastActivityDateTime = DateTime.Now;
+
+		protected Mark Mark
+		{
+			get
+			{
+				return Mark.CreateNew();
+			}
+		}
 
 		[ SetUp ]
 		public void Init()
@@ -39,7 +49,7 @@ namespace ChannelAdvisorAccessTests
 
 		public IItemsService ItemsService{ get; private set; }
 
-		public IAdminService AdminService{ get; private set; }
+		public IAdminService AdminService{ get; private set; }		
 
 		private static TestCredentials _credentials;
 

@@ -12,11 +12,11 @@ namespace ChannelAdvisorAccess.Services
 	public static class ChannelAdvisorManagerExtensions
 	{
 		#region Orders
-		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token, Mark mark = null )
+		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, Mark mark, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrders< T >( start, end, token, mark );
+			return orderService.GetOrders< T >( start, end, mark, token );
 		}
 
 		/// <summary>
@@ -38,18 +38,18 @@ namespace ChannelAdvisorAccess.Services
 		///	var orders = this.GetOrders&lt; OrderResponseDetailHigh >( orderCriteria );
 		/// </code>
 		/// </example>
-		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, OrderCriteria orderCriteria, string accountId, CancellationToken token, Mark mark = null )
+		public static IEnumerable< T > GetOrders< T >( this IChannelAdvisorManager manager, OrderCriteria orderCriteria, string accountId, Mark mark, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrders< T >( orderCriteria, token, mark );
+			return orderService.GetOrders< T >( orderCriteria, mark, token );
 		}
 
-		public static IList< T > GetOrdersList< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, CancellationToken token, Mark mark = null )
+		public static IList< T > GetOrdersList< T >( this IChannelAdvisorManager manager, DateTime start, DateTime end, string accountId, Mark mark, CancellationToken token )
 			where T : OrderResponseItem
 		{
 			var orderService = manager.GetOrdersServiceByAccountId( accountId );
-			return orderService.GetOrdersList< T >( start, end, token, mark );
+			return orderService.GetOrdersList< T >( start, end, mark, token );
 		}
 		#endregion
 
@@ -62,10 +62,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <returns>
 		/// Collection of all items in the account inventory.
 		/// </returns>
-		public static IEnumerable< InventoryItemResponse > GetAllItems( this IChannelAdvisorManager manager, string accountId, CancellationToken token )
+		public static IEnumerable< InventoryItemResponse > GetAllItems( this IChannelAdvisorManager manager, string accountId, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetAllItems( token );
+			return itemService.GetAllItems( mark, token );
 		}
 
 		/// <summary>
@@ -75,10 +75,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="accountId">The account id.</param>
 		/// <param name="skus">The skus.</param>
 		/// <returns>List of items matching supplied SKUs.</returns>
-		public static IEnumerable< InventoryItemResponse > GetItems( this IChannelAdvisorManager manager, string accountId, string[] skus, CancellationToken token )
+		public static IEnumerable< InventoryItemResponse > GetItems( this IChannelAdvisorManager manager, string accountId, string[] skus, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetItems( skus, token );
+			return itemService.GetItems( skus, mark, token );
 		}
 
 		/// <summary>
@@ -94,10 +94,10 @@ namespace ChannelAdvisorAccess.Services
 		/// See <see href="http://developer.channeladvisor.com/display/cadn/InventoryItemCriteria"/> for more details.</remarks>
 		/// <example>Filtering by partial SKU
 		/// <code>itemsFilter.Criteria.PartialSku = "partSku";</code></example>
-		public static IEnumerable< InventoryItemResponse > GetFilteredItems( this IChannelAdvisorManager manager, string accountId, ItemsFilter filter, CancellationToken token )
+		public static IEnumerable< InventoryItemResponse > GetFilteredItems( this IChannelAdvisorManager manager, string accountId, ItemsFilter filter, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			return itemService.GetFilteredItems( filter, token );
+			return itemService.GetFilteredItems( filter, mark, token );
 		}
 
 		/// <summary>
@@ -113,9 +113,9 @@ namespace ChannelAdvisorAccess.Services
 		/// <code>
 		/// var item = ChannelAdvisorFacade.GetItem( "account id", "sku to get" );
 		/// </code></example>
-		public static InventoryItemResponse GetItem( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
+		public static InventoryItemResponse GetItem( this IChannelAdvisorManager manager, string accountId, string sku, Mark mark, CancellationToken token )
 		{
-			var items = GetItems( manager, accountId, new[] { sku }, token );
+			var items = GetItems( manager, accountId, new[] { sku }, mark, token );
 			return items.FirstOrDefault();
 		}
 
@@ -126,10 +126,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="accountId">The account id.</param>
 		/// <param name="sku">The sku.</param>
 		/// <returns>Item attributes collection.</returns>
-		public static AttributeInfo[] GetAttributes( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
+		public static AttributeInfo[] GetAttributes( this IChannelAdvisorManager manager, string accountId, string sku, Mark mark, CancellationToken token )
 		{
 			var itemsService = manager.GetItemsServiceByAccountId( accountId );
-			return itemsService.GetAttributes( sku, token ); 
+			return itemsService.GetAttributes( sku, mark, token ); 
 		}
 
 		/// <summary>
@@ -142,10 +142,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <remarks>This is required since <see cref="GetItems(IChannelAdvisorManager,string,string[])"/> returns
 		/// only available quantity.</remarks>
 		/// <see href="http://developer.channeladvisor.com/display/cadn/GetInventoryItemQuantityInfo"/>
-		public static QuantityInfoResponse GetItemQuantities( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
+		public static QuantityInfoResponse GetItemQuantities( this IChannelAdvisorManager manager, string accountId, string sku, Mark mark, CancellationToken token )
 		{
 			var itemsService = manager.GetItemsServiceByAccountId( accountId );
-			return itemsService.GetItemQuantities( sku, token );
+			return itemsService.GetItemQuantities( sku, mark, token );
 		}
 
 		/// <summary>
@@ -157,10 +157,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <remarks>If SKU exists, item is updated, otherwise it's created.
 		/// <para>For update, populate only properties you want updated. Other properties remain unchanged.</para></remarks>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/SynchInventoryItemList"/>
-		public static void SynchItems( this IChannelAdvisorManager manager, string accountId, List< InventoryItemSubmit > items, CancellationToken token )
+		public static void SynchItems( this IChannelAdvisorManager manager, string accountId, List< InventoryItemSubmit > items, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.SynchItems( items, token );
+			itemService.SynchItems( items, mark, false, token );
 		}
 
 		/// <summary>
@@ -172,10 +172,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <remarks>If SKU exists, item is updated, otherwise it's created.
 		/// <para>For update, populate only properties you want updated. Other properties remain unchanged.</para></remarks>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/SynchInventoryItemList"/>
-		public static void SynchItem( this IChannelAdvisorManager manager, string accountId, InventoryItemSubmit item, CancellationToken token )
+		public static void SynchItem( this IChannelAdvisorManager manager, string accountId, InventoryItemSubmit item, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.SynchItem( item, token );
+			itemService.SynchItem( item, mark, false, token );
 		}
 
 		/// <summary>
@@ -184,10 +184,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="manager">The manager.</param>
 		/// <param name="accountId">The account id.</param>
 		/// <param name="itemQuantityAndPrice">The item quantity and price.</param>
-		public static void UpdateQuantityAndPrice( this IChannelAdvisorManager manager, string accountId, InventoryItemQuantityAndPrice itemQuantityAndPrice, CancellationToken token )
+		public static void UpdateQuantityAndPrice( this IChannelAdvisorManager manager, string accountId, InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.UpdateQuantityAndPrice( itemQuantityAndPrice, token );
+			itemService.UpdateQuantityAndPrice( itemQuantityAndPrice, mark, token );
 		}
 
 		/// <summary>
@@ -196,10 +196,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="manager">The manager.</param>
 		/// <param name="accountId">The account id.</param>
 		/// <param name="itemQuantityAndPrice">The item quantity and price.</param>
-		public static void UpdateQuantityAndPrices( this IChannelAdvisorManager manager, string accountId, List< InventoryItemQuantityAndPrice > itemQuantityAndPrice, CancellationToken token )
+		public static void UpdateQuantityAndPrices( this IChannelAdvisorManager manager, string accountId, List< InventoryItemQuantityAndPrice > itemQuantityAndPrice, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.UpdateQuantityAndPrices( itemQuantityAndPrice, token );
+			itemService.UpdateQuantityAndPrices( itemQuantityAndPrice, mark, token );
 		}
 
 		/// <summary>
@@ -208,10 +208,10 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="manager">The manager.</param>
 		/// <param name="accountId">The account id.</param>
 		/// <param name="sku">The sku of the item to delete.</param>
-		public static void DeleteItem( this IChannelAdvisorManager manager, string accountId, string sku, CancellationToken token )
+		public static void DeleteItem( this IChannelAdvisorManager manager, string accountId, string sku, Mark mark, CancellationToken token )
 		{
 			var itemService = manager.GetItemsServiceByAccountId( accountId );
-			itemService.DeleteItem( sku, token );
+			itemService.DeleteItem( sku, mark, token );
 		}
 		#endregion
 
@@ -227,7 +227,7 @@ namespace ChannelAdvisorAccess.Services
 		/// <param name="trackingNumber">The tracking number.</param>
 		/// <param name="dateShipped">The date shipped when order was shipped (will be converted to UTC).</param>
 		/// <seealso href="http://developer.channeladvisor.com/display/cadn/OrderShipped"/>
-		public static void MarkOrderShipped( this IChannelAdvisorManager manager, string accountId, int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped, Mark mark = null )
+		public static void MarkOrderShipped( this IChannelAdvisorManager manager, string accountId, int orderId, string carrierCode, string classCode, string trackingNumber, DateTime dateShipped, Mark mark, CancellationToken token )
 		{
 			var shippingService = manager.GetShippingServiceByAccountId( accountId );
 			shippingService.MarkOrderShipped( orderId, carrierCode, classCode, trackingNumber, dateShipped, mark );

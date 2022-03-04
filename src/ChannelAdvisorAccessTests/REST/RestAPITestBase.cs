@@ -18,6 +18,8 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.REST.Shared;
+using ChannelAdvisorAccess.Misc;
+using Mark = ChannelAdvisorAccess.Misc.Mark;
 
 namespace ChannelAdvisorAccessTests.REST
 {
@@ -39,6 +41,14 @@ namespace ChannelAdvisorAccessTests.REST
 		private const bool useSOAPCredentials = false;
 		protected ChannelAdvisorServicesFactory ServicesFactory { get; set; }
 		protected RestServiceCredentials RestCredentials { get; set; }
+
+		protected Mark Mark
+		{
+			get
+			{
+				return Mark.CreateNew();
+			}
+		}
 
 		[ SetUp ]
 		public void Init()

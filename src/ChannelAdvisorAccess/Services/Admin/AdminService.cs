@@ -19,11 +19,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 		}
 
 		#region Ping
-		public void Ping( Mark mark = null )
+		public void Ping( Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -34,11 +31,10 @@ namespace ChannelAdvisorAccess.Services.Admin
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 					var result = this._client.Ping( this._credentials );
 					this.RefreshLastNetworkActivityTime();
-					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-					this.CheckCaSuccess( result );					
-				} );
-
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
+					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ));
+                    this.CheckCaSuccess(result);
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: result.ToJson(), additionalInfo: this.AdditionalLogInfo() ) );
+				});
 			}
 			catch( Exception exception )
 			{
@@ -49,10 +45,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 		}
 
-		public async Task PingAsync( Mark mark = null )
+		public async Task PingAsync( Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -64,10 +58,9 @@ namespace ChannelAdvisorAccess.Services.Admin
 					var result = await this._client.PingAsync( this._credentials ).ConfigureAwait( false );
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-					this.CheckCaSuccess( result.PingResult );					
+					this.CheckCaSuccess( result.PingResult );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark: mark, methodResult: result.PingResult.ToJson(), additionalInfo: this.AdditionalLogInfo() ) );
 				} ).ConfigureAwait( false );
-
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 			}
 			catch( Exception exception )
 			{
@@ -79,10 +72,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 		}
 		#endregion
 
-		public AuthorizationResponse[] GetAuthorizationList( Mark mark = null )
+		public AuthorizationResponse[] GetAuthorizationList( Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -101,10 +92,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 		}
 
-		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( Mark mark = null )
+		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -123,10 +112,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 		}
 
-		public AuthorizationResponse[] GetAuthorizationList( string localId, Mark mark = null )
+		public AuthorizationResponse[] GetAuthorizationList( string localId, Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : localId ) );
@@ -155,10 +142,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 		}
 
-		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId, Mark mark = null )
+		public async Task< AuthorizationResponse[] > GetAuthorizationListAsync( string localId, Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : localId ) );
@@ -187,10 +172,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 		}
 
-		public bool RequestAccess( int localId, Mark mark = null )
+		public bool RequestAccess( int localId, Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : localId.ToString() ) );
@@ -218,10 +201,8 @@ namespace ChannelAdvisorAccess.Services.Admin
 			}
 		}
 
-		public async Task< bool > RequestAccessAsync( int localId, Mark mark = null )
+		public async Task< bool > RequestAccessAsync( int localId, Mark mark )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : localId.ToString() ) );

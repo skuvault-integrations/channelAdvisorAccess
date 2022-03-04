@@ -77,9 +77,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< bool > DoesSkuExistAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< bool > DoesSkuExistAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return await this.GetProductWithIdOnlyBySku( sku, token, mark ).ConfigureAwait( false ) != null;
+			return await this.GetProductWithIdOnlyBySku( sku, mark, token ).ConfigureAwait( false ) != null;
 		}
 
 		/// <summary>
@@ -88,9 +88,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public bool DoesSkuExist( string sku, CancellationToken token, Mark mark = null )
+		public bool DoesSkuExist( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.DoesSkuExistAsync( sku, token, mark ).Result;
+			return this.DoesSkuExistAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -99,9 +99,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public IEnumerable< DoesSkuExistResponse > DoSkusExist( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.DoSkusExistAsync( skus, token, mark ).Result;
+			return this.DoSkusExistAsync( skus, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -110,14 +110,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< DoesSkuExistResponse > > DoSkusExistAsync( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var response = new List< DoesSkuExistResponse >();
 
 			if ( skus.Count() == 0 )
 				return response;
 
-			var productIds = await this.GetProductsId( skus, token, mark ).ConfigureAwait( false );
+			var productIds = await this.GetProductsId( skus, mark, token ).ConfigureAwait( false );
 
 			foreach( var sku in skus )
 			{
@@ -128,7 +128,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			return response;
 		}
 
-		public async Task< Dictionary< string, int > > GetProductsId( IEnumerable< string > skus, CancellationToken token, Mark mark )
+		public async Task< Dictionary< string, int > > GetProductsId( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			if ( _productsCache != null )
 			{
@@ -142,14 +142,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				try
 				{
-					return await this.ImportProducts( token, mark ).ConfigureAwait( false );
+					return await this.ImportProducts( mark, token ).ConfigureAwait( false );
 				}
 				catch( ChannelAdvisorProductExportUnavailableException ) { }
 			}
 
 			if ( skus.Count() == 1 )
 			{
-				var product = await GetProductWithIdOnlyBySku( skus.First(), token, mark ).ConfigureAwait( false );
+				var product = await GetProductWithIdOnlyBySku( skus.First(), mark, token ).ConfigureAwait( false );
 
 				if ( product != null )
 				{
@@ -159,10 +159,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				return new Dictionary< string, int >();
 			}
 
-			return await GetProductsWithIdOnlyByBatch( skus, token, mark ).ConfigureAwait( false );
+			return await GetProductsWithIdOnlyByBatch( skus, mark, token ).ConfigureAwait( false );
 		}
 
-		private async Task< Dictionary< string, int > > GetProductsWithIdOnlyByBatch( IEnumerable< string > skus, CancellationToken token, Mark mark )
+		private async Task< Dictionary< string, int > > GetProductsWithIdOnlyByBatch( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var productIds = new Dictionary< string, int >();
 			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
@@ -173,7 +173,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				batchBuilder.AddGetRequest( urlBuilder.GetProductWithIdOnlyBySkuUrl( sku ) );
 			}
 
-			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductIdBySkuUsingBatchRest ] ).ConfigureAwait( false );
+			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductIdBySkuUsingBatchRest ], token ).ConfigureAwait( false );
 			var products = productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First() );
 
 			foreach( var product in products )
@@ -212,9 +212,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public IEnumerable< InventoryItemResponse > GetAllItems( CancellationToken token, Mark mark = null )
+		public IEnumerable< InventoryItemResponse > GetAllItems( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetAllItemsAsync( token, mark ).Result;
+			return this.GetAllItemsAsync( mark, token ).Result;
 		}
 
 		/// <summary>
@@ -222,9 +222,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable < InventoryItemResponse > > GetAllItemsAsync( CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable < InventoryItemResponse > > GetAllItemsAsync( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var result = await this.GetProductsWithAllProperties( null, token, mark ).ConfigureAwait( false );
+			var result = await this.GetProductsWithAllProperties( null, mark, token: token ).ConfigureAwait( false );
 
 			return result.Response.Select( product => product.ToInventoryItemResponse() );
 		}
@@ -234,9 +234,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public IEnumerable< string > GetAllSkus( CancellationToken token, Mark mark = null )
+		public IEnumerable< string > GetAllSkus( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetAllSkusAsync( token, mark ).Result;
+			return this.GetAllSkusAsync( mark, token ).Result;
 		}
 
 		/// <summary>
@@ -244,7 +244,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< string > > GetAllSkusAsync( CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< string > > GetAllSkusAsync( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var skus = new List< string >();
 			int pageNumber = 0;
@@ -252,7 +252,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			while (true)
 			{
 				var url = new ItemsServiceUrlBuilder().GetProductsUrl( "", "ID,Sku", null );
-				var page = await this.GetProducts( url, token, mark, pageNumber, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetAllProductsIdsRest ] ).ConfigureAwait( false );
+				var page = await this.GetProducts( url, mark, pageNumber, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetAllProductsIdsRest ], token: token ).ConfigureAwait( false );
 				skus.AddRange( page.Response.Select( pr => pr.Sku ) );
 
 				if ( page.AllPagesQueried )
@@ -271,9 +271,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="mark"></param>
 		/// <param name="delatInMs"></param>
 		/// <returns></returns>
-		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, CancellationToken token, Mark mark = null, int delatInMs = 5000 )
+		public IEnumerable< InventoryQuantityResponse > GetAvailableQuantities( IEnumerable< string > skus, Mark mark, int delatInMs = 5000, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetAvailableQuantitiesAsync( skus, token, mark ).Result;
+			return this.GetAvailableQuantitiesAsync( skus, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -282,7 +282,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< InventoryQuantityResponse > > GetAvailableQuantitiesAsync( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var inventoryQuantity = new List< InventoryQuantityResponse >();
 			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
@@ -291,7 +291,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			var urls = skus.Select( s => urlBuilder.GetProductWithQuantityOnlyBySkuUrl( s ) );
 			batchBuilder.AddGetRequests( urls );
 
-			var responses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithQuantitiesOnlyUsingBatchRest ] ).ConfigureAwait( false );
+			var responses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithQuantitiesOnlyUsingBatchRest ], token ).ConfigureAwait( false );
 			var skusQuantities = responses.Where( r => r.Value.Length > 0 ).Select( r => r.Value.FirstOrDefault() );
 
 			foreach( var sku in skus )
@@ -313,9 +313,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public int GetAvailableQuantity( string sku, CancellationToken token, Mark mark = null )
+		public int GetAvailableQuantity( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetAvailableQuantityAsync( sku, token, mark ).Result;
+			return this.GetAvailableQuantityAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -324,9 +324,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< int > GetAvailableQuantityAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< int > GetAvailableQuantityAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var product = await this.GetProductWithQuantityOnlyBySku( sku, token, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithQuantityOnlyBySku( sku, mark, token ).ConfigureAwait( false );
 
 			if ( product != null )
 				return product.TotalAvailableQuantity;
@@ -339,9 +339,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public DistributionCenterResponse[] GetDistributionCenterList( CancellationToken token, Mark mark = null )
+		public DistributionCenterResponse[] GetDistributionCenterList( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetDistributionCenterListAsync( token, mark ).Result;
+			return this.GetDistributionCenterListAsync( mark, token ).Result;
 		}
 
 		/// <summary>
@@ -349,9 +349,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( CancellationToken token, Mark mark = null )
+		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var response = await this.GetDistributionCentersAsync( token, mark ).ConfigureAwait( false );
+			var response = await this.GetDistributionCentersAsync( mark, token ).ConfigureAwait( false );
 			return response.Select( dc => dc.ToDistributionCenterResponse() ).ToArray();
 		}
 
@@ -360,17 +360,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< DistributionCenter[] > GetDistributionCentersAsync( CancellationToken token, Mark mark = null )
+		public async Task< DistributionCenter[] > GetDistributionCentersAsync( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var distributionCenters = new List< DistributionCenter >();
-
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
-				var result = await base.GetResponseAsync< DistributionCenter >( ChannelAdvisorEndPoint.DistributionCentersUrl, token, mark, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetDistributionCentersRest ] );
+				var result = await base.GetResponseAsync< DistributionCenter >( ChannelAdvisorEndPoint.DistributionCentersUrl, mark, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetDistributionCentersRest ], token: token );
 				distributionCenters.AddRange( result.Response.Where( dc => !dc.IsDeleted ) );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : distributionCenters.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 			}
@@ -390,9 +387,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="code"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< DistributionCenter > GetDistributionCenterAsync( string code, CancellationToken token, Mark mark )
+		public async Task< DistributionCenter > GetDistributionCenterAsync( string code, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var distributionCenters = await GetDistributionCentersAsync( token, mark ).ConfigureAwait( false );
+			var distributionCenters = await GetDistributionCentersAsync( mark, token ).ConfigureAwait( false );
 			return distributionCenters.FirstOrDefault( dc => dc.Code.ToLower().Equals( code.ToLower() ) );
 		}
 
@@ -402,9 +399,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public QuantityInfoResponse GetItemQuantities( string sku, CancellationToken token, Mark mark = null )
+		public QuantityInfoResponse GetItemQuantities( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetItemQuantitiesAsync( sku, token, mark ).Result;
+			return this.GetItemQuantitiesAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -413,9 +410,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< QuantityInfoResponse > GetItemQuantitiesAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var product = await this.GetProductBySku( sku, token, mark ).ConfigureAwait ( false );
+			var product = await this.GetProductBySku( sku, mark, token ).ConfigureAwait ( false );
 
 			if ( product != null )
 				return product.ToQuantityInfoResponse();
@@ -429,9 +426,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public IEnumerable< InventoryItemResponse > GetItems( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetItemsAsync( skus, token, mark ).Result;
+			return this.GetItemsAsync( skus, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -440,7 +437,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="skus"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< InventoryItemResponse > > GetItemsAsync( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
 			var urlBuilder = new ItemsServiceUrlBuilder();
@@ -450,7 +447,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				batchBuilder.AddGetRequest( urlBuilder.GetProductBySkuUrl( sku, null, null ) );
 			}
 
-			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuUsingBatchRest ] ).ConfigureAwait( false );
+			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuUsingBatchRest ], token: token ).ConfigureAwait( false );
 
 			return productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First().ToInventoryItemResponse() );
 		}
@@ -460,9 +457,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="itemQuantityAndPrice"></param>
 		/// <param name="mark"></param>
-		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, CancellationToken token, Mark mark = null )
+		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			this.UpdateQuantityAndPriceAsync( itemQuantityAndPrice, token, mark ).GetAwaiter().GetResult();
+			this.UpdateQuantityAndPriceAsync( itemQuantityAndPrice, mark, token ).GetAwaiter().GetResult();
 		}
 
 		/// <summary>
@@ -471,16 +468,16 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="itemQuantityAndPrice"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, CancellationToken token, Mark mark = null )
+		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( itemQuantityAndPrice ).IsNotNull();
 			Condition.Requires( itemQuantityAndPrice.Quantity ).IsNotNull();
 
-			var product = await this.GetProductWithIdOnlyBySku( itemQuantityAndPrice.Sku, token, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithIdOnlyBySku( itemQuantityAndPrice.Sku, mark, token ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
-				var distributionCenter = await this.GetDistributionCenterAsync( itemQuantityAndPrice.DistributionCenterCode, token, mark );
+				var distributionCenter = await this.GetDistributionCenterAsync( itemQuantityAndPrice.DistributionCenterCode, mark, token );
 
 				if (distributionCenter != null && !distributionCenter.IsExternallyManaged ) // cannot update quantity on externally managed warehouse
 				{
@@ -494,7 +491,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 					{
 						var url = new ItemsServiceUrlBuilder().GetUpdateProductQuantityUrl( product.ID );
 						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, additionalInfo : this.AdditionalLogInfo() ) );
-						await base.PostAsync( url, new { Value = request }, token, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductQuantityRest ] ).ConfigureAwait( false );
+						await base.PostAsync( url, new { Value = request }, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductQuantityRest ], token: token ).ConfigureAwait( false );
 						
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: request.ToJson(), additionalInfo : this.AdditionalLogInfo()) );
 					}
@@ -513,9 +510,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="itemQuantityAndPrices"></param>
 		/// <param name="mark"></param>
-		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, CancellationToken token, Mark mark = null)
+		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			this.UpdateQuantityAndPricesAsync( itemQuantityAndPrices, token, mark ).GetAwaiter().GetResult();
+			this.UpdateQuantityAndPricesAsync( itemQuantityAndPrices, mark, token ).GetAwaiter().GetResult();
 		}
 
 		/// <summary>
@@ -524,10 +521,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="itemQuantityAndPrices"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, CancellationToken token, Mark mark = null )
+		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var distributionCenters = await this.GetDistributionCentersAsync( token, mark ).ConfigureAwait( false );
-			var productsId = await this.GetProductsId( itemQuantityAndPrices.Select( iq => iq.Sku ), token, mark ).ConfigureAwait( false );
+			var distributionCenters = await this.GetDistributionCentersAsync( mark, token ).ConfigureAwait( false );
+			var productsId = await this.GetProductsId( itemQuantityAndPrices.Select( iq => iq.Sku ), mark, token ).ConfigureAwait( false );
 			var batch = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
 			var urlBuilder = new ItemsServiceUrlBuilder();
 
@@ -553,7 +550,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				batch.AddPostRequest( url, new { Value = request }.ToJson() );
 			}
 
-			await base.DoBatch< ODataResponse <Product> >( batch, token, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductQuantityUsingBatchRest ] ).ConfigureAwait( false );
+			await base.DoBatch< ODataResponse <Product> >( batch, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductQuantityUsingBatchRest ], token: token ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -562,9 +559,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public StoreInfo GetStoreInfo( string sku, CancellationToken token, Mark mark = null )
+		public StoreInfo GetStoreInfo( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetStoreInfoAsync( sku, token, mark ).Result;
+			return this.GetStoreInfoAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -573,9 +570,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public DistributionCenterInfoResponse[] GetShippingInfo( string sku, CancellationToken token, Mark mark = null )
+		public DistributionCenterInfoResponse[] GetShippingInfo( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetShippingInfoAsync( sku, token, mark ).Result;
+			return this.GetShippingInfoAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -584,14 +581,14 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< DistributionCenterInfoResponse[] > GetShippingInfoAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var response = new List< DistributionCenterInfoResponse >();
-			var product = await this.GetProductWithQuantityOnlyBySku( sku, token, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithQuantityOnlyBySku( sku, mark, token ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
-				var distributionCenters = await this.GetDistributionCentersAsync( token, mark ).ConfigureAwait( false );
+				var distributionCenters = await this.GetDistributionCentersAsync( mark, token ).ConfigureAwait( false );
 
 				foreach( var dcQuantity in product.DCQuantities )
 				{
@@ -617,9 +614,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< StoreInfo > GetStoreInfoAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< StoreInfo > GetStoreInfoAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var product = await this.GetProductWithStoreInfoOnlyBySku( sku, token, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithStoreInfoOnlyBySku( sku, mark, token ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
@@ -640,9 +637,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public AttributeInfo[] GetAttributes( string sku, CancellationToken token, Mark mark = null )
+		public AttributeInfo[] GetAttributes( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetAttributesAsync( sku, token, mark ).Result;
+			return this.GetAttributesAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -651,11 +648,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< AttributeInfo[] > GetAttributesAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< AttributeInfo[] > GetAttributesAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var attributes = new List< AttributeInfo >();
 
-			var product = await this.GetProductWithAttributesOnlyBySku( sku, token, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithAttributesOnlyBySku( sku, mark, token ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
@@ -678,9 +675,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public VariationInfo GetVariationInfo( string sku, CancellationToken token, Mark mark = null )
+		public VariationInfo GetVariationInfo( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetVariationInfoAsync( sku, token, mark ).Result;
+			return this.GetVariationInfoAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -689,9 +686,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< VariationInfo > GetVariationInfoAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< VariationInfo > GetVariationInfoAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var product = await this.GetProductWithVariationInfoOnlyBySku( sku, token, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithVariationInfoOnlyBySku( sku, mark, token ).ConfigureAwait( false );
 
 			if ( product != null )
 			{
@@ -704,7 +701,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				
 				if ( product.ParentProductID != null )
 				{
-					var parentProduct = await this.GetProductById( product.ParentProductID.Value, token, mark ).ConfigureAwait( false );
+					var parentProduct = await this.GetProductById( product.ParentProductID.Value, mark, token ).ConfigureAwait( false );
 
 					if ( parentProduct != null )
 						variationInfo.ParentSku = parentProduct.Sku;
@@ -722,9 +719,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public ImageInfoResponse[] GetImageList( string sku, CancellationToken token, Mark mark = null )
+		public ImageInfoResponse[] GetImageList( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetImageListAsync( sku, token, mark ).Result;
+			return this.GetImageListAsync( sku, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -733,10 +730,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, CancellationToken token, Mark mark = null )
+		public async Task< ImageInfoResponse[] > GetImageListAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var productImages = new List< ImageInfoResponse >();
-			var product = await this.GetProductBySku( sku, "ID,Sku,Images", "Images", token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithImagesOnlyRest ] ).ConfigureAwait( false );
+			var product = await this.GetProductBySku( sku, "ID,Sku,Images", "Images", mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithImagesOnlyRest ], token: token ).ConfigureAwait( false );
 
 			if ( product != null && product.Images != null )
 			{
@@ -757,9 +754,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="filter"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, CancellationToken token, Mark mark = null )
+		public IEnumerable< InventoryItemResponse > GetFilteredItems( ItemsFilter filter, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetFilteredItemsAsync( filter, token, mark ).Result;
+			return this.GetFilteredItemsAsync( filter, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -768,9 +765,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="filter"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			var pagedResult = await this.GetFilteredItemsAsync( filter, 0, token, pageSizeDefault, mark ).ConfigureAwait( false );
+			var pagedResult = await this.GetFilteredItemsAsync( filter, 0, mark, pageSizeDefault, token ).ConfigureAwait( false );
 
 			return pagedResult.Response;
 		}
@@ -783,12 +780,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="pageLimit"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int pageNumber, CancellationToken token, int pageLimit = pageSizeDefault, Mark mark = null )
+		public async Task< PagedApiResponse< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, int pageNumber, Mark mark, int pageLimit = pageSizeDefault, CancellationToken token = default( CancellationToken ) )
 		{
 			var inventoryItems = new List< InventoryItemResponse >();
 			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, null, null );
 
-			var result = await this.GetProducts( url, token, mark, pageNumber: pageNumber, pageSize: pageLimit ).ConfigureAwait( false );
+			var result = await this.GetProducts( url, mark, pageNumber: pageNumber, pageSize: pageLimit, token: token ).ConfigureAwait( false );
 
 			foreach( var product in result.Response )
 				inventoryItems.Add( product.ToInventoryItemResponse() );
@@ -802,9 +799,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="filter"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter, CancellationToken token, Mark mark = null )
+		public IEnumerable< string > GetFilteredSkus( ItemsFilter filter, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetFilteredSkusAsync( filter, token, mark ).Result;
+			return this.GetFilteredSkusAsync( filter, mark, token ).Result;
 		}
 
 		/// <summary>
@@ -813,9 +810,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="filter"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, CancellationToken token, Mark mark = null )
+		public async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return ( await this.GetFilteredSkusAsync( filter, 0, pageSizeDefault, token, mark ).ConfigureAwait( false ) ).Response;
+			return ( await this.GetFilteredSkusAsync( filter, 0, pageSizeDefault, mark, token ).ConfigureAwait( false ) ).Response;
 		}
 
 		/// <summary>
@@ -826,10 +823,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="pageLimit"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, CancellationToken token, Mark mark = null )
+		public async Task< PagedApiResponse< string > > GetFilteredSkusAsync( ItemsFilter filter, int startPage, int pageLimit, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, "ID,Sku", null );
-			var result = await this.GetProducts( url, token, mark, pageNumber: startPage, pageSize: pageLimit, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetProductsByFilterWithIdOnlyRest ] ).ConfigureAwait( false );
+			var result = await this.GetProducts( url, mark, pageNumber: startPage, pageSize: pageLimit, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetProductsByFilterWithIdOnlyRest ], token: token ).ConfigureAwait( false );
 
 			return new PagedApiResponse< string >( result.Response.Select( item => item.Sku ), result.FinalPageNumber, result.AllPagesQueried );
 		}
@@ -840,9 +837,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="item"></param>
 		/// <param name="isCreateNew"></param>
 		/// <param name="mark"></param>
-		public void SynchItem( InventoryItemSubmit item, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public void SynchItem( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			this.SynchItemAsync( item, token, isCreateNew, mark ).GetAwaiter().GetResult();
+			this.SynchItemAsync( item, mark, isCreateNew, token ).GetAwaiter().GetResult();
 		}
 
 		/// <summary>
@@ -852,9 +849,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="isCreateNew"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task SynchItemAsync( InventoryItemSubmit item, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public async Task SynchItemAsync( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			var product = await this.GetProductWithIdOnlyBySku( item.Sku, token, mark ).ConfigureAwait( false );
+			var product = await this.GetProductWithIdOnlyBySku( item.Sku, mark, token ).ConfigureAwait( false );
 
 			if ( product == null )
 				return;
@@ -866,7 +863,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
 				var url = new ItemsServiceUrlBuilder().GetUpdateProductUrl( product.ID );
-				await base.PutAsync( url, request, token, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductFieldsRest ] ).ConfigureAwait( false );
+				await base.PutAsync( url, request, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductFieldsRest ], token: token ).ConfigureAwait( false );
 						
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : string.Empty, additionalInfo : this.AdditionalLogInfo()) );
 			}
@@ -884,9 +881,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="items"></param>
 		/// <param name="isCreateNew"></param>
 		/// <param name="mark"></param>
-		public void SynchItems( IEnumerable< InventoryItemSubmit > items, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public void SynchItems( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			SynchItemsAsync( items, token, isCreateNew, mark ).GetAwaiter().GetResult();
+			SynchItemsAsync( items, mark, isCreateNew, token ).GetAwaiter().GetResult();
 		}
 
 		/// <summary>
@@ -896,9 +893,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="isCreateNew"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			var productsId = await this.GetProductsId( items.Select( i => i.Sku ), token, mark ).ConfigureAwait( false );
+			var productsId = await this.GetProductsId( items.Select( i => i.Sku ), mark, token ).ConfigureAwait( false );
 			var batch = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
 			var urlBuilder = new ItemsServiceUrlBuilder();
 			
@@ -914,7 +911,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				batch.AddPutRequest( url, payload.ToJson() );
 			}
 
-			await base.DoBatch< ODataResponse< Product > >( batch, token, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductFieldsUsingBatchRest ] ).ConfigureAwait( false );
+			await base.DoBatch< ODataResponse< Product > >( batch, mark, Timeouts[ ChannelAdvisorOperationEnum.UpdateProductFieldsUsingBatchRest ], token ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -923,9 +920,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task< Product > GetProductBySku( string sku, CancellationToken token, Mark mark )
+		private Task< Product > GetProductBySku( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			return this.GetProductBySku( sku, null, null, token, mark );
+			return this.GetProductBySku( sku, null, null, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductIdBySkuRest ], token );
 		}
 
 		/// <summary>
@@ -934,10 +931,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task< Product > GetProductWithIdOnlyBySku( string sku, CancellationToken token, Mark mark )
+		private Task< Product > GetProductWithIdOnlyBySku( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductWithIdOnlyBySkuUrl( sku );
-			return this.GetProductBySku( sku, url, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductIdBySkuRest ] );
+			return this.GetProductBySku( sku, url, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductIdBySkuRest ], token: token );
 		}
 
 		/// <summary>
@@ -946,10 +943,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task< Product > GetProductWithStoreInfoOnlyBySku( string sku, CancellationToken token, Mark mark )
+		private Task< Product > GetProductWithStoreInfoOnlyBySku( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductWithStoreInfoOnlyBySkuUrl( sku );
-			return this.GetProductBySku( sku, url, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithStoreInfoRest ] );
+			return this.GetProductBySku( sku, url, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithStoreInfoRest ], token: token );
 		}
 
 		/// <summary>
@@ -958,10 +955,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task< Product > GetProductWithAttributesOnlyBySku( string sku, CancellationToken token, Mark mark )
+		private Task< Product > GetProductWithAttributesOnlyBySku( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductWithAttributesOnlyBySkuUrl( sku );
-			return this.GetProductBySku( sku, url, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithAttributesOnlyRest ] );
+			return this.GetProductBySku( sku, url, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithAttributesOnlyRest ], token: token );
 		}
 
 		/// <summary>
@@ -970,10 +967,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task< Product > GetProductWithVariationInfoOnlyBySku( string sku, CancellationToken token, Mark mark )
+		private Task< Product > GetProductWithVariationInfoOnlyBySku( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductWithVariationInfoOnlyBySkuUrl( sku );
-			return this.GetProductBySku( sku, url, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithVariationInfoOnlyRest ] );
+			return this.GetProductBySku( sku, url, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithVariationInfoOnlyRest ], token: token );
 		}
 		
 		/// <summary>
@@ -982,10 +979,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="sku"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task< Product > GetProductWithQuantityOnlyBySku( string sku, CancellationToken token, Mark mark )
+		private Task< Product > GetProductWithQuantityOnlyBySku( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductWithQuantityOnlyBySkuUrl( sku );
-			return this.GetProductBySku( sku, url, token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithQuantitiesOnlyRest ] );
+			return this.GetProductBySku( sku, url, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductBySkuWithQuantitiesOnlyRest ], token: token );
 		}
 
 		/// <summary>
@@ -996,10 +993,10 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="pageNumber"></param>
 		/// <param name="pageSize"></param>
 		/// <returns></returns>
-		private Task< PagedApiResponse< Product > > GetProductsWithAllProperties( string filterProperties, CancellationToken token, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault )
+		private Task< PagedApiResponse< Product > > GetProductsWithAllProperties( string filterProperties, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = this.GetProductsUrl( filterProperties, "DCQuantities,Attributes,Images", null );
-			return this.GetProducts( url, token, mark, pageNumber, pageSize, Timeouts[ ChannelAdvisorOperationEnum.GetAllProductsRest ] );
+			return this.GetProducts( url, mark, pageNumber, pageSize, Timeouts[ ChannelAdvisorOperationEnum.GetAllProductsRest ], token: token );
 		}
 
 		/// <summary>
@@ -1010,17 +1007,17 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="expandProperties"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private async Task< Product > GetProductBySku( string sku, string selectProperties, string expandProperties, CancellationToken token, Mark mark, int? operationTimeout = null )
+		private async Task< Product > GetProductBySku( string sku, string selectProperties, string expandProperties, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = this.GetProductBySkuUrl( sku, selectProperties, expandProperties );
-			var result = await this.GetProducts( url, token, mark, operationTimeout: operationTimeout ).ConfigureAwait( false );
+			var result = await this.GetProducts( url, mark, operationTimeout: operationTimeout, token: token ).ConfigureAwait( false );
 			
 			return result.Response.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
-		private async Task< Product > GetProductBySku( string sku, string url, CancellationToken token, Mark mark, int? operationTimeout = null )
+		private async Task< Product > GetProductBySku( string sku, string url, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
-			var result = await this.GetProducts( url, token, mark, operationTimeout: operationTimeout ).ConfigureAwait( false );
+			var result = await this.GetProducts( url, mark, operationTimeout: operationTimeout, token: token ).ConfigureAwait( false );
 			return result.Response.FirstOrDefault( pr => pr.Sku.ToLower().Equals( sku.ToLower() ) );
 		}
 
@@ -1078,18 +1075,15 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="pageNumber"></param>
 		/// <param name="pageSize"></param>
 		/// <returns></returns>
-		private async Task< PagedApiResponse< Product > > GetProducts( string url, CancellationToken token, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault, int? operationTimeout = null )
+		private async Task< PagedApiResponse< Product > > GetProducts( string url, Mark mark, int pageNumber = 0, int pageSize = pageSizeDefault, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			PagedApiResponse< Product > result = null;
 
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 
-				result = await base.GetResponseAsync< Product >( url, token, mark, pageNumber: pageNumber, pageSize: pageSize, operationTimeout: operationTimeout ).ConfigureAwait( false );
+				result = await base.GetResponseAsync< Product >( url, mark, pageNumber: pageNumber, pageSize: pageSize, operationTimeout: operationTimeout ).ConfigureAwait( false );
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
 					methodParameters: url,
@@ -1112,18 +1106,15 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< Dictionary< string, int > > ImportProducts( CancellationToken token, Mark mark = null )
+		public async Task< Dictionary< string, int > > ImportProducts( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			string csvHeader = "id, sku";
 			string responseFileUrl = null;
 
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: ChannelAdvisorEndPoint.ProductExportUrl ) );
-				var response = await this.PostAsyncAndGetResult< ProductExportResponse >( ChannelAdvisorEndPoint.ProductExportUrl, csvHeader, token, mark, Timeouts[ ChannelAdvisorOperationEnum.ExportProductsRest ] ).ConfigureAwait( false );
+				var response = await this.PostAsyncAndGetResult< ProductExportResponse >( ChannelAdvisorEndPoint.ProductExportUrl, csvHeader, mark, Timeouts[ ChannelAdvisorOperationEnum.ExportProductsRest ], token: token ).ConfigureAwait( false );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: ChannelAdvisorEndPoint.ProductExportUrl, methodResult : response.ToJson(), additionalInfo : this.AdditionalLogInfo() ) );
 
 				ThrowIfProductExportFailed ( response.Status );
@@ -1138,7 +1129,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: url ) );
 
-					var exportStatusResponse = await this.GetEntityAsync< ProductExportResponse >( url, token, mark, Timeouts[ ChannelAdvisorOperationEnum.ExportProductsRest ] ).ConfigureAwait( false );
+					var exportStatusResponse = await this.GetEntityAsync< ProductExportResponse >( url, mark, Timeouts[ ChannelAdvisorOperationEnum.ExportProductsRest ], token: token ).ConfigureAwait( false );
 
 					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
 						methodParameters: url,
@@ -1152,7 +1143,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 						responseFileUrl = exportStatusResponse.ResponseFileUrl;
 
 						// handle result
-						var fileData = await this.DownloadFile( responseFileUrl ).ConfigureAwait( false );
+						var fileData = await this.DownloadFile( responseFileUrl, mark, token ).ConfigureAwait( false );
 						return ReadZippedCsv( fileData );
 					}
 				}
@@ -1249,18 +1240,15 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< int > GetCatalogSize( CancellationToken token, Mark mark )
+		public async Task< int > GetCatalogSize( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			int total = 0;
 
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters: ChannelAdvisorEndPoint.ProductsUrl ) );
 
-				total = ( await base.GetEntityAsync< int >( ChannelAdvisorEndPoint.ProductsUrl + "/$count", token, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductsCatalogSizeRest ] ).ConfigureAwait( false ) );
+				total = ( await base.GetEntityAsync< int >( ChannelAdvisorEndPoint.ProductsUrl + "/$count", mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductsCatalogSizeRest ], token: token ).ConfigureAwait( false ) );
 				
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
 					methodParameters: ChannelAdvisorEndPoint.ProductsUrl,
@@ -1284,12 +1272,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="productId"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private async Task< Product > GetProductById ( int productId, CancellationToken token, Mark mark )
+		private async Task< Product > GetProductById ( int productId, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Product product = null;
-
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 
 			var url = ChannelAdvisorEndPoint.ProductsUrl + "(" + productId.ToString() + ")";
 
@@ -1297,7 +1282,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
 
-				var result = await base.GetResponseAsync< Product >( url, token, mark, false, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetProductByIdRest ] ).ConfigureAwait( false );
+				var result = await base.GetResponseAsync< Product >( url, mark, false, operationTimeout: Timeouts[ ChannelAdvisorOperationEnum.GetProductByIdRest ], token: token ).ConfigureAwait( false );
 				product = result.Response.FirstOrDefault();
 
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, 
@@ -1336,41 +1321,41 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			return payload;
 		}
 
-		public void Ping(Mark mark = null)
+		public void Ping( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 		}
 
-		public Task PingAsync(Mark mark = null)
+		public Task PingAsync( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			return Task.Run(() => { });
 		}
 
-		public void RemoveLabelListFromItemList(string[] labels, IEnumerable<string> skus, string reason, CancellationToken token, Mark mark = null)
+		public void RemoveLabelListFromItemList( string[] labels, IEnumerable<string> skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task RemoveLabelListFromItemListAsync(string[] labels, IEnumerable<string> skus, string reason, CancellationToken token, Mark mark = null)
+		public Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable<string> skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
 		
-		public void AssignLabelListToItemList(string[] labels, bool createLabelIfNotExist, IEnumerable<string> skus, string reason, CancellationToken token, Mark mark = null)
+		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable<string> skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task AssignLabelListToItemListAsync(string[] labels, bool createLabelIfNotExist, IEnumerable<string> skus, string reason, CancellationToken token, Mark mark = null)
+		public Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable<string> skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
 
-		public void DeleteItem(string sku, CancellationToken token, Mark mark = null)
+		public void DeleteItem( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task DeleteItemAsync( string sku, CancellationToken token, Mark mark = null)
+		public Task DeleteItemAsync( string sku, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
@@ -1380,7 +1365,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation( CancellationToken token, Mark mark = null )
+		public ClassificationConfigurationInformation[] GetClassificationConfigurationInformation( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
@@ -1390,17 +1375,17 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// </summary>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync( CancellationToken token, Mark mark = null )
+		public Task< ClassificationConfigurationInformation[] > GetClassificationConfigurationInformationAsync( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
 
-		public ClassificationConfigurationInformation[] GetClassificationConfigInfo( CancellationToken token, Mark mark = null )
+		public ClassificationConfigurationInformation[] GetClassificationConfigInfo( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( CancellationToken token, Mark mark = null )
+		public Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			throw new NotImplementedException();
 		}

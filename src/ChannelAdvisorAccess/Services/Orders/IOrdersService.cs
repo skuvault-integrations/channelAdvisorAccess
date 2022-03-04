@@ -21,9 +21,9 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// </summary>
 		string AccountId{ get; }
 
-		void Ping( Mark mark = null );
+		void Ping( Mark mark, CancellationToken token = default( CancellationToken ) );
 
-		Task PingAsync( Mark mark = null );
+		Task PingAsync( Mark mark, CancellationToken token = default( CancellationToken ) );
 
 		/// <summary>
 		/// Gets the orders.
@@ -32,7 +32,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Iterator to go over orders 1 order at a time.</returns>
 		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
-		IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null )
+		IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -42,7 +42,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Iterator to go over orders 1 order at a time.</returns>
 		/// <remarks>The best way to process orders is to use <c>foreach</c></remarks>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null )
+		Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="startDate">The start date.</param>
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
-		IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, CancellationToken token, Mark mark = null )
+		IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -61,7 +61,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, CancellationToken token, Mark mark = null )
+		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -71,24 +71,24 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, CancellationToken token, Mark mark = null )
+		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>Updates the order list.</summary>
 		/// <param name="orderUpdates">The order updates.</param>
 		/// <returns>Result of updates.</returns>
-		IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, CancellationToken token, Mark mark = null );
+		IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token = default( CancellationToken ) );
 
-		Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, CancellationToken token, Mark mark = null );
+		Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token = default( CancellationToken ) );
 
 		/// <summary>
 		/// Submits the order.
 		/// </summary>
 		/// <param name="orderSubmit">The order submit.</param>
 		/// <returns>New order CA id.</returns>
-		int SubmitOrder( OrderSubmit orderSubmit, CancellationToken token, Mark mark = null );
+		int SubmitOrder( OrderSubmit orderSubmit, Mark mark, CancellationToken token = default( CancellationToken ) );
 
-		Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, CancellationToken token, Mark mark = null );
+		Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, Mark mark, CancellationToken token = default( CancellationToken ) );
 
 		/// <summary>
 		///	This property can be used by the client to monitor the last access library's network activity time.

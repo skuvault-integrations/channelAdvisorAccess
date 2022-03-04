@@ -144,12 +144,12 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private Task RefreshAccessToken( CancellationToken token, Mark mark )
+		private Task RefreshAccessToken( Mark mark, CancellationToken token )
 		{
 			if ( string.IsNullOrEmpty( this._accessToken ) )
-				return this.RefreshAccessTokenBySoapCredentials( token, mark, Timeouts[ ChannelAdvisorOperationEnum.RefreshAccessTokenBySoapCredentials ] );
+				return this.RefreshAccessTokenBySoapCredentials( mark, Timeouts[ ChannelAdvisorOperationEnum.RefreshAccessTokenBySoapCredentials ], token );
 			else
-				return this.RefreshAccessTokenByRestCredentials( token, mark, Timeouts[ ChannelAdvisorOperationEnum.RefreshAccessTokenByRestCredentials ] );
+				return this.RefreshAccessTokenByRestCredentials( mark, Timeouts[ ChannelAdvisorOperationEnum.RefreshAccessTokenByRestCredentials ], token );
 		}
 
 		/// <summary>
@@ -158,7 +158,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenBySoapCredentials( CancellationToken token, Mark mark, int? operationTimeout = null )
+		private async Task RefreshAccessTokenBySoapCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			_waitHandle.WaitOne();
 
@@ -221,7 +221,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// </summary>
 		/// <param name="mark">Mark for logging</param>
 		/// <returns></returns>
-		private async Task RefreshAccessTokenByRestCredentials( CancellationToken token, Mark mark, int? operationTimeout = null )
+		private async Task RefreshAccessTokenByRestCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			_waitHandle.WaitOne();
 			this.SetBasicAuthorizationHeader();
@@ -300,7 +300,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="pageNumber">Page ( 0 - all pages )</param>
 		/// <param name="pageSize">Page size</param>
 		/// <returns></returns>
-		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, CancellationToken token, Mark mark = null, bool collections = true, int pageNumber = 0, int? pageSize = null, int? operationTimeout = null )
+		protected async Task< PagedApiResponse< T > > GetResponseAsync< T >( string apiUrl, Mark mark, bool collections = true, int pageNumber = 0, int? pageSize = null, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -311,7 +311,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( pageNumber > 0 )
 				startPage = pageNumber;
 			
-			var response = await this.GetResponseAsyncByPage< T >( apiUrl, startPage, token, collections, pageSize, mark, operationTimeout ).ConfigureAwait( false );
+			var response = await this.GetResponseAsyncByPage< T >( apiUrl, startPage, mark, collections, pageSize, operationTimeout, token ).ConfigureAwait( false );
 
 			if ( response.Value != null )
 				entities.AddRange( response.Value );
@@ -333,7 +333,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					var options = new ParallelOptions() {  MaxDegreeOfParallelism = 1 };
 					Parallel.For( nextPage, totalPages, options, () => new List< T >(), ( currentPage, pls, tempResult ) =>
 					{
-						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, token, false, serviceRecommendedPageSize, mark, operationTimeout ).GetAwaiter().GetResult();
+						var pagedResponse = this.GetResponseAsyncByPage< T >( apiUrl, currentPage, mark, false, serviceRecommendedPageSize, operationTimeout, token ).GetAwaiter().GetResult();
 						tempResult.AddRange( pagedResponse.Value );
 
 						return tempResult;
@@ -371,7 +371,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="pageSize"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, CancellationToken token, bool requestDataSetSize = false, int? pageSize = null, Mark mark = null, int? operationTimeout = null )
+		protected Task< ODataResponse< T > > GetResponseAsyncByPage< T >( string apiUrl, int page, Mark mark, bool requestDataSetSize = false, int? pageSize = null, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -389,7 +389,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			if ( pageSize != null && page > 1 )
 				url += "&$skip=" + ( page - 1 ) * pageSize;
 
-			return GetEntityAsync< ODataResponse< T > >( url, token, mark, operationTimeout ); 
+			return GetEntityAsync< ODataResponse< T > >( url, mark, operationTimeout, token ); 
 		}
 
 		/// <summary>
@@ -399,7 +399,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="apiUrl"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< T > GetEntityAsync< T >( string apiUrl, CancellationToken token, Mark mark = null, int? operationTimeout = null )
+		protected Task< T > GetEntityAsync< T >( string apiUrl, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -423,7 +423,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, returnStatusCode: httpResponse.StatusCode.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
-							await this.ThrowIfError( httpResponse, responseStr, cts.Token, mark ).ConfigureAwait( false );												
+							await this.ThrowIfError( httpResponse, responseStr, mark, cts.Token ).ConfigureAwait( false );
 
 							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
@@ -444,7 +444,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="url"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< byte[] > DownloadFile( string url, Mark mark = null )
+		protected Task< byte[] > DownloadFile( string url, Mark mark, CancellationToken token )
 		{
 			return this.HttpClient.GetByteArrayAsync( url );
 		}
@@ -457,7 +457,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="body"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, CancellationToken token, Mark mark = null, int? operationTimeout = null )
+		protected Task< T > PostAsyncAndGetResult< T >( string apiUrl, string body, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -482,7 +482,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: responseStr, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
-							await this.ThrowIfError( httpResponse, responseStr, cts.Token, mark ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, responseStr, mark, cts.Token ).ConfigureAwait( false );
 
 							var message = JsonConvert.DeserializeObject< T >( responseStr );
 
@@ -504,7 +504,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="data"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task PostAsync< T >( string apiUrl, T data, CancellationToken token, Mark mark = null, int? operationTimeout = null )
+		protected Task PostAsync< T >( string apiUrl, T data, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -526,7 +526,7 @@ namespace ChannelAdvisorAccess.REST.Services
 							RefreshLastNetworkActivityTime();
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
-							await this.ThrowIfError( httpResponse, null, cts.Token, mark ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse, null, mark, cts.Token ).ConfigureAwait( false );
 
 							return httpResponse.StatusCode;
 						}
@@ -547,7 +547,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="data"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data, CancellationToken token, Mark mark = null, int? operationTimeout = null )
+		protected Task < HttpStatusCode > PutAsync< T > ( string apiUrl, T data, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -569,7 +569,7 @@ namespace ChannelAdvisorAccess.REST.Services
 						RefreshLastNetworkActivityTime();
 						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: apiUrl, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 							
-						await this.ThrowIfError( httpResponse, null, cts.Token, mark ).ConfigureAwait( false );
+						await this.ThrowIfError( httpResponse, null, mark, cts.Token ).ConfigureAwait( false );
 
 						return httpResponse.StatusCode;
 					}
@@ -589,7 +589,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="batch"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		protected async Task < T[] > DoBatch< T >( BatchBuilder batch, CancellationToken token, Mark mark = null, int? operationTimeout = null )
+		protected async Task < T[] > DoBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			var result = new List< T >();
 
@@ -600,7 +600,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			foreach( var batchPart in batches )
 			{
-				result.AddRange( await DoPartialBatch< T >( batchPart, token, mark, operationTimeout ).ConfigureAwait( false ) );
+				result.AddRange( await DoPartialBatch< T >( batchPart, mark, operationTimeout, token ).ConfigureAwait( false ) );
 			}
 
 			return result.ToArray();
@@ -612,7 +612,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="batch"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, CancellationToken token, Mark mark = null, int? operationTimeout = null )
+		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -690,7 +690,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="response"></param>
 		/// <param name="message">response message from server</param>
 		/// <param name="mark">mark for logging</param>
-		private async Task ThrowIfError( HttpResponseMessage response, string message, CancellationToken token, Mark mark )
+		private async Task ThrowIfError( HttpResponseMessage response, string message, Mark mark, CancellationToken token )
 		{
 			if ( message == null )
 				message = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
@@ -708,7 +708,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), notes: "Start to Refresh Access Token. Current Token: " +  token ) );
 				// we have to refresh our access token
-				await this.RefreshAccessToken( token, mark ).ConfigureAwait( false );
+				await this.RefreshAccessToken( mark, token ).ConfigureAwait( false );
 				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), notes: "Finish to Refresh Access Token. Current Token: " + token ) );
 				
 				throw new ChannelAdvisorUnauthorizedException( message );

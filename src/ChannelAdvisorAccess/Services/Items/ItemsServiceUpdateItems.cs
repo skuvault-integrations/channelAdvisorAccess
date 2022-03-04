@@ -14,11 +14,8 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region Update items
-		public void SynchItem( InventoryItemSubmit item, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public void SynchItem( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			var parameters = new { item, isCreateNew };
 
 			try
@@ -29,7 +26,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
-					if( !isCreateNew && !this.DoesSkuExist( item.Sku, token, mark ) )
+					if( !isCreateNew && !this.DoesSkuExist( item.Sku, mark, token ) )
 						return;
 					
 					var resultOfBoolean = this._client.SynchInventoryItem( this._credentials, this.AccountId, item );
@@ -49,11 +46,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task SynchItemAsync( InventoryItemSubmit item, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public async Task SynchItemAsync( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			var parameters = new { item, isCreateNew };
 
 			try
@@ -64,7 +58,7 @@ namespace ChannelAdvisorAccess.Services.Items
 				{
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
-					if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku, token, mark ).ConfigureAwait( false ) ) )
+					if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku, mark, token ).ConfigureAwait( false ) ) )
 						return;
 					
 					var resultOfBoolean = await this._client.SynchInventoryItemAsync( this._credentials, this.AccountId, item ).ConfigureAwait( false );
@@ -83,11 +77,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void SynchItems( IEnumerable< InventoryItemSubmit > items, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public void SynchItems( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			var parameters = new { items, isCreateNew };
 
 			try
@@ -96,7 +87,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				if( !isCreateNew )
 				{
-					var existSkus = this.DoSkusExist( items.Select( x => x.Sku ), token, mark ).Select( x => x.Sku );
+					var existSkus = this.DoSkusExist( items.Select( x => x.Sku ), mark, token ).Select( x => x.Sku );
 					items = items.Where( x => existSkus.Contains( x.Sku ) );
 				}
 
@@ -124,11 +115,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, CancellationToken token, bool isCreateNew = false, Mark mark = null )
+		public async Task SynchItemsAsync( IEnumerable< InventoryItemSubmit > items, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			var parameters = new { items, isCreateNew };
 
 			try
@@ -137,7 +125,7 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				if( !isCreateNew )
 				{
-					var existSkus = ( this.DoSkusExist( items.Select( x => x.Sku ), token, mark ) ).Select( x => x.Sku );
+					var existSkus = ( this.DoSkusExist( items.Select( x => x.Sku ), mark, token ) ).Select( x => x.Sku );
 					items = items.Where( x => existSkus.Contains( x.Sku ) );
 				}
 
@@ -164,11 +152,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, CancellationToken token, Mark mark = null )
+		public void UpdateQuantityAndPrice( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : itemQuantityAndPrice.ToJson() ) );
@@ -193,11 +178,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, CancellationToken token, Mark mark = null )
+		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : itemQuantityAndPrice.ToJson() ) );
@@ -222,11 +204,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, CancellationToken token, Mark mark = null )
+		public void UpdateQuantityAndPrices( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : itemQuantityAndPrices.ToJson() ) );
@@ -256,11 +235,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, CancellationToken token, Mark mark = null )
+		public async Task UpdateQuantityAndPricesAsync( IEnumerable< InventoryItemQuantityAndPrice > itemQuantityAndPrices, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : itemQuantityAndPrices.ToJson() ) );
@@ -288,12 +264,9 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason, CancellationToken token, Mark mark = null )
+		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
-
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 
 			var parameters = new { labels, skus, reason };
 
@@ -326,12 +299,9 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason, CancellationToken token, Mark mark = null )
+		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
-
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 
 			var parameters = new { labels, skus, reason };
 
@@ -359,12 +329,9 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, CancellationToken token, Mark mark = null )
+		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
-
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 
 			var parameters = new { labels, createLabelIfNotExist, skus, reason };
 			try
@@ -395,12 +362,9 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, CancellationToken token, Mark mark = null )
+		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
-
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
 
 			var parameters = new { labels, createLabelIfNotExist, skus, reason };
 

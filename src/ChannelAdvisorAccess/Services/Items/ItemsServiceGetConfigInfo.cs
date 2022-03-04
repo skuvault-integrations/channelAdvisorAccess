@@ -10,11 +10,8 @@ namespace ChannelAdvisorAccess.Services.Items
 	public partial class ItemsService: IItemsService
 	{
 		#region Get Config Info
-		public ClassificationConfigurationInformation[] GetClassificationConfigInfo( CancellationToken token, Mark mark = null )
+		public ClassificationConfigurationInformation[] GetClassificationConfigInfo( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -41,11 +38,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( CancellationToken token, Mark mark = null )
-		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
+		public async Task< ClassificationConfigurationInformation[] > GetClassificationConfigInfoAsync( Mark mark, CancellationToken token )
+		{			
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -72,11 +66,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public DistributionCenterResponse[] GetDistributionCenterList( CancellationToken token, Mark mark = null )
+		public DistributionCenterResponse[] GetDistributionCenterList( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -103,11 +94,8 @@ namespace ChannelAdvisorAccess.Services.Items
 			}
 		}
 
-		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( CancellationToken token, Mark mark = null )
+		public async Task< DistributionCenterResponse[] > GetDistributionCenterListAsync( Mark mark, CancellationToken token )
 		{
-			if( mark.IsBlank() )
-				mark = Mark.CreateNew();
-
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ) );
@@ -135,7 +123,7 @@ namespace ChannelAdvisorAccess.Services.Items
 		}
 		#endregion
 
-		public Task< REST.Models.DistributionCenter[] > GetDistributionCentersAsync( CancellationToken token, Mark mark = null )
+		public Task< REST.Models.DistributionCenter[] > GetDistributionCentersAsync( Mark mark, CancellationToken token )
 		{
 			throw new NotImplementedException();
 		}

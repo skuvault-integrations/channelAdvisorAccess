@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Services;
@@ -20,18 +19,18 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			// clear product quantity for all distribution centers
-			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList( CancellationToken.None ).Select(dc => dc.DistributionCenterCode).ToArray();
+			string[] distributionCentersCodes = this.ItemsService.GetDistributionCenterList( this.Mark ).Select(dc => dc.DistributionCenterCode).ToArray();
 
 			foreach(string distributionCenterCode in distributionCentersCodes)
-				this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 0, distributionCenterCode ), CancellationToken.None );
+				this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 0, distributionCenterCode ), this.Mark );
 
-			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 2 ), CancellationToken.None );
+			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 2 ), this.Mark );
 
 			//------------ Act
-			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 5 ), CancellationToken.None );
+			this.ItemsService.UpdateQuantityAndPrice( CreateItemQuantityAndPrice( 5 ), this.Mark );
 
 			//------------ Assert
-			this.ItemsService.GetAvailableQuantity( TestSku, CancellationToken.None ).Should().Be( 5 );
+			this.ItemsService.GetAvailableQuantity( TestSku, this.Mark ).Should().Be( 5 );
 			ValidateLastActivityDateTimeUpdated();
 		}
 
@@ -51,7 +50,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			this.ItemsService.Ping();
+			this.ItemsService.Ping( this.Mark );
 
 			//------------ Assert
 			ValidateLastActivityDateTimeUpdated();
@@ -63,7 +62,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			this.ItemsService.PingAsync().GetAwaiter().GetResult();
+			this.ItemsService.PingAsync( this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			ValidateLastActivityDateTimeUpdated();
@@ -75,7 +74,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.DoesSkuExist( TestSku, CancellationToken.None );
+			var result = this.ItemsService.DoesSkuExist( TestSku, this.Mark );
 
 			//------------ Assert
 			result.Should().BeTrue();
@@ -88,7 +87,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.DoesSkuExist( TestSku + Guid.NewGuid(), CancellationToken.None );
+			var result = this.ItemsService.DoesSkuExist( TestSku + Guid.NewGuid(), this.Mark );
 
 			//------------ Assert
 			result.Should().BeFalse();			
@@ -100,7 +99,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.DoesSkuExistAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.DoesSkuExistAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().BeTrue();
@@ -113,7 +112,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.DoesSkuExistAsync( TestSku + Guid.NewGuid(), CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.DoesSkuExistAsync( TestSku + Guid.NewGuid(), this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().BeFalse();
@@ -125,7 +124,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 			var incorrectSku = TestSku + Guid.NewGuid();
 			//------------ Act
-			var result = this.ItemsService.DoSkusExist( new[] { TestSku, incorrectSku }, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( new[] { TestSku, incorrectSku }, this.Mark );
 
 			//------------ Assert
 			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
@@ -139,7 +138,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			for( var i = 0; i < 1500; i++ )
 				incorrectSkuList.Add( Guid.NewGuid().ToString() );
 			//------------ Act
-			var result = this.ItemsService.DoSkusExist( incorrectSkuList, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( incorrectSkuList, this.Mark );
 
 			//------------ Assert
 			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() );
@@ -151,7 +150,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.DoSkusExist( new string[] { }, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( new string[] { }, this.Mark );
 
 			//------------ Assert
 			result.Should().HaveCount( 0 );
@@ -164,7 +163,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 
 			//------------ Act
-			var result = this.ItemsService.DoSkusExist( new[] { incorrectSku }, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( new[] { incorrectSku }, this.Mark );
 
 			//------------ Assert
 			result.Should().HaveCount( 0 );
@@ -180,7 +179,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			skuList.Add( TestSku );
 
 			//------------ Act
-			var result = this.ItemsService.DoSkusExist( skuList, CancellationToken.None );
+			var result = this.ItemsService.DoSkusExist( skuList, this.Mark );
 
 			//------------ Assert
 			result.Where( r => r.Result ).ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true } } );
@@ -193,7 +192,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 
 			//------------ Act
-			var result = this.ItemsService.DoSkusExistAsync( new[] { TestSku, incorrectSku }, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.DoSkusExistAsync( new[] { TestSku, incorrectSku }, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
@@ -205,7 +204,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.DoSkusExistAsync( new string[] { }, CancellationToken.None ).GetAwaiter().GetResult();;
+			var result = this.ItemsService.DoSkusExistAsync( new string[] { }, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().HaveCount( 0 );
@@ -218,7 +217,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 
 			//------------ Act
-			var result = this.ItemsService.DoSkusExistAsync( new[] { incorrectSku }, CancellationToken.None ).GetAwaiter().GetResult();;
+			var result = this.ItemsService.DoSkusExistAsync( new[] { incorrectSku }, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().HaveCount( 0 );
@@ -231,7 +230,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetAllItems( CancellationToken.None );
+			var result = this.ItemsService.GetAllItems( this.Mark );
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
@@ -245,7 +244,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 
 			//------------ Act
-			var result = this.ItemsService.GetItems( new[] { TestSku, incorrectSku }, CancellationToken.None );
+			var result = this.ItemsService.GetItems( new[] { TestSku, incorrectSku }, this.Mark );
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
@@ -261,7 +260,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 
 			//------------ Act
-			var result = this.ItemsService.GetItemsAsync( new[] { TestSku, incorrectSku }, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetItemsAsync( new[] { TestSku, incorrectSku }, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
@@ -276,7 +275,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetItemQuantities( TestSku, CancellationToken.None );
+			var result = this.ItemsService.GetItemQuantities( TestSku, this.Mark );
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -290,7 +289,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetItemQuantitiesAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetItemQuantitiesAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -304,7 +303,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetClassificationConfigurationInformation( CancellationToken.None );
+			var result = this.ItemsService.GetClassificationConfigurationInformation( this.Mark );
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
@@ -317,7 +316,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetClassificationConfigurationInformationAsync( CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetClassificationConfigurationInformationAsync( this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
@@ -330,7 +329,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetStoreInfo( TestSku, CancellationToken.None );
+			var result = this.ItemsService.GetStoreInfo( TestSku, this.Mark );
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -343,7 +342,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetStoreInfoAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetStoreInfoAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().NotBeNull();			
@@ -353,7 +352,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 		public void WhenGetStoreInfoAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
 		{
 			var activityTimeBeforeMakingAnyCall = DateTime.UtcNow;
-			this.ItemsService.GetStoreInfoAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			this.ItemsService.GetStoreInfoAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			this.ItemsService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyCall );
 		}
@@ -364,7 +363,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetShippingInfo( TestSku, CancellationToken.None );
+			var result = this.ItemsService.GetShippingInfo( TestSku, this.Mark );
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -378,7 +377,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetShippingInfoAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetShippingInfoAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -392,7 +391,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetVariationInfo( TestSku, CancellationToken.None );
+			var result = this.ItemsService.GetVariationInfo( TestSku, this.Mark );
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -405,7 +404,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			//------------ Arrange
 
 			//------------ Act
-			var result = this.ItemsService.GetVariationInfoAsync( TestSku, CancellationToken.None ).GetAwaiter().GetResult();
+			var result = this.ItemsService.GetVariationInfoAsync( TestSku, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -419,7 +418,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 
 			//------------ Act
-			var result = this.ItemsService.GetAvailableQuantities( new[] { TestSku, incorrectSku }, CancellationToken.None ).ToArray();
+			var result = this.ItemsService.GetAvailableQuantities( new[] { TestSku, incorrectSku }, this.Mark ).ToArray();
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -440,7 +439,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 
 			//------------ Act
-			var result = this.ItemsService.GetAvailableQuantitiesAsync( new[] { TestSku, incorrectSku }, CancellationToken.None ).GetAwaiter().GetResult().ToArray();
+			var result = this.ItemsService.GetAvailableQuantitiesAsync( new[] { TestSku, incorrectSku }, this.Mark ).GetAwaiter().GetResult().ToArray();
 
 			//------------ Assert
 			result.Should().NotBeNull();
@@ -462,10 +461,10 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Act
 			var startTime = DateTime.Now;
-			var allSkus = this.ItemsService.GetAllSkusAsync( CancellationToken.None ).GetAwaiter().GetResult();
+			var allSkus = this.ItemsService.GetAllSkusAsync( this.Mark ).GetAwaiter().GetResult();
 			System.Diagnostics.Debug.WriteLine( ( DateTime.Now - startTime ).TotalSeconds );
 			startTime = DateTime.Now;
-			var existingsSkus = this.ItemsService.DoSkusExistAsync( allSkus, CancellationToken.None ).GetAwaiter().GetResult();
+			var existingsSkus = this.ItemsService.DoSkusExistAsync( allSkus, this.Mark ).GetAwaiter().GetResult();
 			System.Diagnostics.Debug.WriteLine( ( DateTime.Now - startTime ).TotalSeconds );
 			//------------ Assert
 		}
