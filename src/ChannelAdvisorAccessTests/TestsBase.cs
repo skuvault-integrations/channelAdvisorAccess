@@ -8,10 +8,7 @@ using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.Services.Listing;
 using ChannelAdvisorAccess.Services.Orders;
 using ChannelAdvisorAccess.Services.Shipping;
-using Netco.Logging;
-using Netco.Logging.NLogIntegration;
 using NUnit.Framework;
-using Mark = ChannelAdvisorAccess.Misc.Mark;
 
 namespace ChannelAdvisorAccessTests
 {
@@ -49,7 +46,7 @@ namespace ChannelAdvisorAccessTests
 
 		public IItemsService ItemsService{ get; private set; }
 
-		public IAdminService AdminService{ get; private set; }		
+		public IAdminService AdminService{ get; private set; }
 
 		private static TestCredentials _credentials;
 
