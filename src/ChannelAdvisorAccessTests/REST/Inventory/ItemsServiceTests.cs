@@ -610,5 +610,13 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			productsId[ TestSku2 ].Should().Be( 12 );
 		}
 
+		[ Test ]
+		public async Task ImportProducts()
+		{
+			var itemsService = this.ItemsService as ChannelAdvisorAccess.REST.Services.Items.ItemsService;
+			var products = await itemsService.ImportProducts( this.Mark );
+			products.Should().NotBeNull();
+			products.Should().NotBeEmpty();
+		}
 	}
 }
