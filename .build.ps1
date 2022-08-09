@@ -46,8 +46,9 @@ task Package  {
 
 # Set $script:Version = assembly version
 task Version {
-	assert (( Get-Item $build_artifacts_dir\$project_name.dll ).VersionInfo.FileVersion -match '^(\d+\.\d+\.\d+)')
-	$script:Version = $matches[1]
+	#assert (( Get-Item $build_artifacts_dir\$project_name.dll ).VersionInfo.FileVersion -match '^(\d+\.\d+\.\d+)')
+	#$script:Version = $matches[1]
+	$script:Version = ( Get-Item $build_artifacts_dir\$project_name.dll ).VersionInfo.FileVersion
 }
 
 task Archive {
@@ -80,6 +81,7 @@ task NuGet Package, Version, {
 		<owners>Agile Harbor</owners>
 		<projectUrl>https://github.com/agileharbor/$project_name</projectUrl>
 		<licenseUrl>https://raw.github.com/agileharbor/$project_name/master/License.txt</licenseUrl>
+		<repository type="git" url="https://github.com/skuvault-integrations/$project_name/" />
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<copyright>Copyright (C) Agile Harbor, LLC</copyright>
 		<summary>$text</summary>
@@ -92,7 +94,7 @@ task NuGet Package, Version, {
 				<dependency id="Newtonsoft.Json" version="7.0.1" />
 				<dependency id="Polly" version="7.2.2" />
 				<dependency id="SharpZipLib" version="1.1.0" />
-				<dependency id="CsvHelper" version="12.0.0" />
+				<dependency id="CsvHelper" version="27.2.1" />
 			</group>
 		</dependencies>
         <frameworkAssemblies>

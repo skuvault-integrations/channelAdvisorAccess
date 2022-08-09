@@ -28,6 +28,7 @@ _ReSharper*/
 *.ReSharper
 *.docstates
 .vs
+.idea
 
 #Ignore common build files
 build

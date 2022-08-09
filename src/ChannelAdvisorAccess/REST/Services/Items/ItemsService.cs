@@ -4,6 +4,7 @@ using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.Services.Items;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
@@ -19,6 +20,7 @@ using System.Text;
 using CsvHelper;
 using System.Net;
 using System.Threading;
+using CsvHelper.Configuration;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
 {
@@ -1187,12 +1189,15 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 						using( var streamReader = new StreamReader( zipStream, Encoding.UTF8 ) )
 						{
-							using( var csvReader = new CsvReader( streamReader ))
+							var csvConfiguration = new CsvConfiguration( CultureInfo.InvariantCulture )
 							{
-								csvReader.Configuration.HasHeaderRecord = true;
-								csvReader.Configuration.Delimiter = "\t";
-								csvReader.Configuration.BadDataFound = null;
+								HasHeaderRecord = true,
+								Delimiter = "\t",
+								BadDataFound = null
+							};
 
+							using( var csvReader = new CsvReader( streamReader, csvConfiguration ) )
+							{
 								var rows = csvReader.GetRecords< ProductExportRow >();
 								var productIds = new Dictionary< string, int >();
 
