@@ -51,11 +51,13 @@ namespace ChannelAdvisorAccessTests.REST
 			if( credentials.useSoapCredentials )
 			{
 				this.ItemsService = ServicesFactory.CreateItemsRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId, timeouts );
+				this.ItemsPagingService = ServicesFactory.CreateItemsPagingRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId, timeouts );
 				this.OrdersService = ServicesFactory.CreateOrdersRestServiceWithSoapCompatibleAuth( credentials.AccountName, credentials.AccountId, this.ItemsService, timeouts );
 			}
 			else
 			{
 				this.ItemsService = ServicesFactory.CreateItemsRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken, timeouts );
+				this.ItemsPagingService = ServicesFactory.CreateItemsPagingRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken, timeouts );
 				this.OrdersService = ServicesFactory.CreateOrdersRestService( credentials.AccountName, null, credentials.AccessToken, credentials.RefreshToken, timeouts );
 			}
 
@@ -113,6 +115,7 @@ namespace ChannelAdvisorAccessTests.REST
 		public IListingService ListingService{ get; private set; }
 
 		public IItemsService ItemsService{ get; private set; }
+		public IItemsService ItemsPagingService{ get; private set; }
 
 		public IItemsService LightWeightItemsService{ get; private set; }
 

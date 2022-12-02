@@ -353,6 +353,42 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			result.Response.Should().NotBeNullOrEmpty();
 			result.AllPagesQueried.Should().BeFalse();
 		}
+		
+		[ Test ]
+		public void GetAllFilteredItemsByUpdateDate()
+		{
+			var filter = new ItemsFilter
+			{
+				Criteria = new InventoryItemCriteria
+				{
+					DateRangeField = TimeStampFields.LastUpdateDate,
+					DateRangeStartGMT = DateTime.Now.AddHours( -24 ),
+					DateRangeEndGMT = DateTime.Now
+				}
+			};
+
+			var result = this.ItemsPagingService.GetFilteredItemsAsync( filter, this.Mark ).GetAwaiter().GetResult();
+
+			result.Should().NotBeNullOrEmpty();
+		}
+		
+		[ Test ]
+		public void GetAllFilteredSkusByUpdateDate()
+		{
+			var filter = new ItemsFilter
+			{
+				Criteria = new InventoryItemCriteria
+				{
+					DateRangeField = TimeStampFields.LastUpdateDate,
+					DateRangeStartGMT = DateTime.Now.AddHours( -24 ),
+					DateRangeEndGMT = DateTime.Now
+				}
+			};
+
+			var result = this.ItemsPagingService.GetFilteredSkusAsync( filter, this.Mark ).GetAwaiter().GetResult();
+
+			result.Should().NotBeNullOrEmpty();
+		}
 
 		[ Test ]
 		public void GetFilteredItemsByUpdateDateAndNotExistingPage()
