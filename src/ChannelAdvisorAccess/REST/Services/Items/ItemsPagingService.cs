@@ -53,9 +53,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, null, null );
 
-			var result = await Task.FromResult( this.GetProducts( url, mark, token : token ) );
+			var result = await this.GetProducts( url, mark, token : token ).ConfigureAwait( false );
 
-			return ( from product in result.SelectMany( x => x ) select product.ToInventoryItemResponse() ).ToList();
+			return ( from product in result select product.ToInventoryItemResponse() ).ToList();
 		}
 
 		/// <summary>
@@ -68,9 +68,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		public new async Task< List< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark, CancellationToken token = default )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, "ID,Sku", null );
-			var result = await Task.FromResult( this.GetProducts( url, mark, this.Timeouts[ ChannelAdvisorOperationEnum.GetProductsByFilterWithIdOnlyRest ], token ) );
+			var result = await this.GetProducts( url, mark, this.Timeouts[ ChannelAdvisorOperationEnum.GetProductsByFilterWithIdOnlyRest ], token ).ConfigureAwait( false );
 
-			return result.SelectMany( x => x ).Select( item => item.Sku ).ToList();
+			return result.Select( item => item.Sku ).ToList();
 		}
 
 		/// <summary>
@@ -81,22 +81,26 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="operationTimeout"></param>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		private IEnumerable< Product[] > GetProducts( string url, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		private async Task< List< Product > > GetProducts( string url, Mark mark, int? operationTimeout = null, CancellationToken token = default )
 		{
+			var result = new List< Product >();
+
 			var nextLink = url;
 			while( !string.IsNullOrEmpty( nextLink ) )
-			{
-				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo(
-					mark : mark,
-					additionalInfo : this.AdditionalLogInfo(),
-					methodParameters : url ) );
-
-				ODataResponse< Product > resultByPage;
-
 				try
 				{
-					resultByPage = this.GetEntityAsync< ODataResponse< Product > >( nextLink, mark, operationTimeout, token ).GetAwaiter().GetResult();
+					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : url ) );
+
+					var resultByPage = await this.GetEntityAsync< ODataResponse< Product > >( nextLink, mark, operationTimeout, token );
 					nextLink = resultByPage.NextLink;
+
+					result.AddRange( resultByPage.Value );
+
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo(
+						mark : mark,
+						methodParameters : url,
+						methodResult : resultByPage.ToJson(),
+						additionalInfo : this.AdditionalLogInfo() ) );
 				}
 				catch( Exception exception )
 				{
@@ -105,14 +109,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 					throw channelAdvisorException;
 				}
 
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo(
-					mark : mark,
-					methodParameters : url,
-					methodResult : resultByPage.ToJson(),
-					additionalInfo : this.AdditionalLogInfo() ) );
-
-				yield return resultByPage.Value;
-			}
+			return result;
 		}
 	}
 }
