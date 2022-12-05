@@ -86,8 +86,9 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			var result = new List< Product >();
 
 			var nextLink = url;
-			while( !string.IsNullOrEmpty( nextLink ) )
-				try
+			try
+			{
+				while( !string.IsNullOrEmpty( nextLink ) )
 				{
 					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : url ) );
 
@@ -102,12 +103,13 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 						methodResult : resultByPage.ToJson(),
 						additionalInfo : this.AdditionalLogInfo() ) );
 				}
-				catch( Exception exception )
-				{
-					var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
-					ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
-					throw channelAdvisorException;
-				}
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
 
 			return result;
 		}
