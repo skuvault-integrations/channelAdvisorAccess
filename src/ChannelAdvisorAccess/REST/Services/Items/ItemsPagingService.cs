@@ -16,6 +16,8 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 {
 	public class ItemsPagingService: ItemsService, IItemsService
 	{
+		private const int NumberProductsForLogging = 500 * 1000;
+		
 		/// <summary>
 		/// Rest items service with standard authorization flow
 		/// </summary>
@@ -97,6 +99,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 					result.AddRange( resultByPage.Value );
 
+					if( result.Count > NumberProductsForLogging )
+					{
+						ChannelAdvisorLogger.Log().Info( $"[ChannelAdvisor] Product Sync request for '{this.AccountId}' try to receive more than {NumberProductsForLogging} products: {result.Count}" );
+					}
+					
 					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo(
 						mark : mark,
 						methodParameters : url,
