@@ -94,7 +94,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				{
 					ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : url ) );
 
-					var resultByPage = await this.GetEntityAsync< ODataResponse< Product > >( nextLink, mark, operationTimeout, token );
+					var resultByPage = await this.GetEntityAsync< ODataResponse< Product > >( nextLink, mark, operationTimeout, token ).ConfigureAwait( false );
 					nextLink = resultByPage.NextLink;
 
 					result.AddRange( resultByPage.Value );
