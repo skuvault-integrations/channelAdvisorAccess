@@ -57,7 +57,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 			var result = await this.GetProducts( url, mark, token : token ).ConfigureAwait( false );
 
-			return ( from product in result select product.ToInventoryItemResponse() ).ToList();
+			return result.Select( x => x.ToInventoryItemResponse() );
 		}
 
 		/// <summary>
@@ -67,12 +67,12 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="mark"></param>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		public new async Task< List< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark, CancellationToken token = default )
+		public new async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark, CancellationToken token = default )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, "ID,Sku", null );
 			var result = await this.GetProducts( url, mark, this.Timeouts[ ChannelAdvisorOperationEnum.GetProductsByFilterWithIdOnlyRest ], token ).ConfigureAwait( false );
 
-			return result.Select( item => item.Sku ).ToList();
+			return result.Select( item => item.Sku );
 		}
 
 		/// <summary>
