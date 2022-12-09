@@ -15,5 +15,6 @@ namespace ChannelAdvisorAccess.Services
 		IItemsService CreateItemsService( ChannelAdvisorConfig config, ChannelAdvisorTimeouts timeouts );
 		IShippingService CreateShippingService( string accountName, string accountId );
 		IListingService CreateListingService( string accountName, string accountId );
+		IItemsService CreateItemsPagingService( ChannelAdvisorConfig config, ChannelAdvisorTimeouts timeouts );
 	}
 }
