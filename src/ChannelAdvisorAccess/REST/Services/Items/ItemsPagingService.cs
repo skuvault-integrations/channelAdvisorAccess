@@ -51,7 +51,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="mark"></param>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		public new async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark, CancellationToken token = default )
+		public new async Task< IEnumerable< InventoryItemResponse > > GetFilteredItemsAsync( ItemsFilter filter, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, null, null );
 
@@ -67,7 +67,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="mark"></param>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		public new async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark, CancellationToken token = default )
+		public new async Task< IEnumerable< string > > GetFilteredSkusAsync( ItemsFilter filter, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
 			var url = new ItemsServiceUrlBuilder().GetProductsUrl( filter, "ID,Sku", null );
 			var result = await this.GetProducts( url, mark, this.Timeouts[ ChannelAdvisorOperationEnum.GetProductsByFilterWithIdOnlyRest ], token ).ConfigureAwait( false );
@@ -83,7 +83,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <param name="operationTimeout"></param>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		private async Task< List< Product > > GetProducts( string url, Mark mark, int? operationTimeout = null, CancellationToken token = default )
+		private async Task< List< Product > > GetProducts( string url, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			var result = new List< Product >();
 
@@ -101,7 +101,11 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 
 					if( result.Count > NumberProductsForLogging )
 					{
-						ChannelAdvisorLogger.Log().Info( $"[ChannelAdvisor] Product Sync request for '{this.AccountId}' try to receive more than {NumberProductsForLogging} products: {result.Count}" );
+						ChannelAdvisorLogger.Log().Info( string.Format( 
+							"[ChannelAdvisor] Product Sync request for '{0}' try to receive more than '{1}' products: '{2}'",
+							this.AccountId,
+							NumberProductsForLogging,
+							result.Count ) );
 					}
 					
 					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo(
