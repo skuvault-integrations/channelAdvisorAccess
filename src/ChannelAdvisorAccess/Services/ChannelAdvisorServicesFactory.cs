@@ -120,6 +120,19 @@ namespace ChannelAdvisorAccess.Services
 				return CreateItemsRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, timeouts, config.SoapCompatibilityAuth );
 		}
 
+		///  <summary>
+		/// 	Returns Items service
+		///  </summary>
+		///  <param name="config"></param>
+		///  <param name="timeouts"></param>
+		///  <returns></returns>
+		public IItemsService CreateItemsPagingService( ChannelAdvisorConfig config, ChannelAdvisorTimeouts timeouts )
+		{
+			return config.ApiVersion == ChannelAdvisorApiVersion.Soap
+				? this.CreateItemsService( config.AccountName, config.AccountId )
+				: this.CreateItemsPagingRestService( config.AccountName, config.AccountId, config.AccessToken, config.RefreshToken, timeouts, config.SoapCompatibilityAuth );
+		}
+
 		/// <summary>
 		///	Returns Soap items service for concrete tenant
 		/// </summary>
@@ -163,6 +176,40 @@ namespace ChannelAdvisorAccess.Services
 				return this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId, timeouts );
 			else
 				return new REST.Services.Items.ItemsService( credentials, accountName, accessToken, refreshToken, timeouts );
+		}
+
+		///  <summary>
+		/// 	Returns Rest items service with SOAP compatible authorization flow which return all products in one request
+		///  </summary>
+		///  <param name="accountName"></param>
+		///  <param name="accountId"></param>
+		///  <param name="timeouts"></param>
+		///  <returns></returns>
+		public IItemsService CreateItemsPagingRestServiceWithSoapCompatibleAuth( string accountName, string accountId, ChannelAdvisorTimeouts timeouts )
+		{
+			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
+			var soapCredentials = new APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };
+
+			return new REST.Services.Items.ItemsPagingService( credentials, soapCredentials, accountId, accountName, timeouts );
+		}
+
+		///  <summary>
+		/// 	Returns items Rest service with standard authorization flow which return all products in one request
+		///  </summary>
+		///  <param name="accountName"></param>
+		///  <param name="accountId"></param>
+		///  <param name="accessToken"></param>
+		///  <param name="refreshToken"></param>
+		///  <param name="timeouts"></param>
+		///  <param name="soapCompatibleAuth"></param>
+		///  <returns></returns>
+		public IItemsService CreateItemsPagingRestService( string accountName, string accountId, string accessToken, string refreshToken, ChannelAdvisorTimeouts timeouts, bool soapCompatibleAuth = false )
+		{
+			var credentials = new RestCredentials( this._applicationId, this._sharedSecret );
+
+			return soapCompatibleAuth
+				? this.CreateItemsRestServiceWithSoapCompatibleAuth( accountName, accountId, timeouts )
+				: new REST.Services.Items.ItemsPagingService( credentials, accountName, accessToken, refreshToken, timeouts );
 		}
 
 		public IShippingService CreateShippingService( string accountName, string accountId )
