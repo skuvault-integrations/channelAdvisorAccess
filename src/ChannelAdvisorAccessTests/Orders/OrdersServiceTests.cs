@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.OrderService;
@@ -10,7 +9,7 @@ using ChannelAdvisorAccess.Services.Orders;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace ChannelAdvisorAccessTests.Inventory
+namespace ChannelAdvisorAccessTests.Orders
 {
 	[ TestFixture ]
 	public class OrdersServiceTests: TestsBase
@@ -118,7 +117,27 @@ namespace ChannelAdvisorAccessTests.Inventory
 				Debug.Assert( ex is ObjectDisposedException ); 
 			}
 		}
+		
+		[ Test ]
+		[ Explicit ]
+		public async Task GetOrdersAsync_WhenFilterByImportDatesAndStatusUpdateDates_ReturnOrdersHaveLastUpdateDateInTheSpecifiedDateRange()
+		{
+			var beginDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
+			var criteria = new OrderCriteria
+			{
+				ImportDateFilterBeginTimeGMT = beginDate,
+				ImportDateFilterEndTimeGMT = endDate,
+				StatusUpdateFilterBeginTimeGMT = beginDate,
+				StatusUpdateFilterEndTimeGMT = endDate,
+				DetailLevel = DetailLevelTypes.Complete
+			};
 
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
+
+			Assert.True( result.All( x => beginDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
+		}
+		
 		private void ValidateLastActivityDateTimeUpdated()
 		{
 			this.OrdersService.LastActivityTime.Should().NotBe( this.serviceLastActivityDateTime );			

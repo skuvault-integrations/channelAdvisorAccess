@@ -12,6 +12,7 @@ namespace ChannelAdvisorAccess.REST.Extensions
 		public const string PaymentDateFieldName = "PaymentDateUtc";
 		public const string ShippingDateFieldName = "ShippingDateUtc";
 		public const string OrderIdFieldName = "ID";
+		public const string ImportDateFieldName = "ImportDateUtc";
 
 		/// <summary>
 		///	Gets filtering parameter for REST GET request
@@ -29,6 +30,14 @@ namespace ChannelAdvisorAccess.REST.Extensions
 			if ( criteria.OrderCreationFilterEndTimeGMT.HasValue )
 				clauses.Add( $"{CreatedDateFieldName} le {criteria.OrderCreationFilterEndTimeGMT.Value.ToDateTimeOffset()} and " );
 
+			var importDateFilter = "";
+			if ( criteria.ImportDateFilterBeginTimeGMT.HasValue
+				&& criteria.ImportDateFilterEndTimeGMT.HasValue )
+			{
+				importDateFilter = $"({ImportDateFieldName} ge {criteria.ImportDateFilterBeginTimeGMT.Value.ToDateTimeOffset()} " + 
+					$"and {ImportDateFieldName} le {criteria.ImportDateFilterEndTimeGMT.Value.ToDateTimeOffset()})";
+			}
+
 			if ( criteria.StatusUpdateFilterBeginTimeGMT.HasValue
 				&& criteria.StatusUpdateFilterEndTimeGMT.HasValue )
 			{
@@ -36,7 +45,13 @@ namespace ChannelAdvisorAccess.REST.Extensions
 				var statusUpdateEnd = criteria.StatusUpdateFilterEndTimeGMT.Value.ToDateTimeOffset();
 				clauses.Add( $"({CheckoutDateFieldName} ge {statusUpdateBegin} and {CheckoutDateFieldName} le {statusUpdateEnd}) " + 
 					$"or ({PaymentDateFieldName} ge {statusUpdateBegin} and {PaymentDateFieldName} le {statusUpdateEnd}) " + 
-					$"or ({ShippingDateFieldName} ge {statusUpdateBegin} and {ShippingDateFieldName} le {statusUpdateEnd}) and " );
+					$"or ({ShippingDateFieldName} ge {statusUpdateBegin} and {ShippingDateFieldName} le {statusUpdateEnd}) " +
+					$"{( !string.IsNullOrWhiteSpace( importDateFilter ) ? "or " + importDateFilter +" " : "" )}and " );
+			} else {
+				if ( !string.IsNullOrWhiteSpace( importDateFilter ) )
+				{
+					clauses.Add( $"{importDateFilter} and " );
+				}
 			}
 
 			if ( orderId != null )

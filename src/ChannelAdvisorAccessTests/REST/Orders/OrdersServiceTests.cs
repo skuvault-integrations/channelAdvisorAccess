@@ -7,7 +7,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChannelAdvisorAccessTests.REST.Orders
@@ -216,6 +215,26 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 			await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -14 ), DateTime.UtcNow, this.Mark );
 
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
+		}
+		
+		[ Test ]
+		[ Explicit ]
+		public async Task GetOrdersAsync_WhenFilterByImportDatesAndStatusUpdateDates_ReturnOrdersHaveLastUpdateDateInTheSpecifiedDateRange()
+		{
+			var beginDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
+			var criteria = new OrderCriteria
+			{
+				ImportDateFilterBeginTimeGMT = beginDate,
+				ImportDateFilterEndTimeGMT = endDate,
+				StatusUpdateFilterBeginTimeGMT = beginDate,
+				StatusUpdateFilterEndTimeGMT = endDate,
+				DetailLevel = DetailLevelTypes.Complete
+			};
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
+
+			Assert.True( result.All( x => beginDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
 		}
 	}
 }

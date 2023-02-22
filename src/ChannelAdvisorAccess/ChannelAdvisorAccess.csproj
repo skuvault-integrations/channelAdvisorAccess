@@ -306,6 +306,7 @@
     <Compile Include="REST\Models\Infrastructure\ProductExportResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportRow.cs" />
     <Compile Include="REST\Models\MarketplaceSiteIdEnum.cs" />
+    <Compile Include="REST\Models\OrderCriteria.cs" />
     <Compile Include="REST\Services\Items\ItemsPagingService.cs" />
     <Compile Include="REST\Shared\ActionPolicy.cs" />
     <Compile Include="REST\Shared\BatchBuilder.cs" />
