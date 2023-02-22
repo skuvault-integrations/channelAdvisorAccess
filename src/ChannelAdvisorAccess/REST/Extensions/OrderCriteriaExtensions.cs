@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using ChannelAdvisorAccess.OrderService;
@@ -7,7 +6,6 @@ namespace ChannelAdvisorAccess.REST.Extensions
 {
 	public static class OrderCriteriaExtensions
 	{
-		public const string CreatedDateFieldName = "CreatedDateUtc";
 		public const string CheckoutDateFieldName = "CheckoutDateUtc";
 		public const string PaymentDateFieldName = "PaymentDateUtc";
 		public const string ShippingDateFieldName = "ShippingDateUtc";
@@ -18,17 +16,10 @@ namespace ChannelAdvisorAccess.REST.Extensions
 		///	Gets filtering parameter for REST GET request
 		/// </summary>
 		/// <param name="criteria"></param>
-		/// <param name="orderId">Order id</param>
 		/// <returns></returns>
-		public static string ToRequestFilterString( this OrderCriteria criteria, int? orderId = null )
+		public static string ToRequestFilterString( this OrderCriteria criteria )
 		{
 			List< string > clauses = new List< string >();
-			
-			if ( criteria.OrderCreationFilterBeginTimeGMT.HasValue )
-				clauses.Add( $"{CreatedDateFieldName} ge {criteria.OrderCreationFilterBeginTimeGMT.Value.ToDateTimeOffset()} and " );
-
-			if ( criteria.OrderCreationFilterEndTimeGMT.HasValue )
-				clauses.Add( $"{CreatedDateFieldName} le {criteria.OrderCreationFilterEndTimeGMT.Value.ToDateTimeOffset()} and " );
 
 			var importDateFilter = "";
 			if ( criteria.ImportDateFilterBeginTimeGMT.HasValue
@@ -54,13 +45,20 @@ namespace ChannelAdvisorAccess.REST.Extensions
 				}
 			}
 
-			if ( orderId != null )
-				clauses.Add( $"{OrderIdFieldName} eq {orderId.Value.ToString()} and " );
-
 			if ( clauses.Count > 0 )
 				clauses[ clauses.Count - 1] = clauses.Last().Substring( 0, clauses.Last().LastIndexOf( "and" ) );
 
 			return string.Join( " ", clauses );
+		}
+		
+		/// <summary>
+		///	Gets filtering parameter for REST GET request
+		/// </summary>
+		/// <param name="orderId">Order id</param>
+		/// <returns></returns>
+		public static string ToRequestFilterString( this int orderId )
+		{
+			return $"{OrderIdFieldName} eq {orderId.ToString()} ";
 		}
 	}
 }

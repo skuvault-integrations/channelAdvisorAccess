@@ -132,7 +132,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 
 				foreach( int orderId in orderCriteria.OrderIDList )
 				{
-					var searchOrderFilter = orderCriteria.ToRequestFilterString( orderId );
+					var searchOrderFilter = orderId.ToRequestFilterString();
 					var orders = await this.GetOrdersAsync< T >( searchOrderFilter, mark, Timeouts[ ChannelAdvisorOperationEnum.GetOrderRest ], token: token ).ConfigureAwait( false );
 					result.AddRange( orders );
 				}
