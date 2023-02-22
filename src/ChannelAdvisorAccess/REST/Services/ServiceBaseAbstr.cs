@@ -723,16 +723,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		}
 
 		/// <summary>
-		///	Convert date in format suitable for REST end point
-		/// </summary>
-		/// <param name="date"></param>
-		/// <returns></returns>
-		protected string ConvertDate( DateTime date )
-		{
-			return date.ToString( "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture );
-		}
-
-		/// <summary>
 		///	Returns recommended page size by ChannelAdvisor platform for current request
 		/// </summary>
 		/// <param name="nextLinkUrl"></param>

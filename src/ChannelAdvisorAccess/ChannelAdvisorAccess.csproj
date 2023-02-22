@@ -298,6 +298,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="REST\Exceptions\ChannelAdvisorNetworkException.cs" />
     <Compile Include="REST\Exceptions\ChannelAdvisorProductExportFailedException.cs" />
+    <Compile Include="REST\Extensions\DateExtensions.cs" />
+    <Compile Include="REST\Extensions\OrderCriteriaExtensions.cs" />
     <Compile Include="REST\Models\Configuration\ChannelAdvisorEndPoint.cs" />
     <Compile Include="REST\Models\Infrastructure\BatchResponses.cs" />
     <Compile Include="REST\Models\Infrastructure\OAuthResponse.cs" />
