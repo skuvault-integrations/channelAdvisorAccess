@@ -1,6 +1,6 @@
 ﻿using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
-using ChannelAdvisorAccess.OrderService;
+using SoapOrderService = ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services.Orders;
 using System;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="accountId">Tenant account id</param>
 		/// <param name="accountName">Tenant account name</param>
 		/// <param name="itemsService">Items service (to get Distribution Centers)</param>
-		public OrdersService( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, IItemsService itemsService, ChannelAdvisorTimeouts timeouts ) 
+		public OrdersService( RestCredentials credentials, SoapOrderService.APICredentials soapCredentials, string accountId, string accountName, IItemsService itemsService, ChannelAdvisorTimeouts timeouts ) 
 			: base( credentials, soapCredentials, accountId, accountName, timeouts ) 
 		{
 			this._itemsService = itemsService;
@@ -65,9 +65,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : OrderResponseItem
+		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
-			var criteria = new OrderCriteria()
+			var criteria = new OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = startDate,
 				StatusUpdateFilterEndTimeGMT = endDate,
@@ -82,7 +82,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <typeparam name="T"></typeparam>
 		/// <param name="orderCriteria"></param>
 		/// <returns></returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : OrderResponseItem
+		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
 			return this.GetOrdersAsync< T >( orderCriteria, mark, token ).GetAwaiter().GetResult();
 		}
@@ -94,7 +94,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : OrderResponseItem
+		public IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
 			return this.GetOrders< T >( startDate, endDate, mark, token ).ToList();
 		}
@@ -106,9 +106,9 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="startDate"></param>
 		/// <param name="endDate"></param>
 		/// <returns></returns>
-		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : OrderResponseItem
+		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
-			OrderCriteria criteria = new OrderCriteria()
+			var criteria = new OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = startDate,
 				StatusUpdateFilterEndTimeGMT = endDate,
@@ -124,7 +124,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="orderCriteria"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : OrderResponseItem
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
 			if ( orderCriteria.OrderIDList != null && orderCriteria.OrderIDList.Length > 0 )
 			{
@@ -196,22 +196,22 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			throw new NotImplementedException();
 		}
 
-		public int SubmitOrder( OrderSubmit orderSubmit, Mark mark, CancellationToken token )
+		public int SubmitOrder( SoapOrderService.OrderSubmit orderSubmit, Mark mark, CancellationToken token )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task< int > SubmitOrderAsync( OrderSubmit orderSubmit, Mark mark, CancellationToken token )
+		public Task< int > SubmitOrderAsync( SoapOrderService.OrderSubmit orderSubmit, Mark mark, CancellationToken token )
 		{
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable< OrderUpdateResponse > UpdateOrderList( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token )
+		public IEnumerable< SoapOrderService.OrderUpdateResponse > UpdateOrderList( SoapOrderService.OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token )
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task< IEnumerable< OrderUpdateResponse > > UpdateOrderListAsync( OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token )
+		public Task< IEnumerable< SoapOrderService.OrderUpdateResponse > > UpdateOrderListAsync( SoapOrderService.OrderUpdateSubmit[] orderUpdates, Mark mark, CancellationToken token )
 		{
 			throw new NotImplementedException();
 		}

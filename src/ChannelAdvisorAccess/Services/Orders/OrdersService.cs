@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
+using ChannelAdvisorAccess.REST.Shared;
+using RestModels = ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.Services.Items;
 using Netco.Extensions;
 
@@ -118,7 +120,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
-			var orderCriteria = new OrderCriteria
+			var orderCriteria = new RestModels.OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = startDate,
 				StatusUpdateFilterEndTimeGMT = endDate
@@ -130,7 +132,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
-			var orderCriteria = new OrderCriteria
+			var orderCriteria = new RestModels.OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = startDate,
 				StatusUpdateFilterEndTimeGMT = endDate
@@ -160,27 +162,29 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>		
 		/// <param name="mark">Session Mark</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		public IEnumerable< T > GetOrders< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
-			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
-				orderCriteria.DetailLevel = "High";
+			var soapOrderCriteria = orderCriteria.ToSoapOrderCriteria();
+			
+			if( string.IsNullOrEmpty( soapOrderCriteria.DetailLevel ) )
+				soapOrderCriteria.DetailLevel = "High";
 
 			int pageSize;
-			orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
-			orderCriteria.PageNumberFilter = 1;
+			soapOrderCriteria.PageSize = this._pageSizes.TryGetValue( soapOrderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
+			soapOrderCriteria.PageNumberFilter = 1;
 
 			var orders = new List< T >();
 
 			while( true )
 			{
-				var ordersFromPage = this.GetOrdersPage( orderCriteria, mark );
+				var ordersFromPage = this.GetOrdersPage( soapOrderCriteria, mark );
 
 				if( ordersFromPage == null || ordersFromPage.Length == 0 )
 					break;
 
 				orders.AddRange( ordersFromPage.OfType< T >() );
-				orderCriteria.PageNumberFilter += 1;
+				soapOrderCriteria.PageNumberFilter += 1;
 			}
 
 			this.CheckFulfillmentStatus( orders, mark );
@@ -195,31 +199,33 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
 			try
 			{
 				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 
-				if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
-					orderCriteria.DetailLevel = "High";
+				var soapOrderCriteria = orderCriteria.ToSoapOrderCriteria();
+
+				if( string.IsNullOrEmpty( soapOrderCriteria.DetailLevel ) )
+					soapOrderCriteria.DetailLevel = "High";
 
 				int pageSize;
-				orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
-				orderCriteria.PageNumberFilter = 1;
+				soapOrderCriteria.PageSize = this._pageSizes.TryGetValue( soapOrderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
+				soapOrderCriteria.PageNumberFilter = 1;
 
 				var orders = new List< T >();
 				while( true )
 				{
-					var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria, mark ).ConfigureAwait( false );
+					var ordersFromPage = await this.GetOrdersPageAsync( soapOrderCriteria, mark ).ConfigureAwait( false );
 
 					if( ordersFromPage == null || ordersFromPage.Length == 0 )
 						break;
 
 					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark: mark, methodResult: ordersFromPage.OfType< T >().ToJson(), additionalInfo: "\"Result of ordersFromPage.OfType< T >() for page\"" ) );
 					orders.AddRange( ordersFromPage.OfType< T >() );
-					orderCriteria.PageNumberFilter += 1;
+					soapOrderCriteria.PageNumberFilter += 1;
 				}
 
 				await this.CheckFulfillmentStatusAsync( orders, mark );

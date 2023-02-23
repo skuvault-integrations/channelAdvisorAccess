@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using ChannelAdvisorAccess.OrderService;
+using ChannelAdvisorAccess.REST.Models;
 
 namespace ChannelAdvisorAccess.REST.Extensions
 {
@@ -52,7 +52,7 @@ namespace ChannelAdvisorAccess.REST.Extensions
 		}
 		
 		/// <summary>
-		///	Gets filtering parameter for REST GET request
+		///	Gets filter parameter for REST GET request
 		/// </summary>
 		/// <param name="orderId">Order id</param>
 		/// <returns></returns>

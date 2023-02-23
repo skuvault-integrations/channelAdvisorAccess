@@ -4,6 +4,7 @@ using ChannelAdvisorAccess.REST.Models;
 using System.Collections.Generic;
 using System.Linq;
 using ChannelAdvisorAccess.Misc;
+using SoapOrderService = ChannelAdvisorAccess.OrderService;
 
 namespace ChannelAdvisorAccess.REST.Shared
 {
@@ -301,6 +302,22 @@ namespace ChannelAdvisorAccess.REST.Shared
 				ShippingClass = o.ShippingClass,
 				TrackingNumber = o.TrackingNumber
 			} ).ToArray();
+		}
+
+		/// <summary>
+		/// Convert the REST orderCriteria passed from v1 to SOAP
+		/// </summary>
+		/// <param name="orderCriteria"></param>
+		/// <returns></returns>
+		public static SoapOrderService.OrderCriteria ToSoapOrderCriteria( this Models.OrderCriteria orderCriteria )
+		{
+			return new SoapOrderService.OrderCriteria
+			{
+				StatusUpdateFilterBeginTimeGMT = orderCriteria.StatusUpdateFilterBeginTimeGMT,
+				StatusUpdateFilterEndTimeGMT = orderCriteria.StatusUpdateFilterEndTimeGMT,
+				OrderIDList = orderCriteria.OrderIDList,
+				DetailLevel = orderCriteria.DetailLevel
+			};
 		}
 	}
 }

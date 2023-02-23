@@ -6,6 +6,7 @@ using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services;
 using ChannelAdvisorAccess.Services.Orders;
+using RestModels = ChannelAdvisorAccess.REST.Models;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -21,9 +22,9 @@ namespace ChannelAdvisorAccessTests.Orders
 		[ Test ]
 		public async Task GetOrdersAsync()
 		{
-			var criteria = new OrderCriteria
+			var criteria = new RestModels.OrderCriteria
 			{
-				OrderIDList = new int[] { TestOrderId, TestOrderId2 },
+				OrderIDList = new[] { TestOrderId, TestOrderId2 },
 				DetailLevel = DetailLevelTypes.Complete
 			};
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
@@ -35,9 +36,9 @@ namespace ChannelAdvisorAccessTests.Orders
 		[ Test ]
 		public async Task GetOrdersAsync_Taxes()
 		{
-			var criteria = new OrderCriteria
+			var criteria = new RestModels.OrderCriteria
 			{
-				OrderIDList = new int[] { TestOrderId3 },
+				OrderIDList = new[] { TestOrderId3 },
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
@@ -52,9 +53,9 @@ namespace ChannelAdvisorAccessTests.Orders
 		[ Test ]
 		public async Task GetOrdersAsync_Promotions()
 		{
-			var criteria = new OrderCriteria
+			var criteria = new RestModels.OrderCriteria
 			{
-				OrderIDList = new int[] { TestOrderId3 },
+				OrderIDList = new[] { TestOrderId3 },
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
@@ -69,7 +70,7 @@ namespace ChannelAdvisorAccessTests.Orders
 		[ Test ]
 		public async Task GetOrdersAsync_ShouldReturnShippingCost()
 		{
-			var criteria = new OrderCriteria
+			var criteria = new RestModels.OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddMonths( -2 ),
 				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
@@ -85,7 +86,7 @@ namespace ChannelAdvisorAccessTests.Orders
 		public async Task WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
 		{
 			var activityTimeBeforeMakingAnyRequest = this.OrdersService.LastActivityTime;
-			var criteria = new OrderCriteria
+			var criteria = new RestModels.OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddDays( -14 ),
 				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
@@ -117,27 +118,7 @@ namespace ChannelAdvisorAccessTests.Orders
 				Debug.Assert( ex is ObjectDisposedException ); 
 			}
 		}
-		
-		[ Test ]
-		[ Explicit ]
-		public async Task GetOrdersAsync_WhenFilterByImportDatesAndStatusUpdateDates_ReturnOrdersHaveLastUpdateDateInTheSpecifiedDateRange()
-		{
-			var beginDate = DateTime.UtcNow.AddMonths( -2 );
-			var endDate = DateTime.UtcNow;
-			var criteria = new OrderCriteria
-			{
-				ImportDateFilterBeginTimeGMT = beginDate,
-				ImportDateFilterEndTimeGMT = endDate,
-				StatusUpdateFilterBeginTimeGMT = beginDate,
-				StatusUpdateFilterEndTimeGMT = endDate,
-				DetailLevel = DetailLevelTypes.Complete
-			};
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
-
-			Assert.True( result.All( x => beginDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
-		}
-		
 		private void ValidateLastActivityDateTimeUpdated()
 		{
 			this.OrdersService.LastActivityTime.Should().NotBe( this.serviceLastActivityDateTime );			

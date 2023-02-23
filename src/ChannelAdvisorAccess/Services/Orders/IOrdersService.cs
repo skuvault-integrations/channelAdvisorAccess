@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
+using RestModels = ChannelAdvisorAccess.REST.Models;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {
@@ -61,7 +62,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <typeparam name="T">Type of order response.</typeparam>
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		IEnumerable< T > GetOrders< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>
@@ -71,7 +72,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		Task< IEnumerable< T > > GetOrdersAsync< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>Updates the order list.</summary>

@@ -1,6 +1,6 @@
 using System;
-using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.REST.Extensions;
+using ChannelAdvisorAccess.REST.Models;
 using NUnit.Framework;
 
 namespace ChannelAdvisorAccessTests.REST.Extensions
