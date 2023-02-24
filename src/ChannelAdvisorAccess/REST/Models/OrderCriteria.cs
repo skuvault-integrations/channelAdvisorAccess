@@ -12,17 +12,17 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// Orders imported into ChannelAdvisor after
 		/// NOTE: Only the REST API supports this, not SOAP
 		/// </summary>
-		public DateTime? ImportDateFilterBeginTimeGMT { get; set; }
+		public DateTime? ImportDateFilterBegin { get; set; }
 		
 		/// <summary>
 		/// Orders imported into ChannelAdvisor before
 		/// NOTE: Only the REST API supports this, not SOAP
 		/// </summary>
-		public DateTime? ImportDateFilterEndTimeGMT { get; set; }
+		public DateTime? ImportDateFilterEnd { get; set; }
 		
-		public DateTime? StatusUpdateFilterBeginTimeGMT { get; set; }
+		public DateTime? StatusUpdateFilterBegin { get; set; }
 		
-		public DateTime? StatusUpdateFilterEndTimeGMT { get; set; }
+		public DateTime? StatusUpdateFilterEnd { get; set; }
 		
 		public int[] OrderIDList { get; set; }
 		

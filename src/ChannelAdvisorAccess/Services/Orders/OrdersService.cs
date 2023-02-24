@@ -122,8 +122,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			var orderCriteria = new RestModels.OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = startDate,
-				StatusUpdateFilterEndTimeGMT = endDate
+				StatusUpdateFilterBegin = startDate,
+				StatusUpdateFilterEnd = endDate
 			};
 
 			return this.GetOrders< T >( orderCriteria, mark, token );
@@ -134,8 +134,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 		{
 			var orderCriteria = new RestModels.OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = startDate,
-				StatusUpdateFilterEndTimeGMT = endDate
+				StatusUpdateFilterBegin = startDate,
+				StatusUpdateFilterEnd = endDate
 			};
 
 			return await this.GetOrdersAsync< T >( orderCriteria, mark, token ).ConfigureAwait( false );
@@ -159,32 +159,43 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>		
+		/// <param name="restOrderCriteria">The order criteria.</param>		
 		/// <param name="mark">Session Mark</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		public IEnumerable< T > GetOrders< T >( RestModels.OrderCriteria restOrderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
-			var soapOrderCriteria = orderCriteria.ToSoapOrderCriteria();
+			OrderCriteria orderCriteria;
 			
-			if( string.IsNullOrEmpty( soapOrderCriteria.DetailLevel ) )
-				soapOrderCriteria.DetailLevel = "High";
+			try
+			{
+				orderCriteria = restOrderCriteria.ToSoapOrderCriteria();
+			}
+			catch( Exception exception )
+			{
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
+				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
+				throw channelAdvisorException;
+			}
+			
+			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
+				orderCriteria.DetailLevel = "High";
 
 			int pageSize;
-			soapOrderCriteria.PageSize = this._pageSizes.TryGetValue( soapOrderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
-			soapOrderCriteria.PageNumberFilter = 1;
+			orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
+			orderCriteria.PageNumberFilter = 1;
 
 			var orders = new List< T >();
 
 			while( true )
 			{
-				var ordersFromPage = this.GetOrdersPage( soapOrderCriteria, mark );
+				var ordersFromPage = this.GetOrdersPage( orderCriteria, mark );
 
 				if( ordersFromPage == null || ordersFromPage.Length == 0 )
 					break;
 
 				orders.AddRange( ordersFromPage.OfType< T >() );
-				soapOrderCriteria.PageNumberFilter += 1;
+				orderCriteria.PageNumberFilter += 1;
 			}
 
 			this.CheckFulfillmentStatus( orders, mark );
@@ -196,47 +207,47 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>
+		/// <param name="restOrderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		public async Task< IEnumerable< T > > GetOrdersAsync< T >( RestModels.OrderCriteria restOrderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
 			try
 			{
-				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : restOrderCriteria.ToJson() ) );
 
-				var soapOrderCriteria = orderCriteria.ToSoapOrderCriteria();
+				var orderCriteria = restOrderCriteria.ToSoapOrderCriteria();
 
-				if( string.IsNullOrEmpty( soapOrderCriteria.DetailLevel ) )
-					soapOrderCriteria.DetailLevel = "High";
+				if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
+					orderCriteria.DetailLevel = "High";
 
 				int pageSize;
-				soapOrderCriteria.PageSize = this._pageSizes.TryGetValue( soapOrderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
-				soapOrderCriteria.PageNumberFilter = 1;
+				orderCriteria.PageSize = this._pageSizes.TryGetValue( orderCriteria.DetailLevel, out pageSize ) ? pageSize : 20;
+				orderCriteria.PageNumberFilter = 1;
 
 				var orders = new List< T >();
 				while( true )
 				{
-					var ordersFromPage = await this.GetOrdersPageAsync( soapOrderCriteria, mark ).ConfigureAwait( false );
+					var ordersFromPage = await this.GetOrdersPageAsync( orderCriteria, mark ).ConfigureAwait( false );
 
 					if( ordersFromPage == null || ordersFromPage.Length == 0 )
 						break;
 
 					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark: mark, methodResult: ordersFromPage.OfType< T >().ToJson(), additionalInfo: "\"Result of ordersFromPage.OfType< T >() for page\"" ) );
 					orders.AddRange( ordersFromPage.OfType< T >() );
-					soapOrderCriteria.PageNumberFilter += 1;
+					orderCriteria.PageNumberFilter += 1;
 				}
 
 				await this.CheckFulfillmentStatusAsync( orders, mark );
 
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : restOrderCriteria.ToJson() ) );
 				
 				return orders;
 			}
 			catch( Exception exception )
 			{
-				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ), exception );
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : restOrderCriteria.ToJson() ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
 			}

@@ -3,7 +3,6 @@ using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.Services.Items;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using ChannelAdvisorAccess.REST.Extensions;
 
 namespace ChannelAdvisorAccess.REST.Shared

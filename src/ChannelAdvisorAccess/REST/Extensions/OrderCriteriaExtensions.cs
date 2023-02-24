@@ -22,18 +22,18 @@ namespace ChannelAdvisorAccess.REST.Extensions
 			List< string > clauses = new List< string >();
 
 			var importDateFilter = "";
-			if ( criteria.ImportDateFilterBeginTimeGMT.HasValue
-				&& criteria.ImportDateFilterEndTimeGMT.HasValue )
+			if ( criteria.ImportDateFilterBegin.HasValue
+				&& criteria.ImportDateFilterEnd.HasValue )
 			{
-				importDateFilter = $"({ImportDateFieldName} ge {criteria.ImportDateFilterBeginTimeGMT.Value.ToDateTimeOffset()} " + 
-					$"and {ImportDateFieldName} le {criteria.ImportDateFilterEndTimeGMT.Value.ToDateTimeOffset()})";
+				importDateFilter = $"({ImportDateFieldName} ge {criteria.ImportDateFilterBegin.Value.ToDateTimeOffset()} " + 
+					$"and {ImportDateFieldName} le {criteria.ImportDateFilterEnd.Value.ToDateTimeOffset()})";
 			}
 
-			if ( criteria.StatusUpdateFilterBeginTimeGMT.HasValue
-				&& criteria.StatusUpdateFilterEndTimeGMT.HasValue )
+			if ( criteria.StatusUpdateFilterBegin.HasValue
+				&& criteria.StatusUpdateFilterEnd.HasValue )
 			{
-				var statusUpdateBegin = criteria.StatusUpdateFilterBeginTimeGMT.Value.ToDateTimeOffset();
-				var statusUpdateEnd = criteria.StatusUpdateFilterEndTimeGMT.Value.ToDateTimeOffset();
+				var statusUpdateBegin = criteria.StatusUpdateFilterBegin.Value.ToDateTimeOffset();
+				var statusUpdateEnd = criteria.StatusUpdateFilterEnd.Value.ToDateTimeOffset();
 				clauses.Add( $"({CheckoutDateFieldName} ge {statusUpdateBegin} and {CheckoutDateFieldName} le {statusUpdateEnd}) " + 
 					$"or ({PaymentDateFieldName} ge {statusUpdateBegin} and {PaymentDateFieldName} le {statusUpdateEnd}) " + 
 					$"or ({ShippingDateFieldName} ge {statusUpdateBegin} and {ShippingDateFieldName} le {statusUpdateEnd}) " +

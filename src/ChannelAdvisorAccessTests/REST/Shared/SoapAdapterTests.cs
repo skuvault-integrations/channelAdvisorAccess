@@ -41,8 +41,8 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 			var detailLevel = DetailLevelTypes.Complete;
 			var orderCriteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = statusUpdateBegin,
-				StatusUpdateFilterEndTimeGMT = statusUpdateEnd,
+				StatusUpdateFilterBegin = statusUpdateBegin,
+				StatusUpdateFilterEnd = statusUpdateEnd,
 				DetailLevel = detailLevel
 			};
 			
@@ -68,6 +68,19 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 			
 			Assert.That( result.OrderIDList, Is.EqualTo( orderIdList ) );
 			Assert.That( result.DetailLevel, Is.EqualTo( detailLevel ) );
+		}
+		
+		[ Test ]
+		public void ToSoapOrderCriteria_WhenImportDateIsNotNull_ShouldThrow()
+		{
+			var orderCriteria = new OrderCriteria
+			{
+				ImportDateFilterBegin = new DateTime( 2023, 3, 3, 3, 3, 3 ),
+				ImportDateFilterEnd = new DateTime( 2023, 3, 3, 3, 3, 3 )
+			};
+			
+			var ex = Assert.Throws< Exception >( () => orderCriteria.ToSoapOrderCriteria() );
+			Assert.That( ex.Message, Is.EqualTo( "SOAP API doesn't support ImportDate filters" ) );
 		}
 	}
 }

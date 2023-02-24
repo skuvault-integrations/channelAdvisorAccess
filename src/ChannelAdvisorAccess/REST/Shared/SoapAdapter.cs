@@ -1,4 +1,5 @@
-﻿using ChannelAdvisorAccess.InventoryService;
+﻿using System;
+using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.REST.Models;
 using System.Collections.Generic;
@@ -311,10 +312,15 @@ namespace ChannelAdvisorAccess.REST.Shared
 		/// <returns></returns>
 		public static SoapOrderService.OrderCriteria ToSoapOrderCriteria( this Models.OrderCriteria orderCriteria )
 		{
+			if( orderCriteria.ImportDateFilterBegin.HasValue || orderCriteria.ImportDateFilterEnd.HasValue )
+			{
+				throw new Exception( "SOAP API doesn't support ImportDate filters" );
+			}
+
 			return new SoapOrderService.OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = orderCriteria.StatusUpdateFilterBeginTimeGMT,
-				StatusUpdateFilterEndTimeGMT = orderCriteria.StatusUpdateFilterEndTimeGMT,
+				StatusUpdateFilterBeginTimeGMT = orderCriteria.StatusUpdateFilterBegin,
+				StatusUpdateFilterEndTimeGMT = orderCriteria.StatusUpdateFilterEnd,
 				OrderIDList = orderCriteria.OrderIDList,
 				DetailLevel = orderCriteria.DetailLevel
 			};

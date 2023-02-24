@@ -72,8 +72,8 @@ namespace ChannelAdvisorAccessTests.Orders
 		{
 			var criteria = new RestModels.OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddMonths( -2 ),
-				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
+				StatusUpdateFilterBegin = DateTime.UtcNow.AddMonths( -2 ),
+				StatusUpdateFilterEnd = DateTime.UtcNow,
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
@@ -88,8 +88,8 @@ namespace ChannelAdvisorAccessTests.Orders
 			var activityTimeBeforeMakingAnyRequest = this.OrdersService.LastActivityTime;
 			var criteria = new RestModels.OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddDays( -14 ),
-				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
+				StatusUpdateFilterBegin = DateTime.UtcNow.AddDays( -14 ),
+				StatusUpdateFilterEnd = DateTime.UtcNow,
 				DetailLevel = DetailLevelTypes.Complete
 			};
 

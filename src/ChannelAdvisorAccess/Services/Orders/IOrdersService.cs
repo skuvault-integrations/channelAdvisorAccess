@@ -60,19 +60,19 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>
+		/// <param name="restOrderCriteria">The order criteria.</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		IEnumerable< T > GetOrders< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		IEnumerable< T > GetOrders< T >( RestModels.OrderCriteria restOrderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>
+		/// <param name="restOrderCriteria">The order criteria.</param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( RestModels.OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		Task< IEnumerable< T > > GetOrdersAsync< T >( RestModels.OrderCriteria restOrderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>Updates the order list.</summary>

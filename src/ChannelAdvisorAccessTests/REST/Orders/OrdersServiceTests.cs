@@ -32,7 +32,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = new DateTime(2018, 11, 01)
+				StatusUpdateFilterBegin = new DateTime(2018, 11, 01)
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
@@ -46,7 +46,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				StatusUpdateFilterEndTimeGMT = new DateTime(2019, 4, 01)
+				StatusUpdateFilterEnd = new DateTime(2019, 4, 01)
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
@@ -60,8 +60,8 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddMonths( -2 ),
-				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
+				StatusUpdateFilterBegin = DateTime.UtcNow.AddMonths( -2 ),
+				StatusUpdateFilterEnd = DateTime.UtcNow,
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
@@ -77,8 +77,8 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = new DateTime(2019, 06, 03, 12, 0, 0),
-				StatusUpdateFilterEndTimeGMT = new DateTime(2019, 06, 03, 13, 0, 0)
+				StatusUpdateFilterBegin = new DateTime(2019, 06, 03, 12, 0, 0),
+				StatusUpdateFilterEnd = new DateTime(2019, 06, 03, 13, 0, 0)
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
@@ -181,8 +181,8 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = DateTime.UtcNow.AddMonths( -2 ),
-				StatusUpdateFilterEndTimeGMT = DateTime.UtcNow,
+				StatusUpdateFilterBegin = DateTime.UtcNow.AddMonths( -2 ),
+				StatusUpdateFilterEnd = DateTime.UtcNow,
 				DetailLevel = DetailLevelTypes.Complete
 			};
 
@@ -226,10 +226,10 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 			var endDate = DateTime.UtcNow;
 			var criteria = new OrderCriteria
 			{
-				ImportDateFilterBeginTimeGMT = beginDate,
-				ImportDateFilterEndTimeGMT = endDate,
-				StatusUpdateFilterBeginTimeGMT = beginDate,
-				StatusUpdateFilterEndTimeGMT = endDate,
+				ImportDateFilterBegin = beginDate,
+				ImportDateFilterEnd = endDate,
+				StatusUpdateFilterBegin = beginDate,
+				StatusUpdateFilterEnd = endDate,
 				DetailLevel = DetailLevelTypes.Complete
 			};
 

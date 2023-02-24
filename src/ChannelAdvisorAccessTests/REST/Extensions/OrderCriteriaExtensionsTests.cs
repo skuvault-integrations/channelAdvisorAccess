@@ -14,8 +14,8 @@ namespace ChannelAdvisorAccessTests.REST.Extensions
 			var statusUpdateEnd = new DateTime( 2022, 2, 2, 2, 2, 2 );
 			var orderCriteria = new OrderCriteria
 			{
-				StatusUpdateFilterBeginTimeGMT = statusUpdateBegin,
-				StatusUpdateFilterEndTimeGMT = statusUpdateEnd
+				StatusUpdateFilterBegin = statusUpdateBegin,
+				StatusUpdateFilterEnd = statusUpdateEnd
 			};
 			
 			var result = orderCriteria.ToRequestFilterString();
@@ -42,8 +42,8 @@ namespace ChannelAdvisorAccessTests.REST.Extensions
 			var importDateEnd = new DateTime( 2022, 2, 2, 2, 2, 2 );
 			var orderCriteria = new OrderCriteria
 			{
-				ImportDateFilterBeginTimeGMT = importDateBegin,
-				ImportDateFilterEndTimeGMT = importDateEnd
+				ImportDateFilterBegin = importDateBegin,
+				ImportDateFilterEnd = importDateEnd
 			};
 			
 			var result = orderCriteria.ToRequestFilterString();
@@ -60,10 +60,10 @@ namespace ChannelAdvisorAccessTests.REST.Extensions
 			var statusUpdateEnd = new DateTime( 2024, 4, 4, 4, 4, 4 );
 			var orderCriteria = new OrderCriteria
 			{
-				ImportDateFilterBeginTimeGMT = importDateBegin,
-				ImportDateFilterEndTimeGMT = importDateEnd,
-				StatusUpdateFilterBeginTimeGMT = statusUpdateBegin,
-				StatusUpdateFilterEndTimeGMT = statusUpdateEnd
+				ImportDateFilterBegin = importDateBegin,
+				ImportDateFilterEnd = importDateEnd,
+				StatusUpdateFilterBegin = statusUpdateBegin,
+				StatusUpdateFilterEnd = statusUpdateEnd
 			};
 			
 			var result = orderCriteria.ToRequestFilterString();
