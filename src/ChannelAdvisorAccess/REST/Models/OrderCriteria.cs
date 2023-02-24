@@ -20,12 +20,26 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// </summary>
 		public DateTime? ImportDateFilterEnd { get; set; }
 		
+		/// <summary>
+		/// Order status update filter starting date/time
+		/// SOAP API - Passed as-is
+		/// REST API - Split into different statuses
+		/// </summary>
 		public DateTime? StatusUpdateFilterBegin { get; set; }
 		
+		/// <summary>
+		/// Order status update filter ending date/time
+		/// SOAP API - Passed as-is
+		/// REST API - Split into different statuses
+		/// </summary>
 		public DateTime? StatusUpdateFilterEnd { get; set; }
 		
 		public int[] OrderIDList { get; set; }
 		
-		public string DetailLevel{ get; set; }
+		/// <summary>
+		/// Order details to return. Valid options are in class DetailLevelTypes
+		/// NOTE: SOAP API only
+		/// </summary>
+		public string DetailLevel { get; set; }
 	}
 }

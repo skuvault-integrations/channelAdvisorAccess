@@ -147,8 +147,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				OrderIDList = new[] { TestOrderId },
-				DetailLevel = DetailLevelTypes.Complete
+				OrderIDList = new[] { TestOrderId }
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
@@ -164,8 +163,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		{
 			var criteria = new OrderCriteria
 			{
-				OrderIDList = new[] { TestOrderId },
-				DetailLevel = DetailLevelTypes.Complete
+				OrderIDList = new[] { TestOrderId }
 			};
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
