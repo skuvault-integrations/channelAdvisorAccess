@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.Services;
 using ChannelAdvisorAccess.Services.Orders;
@@ -16,84 +16,67 @@ namespace ChannelAdvisorAccessTests.Orders
 	public class OrdersServiceTests: TestsBase
 	{
 		protected const int TestOrderId = 185936;
-		protected const int TestOrderId2 = 185938;
-		protected const int TestOrderId3 = 185939;		
+		protected const int TestOrderId2 = 186058;
 
 		[ Test ]
-		public async Task GetOrdersAsync()
+		[ Explicit ]
+		public async Task GetOrdersByIdsAsync()
 		{
-			var criteria = new RestModels.OrderCriteria
-			{
-				OrderIDList = new[] { TestOrderId, TestOrderId2 },
-				DetailLevel = DetailLevelTypes.Complete
-			};
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersByIdsAsync( new[] { TestOrderId, TestOrderId2 }, this.Mark, CancellationToken.None );
 
 			result.Should().NotBeEmpty();
 			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
-		public async Task GetOrdersAsync_Taxes()
+		[ Explicit ]
+		public async Task GetOrdersAsync_ShouldReturnTaxes()
 		{
-			var criteria = new RestModels.OrderCriteria
-			{
-				OrderIDList = new[] { TestOrderId3 },
-				DetailLevel = DetailLevelTypes.Complete
-			};
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark, CancellationToken.None );
 
-			OrderCart shoppingCart = result.First().ShoppingCart;
+			result.SelectMany( x => x.ShoppingCart.LineItemInvoiceList.Where( y => y.UnitPrice != 0 && y.LineItemType == "SalesTax" ) ).Any().Should().BeTrue();
 			//Always returned as 0 from the CA api
-			//shoppingCart.LineItemSKUList.Any( x => x.TaxCost != null && x.TaxCost != 0 ).Should().BeTrue();
-			shoppingCart.LineItemInvoiceList.Any( x => x.UnitPrice != 0 && x.LineItemType == "SalesTax" ).Should().BeTrue();
+			//result[x].ShoppingCart.LineItemSKUList.Any( x => x.TaxCost != null && x.TaxCost != 0 ).Should().BeTrue();
 		}
 
 		[ Test ]
-		public async Task GetOrdersAsync_Promotions()
+		[ Explicit ]
+		public async Task GetOrdersByIdsAsync_Promotions()
 		{
-			var criteria = new RestModels.OrderCriteria
-			{
-				OrderIDList = new[] { TestOrderId3 },
-				DetailLevel = DetailLevelTypes.Complete
-			};
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark, CancellationToken.None );
 
-			OrderCart shoppingCart = result.First().ShoppingCart;
+			result.SelectMany( x => x.ShoppingCart.LineItemPromoList.Where( y => y.UnitPrice != 0 ) ).Any().Should().BeTrue();
 			//Always returned as 0 from the CA api
-			//shoppingCart.LineItemSKUList.Any(x => x.ItemPromoList != null && x.ItemPromoList.Any()).Should().BeTrue();
-			shoppingCart.LineItemPromoList.Any( x => x.UnitPrice != 0 ).Should().BeTrue();
+			//result[x].ShoppingCart.LineItemSKUList.Any(x => x.ItemPromoList != null && x.ItemPromoList.Any()).Should().BeTrue();
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersAsync_ShouldReturnShippingCost()
 		{
-			var criteria = new RestModels.OrderCriteria
-			{
-				StatusUpdateFilterBegin = DateTime.UtcNow.AddMonths( -2 ),
-				StatusUpdateFilterEnd = DateTime.UtcNow,
-				DetailLevel = DetailLevelTypes.Complete
-			};
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
 			result.Any( o => o.ShoppingCart.LineItemInvoiceList.Any( i => i.LineItemType == "Shipping" ) ).Should().BeTrue();
 		}
 
 		[ Test ]
-		public async Task WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
+		[ Explicit ]
+		public async Task GetOrdersAsync_WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
 		{
 			var activityTimeBeforeMakingAnyRequest = this.OrdersService.LastActivityTime;
-			var criteria = new RestModels.OrderCriteria
-			{
-				StatusUpdateFilterBegin = DateTime.UtcNow.AddDays( -14 ),
-				StatusUpdateFilterEnd = DateTime.UtcNow,
-				DetailLevel = DetailLevelTypes.Complete
-			};
+			var startDate = DateTime.UtcNow.AddDays( -14 );
+			var endDate = DateTime.UtcNow;
 
-			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
 		}

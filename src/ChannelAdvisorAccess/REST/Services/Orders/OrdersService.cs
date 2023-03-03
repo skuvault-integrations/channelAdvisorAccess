@@ -98,6 +98,15 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		{
 			return this.GetOrders< T >( startDate, endDate, mark, token ).ToList();
 		}
+		
+		public async Task< IEnumerable< SoapOrderService.OrderResponseDetailLow > > GetOrdersByIdsAsync( int[] orderIDs, Mark mark, CancellationToken token )
+		{
+			var criteria = new OrderCriteria
+			{
+				OrderIDList = orderIDs
+			};
+			return await this.GetOrdersAsync< SoapOrderService.OrderResponseDetailLow >( criteria, mark, token ).ConfigureAwait( false );
+		}
 
 		/// <summary>
 		///	Gets orders asynchronously by created date range
@@ -111,7 +120,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 			var criteria = new OrderCriteria
 			{
 				StatusUpdateFilterBegin = startDate,
-				StatusUpdateFilterEnd = endDate,
+				StatusUpdateFilterEnd = endDate
 			};
 
 			return this.GetOrdersAsync< T >( criteria, mark, token );
@@ -124,7 +133,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <param name="orderCriteria"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
+		private async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
 			if ( orderCriteria.OrderIDList != null && orderCriteria.OrderIDList.Length > 0 )
 			{

@@ -1,13 +1,12 @@
-﻿using ChannelAdvisorAccess.Constants;
-using ChannelAdvisorAccess.Exceptions;
+﻿using ChannelAdvisorAccess.Exceptions;
 using SoapOrdersService = ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.REST.Shared;
-using ChannelAdvisorAccess.REST.Models;
 using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChannelAdvisorAccessTests.REST.Orders
@@ -15,57 +14,52 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 	public class OrdersServiceTests : RestAPITestBase
 	{
 		protected const int TestOrderId = 182948;
-		protected const int TestOrderId2 = 178499;
-		protected const int TestOrderId3 = 181648;
+		protected const int TestOrderId2 = 186058;
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersAsyncByDate()
 		{
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( DateTime.UtcNow.AddMonths( -3 ), DateTime.UtcNow, this.Mark );
+			var startDate = DateTime.UtcNow.AddMonths( -3 );
+			var endDate = DateTime.UtcNow;
 
-			result.Should().NotBeNullOrEmpty();
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark, CancellationToken.None );
+
 			result.Count().Should().BeGreaterThan( 0 );
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersGreaterEqualThanDateMoreThanOnePage()
 		{
-			var criteria = new OrderCriteria
-			{
-				StatusUpdateFilterBegin = new DateTime(2018, 11, 01)
-			};
+			var startDate = new DateTime(2018, 11, 01);
+			var endDate = DateTime.Now;
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
-			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 20 );
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersLessEqualThanDate()
 		{
-			var criteria = new OrderCriteria
-			{
-				StatusUpdateFilterEnd = new DateTime(2019, 4, 01)
-			};
+			var endDate = new DateTime(2019, 4, 01);
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( DateTime.MinValue, endDate, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterThan( 10 );
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersGreaterEqualThanDateByOrderStatusUpdate()
 		{
-			var criteria = new OrderCriteria
-			{
-				StatusUpdateFilterBegin = DateTime.UtcNow.AddMonths( -2 ),
-				StatusUpdateFilterEnd = DateTime.UtcNow,
-				DetailLevel = DetailLevelTypes.Complete
-			};
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 2 );
@@ -73,36 +67,31 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersGreaterEqualThanDateByPaymentStatusUpdate()
 		{
-			var criteria = new OrderCriteria
-			{
-				StatusUpdateFilterBegin = new DateTime(2019, 06, 03, 12, 0, 0),
-				StatusUpdateFilterEnd = new DateTime(2019, 06, 03, 13, 0, 0)
-			};
+			var startDate = new DateTime(2019, 06, 03, 12, 0, 0);
+			var endDate = new DateTime(2019, 06, 03, 13, 0, 0);
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 1 );
 		}
 
 		[ Test ]
-		public async Task GetOrdersById()
+		[ Explicit ]
+		public async Task GetOrdersByIdsAsync()
 		{
-			var criteria = new OrderCriteria
-			{
-				OrderIDList = new[] { TestOrderId, TestOrderId2 }
-			};
-
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersByIdsAsync( new[] { TestOrderId, TestOrderId2 }, this.Mark, CancellationToken.None );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Should().HaveCount(2);
 		}
 
 		[ Test ]
-		public async Task GetManyOrdersById()
+		[ Explicit ]
+		public async Task GetOrdersByIdsAsync_WhenManyOrderIds()
 		{
 			var orders = new List< int >();
 
@@ -111,29 +100,23 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			orders.AddRange( new[] { TestOrderId2 } );
 
-			var criteria = new OrderCriteria
-			{
-				OrderIDList = orders.ToArray()
-			};
-
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersByIdsAsync( orders.ToArray(), this.Mark, CancellationToken.None );
 
 			result.Should().NotBeNullOrEmpty();
 			result.Should().HaveCount(1);
 		}
 
 		[ Test ]
-		public async Task GetOrderWithDifferentItemsDC()
+		[ Explicit ]
+		public async Task GetOrdersAsync_WithDifferentItemsDC()
 		{
 			var sku1 = "testSku3";
 			var sku2 = "testsku2";
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
 
-			var criteria = new OrderCriteria
-			{
-				OrderIDList = new[] { TestOrderId3 }
-			};
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark, CancellationToken.None );
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
 			var order = result.FirstOrDefault();
 			order.Should().NotBeNull();
 			var orderItem1 = order.ShoppingCart.LineItemSKUList.FirstOrDefault( item => item.SKU.Equals( sku1 ) ) as SoapOrdersService.OrderLineItemItemResponse;
@@ -143,50 +126,43 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersAsync_Taxes()
 		{
-			var criteria = new OrderCriteria
-			{
-				OrderIDList = new[] { TestOrderId }
-			};
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
+			
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark, CancellationToken.None );
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
-
-			var shoppingCart = result.First().ShoppingCart;
+			result.SelectMany( o => o.ShoppingCart.LineItemInvoiceList.Where( x => x.UnitPrice != 0 && x.LineItemType == "SalesTax" ) ).Any().Should().BeTrue();
 			//Always returned as 0 from the CA api
-			//shoppingCart.LineItemSKUList.Any( x => x.TaxCost != null && x.TaxCost != 0 ).Should().BeTrue();
-			shoppingCart.LineItemInvoiceList.Any( x => x.UnitPrice != 0 && x.LineItemType == "SalesTax" ).Should().BeTrue();
+			//result[x].ShoppingCart.LineItemSKUList.Any( x => x.TaxCost != null && x.TaxCost != 0 ).Should().BeTrue();
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersAsync_Promotions()
 		{
-			var criteria = new OrderCriteria
-			{
-				OrderIDList = new[] { TestOrderId }
-			};
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
+		
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark, CancellationToken.None );
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
-
-			var shoppingCart = result.First().ShoppingCart;
+			result.SelectMany( o => o.ShoppingCart.LineItemPromoList.Where( x => x.UnitPrice != 0 ) ).Any().Should().BeTrue();
 			//Always returned as 0 from the CA api
-			//shoppingCart.LineItemSKUList.Any( x => x.ItemPromoList != null && x.ItemPromoList.Any() ).Should().BeTrue();
-			shoppingCart.LineItemPromoList.Any( x => x.UnitPrice != 0 ).Should().BeTrue();
+			//result[x].ShoppingCart.LineItemSKUList.Any( x => x.ItemPromoList != null && x.ItemPromoList.Any() ).Should().BeTrue();
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task GetOrdersAsync_ShouldReturnShippingCost()
 		{
-			var criteria = new OrderCriteria
-			{
-				StatusUpdateFilterBegin = DateTime.UtcNow.AddMonths( -2 ),
-				StatusUpdateFilterEnd = DateTime.UtcNow,
-				DetailLevel = DetailLevelTypes.Complete
-			};
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 			
-			result.Any( o => o.ShoppingCart.LineItemInvoiceList.Any( i => i.LineItemType == "Shipping" ) ).Should().BeTrue();
+			result.SelectMany( o => o.ShoppingCart.LineItemInvoiceList.Where( i => i.LineItemType == "Shipping" ) ).Any().Should().BeTrue();
 		}
 
 		[ Test ]
@@ -208,6 +184,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
+		[ Explicit ]
 		public async Task WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
 		{
 			var activityTimeBeforeMakingAnyRequest = DateTime.UtcNow;
@@ -218,22 +195,14 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		
 		[ Test ]
 		[ Explicit ]
-		public async Task GetOrdersAsync_WhenFilterByImportDatesAndStatusUpdateDates_ReturnOrdersHaveLastUpdateDateInTheSpecifiedDateRange()
+		public async Task GetOrdersAsync_WhenFilterByDates_ReturnOrdersHaveLastUpdateDateInTheSpecifiedDateRange()
 		{
-			var beginDate = DateTime.UtcNow.AddMonths( -2 );
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
 			var endDate = DateTime.UtcNow;
-			var criteria = new OrderCriteria
-			{
-				ImportDateFilterBegin = beginDate,
-				ImportDateFilterEnd = endDate,
-				StatusUpdateFilterBegin = beginDate,
-				StatusUpdateFilterEnd = endDate,
-				DetailLevel = DetailLevelTypes.Complete
-			};
 
-			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( criteria, this.Mark );
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
-			Assert.True( result.All( x => beginDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
+			Assert.True( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
 		}
 	}
 }

@@ -5,11 +5,10 @@ using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
-using ChannelAdvisorAccess.REST.Shared;
-using RestModels = ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.Services.Items;
 using Netco.Extensions;
 
@@ -120,10 +119,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
-			var orderCriteria = new RestModels.OrderCriteria
+			var orderCriteria = new OrderCriteria
 			{
-				StatusUpdateFilterBegin = startDate,
-				StatusUpdateFilterEnd = endDate
+				StatusUpdateFilterBeginTimeGMT = startDate,
+				StatusUpdateFilterEndTimeGMT = endDate,
+				DetailLevel = DetailLevelTypes.Complete
 			};
 
 			return this.GetOrders< T >( orderCriteria, mark, token );
@@ -132,10 +132,11 @@ namespace ChannelAdvisorAccess.Services.Orders
 		public async Task< IEnumerable< T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
-			var orderCriteria = new RestModels.OrderCriteria
+			var orderCriteria = new OrderCriteria
 			{
-				StatusUpdateFilterBegin = startDate,
-				StatusUpdateFilterEnd = endDate
+				StatusUpdateFilterBeginTimeGMT = startDate,
+				StatusUpdateFilterEndTimeGMT = endDate,
+				DetailLevel = DetailLevelTypes.Complete
 			};
 
 			return await this.GetOrdersAsync< T >( orderCriteria, mark, token ).ConfigureAwait( false );
@@ -159,25 +160,12 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="restOrderCriteria">The order criteria.</param>		
+		/// <param name="orderCriteria"></param>
 		/// <param name="mark">Session Mark</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( RestModels.OrderCriteria restOrderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
-			OrderCriteria orderCriteria;
-			
-			try
-			{
-				orderCriteria = restOrderCriteria.ToSoapOrderCriteria();
-			}
-			catch( Exception exception )
-			{
-				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo() ), exception );
-				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
-				throw channelAdvisorException;
-			}
-			
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 				orderCriteria.DetailLevel = "High";
 
@@ -203,21 +191,29 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return orders;
 		}
 
+		public async Task< IEnumerable< OrderResponseDetailLow > > GetOrdersByIdsAsync( int[] orderIDs, Mark mark, CancellationToken token )
+		{
+			var criteria = new OrderCriteria
+			{
+				OrderIDList = orderIDs,
+				DetailLevel = DetailLevelTypes.Low
+			};
+			return await this.GetOrdersAsync< OrderResponseDetailLow >( criteria, mark, token ).ConfigureAwait( false );
+		}
+
 		/// <summary>
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="restOrderCriteria">The order criteria.</param>
+		/// <param name="orderCriteria"></param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( RestModels.OrderCriteria restOrderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		private async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
 			try
 			{
-				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : restOrderCriteria.ToJson() ) );
-
-				var orderCriteria = restOrderCriteria.ToSoapOrderCriteria();
+				ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 
 				if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
 					orderCriteria.DetailLevel = "High";
@@ -241,13 +237,13 @@ namespace ChannelAdvisorAccess.Services.Orders
 
 				await this.CheckFulfillmentStatusAsync( orders, mark );
 
-				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : restOrderCriteria.ToJson() ) );
+				ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodResult : orders.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ) );
 				
 				return orders;
 			}
 			catch( Exception exception )
 			{
-				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : restOrderCriteria.ToJson() ), exception );
+				var channelAdvisorException = new ChannelAdvisorException( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : orderCriteria.ToJson() ), exception );
 				ChannelAdvisorLogger.LogTraceException( channelAdvisorException );
 				throw channelAdvisorException;
 			}

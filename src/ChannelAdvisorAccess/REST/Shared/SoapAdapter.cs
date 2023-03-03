@@ -304,26 +304,5 @@ namespace ChannelAdvisorAccess.REST.Shared
 				TrackingNumber = o.TrackingNumber
 			} ).ToArray();
 		}
-
-		/// <summary>
-		/// Convert the REST orderCriteria passed from v1 to SOAP
-		/// </summary>
-		/// <param name="orderCriteria"></param>
-		/// <returns></returns>
-		public static SoapOrderService.OrderCriteria ToSoapOrderCriteria( this Models.OrderCriteria orderCriteria )
-		{
-			if( orderCriteria.ImportDateFilterBegin.HasValue || orderCriteria.ImportDateFilterEnd.HasValue )
-			{
-				throw new Exception( "SOAP API doesn't support ImportDate filters" );
-			}
-
-			return new SoapOrderService.OrderCriteria
-			{
-				StatusUpdateFilterBeginTimeGMT = orderCriteria.StatusUpdateFilterBegin,
-				StatusUpdateFilterEndTimeGMT = orderCriteria.StatusUpdateFilterEnd,
-				OrderIDList = orderCriteria.OrderIDList,
-				DetailLevel = orderCriteria.DetailLevel
-			};
-		}
 	}
 }
