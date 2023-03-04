@@ -29,17 +29,6 @@ namespace ChannelAdvisorAccess.REST.Models
 		/// Order status update filter ending date/time. In the API request, this is split into multiple statuses
 		/// </summary>
 		private DateTime? StatusUpdateFilterEnd;
-		
-		internal int[] OrderIDList { get; }
-
-		/// <summary>
-		/// Filter by orderIds
-		/// </summary>
-		/// <param name="orderIds"></param>
-		public OrderCriteria( int[] orderIds )
-		{
-			this.OrderIDList = orderIds;
-		}
 
 		/// <summary>
 		/// Filter by order status and import start/end dates

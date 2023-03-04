@@ -96,8 +96,17 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		
 		public async Task< IEnumerable< SoapOrderService.OrderResponseDetailLow > > GetOrdersByIdsAsync( int[] orderIDs, Mark mark, CancellationToken token )
 		{
-			var criteria = new OrderCriteria( orderIDs );
-			return await this.GetOrdersAsync< SoapOrderService.OrderResponseDetailLow >( criteria, mark, token ).ConfigureAwait( false );
+			var result = new List< SoapOrderService.OrderResponseDetailLow >();
+			if ( orderIDs != null && orderIDs.Length > 0 )
+			{
+				foreach( var orderId in orderIDs )
+				{
+					var searchOrderFilter = orderId.ToRequestFilterString();
+					var orders = await this.GetOrdersAsync< SoapOrderService.OrderResponseDetailLow >( searchOrderFilter, mark, Timeouts[ ChannelAdvisorOperationEnum.GetOrderRest ], token: token ).ConfigureAwait( false );
+					result.AddRange( orders );
+				}
+			}
+			return result;
 		}
 
 		/// <summary>
@@ -122,20 +131,6 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <returns></returns>
 		private async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
-			if ( orderCriteria.OrderIDList != null && orderCriteria.OrderIDList.Length > 0 )
-			{
-				var result = new List< T >();
-
-				foreach( int orderId in orderCriteria.OrderIDList )
-				{
-					var searchOrderFilter = orderId.ToRequestFilterString();
-					var orders = await this.GetOrdersAsync< T >( searchOrderFilter, mark, Timeouts[ ChannelAdvisorOperationEnum.GetOrderRest ], token: token ).ConfigureAwait( false );
-					result.AddRange( orders );
-				}
-			
-				return result;
-			}
-
 			var filter = orderCriteria.ToString();
 			return await this.GetOrdersAsync< T >( filter, mark, Timeouts[ ChannelAdvisorOperationEnum.ListOrdersRest ], token: token ).ConfigureAwait( false );
 		}
@@ -144,10 +139,10 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		///	Gets orders asynchronously and returns it as list
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="filter"></param>
+		/// <param name="filter">Order filter string</param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync < T >( string filter, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
+		private async Task< IEnumerable< T > > GetOrdersAsync < T >( string filter, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			var orders = new List< T >();
 			
