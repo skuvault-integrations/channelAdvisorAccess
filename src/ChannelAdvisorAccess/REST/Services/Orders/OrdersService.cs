@@ -67,12 +67,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <returns></returns>
 		public IEnumerable< T > GetOrders< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
-			var criteria = new OrderCriteria
-			{
-				StatusUpdateFilterBegin = startDate,
-				StatusUpdateFilterEnd = endDate,
-			};
-
+			var criteria = new OrderCriteria( startDate, endDate );
 			return this.GetOrders< T >( criteria, mark, token );
 		}
 
@@ -82,7 +77,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <typeparam name="T"></typeparam>
 		/// <param name="orderCriteria"></param>
 		/// <returns></returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
+		private IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
 			return this.GetOrdersAsync< T >( orderCriteria, mark, token ).GetAwaiter().GetResult();
 		}
@@ -101,10 +96,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		
 		public async Task< IEnumerable< SoapOrderService.OrderResponseDetailLow > > GetOrdersByIdsAsync( int[] orderIDs, Mark mark, CancellationToken token )
 		{
-			var criteria = new OrderCriteria
-			{
-				OrderIDList = orderIDs
-			};
+			var criteria = new OrderCriteria( orderIDs );
 			return await this.GetOrdersAsync< SoapOrderService.OrderResponseDetailLow >( criteria, mark, token ).ConfigureAwait( false );
 		}
 
@@ -117,12 +109,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 		/// <returns></returns>
 		public Task< IEnumerable < T > > GetOrdersAsync< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token ) where T : SoapOrderService.OrderResponseItem
 		{
-			var criteria = new OrderCriteria
-			{
-				StatusUpdateFilterBegin = startDate,
-				StatusUpdateFilterEnd = endDate
-			};
-
+			var criteria = new OrderCriteria( startDate, endDate );
 			return this.GetOrdersAsync< T >( criteria, mark, token );
 		}
 
@@ -149,7 +136,7 @@ namespace ChannelAdvisorAccess.REST.Services.Orders
 				return result;
 			}
 
-			var filter = orderCriteria.ToRequestFilterString();
+			var filter = orderCriteria.ToString();
 			return await this.GetOrdersAsync< T >( filter, mark, Timeouts[ ChannelAdvisorOperationEnum.ListOrdersRest ], token: token ).ConfigureAwait( false );
 		}
 

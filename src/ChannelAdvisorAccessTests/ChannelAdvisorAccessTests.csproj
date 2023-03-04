@@ -72,6 +72,7 @@
     <Compile Include="Inventory\DistributionCenterTests.cs" />
     <Compile Include="Inventory\ItemsServiceTests.cs" />
     <Compile Include="REST\Extensions\OrderCriteriaExtensionsTests.cs" />
+    <Compile Include="REST\Orders\OrderCriteriaTests.cs" />
     <Compile Include="Shipping\ShippingServiceTests.cs" />
     <Compile Include="Misc\ChannelAdvisorLoggerTests.cs" />
     <Compile Include="Misc\ChannelAdvisorTimeoutsTests.cs" />
