@@ -1,6 +1,4 @@
-﻿using System;
-using ChannelAdvisorAccess.Constants;
-using ChannelAdvisorAccess.REST.Models;
+﻿using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.REST.Shared;
 using FluentAssertions;
 using NUnit.Framework;

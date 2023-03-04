@@ -163,7 +163,7 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="orderCriteria"></param>
 		/// <param name="mark">Session Mark</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		private IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )

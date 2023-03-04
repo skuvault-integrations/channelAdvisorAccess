@@ -1,11 +1,9 @@
-﻿using System;
-using ChannelAdvisorAccess.InventoryService;
+﻿using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.REST.Models;
 using System.Collections.Generic;
 using System.Linq;
 using ChannelAdvisorAccess.Misc;
-using SoapOrderService = ChannelAdvisorAccess.OrderService;
 
 namespace ChannelAdvisorAccess.REST.Shared
 {

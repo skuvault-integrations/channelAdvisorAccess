@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
-using RestModels = ChannelAdvisorAccess.REST.Models;
 
 namespace ChannelAdvisorAccess.Services.Orders
 {
