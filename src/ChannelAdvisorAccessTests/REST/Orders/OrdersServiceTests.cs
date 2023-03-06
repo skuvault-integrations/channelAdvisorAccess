@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -192,17 +193,33 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
 		}
-		
+
 		[ Test ]
 		[ Explicit ]
-		public async Task GetOrdersAsync_WhenFilterByDates_ReturnOrdersHaveLastUpdateDateInTheSpecifiedDateRange()
+		public async Task GetOrdersAsync_WhenOrderStatusWasUpdatedDuringTheFilterDateRange_butCreatedBefore_ThenReturnSuchOrder()
 		{
-			var startDate = DateTime.UtcNow.AddMonths( -2 );
-			var endDate = DateTime.UtcNow;
+			//OrderID = 186059
+			var startDate = DateTime.SpecifyKind( DateTime.Parse( "2/24/2023 9:36:41 PM", CultureInfo.InvariantCulture ), DateTimeKind.Utc );
+			var endDate = DateTime.SpecifyKind( DateTime.Parse( "2/24/2023 9:38:41 PM", CultureInfo.InvariantCulture ), DateTimeKind.Utc );
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
+			Assert.True( result.Any( x => x.OrderTimeGMT <= startDate || endDate <= x.OrderTimeGMT ) );
 			Assert.True( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
 		}
+		
+		[ Test ]
+		[ Explicit ]
+		public async Task GetOrdersAsync_WhenOrderWasImportedDuringTheFilterDateRange_butStatusWasUpdatedOutsideThisRange_ThenReturnSuchOrder()
+		{
+			//OrderID = 186059
+			var startDate = DateTime.SpecifyKind( DateTime.Parse( "2/24/2023 9:08:25 PM", CultureInfo.InvariantCulture ), DateTimeKind.Utc );
+			var endDate = DateTime.SpecifyKind( DateTime.Parse( "2/24/2023 9:10:25 PM", CultureInfo.InvariantCulture ), DateTimeKind.Utc );
+
+			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
+
+			Assert.True( result.Any( x => x.LastUpdateDate <= startDate || endDate <= x.LastUpdateDate ) );
+		}
+		
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,6 +101,32 @@ namespace ChannelAdvisorAccessTests.Orders
 			{
 				Debug.Assert( ex is ObjectDisposedException ); 
 			}
+		}
+
+		[ Test ]
+		[ Explicit ]
+		public async Task GetOrdersAsync_WhenFilterByDates_ReturnOrdersHaveLastUpdateDateInTheSpecifiedDateRange()
+		{
+			var startDate = DateTime.UtcNow.AddMonths( -2 );
+			var endDate = DateTime.UtcNow;
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark );
+
+			Assert.True( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
+		}
+
+		[ Test ]
+		[ Explicit ]
+		public async Task GetOrdersAsync_WhenOrderStatusWasUpdatedDuringTheFilterDateRange_butCreatedBefore_ThenReturnSuchOrder()
+		{
+			//OrderID = 186059
+			var startDate = DateTime.SpecifyKind( DateTime.Parse( "2/24/2023 9:36:41 PM", CultureInfo.InvariantCulture ), DateTimeKind.Utc );
+			var endDate = DateTime.SpecifyKind( DateTime.Parse( "2/24/2023 9:38:41 PM", CultureInfo.InvariantCulture ), DateTimeKind.Utc );
+
+			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark );
+
+			Assert.True( result.Any( x => x.OrderTimeGMT <= startDate || endDate <= x.OrderTimeGMT ) );
+			Assert.True( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
 		}
 
 		private void ValidateLastActivityDateTimeUpdated()
