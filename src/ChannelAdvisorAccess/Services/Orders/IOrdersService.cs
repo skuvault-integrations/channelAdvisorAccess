@@ -46,6 +46,15 @@ namespace ChannelAdvisorAccess.Services.Orders
 			where T : OrderResponseItem;
 
 		/// <summary>
+		/// Get orders by orderIds
+		/// </summary>
+		/// <param name="orderIDs"></param>
+		/// <param name="mark"></param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		Task< IEnumerable< OrderResponseDetailLow > > GetOrdersByIdsAsync( int[] orderIDs, Mark mark, CancellationToken token );
+ 
+		/// <summary>
 		/// Gets the orders and returns them in a list.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
@@ -53,25 +62,6 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// <param name="endDate">The end date.</param>
 		/// <returns>Downloads all orders matching the date and returns them in a list.</returns>
 		IList< T > GetOrdersList< T >( DateTime startDate, DateTime endDate, Mark mark, CancellationToken token = default( CancellationToken ) )
-			where T : OrderResponseItem;
-
-		/// <summary>
-		/// Gets the orders.
-		/// </summary>
-		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>
-		/// <returns>Orders matching supplied criteria.</returns>
-		IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
-			where T : OrderResponseItem;
-
-		/// <summary>
-		/// Gets the orders.
-		/// </summary>
-		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>
-		/// <param name="mark"></param>
-		/// <returns>Orders matching supplied criteria.</returns>
-		Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem;
 
 		/// <summary>Updates the order list.</summary>

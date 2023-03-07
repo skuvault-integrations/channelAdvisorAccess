@@ -3,7 +3,7 @@ using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.Services.Items;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using ChannelAdvisorAccess.REST.Extensions;
 
 namespace ChannelAdvisorAccess.REST.Shared
 {
@@ -127,25 +127,15 @@ namespace ChannelAdvisorAccess.REST.Shared
 					if ( filterFieldName != null )
 					{
 						if ( criteria.DateRangeStartGMT.HasValue )
-							filterClauses.Add( String.Format( "{0} ge {1} ", filterFieldName, this.ConvertDate( criteria.DateRangeStartGMT.Value ) ) );
+							filterClauses.Add( String.Format( "{0} ge {1} ", filterFieldName, criteria.DateRangeStartGMT.Value.ToDateTimeOffset() ) );
 
 						if ( criteria.DateRangeEndGMT.HasValue )
-							filterClauses.Add( String.Format( "{0} le {1}", filterFieldName, this.ConvertDate( criteria.DateRangeEndGMT.Value ) ) );
+							filterClauses.Add( String.Format( "{0} le {1}", filterFieldName, criteria.DateRangeEndGMT.Value.ToDateTimeOffset() ) );
 					}
 				}
 			}
 
 			return string.Join(" and ", filterClauses.ToArray() );
-		}
-
-		/// <summary>
-		///	Convert date in format suitable for REST end point
-		/// </summary>
-		/// <param name="date"></param>
-		/// <returns></returns>
-		protected string ConvertDate( DateTime date )
-		{
-			return date.ToString( "yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture );
 		}
 	}
 }

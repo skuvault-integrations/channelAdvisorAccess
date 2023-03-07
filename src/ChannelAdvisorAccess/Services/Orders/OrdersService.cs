@@ -5,6 +5,7 @@ using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
 using ChannelAdvisorAccess.OrderService;
@@ -121,7 +122,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 			var orderCriteria = new OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = startDate,
-				StatusUpdateFilterEndTimeGMT = endDate
+				StatusUpdateFilterEndTimeGMT = endDate,
+				DetailLevel = DetailLevelTypes.Complete
 			};
 
 			return this.GetOrders< T >( orderCriteria, mark, token );
@@ -133,7 +135,8 @@ namespace ChannelAdvisorAccess.Services.Orders
 			var orderCriteria = new OrderCriteria
 			{
 				StatusUpdateFilterBeginTimeGMT = startDate,
-				StatusUpdateFilterEndTimeGMT = endDate
+				StatusUpdateFilterEndTimeGMT = endDate,
+				DetailLevel = DetailLevelTypes.Complete
 			};
 
 			return await this.GetOrdersAsync< T >( orderCriteria, mark, token ).ConfigureAwait( false );
@@ -157,10 +160,10 @@ namespace ChannelAdvisorAccess.Services.Orders
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>		
+		/// <param name="orderCriteria"></param>
 		/// <param name="mark">Session Mark</param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		private IEnumerable< T > GetOrders< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
 			if( string.IsNullOrEmpty( orderCriteria.DetailLevel ) )
@@ -188,14 +191,24 @@ namespace ChannelAdvisorAccess.Services.Orders
 			return orders;
 		}
 
+		public async Task< IEnumerable< OrderResponseDetailLow > > GetOrdersByIdsAsync( int[] orderIDs, Mark mark, CancellationToken token )
+		{
+			var criteria = new OrderCriteria
+			{
+				OrderIDList = orderIDs,
+				DetailLevel = DetailLevelTypes.Low
+			};
+			return await this.GetOrdersAsync< OrderResponseDetailLow >( criteria, mark, token ).ConfigureAwait( false );
+		}
+
 		/// <summary>
 		/// Gets the orders.
 		/// </summary>
 		/// <typeparam name="T">Type of order response.</typeparam>
-		/// <param name="orderCriteria">The order criteria.</param>
+		/// <param name="orderCriteria"></param>
 		/// <param name="mark"></param>
 		/// <returns>Orders matching supplied criteria.</returns>
-		public async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
+		private async Task< IEnumerable< T > > GetOrdersAsync< T >( OrderCriteria orderCriteria, Mark mark, CancellationToken token = default( CancellationToken ) )
 			where T : OrderResponseItem
 		{
 			try

@@ -298,12 +298,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="REST\Exceptions\ChannelAdvisorNetworkException.cs" />
     <Compile Include="REST\Exceptions\ChannelAdvisorProductExportFailedException.cs" />
+    <Compile Include="REST\Extensions\DateExtensions.cs" />
+    <Compile Include="REST\Extensions\OrderCriteriaExtensions.cs" />
     <Compile Include="REST\Models\Configuration\ChannelAdvisorEndPoint.cs" />
     <Compile Include="REST\Models\Infrastructure\BatchResponses.cs" />
     <Compile Include="REST\Models\Infrastructure\OAuthResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportResponse.cs" />
     <Compile Include="REST\Models\Infrastructure\ProductExportRow.cs" />
     <Compile Include="REST\Models\MarketplaceSiteIdEnum.cs" />
+    <Compile Include="REST\Models\OrderCriteria.cs" />
     <Compile Include="REST\Services\Items\ItemsPagingService.cs" />
     <Compile Include="REST\Shared\ActionPolicy.cs" />
     <Compile Include="REST\Shared\BatchBuilder.cs" />
@@ -359,8 +362,6 @@
     </Compile>
     <Compile Include="Services\Admin\AdminService.cs" />
     <Compile Include="Services\Admin\IAdminService.cs" />
-    <Compile Include="Services\ChannelAdvisorManager.cs" />
-    <Compile Include="Services\ChannelAdvisorManagerExtensions.cs" />
     <Compile Include="Services\ChannelAdvisorServicesFactory.cs" />
     <Compile Include="Services\IChannelAdvisorManager.cs" />
     <Compile Include="Services\IChannelAdvisorServicesFactory.cs" />
