@@ -220,6 +220,5 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			Assert.True( result.Any( x => x.LastUpdateDate <= startDate || endDate <= x.LastUpdateDate ) );
 		}
-		
 	}
 }
