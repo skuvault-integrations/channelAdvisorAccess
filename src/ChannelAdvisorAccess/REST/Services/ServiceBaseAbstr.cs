@@ -718,7 +718,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					// batch response sometimes contains this code due to factors on ChannelAdvisor side
 					|| responseStatusCode == (int)HttpStatusCode.NotAcceptable )
 			{
-				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), notes: "HTTP response status code: " + responseStatusCode ));
+				ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), returnStatusCode: responseStatusCode.ToString(), methodResult: message ));
 				throw new ChannelAdvisorNetworkException( message );
 			}
 			
