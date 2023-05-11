@@ -717,7 +717,10 @@ namespace ChannelAdvisorAccess.REST.Services
 					|| responseStatusCode == _tooManyRequestsStatusCode
 					// batch response sometimes contains this code due to factors on ChannelAdvisor side
 					|| responseStatusCode == (int)HttpStatusCode.NotAcceptable )
-				throw new ChannelAdvisorNetworkException( message );
+				{
+					ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), returnStatusCode: responseStatusCode.ToString(), methodResult: message ));
+					throw new ChannelAdvisorNetworkException( message );
+				}
 			
 			throw new ChannelAdvisorException( responseStatusCode, message );
 		}
