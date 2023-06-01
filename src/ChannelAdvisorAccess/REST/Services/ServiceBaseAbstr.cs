@@ -37,7 +37,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		protected string _accessToken;
 		private DateTime _accessTokenExpiredUtc;
 		protected readonly string _refreshToken;
-		private static AutoResetEvent _waitHandle = new AutoResetEvent( true );
 
 		protected string AccountName { get; private set; }
 		protected HttpClient HttpClient { get; private set; }
@@ -160,8 +159,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <returns></returns>
 		private async Task RefreshAccessTokenBySoapCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
-			_waitHandle.WaitOne();
-
 			this.SetBasicAuthorizationHeader();
 
 			var requestData = new Dictionary< string, string >
@@ -211,7 +208,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 			finally
 			{
-				_waitHandle.Set();
 				this.SetDefaultAuthorizationHeader();
 			}
 		}
@@ -223,7 +219,6 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <returns></returns>
 		private async Task RefreshAccessTokenByRestCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
-			_waitHandle.WaitOne();
 			this.SetBasicAuthorizationHeader();
 			AddAccountInfoToHeader();
 
@@ -277,7 +272,6 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 			finally
 			{
-				_waitHandle.Set();
 				this.SetDefaultAuthorizationHeader();
 			}
 		}
