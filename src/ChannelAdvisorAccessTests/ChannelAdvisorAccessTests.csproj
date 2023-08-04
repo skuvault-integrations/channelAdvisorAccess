@@ -74,7 +74,6 @@
     <Compile Include="REST\Extensions\OrderCriteriaExtensionsTests.cs" />
     <Compile Include="REST\Orders\OrderCriteriaTests.cs" />
     <Compile Include="Shipping\ShippingServiceTests.cs" />
-    <Compile Include="Misc\ChannelAdvisorLoggerTests.cs" />
     <Compile Include="Misc\ChannelAdvisorTimeoutsTests.cs" />
     <Compile Include="Misc\OrderExtensionsTests.cs" />
     <Compile Include="Listing\ListingServiceTests.cs" />

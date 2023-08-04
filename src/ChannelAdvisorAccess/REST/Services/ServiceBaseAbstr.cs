@@ -1,23 +1,23 @@
-﻿using ChannelAdvisorAccess.OrderService;
-using ChannelAdvisorAccess.Exceptions;
-using ChannelAdvisorAccess.Services.Items;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
+using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.Misc;
+using ChannelAdvisorAccess.OrderService;
 using ChannelAdvisorAccess.REST.Exceptions;
 using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
+using ChannelAdvisorAccess.Services.Items;
 using CuttingEdge.Conditions;
 using Newtonsoft.Json;
-using System.Linq;
+using SkuVault.Integrations.Core.Extensions;
 
 namespace ChannelAdvisorAccess.REST.Services
 {
@@ -196,7 +196,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					this._accessToken = result.AccessToken;
 					this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
 
-					var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
+					var resultForLog = new { AccessToken = result.AccessToken.SanitizeForLogs(), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
 					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 				}
 			}
@@ -226,7 +226,7 @@ namespace ChannelAdvisorAccess.REST.Services
 			var content = new FormUrlEncodedContent( requestData );
 			const string requestTokenUrl = "oauth2/token";
 
-			var payloadForLog = new { GrantType = requestData[ "grant_type" ], RefreshToken = ChannelAdvisorLogger.SanitizeToken( requestData[ "refresh_token" ] ) };
+			var payloadForLog = new { GrantType = requestData[ "grant_type" ], RefreshToken = requestData[ "refresh_token" ].SanitizeForLogs() };
 			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
 			try
@@ -260,7 +260,7 @@ namespace ChannelAdvisorAccess.REST.Services
 					this._accessToken = result.AccessToken;
 					this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
 
-					var resultForLog = new { AccessToken = ChannelAdvisorLogger.SanitizeToken( result.AccessToken ), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
+					var resultForLog = new { AccessToken = result.AccessToken.SanitizeForLogs(), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
 					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 				}
 			}
