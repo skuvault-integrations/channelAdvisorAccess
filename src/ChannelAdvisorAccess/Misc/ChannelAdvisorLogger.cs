@@ -90,14 +90,5 @@ namespace ChannelAdvisorAccess.Misc
 			return Enumerable.Range( 0, str.Length / chunkSize )
 				.Select( i => str.Substring( i * chunkSize, chunkSize ) );
 		}
-
-		public static string SanitizeToken( string token )
-		{
-			if ( string.IsNullOrWhiteSpace( token ) )
-				return string.Empty;
-
-			var length = token.Length;
-			return token.Substring( 0, Math.Min( 4, length ) ) + "****" + token.Substring( length - Math.Min( 4, length ) ); 
-		}
 	}
 }
