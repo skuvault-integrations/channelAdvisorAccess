@@ -21,11 +21,12 @@ $archive_dir = "$release_dir\archive"
 $src_dir = "$BuildRoot\src"
 $solution_file = "$src_dir\$($project_name).sln"
 	
-# Use MSBuild.
-Set-Alias MSBuild16 (Join-Path -Path (Get-VSSetupInstance | Where-Object {$_.DisplayName -eq 'Visual Studio Professional 2019'} | select InstallationPath | Select-Object -first 1).InstallationPath -ChildPath "MSBuild\Current\Bin\MSBuild.exe")
+# Use MSBuild. 
+# Requires PowerShell command: Install-Module VSSetup -Scope CurrentUser
+Set-Alias MSBuild (Join-Path -Path (Get-VSSetupInstance | select InstallationPath | Select-Object -first 1).InstallationPath -ChildPath "MSBuild\Current\Bin\MSBuild.exe")
 
 task Clean { 
-	exec { MSBuild16 "$solution_file" /t:Clean /p:Configuration=Release /p:Platform="Any CPU" /v:quiet } 
+	exec { MSBuild "$solution_file" /t:Clean /p:Configuration=Release /v:quiet } 
 	Remove-Item -force -recurse $build_dir -ErrorAction SilentlyContinue | Out-Null
 }
 
@@ -36,7 +37,7 @@ task Init Clean, {
 }
 
 task Build {
-	exec { MSBuild16 "$solution_file" /t:Build /p:Configuration=Release /p:Platform="Any CPU" /v:minimal /p:OutDir="$build_artifacts_dir\" }
+	exec { MSBuild "$solution_file" /t:Build /p:Configuration=Release /v:minimal /p:OutDir="$build_artifacts_dir\" }
 }
 
 task Package  {
@@ -46,9 +47,9 @@ task Package  {
 
 # Set $script:Version = assembly version
 task Version {
-	#assert (( Get-Item $build_artifacts_dir\$project_name.dll ).VersionInfo.FileVersion -match '^(\d+\.\d+\.\d+)')
-	#$script:Version = $matches[1]
-	$script:Version = ( Get-Item $build_artifacts_dir\$project_name.dll ).VersionInfo.FileVersion
+	assert (( Get-Item $build_artifacts_dir\$project_name.dll ).VersionInfo.FileVersion -match '^(\d+\.\d+\.\d+)')
+	$script:Version = $matches[1]
+
 }
 
 task Archive {
@@ -76,14 +77,14 @@ task NuGet Package, Version, {
 <package>
 	<metadata>
 		<id>$project_name</id>
-		<version>$Version-alpha</version>
-		<authors>Agile Harbor</authors>
-		<owners>Agile Harbor</owners>
+		<version>$Version</version>
+		<authors>SkuVault</authors>
+		<owners>SkuVault</owners>
 		<projectUrl>https://github.com/agileharbor/$project_name</projectUrl>
 		<licenseUrl>https://raw.github.com/agileharbor/$project_name/master/License.txt</licenseUrl>
 		<repository type="git" url="https://github.com/skuvault-integrations/$project_name/" />
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<copyright>Copyright (C) Agile Harbor, LLC</copyright>
+		<copyright>Copyright (C) 2022 SkuVault Inc.</copyright>
 		<summary>$text</summary>
 		<description>$text</description>
 		<tags>$project_short_name</tags>
