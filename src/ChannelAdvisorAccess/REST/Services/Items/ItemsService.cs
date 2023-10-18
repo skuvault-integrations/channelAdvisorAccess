@@ -303,7 +303,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 				if ( product == null )
 					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, MessageCode = 113, Message = String.Format( "The specified SKU {0} does not exist", sku ) });
 				else
-					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, Quantity = product.TotalAvailableQuantity });
+					inventoryQuantity.Add( new InventoryQuantityResponse() { SKU = sku, Quantity = product.TotalAvailableQuantity.GetValueOrDefault() } );
 			}
 
 			return inventoryQuantity.ToArray();
@@ -330,10 +330,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		{
 			var product = await this.GetProductWithQuantityOnlyBySku( sku, mark, token ).ConfigureAwait( false );
 
-			if ( product != null )
-				return product.TotalAvailableQuantity;
-
-			return 0;
+			return product?.TotalAvailableQuantity ?? 0;
 		}
 
 		/// <summary>

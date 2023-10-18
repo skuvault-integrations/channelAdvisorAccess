@@ -185,7 +185,7 @@ namespace ChannelAdvisorAccess.REST.Models
 		public string StoreTitle { get; set; }
 		public string StoreDescription { get; set; }
 		public BundleType BundleType { get; set; }
-		public int TotalAvailableQuantity { get; set; }
+		public int? TotalAvailableQuantity { get; set; }
 		public long OpenAllocatedQuantity { get; set; }
 		public long OpenAllocatedQuantityPooled { get; set; }
 		public long PendingCheckoutQuantity { get; set; }

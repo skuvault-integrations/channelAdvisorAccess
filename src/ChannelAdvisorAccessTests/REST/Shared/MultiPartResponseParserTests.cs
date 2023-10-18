@@ -26,7 +26,22 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 			isParseSuccessful.Should().BeTrue();
 			batchStatusCode.Should().Be( successCode );
 		}
-		
+
+		[ Test ]
+		public void MultiPartResponseParser_ShouldReturn200Success_WhenProductHasNullTotalAvailableQuantity()
+		{
+			int batchStatusCode;
+			const int successCode = ( int ) HttpStatusCode.OK;
+			IEnumerable< ODataResponse< Product > > parsedResponse;
+			var responseProductWithNullTotalAvailableQuantity = "{\"responses\":[{\"id\":\"3708\",\"status\":200,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"@odata.context\":\"https://api.channeladvisor.com/v1/$metadata#Products(Sku,TotalAvailableQuantity,DCQuantities,DCQuantities())\",\"value\":[{\"Sku\":\"someSku\",\"TotalAvailableQuantity\":null,\"DCQuantities\":[]}]}}]}";
+
+			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseProductWithNullTotalAvailableQuantity, out batchStatusCode, out parsedResponse );
+
+			isParseSuccessful.Should().BeTrue();
+			batchStatusCode.Should().Be( successCode );
+			parsedResponse.Single().Value.Single().TotalAvailableQuantity.Should().Be( null );
+		}
+
 		[ Test ]
 		public void GivenBatchItemsProducts_WhenCallMultiPartResponseParser_ThenParsesProducts()
 		{
