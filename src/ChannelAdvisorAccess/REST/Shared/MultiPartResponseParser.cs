@@ -22,6 +22,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 				{
 					args.ErrorContext.Handled = true;
 					isResponseValid = false;
+					//TODO GUARD-3174 Could capture the error text (args?.ErrorContext?.Error?.Message) and then return it as a new out?
 				}
 			} );
 
