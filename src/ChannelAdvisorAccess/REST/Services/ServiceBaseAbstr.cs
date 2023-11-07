@@ -635,22 +635,27 @@ namespace ChannelAdvisorAccess.REST.Services
 							RefreshLastNetworkActivityTime();
 
 							int batchStatusCode = ( int )HttpStatusCode.OK;
+							string parseErrorMessage = "";
 
 							try
-							{								
+							{
 								IEnumerable< T > parsedEntities;
-								if ( MultiPartResponseParser.TryParse< T >( content, out batchStatusCode, out parsedEntities ) )
+								if ( MultiPartResponseParser.TryParse< T >( content, out batchStatusCode, out parsedEntities, out parseErrorMessage ) )
 								{
 									entities.AddRange( parsedEntities );
 								}
 								else
-								{								
-									ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content, errors: "Can't parse the response", additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+								{
+									ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content,
+										errors: "Can't parse the response: " + parseErrorMessage, additionalInfo : this.AdditionalLogInfo(),
+										operationTimeout: operationTimeout, returnStatusCode: httpResponse.StatusCode.ToString() ) );
 								}
 							}
 							catch ( Exception ex )
-							{								
-								ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content, errors: "Failed due to: " + ex.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+							{
+								ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content,
+									errors: "Failed due to: " + ex.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout,
+									returnStatusCode: httpResponse.StatusCode.ToString() ) );
 							}
 
 							if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )

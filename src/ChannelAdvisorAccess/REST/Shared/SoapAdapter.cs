@@ -221,7 +221,6 @@ namespace ChannelAdvisorAccess.REST.Shared
 		{
 			QuantityInfoResponse response = new QuantityInfoResponse()
 			{
-				//TODO GUARD-3174 Potentially, also add a test ensuring that null is mapped to default?
 				 Available = product.TotalAvailableQuantity.GetValueOrDefault(),
 				 OpenAllocated = (int)product.OpenAllocatedQuantity,
 				 OpenAllocatedPooled = (int)product.OpenAllocatedQuantityPooled,

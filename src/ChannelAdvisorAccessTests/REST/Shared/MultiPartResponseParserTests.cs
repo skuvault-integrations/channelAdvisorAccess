@@ -1,11 +1,11 @@
-﻿using ChannelAdvisorAccess.REST.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
 using FluentAssertions;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 
 namespace ChannelAdvisorAccessTests.REST.Shared
 {
@@ -18,28 +18,34 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 		public void GivenBatchItemsReturn200Status_WhenCallMultiPartResponseParser_ThenReturns200BatchStatusCode()
 		{
 			int batchStatusCode;
+			string parseErrorMessage;
 			const int successCode = ( int ) HttpStatusCode.OK;
 			IEnumerable< ODataResponse< Product > > parsedResponse;
 
-			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseProductsSuccess, out batchStatusCode, out parsedResponse );
+			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseProductsSuccess, out batchStatusCode,
+				out parsedResponse, out parseErrorMessage );
 
 			isParseSuccessful.Should().BeTrue();
 			batchStatusCode.Should().Be( successCode );
+			parseErrorMessage.Should().BeEmpty();
 		}
 
 		[ Test ]
 		public void MultiPartResponseParser_ShouldReturn200Success_WhenProductHasNullTotalAvailableQuantity()
 		{
 			int batchStatusCode;
+			string parseErrorMessage;
 			const int successCode = ( int ) HttpStatusCode.OK;
 			IEnumerable< ODataResponse< Product > > parsedResponse;
 			var responseProductWithNullTotalAvailableQuantity = "{\"responses\":[{\"id\":\"3708\",\"status\":200,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"@odata.context\":\"https://api.channeladvisor.com/v1/$metadata#Products(Sku,TotalAvailableQuantity,DCQuantities,DCQuantities())\",\"value\":[{\"Sku\":\"someSku\",\"TotalAvailableQuantity\":null,\"DCQuantities\":[]}]}}]}";
 
-			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseProductWithNullTotalAvailableQuantity, out batchStatusCode, out parsedResponse );
+			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseProductWithNullTotalAvailableQuantity,
+				out batchStatusCode, out parsedResponse, out parseErrorMessage );
 
 			isParseSuccessful.Should().BeTrue();
 			batchStatusCode.Should().Be( successCode );
 			parsedResponse.Single().Value.Single().TotalAvailableQuantity.Should().Be( null );
+			parseErrorMessage.Should().BeEmpty();
 		}
 
 		[ Test ]
@@ -47,11 +53,16 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 		{
 			int batchStatusCode;
 			IEnumerable< ODataResponse< Product > > parsedResponse;
+			string parseErrorMessage;
+			const int successCode = ( int ) HttpStatusCode.OK;
 
-			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseProductsSuccess, out batchStatusCode, out parsedResponse );
+			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseProductsSuccess, out batchStatusCode,
+				out parsedResponse, out parseErrorMessage );
 			var result = parsedResponse.ToList();
 
 			isParseSuccessful.Should().BeTrue();
+			batchStatusCode.Should().Be( successCode );
+			parseErrorMessage.Should().BeEmpty();
 			result.Count().Should().Be( 2 );
 			result[ 0 ].Value[ 0 ].ID.Should().Be( 10062976 );
 			result[ 0 ].Value[ 0 ].Sku.Should().Be( "testkit1" );
@@ -68,14 +79,18 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 		{
 			int batchStatusCode;
 			const int unauthorized401 = ( int ) HttpStatusCode.Unauthorized;
+			string parseErrorMessage;
+
 			var responseItemsStatus401 = "{\"responses\":[{\"id\":\"1\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"2\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"3\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"4\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"5\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"6\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}}]}";
 
 			IEnumerable< ODataResponse< Product > > parsedResponse;
-			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseItemsStatus401, out batchStatusCode, out parsedResponse );
+			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseItemsStatus401, out batchStatusCode,
+				out parsedResponse, out parseErrorMessage );
 			var result = parsedResponse.ToList();
 
 			isParseSuccessful.Should().BeTrue();
 			batchStatusCode.Should().Be( unauthorized401 );
+			parseErrorMessage.Should().BeEmpty();
 			result[ 0 ].Error.Message.Should().Be( "Authorization has been denied for this request." );
 		}
 
@@ -84,14 +99,17 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 		{
 			int batchStatusCode;
 			const int unauthorized401 = ( int ) HttpStatusCode.Unauthorized;
+			string parseErrorMessage;
 			var responseItems401TheLast200 = "{\"responses\":[{\"id\":\"1\",\"status\":500,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"2\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"3\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"4\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"5\",\"status\":401,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"error\":{\"code\":\"\",\"message\":\"Authorization has been denied for this request.\"}}},{\"id\":\"6\",\"status\":200,\"headers\":{\"content-type\":\"application/json; odata.metadata=minimal; odata.streaming=true\",\"odata-version\":\"4.0\"}, \"body\" :{\"@odata.context\":\"https://api.channeladvisor.com/v1/$metadata#Products(ID,Sku)\",\"value\":[{\"ID\":10059896,\"Sku\":\"testkit2\"},{\"ID\":22222222,\"Sku\":\"testsku2\"}]}}]}";
 
 			IEnumerable< ODataResponse< Product > > parsedResponse;
-			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseItems401TheLast200, out batchStatusCode, out parsedResponse );
+			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( responseItems401TheLast200, out batchStatusCode,
+				out parsedResponse, out parseErrorMessage );
 			var result = parsedResponse.ToList();
 
 			isParseSuccessful.Should().BeTrue();
 			batchStatusCode.Should().Be( unauthorized401 );
+			parseErrorMessage.Should().BeEmpty();
 			result[ 0 ].Error.Message.Should().Be( "Authorization has been denied for this request." );
 			result[ 5 ].Value.First().Sku.Should().Be( "testkit2" );
 		}
@@ -101,11 +119,14 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 		{
 			int batchStatusCode;
 			var invalidJsonResponse = "MESSAGE\":\"TOO MANY REQUESTS\"";
+			string parseErrorMessage;
 
 			IEnumerable< ODataResponse< Product > > parsedResponse;
-			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( invalidJsonResponse, out batchStatusCode, out parsedResponse );
+			var isParseSuccessful = MultiPartResponseParser.TryParse< ODataResponse< Product > >( invalidJsonResponse, out batchStatusCode,
+				out parsedResponse, out parseErrorMessage );
 			
 			isParseSuccessful.Should().BeFalse();
+			parseErrorMessage.Should().Contain( "Unexpected character encountered" );
 		}
 	}
 }
