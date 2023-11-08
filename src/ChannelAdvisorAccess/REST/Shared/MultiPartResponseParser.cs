@@ -8,20 +8,23 @@ namespace ChannelAdvisorAccess.REST.Shared
 {
 	public static class MultiPartResponseParser
 	{
-		public static bool TryParse< T >( string response, out int httpBatchStatusCode, out IEnumerable< T > result )
+		public static bool TryParse< T >( string response, out int httpBatchStatusCode, out IEnumerable< T > result, out string parseErrorMessage )
 		{
 			result = new T[] { };
 			httpBatchStatusCode = 0;
+			parseErrorMessage = "";
 			var isResponseValid = true;
 
 			if ( string.IsNullOrWhiteSpace( response ) )
 				return false;
 
+			var deserializeErrorMessage = "";
 			var batchResponses = JsonConvert.DeserializeObject< BatchResponses< T > >( response, new JsonSerializerSettings() {
 				Error = ( s, args ) =>
 				{
 					args.ErrorContext.Handled = true;
 					isResponseValid = false;
+					deserializeErrorMessage = args?.ErrorContext?.Error?.Message;
 				}
 			} );
 
@@ -35,6 +38,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 				return true;
 			}
 
+			parseErrorMessage = deserializeErrorMessage;
 			return false;
 		}
 	}

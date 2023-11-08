@@ -221,7 +221,7 @@ namespace ChannelAdvisorAccess.REST.Shared
 		{
 			QuantityInfoResponse response = new QuantityInfoResponse()
 			{
-				 Available = product.TotalAvailableQuantity,
+				 Available = product.TotalAvailableQuantity.GetValueOrDefault(),
 				 OpenAllocated = (int)product.OpenAllocatedQuantity,
 				 OpenAllocatedPooled = (int)product.OpenAllocatedQuantityPooled,
 				 PendingCheckout = (int)product.PendingCheckoutQuantity,
