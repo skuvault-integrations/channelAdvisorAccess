@@ -667,7 +667,7 @@ namespace ChannelAdvisorAccess.REST.Services
 								}
 							}
 
-							await this.ThrowIfError( Math.Max( batchStatusCode, (int)httpResponse.StatusCode  ), content, cts.Token, mark ).ConfigureAwait( false );
+							await this.ThrowIfError( httpResponse.StatusCode == HttpStatusCode.OK ? batchStatusCode : (int)httpResponse.StatusCode, content, cts.Token, mark ).ConfigureAwait( false );
 
 							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 						}
