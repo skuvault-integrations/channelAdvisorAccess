@@ -1,4 +1,5 @@
-﻿using ChannelAdvisorAccess.REST.Models;
+﻿using System;
+using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.REST.Shared;
 using FluentAssertions;
 using NUnit.Framework;
@@ -75,6 +76,148 @@ namespace ChannelAdvisorAccessTests.REST.Shared
 
 			// Assert
 			quantityInfoResponse.Available.Should().Be( product.TotalAvailableQuantity );
+		}
+
+		[ Test ]
+		public void GetDistributionCenterCode_ReturnsNull_WhenOrderItemDoesNotExist()
+		{
+			// Arrange
+			var orderItemId = this._randomizer.Next( 0, 100 );
+			var fulfiilments = new[]
+			{
+				new Fulfillment
+				{
+					Items = new[]
+					{
+						new FulfillmentItem
+						{
+							OrderItemID = orderItemId + 1
+						}
+					}
+				}
+			};
+
+			var dcCodes = Array.Empty< DistributionCenter >();
+
+			// Act
+			var dcCode = SoapAdapter.GetDistributionCenterCode( fulfiilments, orderItemId, dcCodes );
+
+			// Assert
+			dcCode.Should().BeNullOrEmpty();
+		}
+
+		[ Test ]
+		public void GetDistributionCenterCode_ReturnsNull_WhenDistributionCenterIdIsNull()
+		{
+			// Arrange
+			var orderItemId = this._randomizer.Next( 0, 100 );
+			var distributionCenterId = this._randomizer.Next( 0, 100 );
+			var distributionCenterCode = Guid.NewGuid().ToString();
+			var fulfiilments = new[]
+			{
+				new Fulfillment
+				{
+					Items = new[]
+					{
+						new FulfillmentItem
+						{
+							OrderItemID = orderItemId
+						}
+					},
+					DistributionCenterID = null
+				}
+			};
+
+			var dcCodes = new[]
+			{
+				new DistributionCenter
+				{
+					ID = distributionCenterId,
+					Code = distributionCenterCode
+				}
+			};
+
+			// Act
+			var dcCode = SoapAdapter.GetDistributionCenterCode( fulfiilments, orderItemId, dcCodes );
+
+			// Assert
+			dcCode.Should().BeNullOrEmpty();
+		}
+
+		[ Test ]
+		public void GetDistributionCenterCode_ReturnsNull_WhenDistributionCenterDoesNotExist()
+		{
+			// Arrange
+			var orderItemId = this._randomizer.Next( 0, 100 );
+			var distributionCenterId = this._randomizer.Next( 0, 100 );
+			var distributionCenterCode = Guid.NewGuid().ToString();
+			var fulfiilments = new[]
+			{
+				new Fulfillment
+				{
+					Items = new[]
+					{
+						new FulfillmentItem
+						{
+							OrderItemID = orderItemId
+						}
+					},
+					DistributionCenterID = distributionCenterId
+				}
+			};
+
+			var dcCodes = new[]
+			{
+				new DistributionCenter
+				{
+					ID = distributionCenterId + 1,
+					Code = distributionCenterCode
+				}
+			};
+
+			// Act
+			var dcCode = SoapAdapter.GetDistributionCenterCode( fulfiilments, orderItemId, dcCodes );
+
+			// Assert
+			dcCode.Should().BeNullOrEmpty();
+		}
+
+		[ Test ]
+		public void GetDistributionCenterCode_ReturnsCode()
+		{
+			// Arrange
+			var orderItemId = this._randomizer.Next( 0, 100 );
+			var distributionCenterId = this._randomizer.Next( 0, 100 );
+			var distributionCenterCode = Guid.NewGuid().ToString();
+			var fulfiilments = new[]
+			{
+				new Fulfillment
+				{
+					Items = new[]
+					{
+						new FulfillmentItem
+						{
+							OrderItemID = orderItemId
+						}
+					},
+					DistributionCenterID = distributionCenterId
+				}
+			};
+
+			var dcCodes = new[]
+			{
+				new DistributionCenter
+				{
+					ID = distributionCenterId,
+					Code = distributionCenterCode
+				}
+			};
+
+			// Act
+			var dcCode = SoapAdapter.GetDistributionCenterCode( fulfiilments, orderItemId, dcCodes );
+
+			// Assert
+			dcCode.Should().Be( distributionCenterCode );
 		}
 	}
 }

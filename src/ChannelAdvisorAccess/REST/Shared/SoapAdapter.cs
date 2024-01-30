@@ -119,14 +119,8 @@ namespace ChannelAdvisorAccess.REST.Shared
 					 Title = item.Title,
 					 Quantity = item.Quantity,
 				};
-				
-				var itemFulFillment = order.Fulfillments.FirstOrDefault( f => f.Items.FirstOrDefault( fi => fi.OrderItemID == item.ID ) != null );
 
-				if ( itemFulFillment != null )
-				{
-					var distributionCenter = distributionCenters.FirstOrDefault( dc => dc.ID == itemFulFillment.DistributionCenterID.Value );
-					orderLineItem.DistributionCenterCode = distributionCenter.Code;
-				}
+				orderLineItem.DistributionCenterCode = GetDistributionCenterCode( order.Fulfillments, item.ID, distributionCenters );
 				
 				List< OrderLineItemItemPromo > promotions = new List< OrderLineItemItemPromo >();
 
@@ -183,6 +177,16 @@ namespace ChannelAdvisorAccess.REST.Shared
 			return response;
 		}
 
+		internal static string GetDistributionCenterCode( Fulfillment[] fulfillments, int orderItemId, DistributionCenter[] distributionCenters )
+		{
+			var itemFulFillment = fulfillments.FirstOrDefault( f => f.Items.FirstOrDefault( fi => fi.OrderItemID == orderItemId ) != null );
+
+			if( itemFulFillment?.DistributionCenterID == null )
+				return null;
+
+			return distributionCenters.FirstOrDefault( dc => dc.ID == itemFulFillment.DistributionCenterID.Value )?.Code;
+		}
+		
 		/// <summary>
 		///	Converts REST distribution center to SOAP response
 		/// </summary>
