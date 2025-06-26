@@ -224,6 +224,26 @@ namespace ChannelAdvisorAccessTests.Inventory
 		}
 
 		[ Test ]
+		public void DoSkusExist_When_Large_Batch_Should_Handle_Batching()
+		{
+			//------------ Arrange
+			var skuList = new List< string >();
+			for( int i = 0; i < 250; i++ ) // More than 100 to test batching
+				skuList.Add( Guid.NewGuid().ToString() );
+			skuList.Add( TestSku ); // Add one valid SKU
+
+			//------------ Act
+			var result = this.ItemsService.DoSkusExist( skuList, this.Mark );
+
+			//------------ Assert
+			result.Should().NotBeNull();
+			result.Count().Should().Be( 251 ); // Should return results for all SKUs
+			result.Where( r => r.Result ).Should().HaveCount( 1 ); // Only TestSku should exist
+			result.Single( r => r.Result ).Sku.Should().Be( TestSku );
+			ValidateLastActivityDateTimeUpdated();
+		}
+
+		[ Test ]
 		[ Ignore ]
 		public void GetAllItems()
 		{

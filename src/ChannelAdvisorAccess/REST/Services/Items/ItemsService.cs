@@ -164,7 +164,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			return await GetProductsWithIdOnlyByBatch( skus, mark, token ).ConfigureAwait( false );
 		}
 
-		private async Task< Dictionary< string, int > > GetProductsWithIdOnlyByBatch( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
+		private async Task< Dictionary< string, int > > GetProductsWithIdOnlyByBatch( IEnumerable< string > skus, Mark mark, CancellationToken token = default(CancellationToken) )
 		{
 			var productIds = new Dictionary< string, int >();
 			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
@@ -182,7 +182,7 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			{
 				var sku = product.Sku.ToLower();
 
-				if ( !productIds.ContainsKey( sku ) )
+				if( !productIds.ContainsKey( sku ) )
 				{
 					productIds.Add( sku, product.ID );
 				}
