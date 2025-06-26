@@ -21,6 +21,7 @@ using CsvHelper;
 using System.Net;
 using System.Threading;
 using CsvHelper.Configuration;
+using Netco.Extensions;
 
 namespace ChannelAdvisorAccess.REST.Services.Items
 {
@@ -164,27 +165,32 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 			return await GetProductsWithIdOnlyByBatch( skus, mark, token ).ConfigureAwait( false );
 		}
 
-		private async Task< Dictionary< string, int > > GetProductsWithIdOnlyByBatch( IEnumerable< string > skus, Mark mark, CancellationToken token = default( CancellationToken ) )
+		private async Task< Dictionary< string, int > > GetProductsWithIdOnlyByBatch( IEnumerable< string > skus, Mark mark, CancellationToken token = default(CancellationToken) )
 		{
 			var productIds = new Dictionary< string, int >();
-			var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
-			var urlBuilder = new ItemsServiceUrlBuilder();
+			var skuBatches = skus.Slice( _maxBatchSize ).ToList();
 
-			foreach( var sku in skus )
+			foreach( var skuBatch in skuBatches )
 			{
-				batchBuilder.AddGetRequest( urlBuilder.GetProductWithIdOnlyBySkuUrl( sku ) );
-			}
+				var batchBuilder = new BatchBuilder( ChannelAdvisorEndPoint.BaseApiUrl + "/" );
+				var urlBuilder = new ItemsServiceUrlBuilder();
 
-			var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductIdBySkuUsingBatchRest ], token ).ConfigureAwait( false );
-			var products = productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First() );
-
-			foreach( var product in products )
-			{
-				var sku = product.Sku.ToLower();
-
-				if ( !productIds.ContainsKey( sku ) )
+				foreach( var sku in skuBatch )
 				{
-					productIds.Add( sku, product.ID );
+					batchBuilder.AddGetRequest( urlBuilder.GetProductWithIdOnlyBySkuUrl( sku ) );
+				}
+
+				var productResponses = await base.DoBatch< ODataResponse< Product > >( batchBuilder, mark, Timeouts[ ChannelAdvisorOperationEnum.GetProductIdBySkuUsingBatchRest ], token ).ConfigureAwait( false );
+				var products = productResponses.Where( r => r.Value.Length != 0 ).Select( r => r.Value.First() );
+
+				foreach( var product in products )
+				{
+					var sku = product.Sku.ToLower();
+
+					if( !productIds.ContainsKey( sku ) )
+					{
+						productIds.Add( sku, product.ID );
+					}
 				}
 			}
 
