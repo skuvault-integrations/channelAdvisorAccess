@@ -151,13 +151,15 @@ namespace ChannelAdvisorAccess.REST.Services
 				return this.RefreshAccessTokenByRestCredentials( mark, Timeouts[ ChannelAdvisorOperationEnum.RefreshAccessTokenByRestCredentials ], token );
 		}
 
-		/// <summary>
-		///	Gets refresh token by SOAP credentials
-		///	This is way how to obtain refresh token using existing credentials without involving partner
-		/// </summary>
-		/// <param name="mark">Mark for logging</param>
-		/// <returns></returns>
-		private async Task RefreshAccessTokenBySoapCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
+		///  <summary>
+		/// 	Gets refresh token by SOAP credentials
+		/// 	This is way how to obtain refresh token using existing credentials without involving partner
+		///  </summary>
+		///  <param name="mark">Mark for logging</param>
+		///  <param name="operationTimeout"></param>
+		///  <param name="token"></param>
+		///  <returns></returns>
+		private async Task RefreshAccessTokenBySoapCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default(CancellationToken) )
 		{
 			this.SetBasicAuthorizationHeader();
 
@@ -173,31 +175,40 @@ namespace ChannelAdvisorAccess.REST.Services
 
 			var content = new FormUrlEncodedContent( requestData );
 
-			var payloadForLog = new { GrantType = requestData[ "grant_type" ], ClientId = requestData[ "client_id" ], AccountId = requestData[ "account_id" ],
-				Scope = requestData[ "scope" ] };
-			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+			var payloadForLog = new
+			{
+				GrantType = requestData[ "grant_type" ], ClientId = requestData[ "client_id" ], AccountId = requestData[ "account_id" ],
+				Scope = requestData[ "scope" ]
+			};
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters : "oauth2/token", payload : payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout : operationTimeout ) );
 
 			try
 			{
 				using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 				{
-					if ( operationTimeout != null )
+					if( operationTimeout != null )
 						cts.CancelAfter( operationTimeout.Value );
 
 					RefreshLastNetworkActivityTime();
 					var response = await this.HttpClient.PostAsync( "oauth2/token", content, cts.Token ).ConfigureAwait( false );
 					var responseStr = await response.Content.ReadAsStringAsync();
 					RefreshLastNetworkActivityTime();
+
+					if( response.StatusCode == HttpStatusCode.BadRequest )
+					{
+						throw new ChannelAdvisorUnauthorizedException( $"Token refresh failed with Bad Request: {responseStr}" );
+					}
+
 					var result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 
-					if ( !string.IsNullOrEmpty( result.Error ) )
+					if( !string.IsNullOrEmpty( result.Error ) )
 						throw new ChannelAdvisorUnauthorizedException( result.Error );
 
 					this._accessToken = result.AccessToken;
 					this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
 
 					var resultForLog = new { AccessToken = result.AccessToken.SanitizeForLogs(), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
-					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: "oauth2/token", methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters : "oauth2/token", methodResult : resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout : operationTimeout ) );
 				}
 			}
 			catch( Exception ex )
@@ -212,11 +223,13 @@ namespace ChannelAdvisorAccess.REST.Services
 			}
 		}
 
-		/// <summary>
-		///	Gets refresh token by REST credentials
-		/// </summary>
-		/// <param name="mark">Mark for logging</param>
-		/// <returns></returns>
+		///  <summary>
+		/// 	Gets refresh token by REST credentials
+		///  </summary>
+		///  <param name="mark">Mark for logging</param>
+		///  <param name="operationTimeout"></param>
+		///  <param name="token"></param>
+		///  <returns></returns>
 		private async Task RefreshAccessTokenByRestCredentials( Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			this.SetBasicAuthorizationHeader();
@@ -227,13 +240,13 @@ namespace ChannelAdvisorAccess.REST.Services
 			const string requestTokenUrl = "oauth2/token";
 
 			var payloadForLog = new { GrantType = requestData[ "grant_type" ], RefreshToken = requestData[ "refresh_token" ].SanitizeForLogs() };
-			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, payload: payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+			ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters : requestTokenUrl, payload : payloadForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout : operationTimeout ) );
 
 			try
 			{
 				using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 				{
-					if ( operationTimeout != null )
+					if( operationTimeout != null )
 						cts.CancelAfter( operationTimeout.Value );
 
 					RefreshLastNetworkActivityTime();
@@ -245,23 +258,29 @@ namespace ChannelAdvisorAccess.REST.Services
 					{
 						responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait( false );
 						RefreshLastNetworkActivityTime();
+
+						if( response.StatusCode == HttpStatusCode.BadRequest )
+						{
+							throw new ChannelAdvisorUnauthorizedException( $"Token refresh failed with Bad Request: {responseStr}" );
+						}
+
 						result = JsonConvert.DeserializeObject< OAuthResponse >( responseStr );
 					}
 					catch( Exception responseEx )
-					{						
-						ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: responseStr, errors: "Failed due to" + responseEx.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+					{
+						ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters : requestTokenUrl, methodResult : responseStr, errors : "Failed due to" + responseEx.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout : operationTimeout ) );
 						var channelAdvisorException = new ChannelAdvisorException( responseEx.Message, responseEx );
 						throw channelAdvisorException;
 					}
-					
-					if ( !string.IsNullOrEmpty( result.Error ) )
+
+					if( !string.IsNullOrEmpty( result.Error ) )
 						throw new ChannelAdvisorUnauthorizedException( result.Error );
 
 					this._accessToken = result.AccessToken;
 					this._accessTokenExpiredUtc = DateTime.UtcNow.AddSeconds( result.ExpiresIn );
 
 					var resultForLog = new { AccessToken = result.AccessToken.SanitizeForLogs(), result.Error, ExpiresOn = this._accessTokenExpiredUtc };
-					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: requestTokenUrl, methodResult: resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+					ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters : requestTokenUrl, methodResult : resultForLog.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout : operationTimeout ) );
 				}
 			}
 			catch( Exception ex )
