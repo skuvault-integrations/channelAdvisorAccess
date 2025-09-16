@@ -1,6 +1,5 @@
 name: Continuous Integration/Continuous Deployment
 
-# Runs when a pull request (against master branch) is opened, reopened or when the master branch is updated or when a release tag is created.
 on:
   pull_request:
     branches:
@@ -35,7 +34,7 @@ jobs:
           dotnet nuget add source --username ${{ secrets.SV_NUGET_OWNER}} --password ${{ secrets.NUGETTOKEN }} --store-password-in-clear-text --name github-integrations "https://nuget.pkg.github.com/skuvault-integrations/index.json"
 
       - name: Install dependencies
-        run: dotnet restore $SOLUTION_NAME
+        run: dotnet restore ${{ env.SOLUTION_NAME }}
 
       - name: Get build version
         run: |
@@ -46,10 +45,11 @@ jobs:
         shell: pwsh
 
       - name: Build
-        run: dotnet build $SOLUTION_NAME --configuration $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
+        run: dotnet build ${{ env.SOLUTION_NAME }} --configuration ${{ env.BUILD_CONFIG }} -p:Version=$env:BUILD_VERSION --no-restore
+        shell: pwsh
 
       - name: Unit tests
-        run: dotnet test --no-restore --no-build --configuration $BUILD_CONFIG --verbosity normal $SOLUTION_NAME
+        run: dotnet test --no-restore --no-build --configuration ${{ env.BUILD_CONFIG }} --verbosity normal ${{ env.SOLUTION_NAME }}
 
       - name: Upload packages (to be used in the next job)
         if: startsWith(github.ref, 'refs/tags')
@@ -81,3 +81,4 @@ jobs:
           for file in $(find . -name '*.nupkg'); do
             dotnet nuget push "$file" --source github-integrations
           done
+        shell: bash
