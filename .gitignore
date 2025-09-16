@@ -31,7 +31,6 @@ _ReSharper*/
 .idea
 
 #Ignore common build files
-build
 log
 *Credentials*.csv
 
