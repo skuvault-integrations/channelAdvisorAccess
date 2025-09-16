@@ -33,6 +33,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mono-complete
 
+      - name: Install .NET Framework reference assemblies
+        run: |
+          sudo apt-get install -y mono-reference-assemblies-4.0
+
       - name: Add NuGet sources for restoring packages
         if: startsWith(github.ref, 'refs/tags')
         run: |
@@ -62,7 +66,7 @@ jobs:
         with:
           name: channeladvisor-access-packages
           path: |
-            **/*.nupkg
+             **/*.nupkg
           overwrite: true
 
   publish-packages:
