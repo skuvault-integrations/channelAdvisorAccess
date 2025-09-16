@@ -16,7 +16,7 @@ jobs:
 
     env:
       BUILD_CONFIG: 'Release'
-      SOLUTION_NAME: './src/ChannelAdvisorAccess.sln'
+      SOLUTION_NAME: 'src/ChannelAdvisorAccess.sln'
       PACKAGES_ARTIFACT: channeladvisor-access-packages
 
     steps:
