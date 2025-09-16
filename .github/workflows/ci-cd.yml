@@ -16,7 +16,7 @@ jobs:
 
     env:
       BUILD_CONFIG: 'Release'
-      SOLUTION_NAME: 'ChannelAdvisorAccess.sln'
+      SOLUTION_NAME: './src/ChannelAdvisorAccess.sln'
       PACKAGES_ARTIFACT: channeladvisor-access-packages
 
     steps:
@@ -60,7 +60,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags')
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PACKAGES_ARTIFACT }}
+          name: channeladvisor-access-packages
           path: |
             **/*.nupkg
           overwrite: true
@@ -75,7 +75,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.PACKAGES_ARTIFACT }}
+          name: channeladvisor-access-packages
 
       - name: Add NuGet Sources for publishing packages
         run: |
