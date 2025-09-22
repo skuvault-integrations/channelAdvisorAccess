@@ -11,7 +11,7 @@ using Netco.Extensions;
 
 namespace ChannelAdvisorAccess.Services.Items
 {
-	public partial class ItemsService : IItemsService
+	public partial class ItemsService: IItemsService
 	{
 		#region Update items
 		public void SynchItem( InventoryItemSubmit item, Mark mark, bool isCreateNew = false, CancellationToken token = default( CancellationToken ) )
