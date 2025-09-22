@@ -65,6 +65,19 @@ namespace ChannelAdvisorAccess.Misc
 			} );
 		}
 
+		public static ActionPolicyAsync CreateQueryAsync( Func< string > additionalLogInfo, CancellationToken cancellationToken )
+		{
+			return ActionPolicyAsync.Handle< Exception >().RetryAsync( RetryCount, async ( ex, i ) =>
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				var delay = GetDelay( ex, i );
+				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
+				ChannelAdvisorLogger.LogTrace( ex, message );
+
+				await Task.Delay( delay, cancellationToken ).ConfigureAwait( false );
+			} );
+		}
+
 		public static ActionPolicy CreateSubmit( Func< string > additionalLogInfo = null )
 		{
 			return ActionPolicy.Handle< Exception >().Retry( RetryCount, ( ex, i ) =>
@@ -86,6 +99,19 @@ namespace ChannelAdvisorAccess.Misc
 				ChannelAdvisorLogger.LogTrace( ex, message );
 
 				await Task.Delay( delay ).ConfigureAwait( false );
+			} );
+		}
+
+		public static ActionPolicyAsync CreateSubmitAsync( Func< string > additionalLogInfo, CancellationToken cancellationToken )
+		{
+			return ActionPolicyAsync.Handle< Exception >().RetryAsync( RetryCount, async ( ex, i ) =>
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				var delay = GetDelay( ex, i );
+				var message = CreateRetryMessage( additionalLogInfo, i, delay, ex );
+				ChannelAdvisorLogger.LogTrace( ex, message );
+
+				await Task.Delay( delay, cancellationToken ).ConfigureAwait( false );
 			} );
 		}
 		#endregion
