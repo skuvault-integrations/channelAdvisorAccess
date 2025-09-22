@@ -322,8 +322,10 @@ namespace ChannelAdvisorAccess.Services.Items
 					{
 						this.RefreshLastNetworkActivityTime();
 						ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );					
+						token.ThrowIfCancellationRequested();
 						var resultOfBoolean = await this._client.RemoveLabelListFromInventoryItemListAsync( this._credentials, this.AccountId, labels, s.ToArray(), reason ).ConfigureAwait( false );
 						this.RefreshLastNetworkActivityTime();
+						token.ThrowIfCancellationRequested();
 						CheckCaSuccess( resultOfBoolean.RemoveLabelListFromInventoryItemListResult );
 						ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : s.ToJson() ) );
 					} ).ConfigureAwait( false );
