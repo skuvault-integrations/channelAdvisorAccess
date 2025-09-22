@@ -56,12 +56,15 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
+					token.ThrowIfCancellationRequested();
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
 					if( !isCreateNew && !( await this.DoesSkuExistAsync( item.Sku, mark, token ).ConfigureAwait( false ) ) )
 						return;
 					
+					token.ThrowIfCancellationRequested();
 					var resultOfBoolean = await this._client.SynchInventoryItemAsync( this._credentials, this.AccountId, item ).ConfigureAwait( false );
+					token.ThrowIfCancellationRequested();
 					this.RefreshLastNetworkActivityTime();
 					CheckCaSuccess( resultOfBoolean.SynchInventoryItemResult );
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : parameters.ToJson() ) );
@@ -131,9 +134,11 @@ namespace ChannelAdvisorAccess.Services.Items
 
 				await items.DoWithPagesAsync( 100, async i => await AP.CreateSubmitAsync( ExtensionsInternal.CreateMethodCallInfo( this.AdditionalLogInfo ) ).Do( async () =>
 				{
+					token.ThrowIfCancellationRequested();
 					this.RefreshLastNetworkActivityTime();
 					ChannelAdvisorLogger.LogTraceRetryStarted( this.CreateMethodCallInfo( mark : mark, additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : i.ToJson() ) );						
 					var resultOfBoolean = await this._client.SynchInventoryItemListAsync( this._credentials, this.AccountId, i.ToArray() ).ConfigureAwait( false );
+					token.ThrowIfCancellationRequested();
 					this.RefreshLastNetworkActivityTime();
 					CheckCaSuccess( resultOfBoolean.SynchInventoryItemListResult );
 					ChannelAdvisorLogger.LogTraceRetryEnd( this.CreateMethodCallInfo( mark : mark, methodResult : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : resultOfBoolean.ToJson(), additionalInfo : this.AdditionalLogInfo(), methodParameters : !this.LogDetailsEnum.HasFlag( LogDetailsEnum.LogParametersAndResultForRetry ) ? null : i.ToJson() ) );
