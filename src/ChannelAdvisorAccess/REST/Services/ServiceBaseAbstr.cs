@@ -637,8 +637,6 @@ namespace ChannelAdvisorAccess.REST.Services
 				{
 					using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 					{
-						var entities = new List< T >();
-
 						if ( operationTimeout != null )
 							cts.CancelAfter( operationTimeout.Value );
 
@@ -653,6 +651,7 @@ namespace ChannelAdvisorAccess.REST.Services
 						int batchStatusCode = ( int )HttpStatusCode.OK;
 						string parseErrorMessage = "";
 
+						var entities = new List< T >();
 						try
 						{
 							IEnumerable< T > parsedEntities;
