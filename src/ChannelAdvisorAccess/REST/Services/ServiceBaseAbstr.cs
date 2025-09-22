@@ -637,10 +637,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				{
 					using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 					{
-						// CRITICAL FIX: Process the provided batch directly instead of splitting it again.
-						// DoBatch already splits batches to _currentBatchSize, so splitting again here
-						// turns 100-operation batches into single-operation batches, causing 100x slowdown
-						// and triggering TaskCanceledException due to excessive processing time.
+						var entities = new List< T >();
 
 						if ( operationTimeout != null )
 							cts.CancelAfter( operationTimeout.Value );
@@ -655,7 +652,6 @@ namespace ChannelAdvisorAccess.REST.Services
 
 						int batchStatusCode = ( int )HttpStatusCode.OK;
 						string parseErrorMessage = "";
-						var entities = new List< T >();
 
 						try
 						{
