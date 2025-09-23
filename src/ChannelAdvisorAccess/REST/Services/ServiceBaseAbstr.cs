@@ -622,7 +622,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Do batch request
 		/// </summary>
-		/// <param name="batchPart"></param>
+		/// <param name="batchPart">A single batch part to be processed in this request.</param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
 		private Task < T[] > DoPartialBatch< T >( BatchBuilder batchPart, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
@@ -676,7 +676,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 						if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
 						{
-							// slowly decrease the number of requests in the batch for subsequent batches
+							// slowly decrease the number of requests in the batch for future batch operations.
 							if ( this._currentBatchSize >= _minBatchSize )
 							{
 								this._currentBatchSize = ( int )Math.Ceiling( this._currentBatchSize * 0.7 );
