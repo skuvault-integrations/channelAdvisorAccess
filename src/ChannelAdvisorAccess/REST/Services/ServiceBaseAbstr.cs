@@ -622,7 +622,7 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Do batch request
 		/// </summary>
-		/// <param name="batchPart"></param>
+		/// <param name="batchPart">A single batch part to be processed in this request.</param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
 		private Task < T[] > DoPartialBatch< T >( BatchBuilder batchPart, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
