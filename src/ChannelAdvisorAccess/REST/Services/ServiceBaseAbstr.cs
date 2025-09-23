@@ -676,7 +676,7 @@ namespace ChannelAdvisorAccess.REST.Services
 
 						if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
 						{
-							// slowly decrease the number of requests in the batch for subsequent batches
+							// slowly decrease the number of requests in the batch for future batch operations
 							if ( this._currentBatchSize >= _minBatchSize )
 							{
 								this._currentBatchSize = ( int )Math.Ceiling( this._currentBatchSize * 0.7 );
