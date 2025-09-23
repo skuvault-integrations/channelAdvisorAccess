@@ -631,11 +631,12 @@ namespace ChannelAdvisorAccess.REST.Services
 				mark = Mark.CreateNew();
 
 			var url = ChannelAdvisorEndPoint.BatchUrl;
-			var entities = new List< T >();
+
 
 			return this.BatchThrottler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
+					var entities = new List< T >();
 					using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 					{
 						if ( operationTimeout != null )
