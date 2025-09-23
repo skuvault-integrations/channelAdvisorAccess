@@ -631,6 +631,7 @@ namespace ChannelAdvisorAccess.REST.Services
 				mark = Mark.CreateNew();
 
 			var url = ChannelAdvisorEndPoint.BatchUrl;
+			var entities = new List< T >();
 
 			return this.BatchThrottler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
@@ -651,7 +652,6 @@ namespace ChannelAdvisorAccess.REST.Services
 						int batchStatusCode = ( int )HttpStatusCode.OK;
 						string parseErrorMessage = "";
 
-						var entities = new List< T >();
 						try
 						{
 							IEnumerable< T > parsedEntities;
