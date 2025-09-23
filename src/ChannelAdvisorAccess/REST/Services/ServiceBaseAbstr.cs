@@ -622,10 +622,10 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Do batch request
 		/// </summary>
-		/// <param name="batch"></param>
+		/// <param name="batchPart"></param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
+		private Task < T[] > DoPartialBatch< T >( BatchBuilder batchPart, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
@@ -640,9 +640,9 @@ namespace ChannelAdvisorAccess.REST.Services
 						if ( operationTimeout != null )
 							cts.CancelAfter( operationTimeout.Value );
 
-						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batch.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batchPart.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
-						var multipartContent = batch.Build();
+						var multipartContent = batchPart.Build();
 						RefreshLastNetworkActivityTime();
 						var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cts.Token ).ConfigureAwait( false );
 						string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
