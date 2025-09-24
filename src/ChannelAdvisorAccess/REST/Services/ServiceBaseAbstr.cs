@@ -622,74 +622,70 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <summary>
 		///	Do batch request
 		/// </summary>
-		/// <param name="batch"></param>
+		/// <param name="batchPart">A single batch part to be processed in this request.</param>
 		/// <param name="mark"></param>
 		/// <returns></returns>
-		private Task < T[] > DoPartialBatch< T >( BatchBuilder batch, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
+		private Task < T[] > DoPartialBatch< T >( BatchBuilder batchPart, Mark mark, int? operationTimeout = null, CancellationToken token = default( CancellationToken ) )
 		{
 			if( mark.IsBlank() )
 				mark = Mark.CreateNew();
 
 			var url = ChannelAdvisorEndPoint.BatchUrl;
 
+
 			return this.BatchThrottler.ExecuteAsync( () => {
 				return this.ActionPolicy.ExecuteAsync( async () =>
 				{
+					var entities = new List< T >();
 					using( var cts = CancellationTokenSource.CreateLinkedTokenSource( token ) )
 					{
-						var entities = new List< T >();
-						var batches = batch.Split( this._currentBatchSize );
+						if ( operationTimeout != null )
+							cts.CancelAfter( operationTimeout.Value );
 
-						foreach( var batchPart in batches )
+						ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batchPart.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
+
+						var multipartContent = batchPart.Build();
+						RefreshLastNetworkActivityTime();
+						var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cts.Token ).ConfigureAwait( false );
+						string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
+						RefreshLastNetworkActivityTime();
+
+						int batchStatusCode = ( int )HttpStatusCode.OK;
+						string parseErrorMessage = "";
+
+						try
 						{
-							if ( operationTimeout != null )
-								cts.CancelAfter( operationTimeout.Value );
-
-							ChannelAdvisorLogger.LogStarted( this.CreateMethodCallInfo( mark : mark, methodParameters: url, payload: batchPart.ToString(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
-							
-							var multipartContent = batchPart.Build();
-							RefreshLastNetworkActivityTime();
-							var httpResponse = await HttpClient.PostAsync( url + "?access_token=" + this._accessToken, multipartContent, cts.Token ).ConfigureAwait( false );
-							string content = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait( false );
-							RefreshLastNetworkActivityTime();
-
-							int batchStatusCode = ( int )HttpStatusCode.OK;
-							string parseErrorMessage = "";
-
-							try
+							IEnumerable< T > parsedEntities;
+							if ( MultiPartResponseParser.TryParse< T >( content, out batchStatusCode, out parsedEntities, out parseErrorMessage ) )
 							{
-								IEnumerable< T > parsedEntities;
-								if ( MultiPartResponseParser.TryParse< T >( content, out batchStatusCode, out parsedEntities, out parseErrorMessage ) )
-								{
-									entities.AddRange( parsedEntities );
-								}
-								else
-								{
-									ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content,
-										errors: "Can't parse the response: " + parseErrorMessage, additionalInfo : this.AdditionalLogInfo(),
-										operationTimeout: operationTimeout, returnStatusCode: httpResponse.StatusCode.ToString() ) );
-								}
+								entities.AddRange( parsedEntities );
 							}
-							catch ( Exception ex )
+							else
 							{
 								ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content,
-									errors: "Failed due to: " + ex.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout,
-									returnStatusCode: httpResponse.StatusCode.ToString() ) );
+									errors: "Can't parse the response: " + parseErrorMessage, additionalInfo : this.AdditionalLogInfo(),
+									operationTimeout: operationTimeout, returnStatusCode: httpResponse.StatusCode.ToString() ) );
 							}
-
-							if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
-							{
-								// slowly decrease the number of requests in the batch
-								if ( this._currentBatchSize >= _minBatchSize )
-								{
-									this._currentBatchSize = ( int )Math.Ceiling( this._currentBatchSize * 0.7 );
-								}
-							}
-
-							await this.ThrowIfError( httpResponse.StatusCode == HttpStatusCode.OK ? batchStatusCode : (int)httpResponse.StatusCode, content, cts.Token, mark ).ConfigureAwait( false );
-
-							ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 						}
+						catch ( Exception ex )
+						{
+							ChannelAdvisorLogger.LogTrace( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content,
+								errors: "Failed due to: " + ex.Message, additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout,
+								returnStatusCode: httpResponse.StatusCode.ToString() ) );
+						}
+
+						if ( ( int )httpResponse.StatusCode == _tooManyRequestsStatusCode )
+						{
+							// slowly decrease the number of requests in the batch for future batch operations.
+							if ( this._currentBatchSize >= _minBatchSize )
+							{
+								this._currentBatchSize = ( int )Math.Ceiling( this._currentBatchSize * 0.7 );
+							}
+						}
+
+						await this.ThrowIfError( httpResponse.StatusCode == HttpStatusCode.OK ? batchStatusCode : (int)httpResponse.StatusCode, content, cts.Token, mark ).ConfigureAwait( false );
+
+						ChannelAdvisorLogger.LogEnd( this.CreateMethodCallInfo( mark : mark, methodParameters: url, methodResult: content.ToJson(), additionalInfo : this.AdditionalLogInfo(), operationTimeout: operationTimeout ) );
 
 						return entities.ToArray();
 					}
