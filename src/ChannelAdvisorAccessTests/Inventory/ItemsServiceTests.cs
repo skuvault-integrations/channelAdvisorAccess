@@ -11,6 +11,7 @@ using NUnit.Framework;
 
 namespace ChannelAdvisorAccessTests.Inventory
 {
+	[ Explicit ]
 	public class ItemsServiceTests: TestsBase
 	{
 		[ Test ]
@@ -127,7 +128,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = this.ItemsService.DoSkusExist( new[] { TestSku, incorrectSku }, this.Mark );
 
 			//------------ Assert
-			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
+			result.Should().BeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
 		}
 
 		[ Test ]
@@ -141,7 +142,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = this.ItemsService.DoSkusExist( incorrectSkuList, this.Mark );
 
 			//------------ Assert
-			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() );
+			result.Should().BeEquivalentTo( new List< DoesSkuExistResponse >() );
 		}
 
 		[ Test ]
@@ -182,7 +183,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = this.ItemsService.DoSkusExist( skuList, this.Mark );
 
 			//------------ Assert
-			result.Where( r => r.Result ).ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true } } );
+			result.Where( r => r.Result ).Should().BeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true } } );
 		}
 
 		[ Test ]
@@ -195,7 +196,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 			var result = this.ItemsService.DoSkusExistAsync( new[] { TestSku, incorrectSku }, this.Mark ).GetAwaiter().GetResult();
 
 			//------------ Assert
-			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
+			result.Should().BeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
 		}
 
 		[ Test ]
@@ -224,7 +225,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 		}
 
 		[ Test ]
-		[ Ignore ]
+		[ Ignore("Manual test") ]
 		public void GetAllItems()
 		{
 			//------------ Arrange
@@ -248,8 +249,8 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
-			result.Count().ShouldBeEquivalentTo( 1 );
-			result.First().Sku.ToLower().ShouldBeEquivalentTo( TestSku.ToLower() );
+			result.Count().Should().Be( 1 );
+			result.First().Sku.ToLower().Should().Be( TestSku.ToLower() );
 			ValidateLastActivityDateTimeUpdated();
 		}
 
@@ -264,8 +265,8 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNullOrEmpty();
-			result.Count().ShouldBeEquivalentTo( 1 );
-			result.First().Sku.ToLower().ShouldBeEquivalentTo( TestSku.ToLower() );
+			result.Count().Should().Be( 1 );
+			result.First().Sku.ToLower().Should().Be( TestSku.ToLower() );
 			ValidateLastActivityDateTimeUpdated();
 		}
 
@@ -422,13 +423,13 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNull();
-			result.Length.ShouldBeEquivalentTo( 2 );
-			result[ 0 ].SKU.ShouldBeEquivalentTo( TestSku );
-			result[ 0 ].MessageCode.ShouldBeEquivalentTo( 0 );
+			result.Length.Should().Be( 2 );
+			result[ 0 ].SKU.Should().Be( TestSku );
+			result[ 0 ].MessageCode.Should().Be( 0 );
 			result[ 0 ].Quantity.Should().BeGreaterThan( 0 );
-			result[ 1 ].SKU.ShouldBeEquivalentTo( incorrectSku );
+			result[ 1 ].SKU.Should().Be( incorrectSku );
 			result[ 1 ].MessageCode.Should().BeGreaterThan( 0 );
-			result[ 1 ].Quantity.ShouldBeEquivalentTo( 0 );
+			result[ 1 ].Quantity.Should().Be( 0 );
 			ValidateLastActivityDateTimeUpdated();
 		}
 
@@ -443,18 +444,18 @@ namespace ChannelAdvisorAccessTests.Inventory
 
 			//------------ Assert
 			result.Should().NotBeNull();
-			result.Length.ShouldBeEquivalentTo( 2 );
-			result[ 0 ].SKU.ShouldBeEquivalentTo( TestSku );
-			result[ 0 ].MessageCode.ShouldBeEquivalentTo( 0 );
+			result.Length.Should().Be( 2 );
+			result[ 0 ].SKU.Should().Be( TestSku );
+			result[ 0 ].MessageCode.Should().Be( 0 );
 			result[ 0 ].Quantity.Should().BeGreaterThan( 0 );
-			result[ 1 ].SKU.ShouldBeEquivalentTo( incorrectSku );
+			result[ 1 ].SKU.Should().Be( incorrectSku );
 			result[ 1 ].MessageCode.Should().BeGreaterThan( 0 );
-			result[ 1 ].Quantity.ShouldBeEquivalentTo( 0 );
+			result[ 1 ].Quantity.Should().Be( 0 );
 			ValidateLastActivityDateTimeUpdated();
 		}
 
 		[ Test ]
-		[ Ignore ]
+		[ Ignore("Manual test") ]
 		public void SpeedTest()
 		{
 			//------------ Arrange

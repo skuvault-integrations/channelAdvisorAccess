@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using ChannelAdvisorAccess.Misc;
@@ -26,6 +27,7 @@ namespace ChannelAdvisorAccessTests.REST
 		public bool useSoapCredentials{ get; set; }
 	}
 
+	[ SuppressMessage( "Structure", "NUnit1032:An IDisposable field/property should be Disposed in a TearDown method" ) ]
 	public class RestAPITestBase
 	{
 		private const bool useSOAPCredentials = false;

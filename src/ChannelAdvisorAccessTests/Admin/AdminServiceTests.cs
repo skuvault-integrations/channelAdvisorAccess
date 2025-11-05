@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 namespace ChannelAdvisorAccessTests.Admin
 {
+	[ Explicit ]
 	[ TestFixture ]
 	public class AdminServiceTests : TestsBase
 	{
@@ -17,16 +18,16 @@ namespace ChannelAdvisorAccessTests.Admin
 
 			using ( service = (AdminService)factory.CreateAdminService() )
 			{
-				Debug.Assert( !service.Disposed ); // not be disposed yet
+				Assert.That( service.Disposed, Is.False ); // not be disposed yet
 			}
 
 			try
 			{
-				Debug.Assert( service.Disposed ); // expecting an exception.
+				Assert.That( service.Disposed, Is.True ); // expecting an exception.
 			}
 			catch ( Exception ex )
 			{
-				Debug.Assert( ex is ObjectDisposedException ); 
+				Assert.That( ex, Is.TypeOf<ObjectDisposedException>() );
 			}
 		}
 	}

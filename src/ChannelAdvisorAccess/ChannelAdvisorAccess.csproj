@@ -42,5 +42,9 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ChannelAdvisorAccessTests" />
+  </ItemGroup>
+
 </Project>
 

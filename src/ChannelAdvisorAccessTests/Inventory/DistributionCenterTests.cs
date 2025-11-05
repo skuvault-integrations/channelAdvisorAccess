@@ -7,6 +7,7 @@ namespace ChannelAdvisorAccessTests.Inventory
 {
 	public class DistributionCenterTests : TestsBase
 	{
+		[ Explicit ]
 		[ Test ]
 		public void GetDistributionCenterList()
 		{

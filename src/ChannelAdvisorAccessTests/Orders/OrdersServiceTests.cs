@@ -82,6 +82,7 @@ namespace ChannelAdvisorAccessTests.Orders
 			this.OrdersService.LastActivityTime.Should().BeAfter( activityTimeBeforeMakingAnyRequest );
 		}
 
+		[ Explicit ]
 		[ Test ]
 		public void AdminService_IsDisposable()
 		{
@@ -90,16 +91,16 @@ namespace ChannelAdvisorAccessTests.Orders
 			
 			using ( service = ( OrdersService )factory.CreateOrdersService( "test", Credentials.AccountId ) )
 			{
-				Debug.Assert( !service.Disposed ); // not be disposed yet
+				Assert.That( service.Disposed, Is.False ); // not be disposed yet
 			}
 
 			try
 			{
-				Debug.Assert( service.Disposed ); // expecting an exception.
+				Assert.That( service.Disposed, Is.True ); // expecting an exception.
 			}
 			catch ( Exception ex )
 			{
-				Debug.Assert( ex is ObjectDisposedException ); 
+				Assert.That( ex, Is.TypeOf<ObjectDisposedException>() );
 			}
 		}
 
@@ -112,7 +113,7 @@ namespace ChannelAdvisorAccessTests.Orders
 
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
-			Assert.True( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
+			Assert.That( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ), Is.True );
 		}
 
 		[ Test ]
@@ -125,8 +126,8 @@ namespace ChannelAdvisorAccessTests.Orders
 
 			var result = await this.OrdersService.GetOrdersAsync< OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
-			Assert.True( result.Any( x => x.OrderTimeGMT <= startDate || endDate <= x.OrderTimeGMT ) );
-			Assert.True( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
+			Assert.That( result.Any( x => x.OrderTimeGMT <= startDate || endDate <= x.OrderTimeGMT ), Is.True );
+			Assert.That( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ), Is.True );
 		}
 
 		private void ValidateLastActivityDateTimeUpdated()

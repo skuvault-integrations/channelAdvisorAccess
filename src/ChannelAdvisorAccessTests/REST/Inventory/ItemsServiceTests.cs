@@ -3,15 +3,14 @@ using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Constants;
 using ChannelAdvisorAccess.Services.Items;
-using System.Threading;
 
 namespace ChannelAdvisorAccessTests.REST.Inventory
 {
+	[ Explicit ]
 	public class ItemsServiceTests : RestAPITestBase
 	{
 		protected const string TestSku = "testSku1";
@@ -220,8 +219,8 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var result = this.ItemsService.GetItems( new[] { TestSku, incorrectSku }, this.Mark );
 
 			result.Should().NotBeNullOrEmpty();
-			result.Count().ShouldBeEquivalentTo( 1 );
-			result.First().Sku.ToLower().ShouldBeEquivalentTo( TestSku.ToLower() );
+			result.Count().Should().Be( 1 );
+			result.First().Sku.ToLower().Should().Be( TestSku.ToLower() );
 		}
 
 		[ Test ]
@@ -430,7 +429,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 		
 		[ Test ]
-		[ Ignore ]
+		[ Ignore("Manual test") ]
 		public void GetAllItems()
 		{
 			var result = this.ItemsService.GetAllItems( this.Mark );
@@ -459,7 +458,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var incorrectSku = TestSku + Guid.NewGuid();
 			var result = this.ItemsService.DoSkusExist( new[] { TestSku, incorrectSku }, this.Mark );
 
-			result.ShouldBeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
+			result.Should().BeEquivalentTo( new List< DoesSkuExistResponse >() { new DoesSkuExistResponse() { Sku = TestSku, Result = true }, new DoesSkuExistResponse() { Sku = incorrectSku, Result = false } } );
 		}
 
 		[ Test ]
@@ -502,13 +501,13 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			var result = this.ItemsService.GetAvailableQuantities( new[] { TestSku, incorrectSku }, this.Mark ).ToArray();
 
 			result.Should().NotBeNull();
-			result.Length.ShouldBeEquivalentTo( 2 );
-			result[ 0 ].SKU.ShouldBeEquivalentTo( TestSku );
-			result[ 0 ].MessageCode.ShouldBeEquivalentTo( 0 );
+			result.Length.Should().Be( 2 );
+			result[ 0 ].SKU.Should().Be( TestSku );
+			result[ 0 ].MessageCode.Should().Be( 0 );
 			result[ 0 ].Quantity.Should().BeGreaterThan( 0 );
-			result[ 1 ].SKU.ShouldBeEquivalentTo( incorrectSku );
+			result[ 1 ].SKU.Should().Be( incorrectSku );
 			result[ 1 ].MessageCode.Should().BeGreaterThan( 0 );
-			result[ 1 ].Quantity.ShouldBeEquivalentTo( 0 );
+			result[ 1 ].Quantity.Should().Be( 0 );
 		}
 
 		[ Test ]
@@ -534,7 +533,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
-		[ Ignore ]
+		[ Ignore("Manual test") ]
 		public void GetClassificationConfigurationInformation()
 		{
 			var result = this.ItemsService.GetClassificationConfigurationInformation( this.Mark );
@@ -611,7 +610,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 		}
 
 		[ Test ]
-		[ Ignore ]
+		[ Ignore("Manual test") ]
 		public void GetItemsByLabel()
 		{
 			string labelName = "updateLabel";

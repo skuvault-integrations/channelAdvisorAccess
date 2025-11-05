@@ -3,6 +3,7 @@ using ChannelAdvisorAccess.REST.Models;
 using ChannelAdvisorAccess.REST.Shared;
 using FluentAssertions;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace ChannelAdvisorAccessTests.REST.Shared
 {
