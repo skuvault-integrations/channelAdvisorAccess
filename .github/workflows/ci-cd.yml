@@ -28,6 +28,11 @@ jobs:
           dotnet-version: |
             8.x
 
+      - name: Add NuGet sources for restoring packages
+        run: |
+          dotnet nuget add source --username ${{ secrets.SV_NUGET_OWNER}} --password ${{ secrets.NUGETTOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/skuvault/index.json"
+          dotnet nuget add source --username ${{ secrets.SV_NUGET_OWNER}} --password ${{ secrets.NUGETTOKEN }} --store-password-in-clear-text --name github-integrations "https://nuget.pkg.github.com/skuvault-integrations/index.json"
+
       - name: Install dependencies
         run: dotnet restore $SOLUTION_NAME
 
