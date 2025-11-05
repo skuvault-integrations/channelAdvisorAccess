@@ -15,7 +15,6 @@ using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
 using ChannelAdvisorAccess.Services.Items;
-using CuttingEdge.Conditions;
 using Newtonsoft.Json;
 using SkuVault.Integrations.Core.Extensions;
 
@@ -65,10 +64,25 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="refreshToken">Tenant refresh token</param>
 		protected RestServiceBaseAbstr( RestCredentials credentials, string accountName, string accessToken, string refreshToken, ChannelAdvisorTimeouts timeouts )
 		{
-			Condition.Requires( credentials ).IsNotNull();
-			Condition.Requires( accountName ).IsNotNullOrEmpty();
-			Condition.Requires( accessToken ).IsNotNullOrEmpty();
-			Condition.Requires( refreshToken ).IsNotNullOrEmpty();
+			if( credentials == null )
+			{
+				throw new ArgumentNullException( nameof(credentials), "credentials must not be null" );
+			}
+
+			if( string.IsNullOrEmpty( accountName ) )
+			{
+				throw new ArgumentException( "accountName must not be null or empty", nameof(accountName) );
+			}
+
+			if( string.IsNullOrEmpty( accessToken ) )
+			{
+				throw new ArgumentException( "accessToken must not be null or empty", nameof(accessToken) );
+			}
+
+			if( string.IsNullOrEmpty( refreshToken ) )
+			{
+				throw new ArgumentException( "refreshToken must not be null or empty", nameof(refreshToken) );
+			}
 
 			this._credentials = credentials;
 			this.AccountName = accountName;
@@ -91,8 +105,16 @@ namespace ChannelAdvisorAccess.REST.Services
 		/// <param name="accountId">Tenant account id</param>
 		protected RestServiceBaseAbstr( RestCredentials credentials, APICredentials soapCredentials, string accountId, string accountName, ChannelAdvisorTimeouts timeouts )
 		{
-			Condition.Requires( credentials ).IsNotNull();
-			Condition.Requires( soapCredentials ).IsNotNull();
+			if( credentials == null )
+			{
+				throw new ArgumentNullException( nameof(credentials), "credentials must not be null" );
+			}
+
+			if( soapCredentials == null )
+			{
+				throw new ArgumentNullException( nameof(soapCredentials), "soapCredentials must not be null" );
+			}
+
 
 			this._credentials = credentials;
 			this._soapCredentials = soapCredentials;

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Misc;
-using CuttingEdge.Conditions;
 using Netco.Extensions;
 
 namespace ChannelAdvisorAccess.Services.Items
@@ -264,7 +263,15 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public void RemoveLabelListFromItemList( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
+			if( labels == null )
+			{
+				throw new ArgumentNullException( nameof(labels), "labels must not be null" );
+			}
+
+			if( labels.Length > 3 )
+			{
+				throw new ArgumentException( "Only up to 3 labels allowed.", nameof(labels) );
+			}
 
 			var parameters = new { labels, skus, reason };
 
@@ -299,7 +306,15 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task RemoveLabelListFromItemListAsync( string[] labels, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
+			if( labels == null )
+			{
+				throw new ArgumentNullException( nameof(labels), "labels must not be null" );
+			}
+
+			if( labels.Length > 3 )
+			{
+				throw new ArgumentException( "Only up to 3 labels allowed.", nameof(labels) );
+			}
 
 			var parameters = new { labels, skus, reason };
 
@@ -330,7 +345,15 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public void AssignLabelListToItemList( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
+			if( labels == null )
+			{
+				throw new ArgumentNullException( nameof(labels), "labels must not be null" );
+			}
+
+			if( labels.Length > 3 )
+			{
+				throw new ArgumentException( "Only up to 3 labels allowed.", nameof(labels) );
+			}
 
 			var parameters = new { labels, createLabelIfNotExist, skus, reason };
 			try
@@ -363,7 +386,15 @@ namespace ChannelAdvisorAccess.Services.Items
 
 		public async Task AssignLabelListToItemListAsync( string[] labels, bool createLabelIfNotExist, IEnumerable< string > skus, string reason, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			Condition.Requires( labels, "labels" ).IsShorterOrEqual( 3, "Only up to 3 labels allowed." ).IsNotNull();
+			if( labels == null )
+			{
+				throw new ArgumentNullException( nameof(labels), "labels must not be null" );
+			}
+
+			if( labels.Length > 3 )
+			{
+				throw new ArgumentException( "Only up to 3 labels allowed.", nameof(labels) );
+			}
 
 			var parameters = new { labels, createLabelIfNotExist, skus, reason };
 

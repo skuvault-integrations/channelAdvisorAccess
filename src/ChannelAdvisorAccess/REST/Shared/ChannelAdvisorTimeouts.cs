@@ -1,4 +1,4 @@
-﻿using CuttingEdge.Conditions;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ChannelAdvisorAccess.REST.Shared
@@ -119,7 +119,11 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 		public ChannelAdvisorOperationTimeout( int timeoutInMs )
 		{
-			Condition.Requires( timeoutInMs, "timeoutInMs" ).IsGreaterThan( 0 );
+			if( timeoutInMs <= 0 )
+			{
+				throw new ArgumentOutOfRangeException( nameof(timeoutInMs), timeoutInMs, "timeoutInMs must be greater than 0" );
+			}
+
 			this.TimeoutInMs = timeoutInMs;
 		}
 	}

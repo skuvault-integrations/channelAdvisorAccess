@@ -1,10 +1,4 @@
-﻿using ChannelAdvisorAccess.REST.Shared;
-using CuttingEdge.Conditions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace ChannelAdvisorAccess.Misc
 {
@@ -18,7 +12,10 @@ namespace ChannelAdvisorAccess.Misc
 		public string RefreshToken { get; set; }
 
 		public ChannelAdvisorConfig( string accountName ) {
-			Condition.Requires( accountName, "accountName" );
+			if( accountName == null )
+			{
+				throw new ArgumentNullException( nameof(accountName), "accountName must not be null" );
+			}
 
 			this.AccountName = accountName;
 		}

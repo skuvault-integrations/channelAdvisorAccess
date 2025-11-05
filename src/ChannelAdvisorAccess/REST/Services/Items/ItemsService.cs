@@ -11,7 +11,6 @@ using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.REST.Models.Configuration;
 using ChannelAdvisorAccess.REST.Models.Infrastructure;
 using ChannelAdvisorAccess.REST.Shared;
-using CuttingEdge.Conditions;
 using APICredentials = ChannelAdvisorAccess.OrderService.APICredentials;
 using ChannelAdvisorAccess.REST.Exceptions;
 using ICSharpCode.SharpZipLib.Zip;
@@ -469,8 +468,15 @@ namespace ChannelAdvisorAccess.REST.Services.Items
 		/// <returns></returns>
 		public async Task UpdateQuantityAndPriceAsync( InventoryItemQuantityAndPrice itemQuantityAndPrice, Mark mark, CancellationToken token = default( CancellationToken ) )
 		{
-			Condition.Requires( itemQuantityAndPrice ).IsNotNull();
-			Condition.Requires( itemQuantityAndPrice.Quantity ).IsNotNull();
+			if( itemQuantityAndPrice == null )
+			{
+				throw new ArgumentNullException( nameof(itemQuantityAndPrice), "itemQuantityAndPrice must not be null" );
+			}
+
+			if( itemQuantityAndPrice.Quantity == null )
+			{
+				throw new ArgumentNullException( nameof(itemQuantityAndPrice.Quantity), "Quantity must not be null" );
+			}
 
 			var product = await this.GetProductWithIdOnlyBySku( itemQuantityAndPrice.Sku, mark, token ).ConfigureAwait( false );
 

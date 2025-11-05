@@ -1,4 +1,4 @@
-﻿using CuttingEdge.Conditions;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,7 +14,10 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 		public BatchBuilder( string baseUrl )
 		{
-			Condition.Requires( baseUrl, "baseUrl" ).IsNotNullOrWhiteSpace();
+			if( string.IsNullOrWhiteSpace( baseUrl ) )
+			{
+				throw new ArgumentException( "baseUrl must not be null or whitespace", nameof(baseUrl) );
+			}
 
 			_requestParts = new List< RequestPart >();
 			_baseUrl = baseUrl;
@@ -22,8 +25,15 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 		private BatchBuilder( string baseUrl, IEnumerable< RequestPart > parts )
 		{
-			Condition.Requires( baseUrl, "baseUrl" ).IsNotNullOrWhiteSpace();
-			Condition.Requires( parts, "parts" ).IsNotEmpty();
+			if( string.IsNullOrWhiteSpace( baseUrl ) )
+			{
+				throw new ArgumentException( "baseUrl must not be null or whitespace", nameof(baseUrl) );
+			}
+
+			if( parts == null || !parts.Any() )
+			{
+				throw new ArgumentException( "parts must not be empty", nameof(parts) );
+			}
 
 			_requestParts = parts.ToList();
 			_baseUrl = baseUrl;
@@ -145,7 +155,10 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 		public RequestPart( int id, HttpMethod method, string url, string payload = null )
 		{
-			Condition.Requires( id, "Id" ).IsGreaterThan( 0 );
+			if( id <= 0 )
+			{
+				throw new ArgumentOutOfRangeException( nameof(id), id, "Id must be greater than 0" );
+			}
 
 			this.Id = id;
 			this.Boundary = "--changeset";
