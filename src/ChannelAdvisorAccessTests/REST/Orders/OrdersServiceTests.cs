@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace ChannelAdvisorAccessTests.REST.Orders
 {
+	[ Explicit ]
 	public class OrdersServiceTests : RestAPITestBase
 	{
 		protected const int TestOrderId = 182948;
 		protected const int TestOrderId2 = 186058;
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersAsyncByDate()
 		{
 			var startDate = DateTime.UtcNow.AddMonths( -3 );
@@ -30,7 +30,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersGreaterEqualThanDateMoreThanOnePage()
 		{
 			var startDate = new DateTime(2018, 11, 01);
@@ -42,7 +41,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersLessEqualThanDate()
 		{
 			var endDate = new DateTime(2019, 4, 01);
@@ -54,7 +52,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersGreaterEqualThanDateByOrderStatusUpdate()
 		{
 			var startDate = DateTime.UtcNow.AddMonths( -2 );
@@ -64,11 +61,10 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			result.Should().NotBeNullOrEmpty();
 			result.Count().Should().BeGreaterOrEqualTo( 2 );
-			Assert.IsFalse( result.Any( r => r.ShippingInfo.ShipmentList == null ) );
+			Assert.That( result.Any( r => r.ShippingInfo.ShipmentList == null ), Is.False );
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersGreaterEqualThanDateByPaymentStatusUpdate()
 		{
 			var startDate = new DateTime(2019, 06, 03, 12, 0, 0);
@@ -81,7 +77,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersByIdsAsync()
 		{
 			var result = await this.OrdersService.GetOrdersByIdsAsync( new[] { TestOrderId, TestOrderId2 }, this.Mark, CancellationToken.None );
@@ -91,7 +86,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersByIdsAsync_WhenManyOrderIds()
 		{
 			var orders = new List< int >();
@@ -108,7 +102,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersAsync_WithDifferentItemsDC()
 		{
 			var sku1 = "testSku3";
@@ -127,7 +120,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersAsync_Taxes()
 		{
 			var startDate = DateTime.UtcNow.AddMonths( -2 );
@@ -141,7 +133,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersAsync_Promotions()
 		{
 			var startDate = DateTime.UtcNow.AddMonths( -2 );
@@ -155,7 +146,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersAsync_ShouldReturnShippingCost()
 		{
 			var startDate = DateTime.UtcNow.AddMonths( -2 );
@@ -175,8 +165,8 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			var ordersService = ServicesFactory.CreateOrdersRestService( RestCredentials.AccountName, null, RestCredentials.AccessToken, RestCredentials.RefreshToken, timeouts );
 
-			var ex = Assert.Throws< ChannelAdvisorException >( async () => {
-				var orders = await ordersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -3 ), DateTime.UtcNow, this.Mark );
+			var ex = Assert.Throws<ChannelAdvisorException>( () => {
+				var orders = ordersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( DateTime.UtcNow.AddDays( -3 ), DateTime.UtcNow, this.Mark ).GetAwaiter().GetResult();
 			} );
 			
 			ex.Should().NotBeNull();
@@ -185,7 +175,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task WhenGetOrdersAsyncIsCalled_ThenModifiedLastActivityTimeIsExpected()
 		{
 			var activityTimeBeforeMakingAnyRequest = DateTime.UtcNow;
@@ -195,7 +184,6 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 		}
 
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersAsync_WhenOrderStatusWasUpdatedDuringTheFilterDateRange_butCreatedBefore_ThenReturnSuchOrder()
 		{
 			//OrderID = 186059
@@ -204,12 +192,11 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
-			Assert.True( result.Any( x => x.OrderTimeGMT <= startDate || endDate <= x.OrderTimeGMT ) );
-			Assert.True( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ) );
+			Assert.That( result.Any( x => x.OrderTimeGMT <= startDate || endDate <= x.OrderTimeGMT ), Is.True );
+			Assert.That( result.All( x => startDate <= x.LastUpdateDate && x.LastUpdateDate <= endDate ), Is.True );
 		}
 		
 		[ Test ]
-		[ Explicit ]
 		public async Task GetOrdersAsync_WhenOrderWasImportedDuringTheFilterDateRange_butStatusWasUpdatedOutsideThisRange_ThenReturnSuchOrder()
 		{
 			//OrderID = 186059
@@ -218,7 +205,7 @@ namespace ChannelAdvisorAccessTests.REST.Orders
 
 			var result = await this.OrdersService.GetOrdersAsync< SoapOrdersService.OrderResponseDetailComplete >( startDate, endDate, this.Mark );
 
-			Assert.True( result.Any( x => x.LastUpdateDate <= startDate || endDate <= x.LastUpdateDate ) );
+			Assert.That( result.Any( x => x.LastUpdateDate <= startDate || endDate <= x.LastUpdateDate ), Is.True );
 		}
 	}
 }

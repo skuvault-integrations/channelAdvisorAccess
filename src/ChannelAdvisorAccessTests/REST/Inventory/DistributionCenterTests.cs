@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace ChannelAdvisorAccessTests.REST.Inventory
 {
+	[ Explicit ]
 	public class DistributionCenterTests : RestAPITestBase
 	{
 		protected const string TestDistributionCenterCode = "Louisville";

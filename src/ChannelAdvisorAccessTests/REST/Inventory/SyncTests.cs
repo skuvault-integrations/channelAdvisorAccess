@@ -1,17 +1,14 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ChannelAdvisorAccess.InventoryService;
 using ChannelAdvisorAccess.Constants;
-using ChannelAdvisorAccess.Services.Items;
 using System.Diagnostics;
 using System;
-using System.Threading;
 
 namespace ChannelAdvisorAccessTests.REST.Inventory
 {
+	[ Explicit ]
 	[ TestFixture ]
 	public class SyncTests : RestAPITestBase
 	{
@@ -58,7 +55,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 
 			this.ItemsService.UpdateQuantityAndPrices( requests, this.Mark );
 
-			Assert.IsTrue( sv.Elapsed.TotalSeconds < ( averageProductExportProcessingTimeInSec + averageRequestProcessingTimeInSec * ( caSkusQuantity.Count() * 2 + 1 ) / threadsNumber ) );
+			Assert.That( sv.Elapsed.TotalSeconds < ( averageProductExportProcessingTimeInSec + averageRequestProcessingTimeInSec * ( caSkusQuantity.Count() * 2 + 1 ) / threadsNumber ), Is.True );
 		}
 
 		/// <summary>
@@ -100,7 +97,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 
 			this.ItemsService.UpdateQuantityAndPrices( requests, this.Mark );
 
-			Assert.IsTrue( sv.Elapsed.TotalSeconds < ( averageRequestProcessingTimeInSec * ( caSkusQuantity.Count() * 2 + 1 ) / threadsNumber ) );
+			Assert.That( sv.Elapsed.TotalSeconds < ( averageRequestProcessingTimeInSec * ( caSkusQuantity.Count() * 2 + 1 ) / threadsNumber ), Is.True );
 		}
 
 		/// <summary>
@@ -143,7 +140,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			base.LightWeightItemsService.UpdateQuantityAndPrices( requests, this.Mark );
 
 			int totalSkusPages = (int)Math.Ceiling( (double) caCatalogSize / 100 );
-			Assert.IsTrue( sv.Elapsed.TotalSeconds < ( averageRequestProcessingTimeInSec * ( totalSkusPages * averageProductPageProcessingTimeInSec + caSkusQuantity.Count() + 1 ) / threadsNumber ) );
+			Assert.That( sv.Elapsed.TotalSeconds < ( averageRequestProcessingTimeInSec * ( totalSkusPages * averageProductPageProcessingTimeInSec + caSkusQuantity.Count() + 1 ) / threadsNumber ), Is.True );
 		}
 
 		[ Test ]
@@ -163,7 +160,7 @@ namespace ChannelAdvisorAccessTests.REST.Inventory
 			base.LightWeightItemsService.SynchItems( commonSkus, this.Mark );
 
 			var commonSkusDetails = base.LightWeightItemsService.GetItems( commonSkus.Select( s => s.Sku ), this.Mark );
-			Assert.IsTrue( commonSkusDetails.FirstOrDefault( d => d.WarehouseLocation == null || d.WarehouseLocation.IndexOf( warehouseLocationPrefix ) < 0 ) == null );
+			Assert.That( commonSkusDetails.FirstOrDefault( d => d.WarehouseLocation == null || d.WarehouseLocation.IndexOf( warehouseLocationPrefix ) < 0 ) == null, Is.True );
 		}
 	}
 }

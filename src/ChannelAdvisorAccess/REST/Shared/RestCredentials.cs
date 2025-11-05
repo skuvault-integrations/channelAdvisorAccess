@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CuttingEdge.Conditions;
 
 namespace ChannelAdvisorAccess.REST.Shared
 {
@@ -14,8 +9,15 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 		public RestCredentials( string applicationId, string sharedSecret )
 		{
-			Condition.Requires( applicationId ).IsNotNullOrEmpty();
-			Condition.Requires( sharedSecret ).IsNotNullOrEmpty();
+			if( string.IsNullOrEmpty( applicationId ) )
+			{
+				throw new ArgumentException( "applicationId must not be null or empty", nameof(applicationId) );
+			}
+
+			if( string.IsNullOrEmpty( sharedSecret ) )
+			{
+				throw new ArgumentException( "sharedSecret must not be null or empty", nameof(sharedSecret) );
+			}
 
 			this.ApplicationId = applicationId;
 			this.SharedSecret = sharedSecret;

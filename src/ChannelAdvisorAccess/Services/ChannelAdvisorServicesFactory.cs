@@ -6,12 +6,12 @@ using ChannelAdvisorAccess.Services.Items;
 using ChannelAdvisorAccess.Services.Listing;
 using ChannelAdvisorAccess.Services.Orders;
 using ChannelAdvisorAccess.Services.Shipping;
-using System.Net;
 using ChannelAdvisorAccess.REST.Shared;
 using ChannelAdvisorAccess.Misc;
 
 namespace ChannelAdvisorAccess.Services
 {
+	/// <inheritdoc />
 	public class ChannelAdvisorServicesFactory : IChannelAdvisorServicesFactory
 	{
 		private readonly string _developerKey;
@@ -21,10 +21,17 @@ namespace ChannelAdvisorAccess.Services
 		private readonly ObjectCache _cache;
 		private readonly TimeSpan _slidingCacheExpiration;
 
-		public ChannelAdvisorServicesFactory( string developerKey, string developerPassword, string applicationId, string sharedSecret, ObjectCache cache = null ) :
-				this( developerKey, developerPassword, applicationId, sharedSecret, cache, ObjectCache.NoSlidingExpiration )
+		/// <summary>
+		/// Provides factory methods to create instances of various ChannelAdvisor services.
+		/// </summary>
+		public ChannelAdvisorServicesFactory( string developerKey, string developerPassword, string applicationId, string sharedSecret, ObjectCache cache = null ):
+			this( developerKey, developerPassword, applicationId, sharedSecret, cache, ObjectCache.NoSlidingExpiration )
 		{ }
 
+		/// <summary>
+		/// Provides factory methods for creating instances of ChannelAdvisor service interfaces such as
+		/// admin, orders, items, shipping, and listing services.
+		/// </summary>
 		public ChannelAdvisorServicesFactory( string developerKey, string developerPassword, string applicationId, string sharedSecret, ObjectCache cache, TimeSpan slidingCacheExpiration )
 		{
 			this._applicationId = applicationId;
@@ -36,6 +43,10 @@ namespace ChannelAdvisorAccess.Services
 			this._slidingCacheExpiration = slidingCacheExpiration;
 		}
 
+		/// <summary>
+		/// Creates and returns an instance of the IAdminService for managing administrative operations within ChannelAdvisor.
+		/// </summary>
+		/// <returns>An implementation of the IAdminService interface.</returns>
 		public IAdminService CreateAdminService()
 		{
 			var adminCredentials = new AdminService.APICredentials { DeveloperKey = this._developerKey, Password = this._developerPassword };

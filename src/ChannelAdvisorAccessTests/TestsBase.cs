@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Caching;
 using ChannelAdvisorAccess.Misc;
@@ -12,6 +13,7 @@ using NUnit.Framework;
 
 namespace ChannelAdvisorAccessTests
 {
+	[ SuppressMessage( "Structure", "NUnit1032:An IDisposable field/property should be Disposed in a TearDown method" ) ]
 	public class TestsBase
 	{
 		protected const string TestDistributionCenterCode = "Louisville";

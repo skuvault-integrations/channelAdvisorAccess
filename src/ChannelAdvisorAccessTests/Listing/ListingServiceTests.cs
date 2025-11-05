@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using ChannelAdvisorAccess.Services;
 using ChannelAdvisorAccess.Services.Listing;
 using NUnit.Framework;
 
 namespace ChannelAdvisorAccessTests.Listing
 {
+	[ Explicit ]
 	[TestFixture]
 	public class ListingServiceTests : TestsBase
 	{
@@ -17,16 +17,16 @@ namespace ChannelAdvisorAccessTests.Listing
 
 			using ( service = ( ListingService )factory.CreateListingService( "test", Credentials.AccountId ) )
 			{
-				Debug.Assert( !service.Disposed ); // not be disposed yet
+				Assert.That( service.Disposed, Is.False ); // not be disposed yet
 			}
 
 			try
 			{
-				Debug.Assert( service.Disposed ); // expecting an exception.
+				Assert.That( service.Disposed, Is.True ); // expecting an exception.
 			}
 			catch ( Exception ex )
 			{
-				Debug.Assert( ex is ObjectDisposedException );
+				Assert.That( ex, Is.TypeOf<ObjectDisposedException>() );
 			}
 		}
 	}

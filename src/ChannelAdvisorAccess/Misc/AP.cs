@@ -2,8 +2,6 @@ using System;
 using System.Net;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Caching;
 using Netco.ActionPolicyServices;
 using Netco.Extensions;
 using Netco.Utils;

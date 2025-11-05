@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using ChannelAdvisorAccess.Exceptions;
 using ChannelAdvisorAccess.REST.Exceptions;
-using CuttingEdge.Conditions;
 using Polly;
 
 namespace ChannelAdvisorAccess.REST.Shared
@@ -17,7 +13,10 @@ namespace ChannelAdvisorAccess.REST.Shared
 
 		public ActionPolicy( int attempts )
 		{
-			Condition.Requires( attempts ).IsGreaterThan( 0 );
+			if( attempts <= 0 )
+			{
+				throw new ArgumentOutOfRangeException( nameof(attempts), attempts, "attempts must be greater than 0" );
+			}
 
 			this._retryAttempts = attempts;
 		}
