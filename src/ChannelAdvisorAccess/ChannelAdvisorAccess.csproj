@@ -18,7 +18,7 @@
     </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Netco" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
